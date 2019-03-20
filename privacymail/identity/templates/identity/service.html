@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tags %}
+{% load countries %}
+{% load widget_tweaks %}
+{% load i18n %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'flags/sprite.css' %}">
+{% endblock %}
+
+{% block title %}
+{{ service.name }} - PrivacyMail
+{% endblock%}
+
+{% block page %}
+<div class="page-header header-filter" data-parallax="true" style="background-image: url('{% static 'img/letter.jpg' %}');"></div>
+<div class="main main-raised">
+    <div class="profile-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h5 class="mb-0">{% trans 'SHOWING RESULTS FOR' %}</h5>
+                    <h2 class="mt-0">{{ service.name }}</h2>
+                </div>
+            </div>
+            <div class="row">
+                {% if error %}
+                <div class="col-lg-8 text-center">
+                    <p><i class="fas fa-5x fa-exclamation-triangle"></i></p>
+                    <p>{% trans 'Server Error' %}</p>
+                    <p class="text-left">{% blocktrans %}Looks like there is a problem on our end. Please check back in a couple of minutes, or contact us if the problem persists.{% endblocktrans %}</p>
+                    <!-- Error: {{ error }} -->
+                </div>
+                {% else %}
+                    {% if count_mails > 0 %}
+                    <div class="col-lg-8 text-left">
+                        {% for measure in measures %}
+                        {% show_measure measure.id measure.reliability measure.title measure.status_text measure.description measure.condition measure.errors measure.status %}
+                        {% endfor %}
+
+                        <h3>Hosts</h3>
+                        <p>{% trans 'The following hosts receive data through tracking.' %}</p>
+                        <ul class="list-group">
+                            {% for t in tracker %}
+                            <li class="list-group-item">{{ t.host }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% else %}
+                    <div class="col-lg-8 text-center">
+                        <p><i class="far fa-5x fa-question-circle"></i></p>
+                        <p>{% trans 'No results available (yet)' %}</p>
+                        <p class="text-left">{% blocktrans %}We have not yet received any eMails for this service, and thus cannot show any results. Please check back at a later time.{% endblocktrans %}</p>
+                    </div>
+                    {% endif %}
+                <div class="col-lg-4 text-left">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">Statistics</h4>
+                            <p class="card-text">
+                                {% blocktrans with unc=unconfirmed_idents.count count cnt=idents.count %}
+                                {{ cnt }} identity registered (and {{ unc }} unconfirmed).<br/>
+                                {% plural %}
+                                {{ cnt }} identities registered (and {{ unc }} unconfirmed).<br/>
+                                {% endblocktrans %}
+                                {% blocktrans with cnt_mails=count_mails cnt_mult_ident_mails=count_mult_ident_mails %}
+                                {{ cnt_mails }} eMails processed.<br/>
+                                {{ cnt_mult_ident_mails }} eMails received on more than one identity.
+                                {% endblocktrans %}
+                            </p>
+                            <form action='/identity/' method="post"> {% csrf_token %} <input type="text" name="domain" value="{{ service.url }}" class="d-none" />
+                                <button type="submit" class="btn btn-success w-100" ><i class="fas fa-plus"></i> {% trans 'Add another identity' %}</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">{% trans 'More information' %}</h4>
+                            {% if service.country_of_origin != "" and service.sector != "unknown" %}
+                                <p class="card-text"><strong>{% trans 'Sector' %}</strong>: {{ service.get_sector_display }} <br> 
+                                    <strong>{% trans 'Country' %}</strong>: {{service.country_of_origin.name}}</p>
+                            {% else %}
+                            <p class="card-text">{% trans 'Know this website? Tell us more about it:' %}</p>
+                            <form action='/service/{{service.id}}/set_meta/' method="POST">
+                                {% csrf_token %}
+                                <input type="text" name="serviceID" value="{{service.id}}" class="d-none" />
+                                <div class="form-group">
+                                    {{ form.country_of_origin.errors  }}
+                                    <label for="{{ form.country_of_origin.id_for_label }}">{% trans 'Country:' %}</label>
+                                    <div class="input-group">
+                                        {% render_field form.country_of_origin class="form-control selectpicker" %}
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    {{form.sector.errors}}
+                                    <label for="{{ form.sector.id_for_label }}">{% trans 'Sector' %}:</label>
+                                    <div class="input-group">
+                                        {% render_field form.sector class="form-control selectpicker" %}
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-info w-100">{% trans 'Update' %}</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

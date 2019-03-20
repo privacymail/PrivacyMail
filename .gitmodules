@@ -1,0 +1,3 @@
+[submodule "privacymail/OpenWPM"]
+	path = privacymail/OpenWPM
+	url = https://github.com/mozilla/OpenWPM.git
