@@ -25,8 +25,8 @@ for i in range(NUM_BROWSERS):
 browser_params[0]['headless'] = True  # Launch only browser 0 headless
 
 # Update TaskManager configuration (use this for crawl-wide settings)
-manager_params['data_directory'] = '~/Desktop/'
-manager_params['log_directory'] = '~/Desktop/'
+manager_params['data_directory'] = '~/openwpm/data/'
+manager_params['log_directory'] = '~/openwpm/log/'
 manager_params['database_name'] = './crawl-data' + str(thread_id) + '.sqlite'
 
 # Instantiates the measurement platform
