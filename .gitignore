@@ -115,3 +115,7 @@ privacymail/static
 
 # Settings.py
 privacymail/privacymail/settings.py
+
+# SSH keys
+ansible/files/id_deploy
+ansible/files/id_deploy.pub
