@@ -47,6 +47,8 @@ class ImapFetcher(CronJobBase):
         server = http.server.HTTPServer(('127.0.0.1', PORT), Handler)
 
         def startThread():
+            # create a dummy favicon.ico
+            open('/tmp/favicon.ico', 'a').close()
             thread = threading.Thread(target=server.serve_forever)
             thread.deamon = True
             thread.start()

@@ -714,6 +714,8 @@ class Mail(models.Model):
                 mailFiles.append(filename)
                 file_to_mail_map[filename] = mail
             else:
+                mail.processing_state = Mail.PROCESSING_STATES.DONE
+                mail.save()
                 continue
             file.close()
 
