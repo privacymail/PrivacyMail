@@ -235,7 +235,7 @@ LOCALHOST_URL = 'localhost.privacymail.info:5000'
 
 # Django Mail
 SERVER_EMAIL = ""  # TODO Add eMail to be used as sender
-ADMINS = [('admin', 'admin@newsletterme.de')]  # TODO Add admin users and eMails
+ADMINS = [('admin', 'admin@domain.tld')]  # TODO Add admin users and eMails
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 
