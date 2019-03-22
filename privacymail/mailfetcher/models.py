@@ -993,6 +993,13 @@ class Mail(models.Model):
     def connect_tracker(eresource):
         extracturl = tldextract.extract(eresource.url)
         host = "{}.{}".format(extracturl.domain, extracturl.suffix)
+
+        # Don't save our own domain as third party.
+        localDomain = tldextract.extract(settings.LOCALHOST_URL)
+        localHost = "{}.{}".format(localDomain.domain, localDomain.suffix)
+        if localHost in host:
+            return
+
         thirdparty, created = Thirdparty.objects.update_or_create(name=host, host=host,
                                                                   defaults={'resultsdirty': True}, )
         eresource.host = thirdparty
