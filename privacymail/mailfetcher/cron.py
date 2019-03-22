@@ -18,6 +18,7 @@ import tldextract
 import mailfetcher.models
 import traceback
 import logging
+from django.core.cache import cache
 
 poplib._MAXLINE = 20480
 logger = logging.getLogger(__name__)
@@ -31,6 +32,7 @@ class ImapFetcher(CronJobBase):
 
 
     def do(self):
+        cache.delete('ImapFetcher')
         num_mails_processed = 0
 
 
