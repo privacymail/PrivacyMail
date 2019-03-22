@@ -261,6 +261,9 @@ EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' 
 
 # Profiling
 SILKY_PYTHON_PROFILER = True
+# Authentication
+SILKY_AUTHENTICATION = True  # User must login
+SILKY_AUTHORISATION = True  # User must have permissions
 
 RAVEN_CONFIG = {
     'dsn': '{{ lookup('passwordstore', 'privacymail/raven-dsn') }}',
