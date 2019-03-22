@@ -214,14 +214,14 @@ UNSUBSCRIBE_LINK_DICT = ['sub',  # unsubscribe, subscribtion
                         ]
 
 # Number of mails to be processed per batch by the cronjob.
-CRON_MAILQUEUE_SIZE = 30
+CRON_MAILQUEUE_SIZE = 100
 
 # Number of retries
-OPENWPM_RETRIES = 5
+OPENWPM_RETRIES = 3
 
-OPENWPM_TIMEOUT = 35
+OPENWPM_TIMEOUT = 10
 # Number of threads used to call openWPM
-NUMBER_OF_THREADS = 6
+NUMBER_OF_THREADS = 10
 
 OPENWPM_FAIL_INCREASE = 1
 
