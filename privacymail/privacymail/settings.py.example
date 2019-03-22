@@ -251,6 +251,9 @@ EMAIL_HOST_PASSWORD = ''  # TODO Add eMail password
 
 # Profiling
 SILKY_PYTHON_PROFILER = True
+# Authentication
+SILKY_AUTHENTICATION = True  # User must login
+SILKY_AUTHORISATION = True  # User must have permissions
 
 RAVEN_CONFIG = {
     'dsn': '', # TODO Add DSN when using raven / sentry

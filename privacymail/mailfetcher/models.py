@@ -737,8 +737,8 @@ class Mail(models.Model):
             browser_params[i]['spoof_mailclient'] = True
 
         # Update TaskManager configuration (use this for crawl-wide settings)
-        manager_params['data_directory'] = '~/Desktop/'
-        manager_params['log_directory'] = '~/Desktop/'
+        manager_params['data_directory'] = settings.OPENWPM_DATA_DIR
+        manager_params['log_directory'] = settings.OPENWPM_LOG_DIR
 
         # Instantiates the measurement platform
         # Commands time out by default after 60 seconds
@@ -882,8 +882,8 @@ class Mail(models.Model):
             browser_params[i]['headless'] = True
 
         # Update TaskManager configuration (use this for crawl-wide settings)
-        manager_params['data_directory'] = '~/Desktop/'
-        manager_params['log_directory'] = '~/Desktop/'
+        manager_params['data_directory'] = settings.OPENWPM_DATA_DIR
+        manager_params['log_directory'] = settings.OPENWPM_LOG_DIR
 
         # Instantiates the measurement platform
         # Commands time out by default after 60 seconds
@@ -998,6 +998,13 @@ class Mail(models.Model):
     def connect_tracker(eresource):
         extracturl = tldextract.extract(eresource.url)
         host = "{}.{}".format(extracturl.domain, extracturl.suffix)
+
+        # Don't save our own domain as third party.
+        localDomain = tldextract.extract(settings.LOCALHOST_URL)
+        localHost = "{}.{}".format(localDomain.domain, localDomain.suffix)
+        if localHost in host:
+            return
+
         thirdparty, created = Thirdparty.objects.update_or_create(name=host, host=host,
                                                                   defaults={'resultsdirty': True}, )
         eresource.host = thirdparty
