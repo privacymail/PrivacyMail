@@ -11,9 +11,9 @@
     install_path: /opt/privacymail/privacymail/
     home_dir: /opt/privacymail
   tasks:
+    # Initial install
     - name: Enable universe repositories
       shell: add-apt-repository universe
-    # Initial install
     - name: Install Python PPA
       apt_repository:
         repo: 'ppa:deadsnakes/ppa'
