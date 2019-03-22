@@ -31,7 +31,7 @@ SECRET_KEY = '{{ lookup('passwordstore', 'privacymail/django-secret-key' )}}'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['beta.privacymail.info']
+ALLOWED_HOSTS = ['{{ pm_domain }}']
 
 
 # Application definition
@@ -158,20 +158,20 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = 'static/'
+STATIC_ROOT = '{{ static_path }}'
 
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
     "mailfetcher.analyser_cron.Analyser",
 ]
 
-OPENWPM_PATH = '/home/privacymail/privacymail/privacymail/runopenwpm.py'
+OPENWPM_PATH = '{{ home_dir }}/privacymail/privacymail/runopenwpm.py'
 # Change these in runopenwpm.py as well, if you want to change them
-OPENWPM_DATA_DIR = '/home/privacymail/openwpm/data/'
-OPENWPM_LOG_DIR = '/home/privacymail/openwpm/log/'
+OPENWPM_DATA_DIR = '{{ home_dir }}/openwpm/data/'
+OPENWPM_LOG_DIR = '{{ home_dir }}/openwpm/log/'
 
 #URL on which the server is reached
-SYSTEM_ROOT_URL = 'https://beta.privacymail.info'
+SYSTEM_ROOT_URL = 'http://{{ pm_domain }}'
 
 # Mail credentials
 
@@ -266,7 +266,7 @@ RAVEN_CONFIG = {
     'dsn': '{{ lookup('passwordstore', 'privacymail/raven-dsn') }}',
     # If you are using git, you can also automatically configure the
     # release based on the git info.
-    'release': raven.fetch_git_sha(os.path.abspath(os.pardir)),
+    'release': raven.fetch_git_sha("{{ install_path }}"),
     'transport': RequestsHTTPTransport,
 }
 

@@ -1,0 +1,255 @@
+---
+- hosts: pm-deploytest
+  become: true
+  become_user: root
+  vars:
+    pm_domain: "local.privacymail.info"
+    db_user: "{{ lookup('passwordstore', 'privacymail/postgres-user') }}"
+    db_pass: "{{ lookup('passwordstore', 'privacymail/postgres-password') }}"
+    host_locale: en_US.UTF-8
+    static_path: /var/www/pmail-static/
+    install_path: /opt/privacymail/privacymail/
+    home_dir: /opt/privacymail
+  tasks:
+    # Initial install
+    - name: Install Python PPA
+      apt_repository:
+        repo: 'ppa:deadsnakes/ppa'
+        state: present
+    - name: Install apt packages
+      apt: 
+        name: ['python3.7', 'python3.7-dev', 'python-virtualenv', 'python-pip', 'apache2', 'apache2-dev', 'postgresql', 'postgresql-contrib', 'python-psycopg2', 'git']
+        update_cache: yes
+    # Set up user
+    - name: Create privacymail user
+      user:
+        name: privacymail
+        comment: "Service account for PrivacyMail"
+        groups: www-data
+        home: /opt/privacymail/
+        shell: /bin/bash
+        # Ensure that this contains a password in the correct format, see 
+        # https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+        password: "{{ lookup('passwordstore', 'privacymail/privacymail-user-pass') }}"
+    - name: Create privacymail SSH directory
+      file:
+        path: /opt/privacymail/.ssh
+        owner: privacymail
+        group: privacymail
+        mode: 0700
+        state: directory
+    - name: Place SSH deploy key for privacymail user
+      copy:
+        src: files/id_deploy
+        dest: /opt/privacymail/.ssh/id_deploy
+        owner: privacymail
+        group: privacymail
+        mode: 0600
+    - name: Place SSH deploy public key for privacymail user
+      copy:
+        src: files/id_deploy.pub
+        dest: /opt/privacymail/.ssh/id_deploy.pub
+        owner: privacymail
+        group: privacymail
+        mode: 0600
+    - name: Place SSH config file
+      copy:
+        src: files/config
+        dest: /opt/privacymail/.ssh/config
+        owner: privacymail
+        group: privacymail
+        mode: 0600
+    # Set up database
+    - name: Create Postgres database
+      become_user: postgres
+      postgresql_db:
+        name: privacymail
+    - name: Create Postgres user
+      become_user: postgres
+      postgresql_user:
+        db: privacymail
+        name: "{{ db_user }}"
+        password: "{{ db_pass }}"
+    # Put code into place
+    - name: Update remote repository
+      become_user: privacymail
+      git:
+        repo: github:malexmave/PrivacyMail
+        dest: /opt/privacymail/privacymail
+        version: develop
+        update: yes
+        accept_hostkey: yes
+        force: yes
+    - name: Place settings file
+      become_user: privacymail
+      template:
+        src: settings.py
+        dest: /opt/privacymail/privacymail/privacymail/privacymail/settings.py
+        owner: privacymail
+        group: privacymail
+        mode: 0600
+    # Install dependencies
+    - name: Update pip requirements
+      become_user: privacymail
+      pip:
+        virtualenv_python: python3.7
+        requirements: /opt/privacymail/privacymail/requirements.txt
+        virtualenv: /opt/privacymail/privacymail/venv
+    # Install OpenWPM dependencies
+    - name: Run OpenWPM installer (this may take a while)
+      shell: |
+        cd /opt/privacymail/privacymail/privacymail/OpenWPM/
+        ./install.sh --no-flash
+      args:
+        creates: /opt/privacymail/privacymail/privacymail/OpenWPM/firefox-bin/firefox
+      environment:
+        TRAVIS: "true"
+    - name: Set owner of OpenWPM stuff
+      file:
+        path: /opt/privacymail/privacymail/privacymail/OpenWPM
+        owner: privacymail
+        group: privacymail
+        recurse: yes
+    - name: Update OpenWPM pip requirements in venv (if this fails on the first attempt, simply rerun the deploy playbook)
+      become_user: privacymail
+      environment:
+        LANG: "{{ host_locale }}"
+        LC_COLLATE: "{{ host_locale }}"
+        LC_CTYPE: "{{ host_locale }}"
+        LC_MESSAGES: "{{ host_locale }}"
+        LC_MONETARY: "{{ host_locale }}"
+        LC_NUMERIC: "{{ host_locale }}"
+        LC_TIME: "{{ host_locale }}"
+        LC_ALL: "{{ host_locale }}"
+      pip:
+        virtualenv: /opt/privacymail/privacymail/venv
+        requirements: /opt/privacymail/privacymail/privacymail/OpenWPM/requirements.txt
+    - name: Create folder structure for OpenWPM - Part 1
+      become_user: privacymail
+      file:
+        path: /opt/privacymail/openwpm
+        owner: privacymail
+        group: www-data
+        mode: 0770
+        state: directory
+    - name: Create folder structure for OpenWPM - Part 2
+      become_user: privacymail
+      file:
+        path: /opt/privacymail/openwpm/log
+        owner: privacymail
+        group: www-data
+        mode: 0770
+        state: directory
+    - name: Create folder structure for OpenWPM - Part 3
+      become_user: privacymail
+      file:
+        path: /opt/privacymail/openwpm/data
+        owner: privacymail
+        group: www-data
+        mode: 0770
+        state: directory
+    # Prepare things for the app
+    - name: Create static folder
+      file:
+        path: "{{ static_path }}"
+        owner: www-data
+        group: privacymail
+        mode: 0770
+        state: directory
+    # Create and migrate database
+    - name: Migrate database
+      become_user: privacymail
+      shell: |
+        set -e
+        cd /opt/privacymail/privacymail/privacymail
+        . ../venv/bin/activate
+        python manage.py migrate
+        python manage.py createcachetable
+    - name: Collect static files
+      become_user: privacymail
+      shell: |
+        set -e
+        cd /opt/privacymail/privacymail/privacymail
+        . ../venv/bin/activate
+        python manage.py collectstatic --noinput
+    # Prepare webserver
+    - name: Install mod_wsgi from pip
+      become_user: privacymail
+      pip:
+        name: mod_wsgi
+        virtualenv: /opt/privacymail/privacymail/venv
+    - name: Create mod_wsgi config file for apache2
+      shell: /opt/privacymail/privacymail/venv/bin/mod_wsgi-express module-config > /etc/apache2/mods-available/py-wsgi.load
+      args:
+        creates: /etc/apache2/mods-available/py-wsgi.load
+    - name: Load mod_wsgi in Apache2
+      apache2_module:
+        state: present
+        name: py-wsgi
+        identifier: wsgi_module
+    - name: Create site config
+      copy:
+        dest: "/etc/apache2/sites-available/{{ pm_domain }}.conf"
+        owner: www-data
+        group: www-data
+        content: |
+          <VirtualHost *:80>
+          ServerName {{ pm_domain }}
+          WSGIScriptAlias / /opt/privacymail/privacymail/privacymail/privacymail/wsgi.py
+
+          WSGIDaemonProcess {{ pm_domain }} processes=2 threads=15 display-name=%{GROUP} python-home=/opt/privacymail/privacymail/venv/ python-path=/opt/privacymail/privacymail/privacymail/
+          WSGIProcessGroup {{ pm_domain }}
+
+          Alias /static /var/www/pmail-static/
+          Alias /favicon.ico /var/www/pmail-static/img/favicon.ico
+          Alias /robots.txt /var/www/pmail-static/robots.txt
+
+          <Directory /var/www/pmail-static >
+          Require all granted
+          </Directory>
+
+          <Directory /opt/privacymail/privacymail/privacymail/privacymail>
+          <Files wsgi.py>
+          Require all granted
+          </Files>
+          </Directory>
+          </VirtualHost>
+    - name: Give access to Django files to www-data
+      file:
+        path: "{{ install_path}}"
+        owner: privacymail
+        group: www-data
+        mode: 0770
+        recurse: yes
+    - name: Enable new site
+      command: "a2ensite {{ pm_domain }}"
+    - name: Restart apache2
+      service:
+        name: apache2
+        state: restarted
+
+    
+
+
+# Tasks left to do:
+# Install webserver with wsgi support
+#  - Configure domain
+# Migrate database
+# Create cache database
+# Collect static files
+#  - Ensure they are placed in the correct directory for serving
+# Install cronjobs
+
+
+# Old stuff
+#  - name: Migrate database
+#      command: /opt/privacymail/privacymail/privacymail/manage.py migrate
+#      environment:
+#        PATH: /opt/privacymail/privacymail/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#        VIRTUAL_ENV: /opt/privacymail/privacymail/venv
+#    - name: Collect static files
+#      command: /opt/privacymail/privacymail/privacymail/manage.py collectstatic --no-input
+#      environment:
+#        PATH: /opt/privacymail/privacymail/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+#        VIRTUAL_ENV: /opt/privacymail/privacymail/venv
+
