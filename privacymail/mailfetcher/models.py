@@ -40,7 +40,7 @@ import re
 from email.utils import parsedate, parsedate_to_datetime
 import statistics
 import logging
-
+from django.db import connection
 
 mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
@@ -762,6 +762,8 @@ class Mail(models.Model):
         # Shuts down the browsers and waits for the data to finish logging
         manager.close()
 
+        # Make sure the db connection is open
+        connection.connect()
 
         print('Importing OpenWPM results.')
         failed_mails = []
@@ -903,6 +905,9 @@ class Mail(models.Model):
         # Shuts down the browsers and waits for the data to finish logging
         manager.close()
 
+        # Make sure the db connection is open
+        connection.connect()
+
         print('Importing OpenWPM results.')
         failed_urls = {}
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
@@ -993,6 +998,13 @@ class Mail(models.Model):
     def connect_tracker(eresource):
         extracturl = tldextract.extract(eresource.url)
         host = "{}.{}".format(extracturl.domain, extracturl.suffix)
+
+        # Don't save our own domain as third party.
+        localDomain = tldextract.extract(settings.LOCALHOST_URL)
+        localHost = "{}.{}".format(localDomain.domain, localDomain.suffix)
+        if localHost in host:
+            return
+
         thirdparty, created = Thirdparty.objects.update_or_create(name=host, host=host,
                                                                   defaults={'resultsdirty': True}, )
         eresource.host = thirdparty
