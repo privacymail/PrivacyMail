@@ -230,28 +230,5 @@
         name: apache2
         state: restarted
 
-    
-
-
 # Tasks left to do:
-# Install webserver with wsgi support
-#  - Configure domain
-# Migrate database
-# Create cache database
-# Collect static files
-#  - Ensure they are placed in the correct directory for serving
-# Install cronjobs
-
-
-# Old stuff
-#  - name: Migrate database
-#      command: /opt/privacymail/privacymail/privacymail/manage.py migrate
-#      environment:
-#        PATH: /opt/privacymail/privacymail/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-#        VIRTUAL_ENV: /opt/privacymail/privacymail/venv
-#    - name: Collect static files
-#      command: /opt/privacymail/privacymail/privacymail/manage.py collectstatic --no-input
-#      environment:
-#        PATH: /opt/privacymail/privacymail/venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-#        VIRTUAL_ENV: /opt/privacymail/privacymail/venv
-
+# - Install cronjobs
