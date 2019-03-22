@@ -1,9 +1,9 @@
 ---
-- hosts: pm-deploytest
+- hosts: privacymail-deploy
   become: true
   become_user: root
   vars:
-    pm_domain: "local.privacymail.info"
+    pm_domain: "beta.privacymail.info"
     db_user: "{{ lookup('passwordstore', 'privacymail/postgres-user') }}"
     db_pass: "{{ lookup('passwordstore', 'privacymail/postgres-password') }}"
     host_locale: en_US.UTF-8
@@ -11,6 +11,8 @@
     install_path: /opt/privacymail/privacymail/
     home_dir: /opt/privacymail
   tasks:
+    - name: Enable universe repositories
+      shell: add-apt-repository universe
     # Initial install
     - name: Install Python PPA
       apt_repository:
@@ -110,7 +112,7 @@
         owner: privacymail
         group: privacymail
         recurse: yes
-    - name: Update OpenWPM pip requirements in venv (if this fails on the first attempt, simply rerun the deploy playbook)
+    - name: Update OpenWPM pip requirements in venv
       become_user: privacymail
       environment:
         LANG: "{{ host_locale }}"
