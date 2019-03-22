@@ -40,7 +40,7 @@ import re
 from email.utils import parsedate, parsedate_to_datetime
 import statistics
 import logging
-
+from django.db import connection
 
 mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
@@ -762,6 +762,8 @@ class Mail(models.Model):
         # Shuts down the browsers and waits for the data to finish logging
         manager.close()
 
+        # Make sure the db connection is open
+        connection.connect()
 
         print('Importing OpenWPM results.')
         failed_mails = []
@@ -902,6 +904,9 @@ class Mail(models.Model):
 
         # Shuts down the browsers and waits for the data to finish logging
         manager.close()
+
+        # Make sure the db connection is open
+        connection.connect()
 
         print('Importing OpenWPM results.')
         failed_urls = {}
