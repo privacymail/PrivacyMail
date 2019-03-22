@@ -8,8 +8,10 @@ def validate_domain(domain):
     :param domain: The Domain as a string
     :return: The canonical name of the domain as a string.
     """
-    # Remote leading and trailing whitespaces
+    # Remove leading and trailing whitespaces
     domain = domain.strip()
+    # Coerce to lower case
+    domain = domain.lower()
     # Check if the domain is a valid domain or URL
     if is_valid_domain(domain):
         # Disassemble domain and reassemble in canonical form
