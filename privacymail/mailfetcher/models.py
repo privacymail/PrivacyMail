@@ -465,6 +465,10 @@ class Mail(models.Model):
             for link in links:
                 print(link)
         try:
+            if len(list_differences) == 0:
+                list_differences.append(0)
+            if min_difference == 5000:
+                min_difference = 0
             return links, num_different_links, l1, min_difference, max_difference, statistics.mean(list_differences), \
                statistics.median(list_differences)
         except statistics.StatisticsError:

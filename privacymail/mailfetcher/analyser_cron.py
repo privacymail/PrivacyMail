@@ -860,6 +860,8 @@ def analyze_differences_between_similar_mails(service):
         # results = {}
         # print(m)
         similar_mails = m.get_similar_mails_of_different_identities()
+        if len(similar_mails) == 0:
+            continue
         for el in similar_mails:
             if el.id in already_processed_mails:
                 continue
@@ -883,8 +885,8 @@ def analyze_differences_between_similar_mails(service):
                 # m.get_similar_links(el)
                 similar_links, num_diff_links, num_total_links, min_difference, max_difference, mean, median = \
                     m.get_similar_links(el, False)
-                if len(similar_links) == 0:
-                    continue
+                # if len(similar_links) == 0:
+                #     continue
                 try:
                     ratio_list.append(num_diff_links / num_total_links)
                 except ZeroDivisionError:
@@ -895,6 +897,8 @@ def analyze_differences_between_similar_mails(service):
                 max_diff_list.append(max_difference)
                 mean_diff_list.append(mean)
                 median_diff_list.append(median)
+    if pairs_analysed == 0:
+        return 0, -1, -1, -1, -1, -1
     try:
         ratio = statistics.mean(ratio_list)
         minimum = statistics.mean(min_diff_list)
