@@ -158,9 +158,14 @@ def create_service_cache(service, force=False):
     # Check for eMails leakage
     mail_leakage_resources = Eresource.objects.filter(mail_leakage__isnull=False, mail__in=service.mails())
     algos_string = ""
-    if mail_leakage_resources:
-        algos = mail_leakage_resources.values_list('mail_leakage').distinct()
-        algos_string = ', '.join([a[0] for a in algos])
+    if mail_leakage_resources.exists():
+        algos = []
+        for algorithms_list in mail_leakage_resources.values_list('mail_leakage').distinct():
+            for algorithm in algorithms_list[0].split(', '):
+                if algorithm in algos or algorithm == '':
+                    continue
+                algos.append(algorithm)
+        algos_string = ', '.join(algos)
 
     # Get all identities associated with this service
     idents = Identity.objects.filter(service=service, approved=True)
@@ -310,6 +315,7 @@ def create_service_cache(service, force=False):
         'connections': connections,
         'tracker': tracker,
         'third_party_spam': third_party_spam,
+        'leak_algorithms': algos_string,
         # Num of mails of service: done
         # Number of (unconfirmed) identities: done
         # sets any cookies : done
