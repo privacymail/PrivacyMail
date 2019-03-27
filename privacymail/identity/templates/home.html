@@ -17,7 +17,7 @@ PrivacyMail
                 <br>
             </div>
         </div>
-        <div class="searchbar">
+        <div class="searchbar col-lg-6">
             <form action="/" method="post" id='sbar-form'>{% csrf_token %}
                 <input class="search_input" id='sbar-input' type="text" name="domain" placeholder="nytimes.com" {% if offer_identity_creation %} value="{{ offer_identity_creation }}" autocomplete="off" {% endif %} {% if notification %} value="{{ notification.domain }}" autocomplete="off" {% endif %}>
                 <button type="submit" class="search_icon" id='sbar-button'><i class="fas fa-search"></i></button>
