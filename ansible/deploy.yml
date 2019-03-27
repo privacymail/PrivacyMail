@@ -10,6 +10,7 @@
     static_path: /var/www/pmail-static/
     install_path: /opt/privacymail/privacymail/
     home_dir: /opt/privacymail
+    branch: develop
   tasks:
     # Initial install
     - name: Enable universe repositories
@@ -78,7 +79,7 @@
       git:
         repo: github:malexmave/PrivacyMail
         dest: /opt/privacymail/privacymail
-        version: develop
+        version: "{{ branch }}"
         update: yes
         accept_hostkey: yes
         force: yes
