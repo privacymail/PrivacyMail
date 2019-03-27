@@ -11,7 +11,6 @@ from django.shortcuts import redirect
 from django.db.models import Count
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
-from silk.profiling.profiler import silk_profile
 from mailfetcher import analyser_cron
 from . import forms
 from mailfetcher.analyser_cron import create_service_cache
@@ -23,17 +22,14 @@ logger = logging.getLogger(__name__)
 
 
 class HomeView(View):
-    @silk_profile(name='get_last_services')
     def get_last_services(self):
         idents = Identity.objects.filter(approved=True)
         return Service.objects.filter(identity__in=idents).distinct().order_by('-id')[:10]
 
-    @silk_profile(name='get_common_trackhosts')
     def get_common_trackhosts(self):
         return Thirdparty.objects.filter(eresource__type='con').annotate(
             num_service=Count('eresource__mail__identity__service', distinct=True)).order_by('-num_service')[:10]
 
-    @silk_profile(name='get_global_stats')
     def get_global_stats(self):
         return {
             "email_count": Mail.objects.count(),
@@ -147,7 +143,6 @@ class ServiceView(View):
         return self.render_service(request, service)
 
     @staticmethod
-    @silk_profile(name="Render Service")
     def render_service(request, service, form=None):
 
         site_params = ServiceView.get_service_site_params(service)
