@@ -239,7 +239,7 @@ ADMINS = [('admin', 'admin@domain.tld')]  # TODO Add admin users and eMails
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 
-DISABLE_ADMIN_MAILS = True
+DISABLE_ADMIN_MAILS = False
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = ''  # TODO add eMail host

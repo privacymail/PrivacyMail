@@ -244,12 +244,12 @@ LOCALHOST_URL = 'localhost.privacymail.info:5000'
 
 
 # Django Mail
-SERVER_EMAIL = "admin@privacymail.info"
+SERVER_EMAIL = "admin@newsletterme.de"
 ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 
-DISABLE_ADMIN_MAILS = True
+DISABLE_ADMIN_MAILS = False
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.newsletterme.de'
