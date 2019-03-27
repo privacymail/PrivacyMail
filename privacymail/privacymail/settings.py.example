@@ -225,11 +225,6 @@ NUMBER_OF_THREADS = 10
 
 OPENWPM_FAIL_INCREASE = 1
 
-# Don't fetch new mails or run openwpm. Just reanalyze the eresources in the db.
-REANALYZE_ERESOURCES = False
-
-EVALUATE = False
-
 LOCALHOST_URL = 'localhost.privacymail.info:5000'
 
 
