@@ -339,6 +339,9 @@ class Mail(models.Model):
         hashdict = None
 
         all_eresources = Eresource.objects.filter(mail=self).exclude(possible_unsub_link=True)
+        if self.h_x_original_to == None:
+            print ('Did not find mailaddress. Mail: {}'.format(self))
+            return
         hashdict = Mail.generate_match_dict(self.h_x_original_to)
         for eresource in all_eresources:
             Mail.analyze_eresource(eresource, hashdict)
@@ -570,98 +573,65 @@ class Mail(models.Model):
         #case insensitive
         for key, val in dict.items():
             if str(val) in eresource.url or str(val).casefold() in eresource.url.replace('-', '').casefold():
-                eresource.mail_leakage = key
+                if eresource.mail_leakage is None or eresource.mail == '':
+                    eresource.mail_leakage = key
+                else:
+                    if key in eresource.mail_leakage:
+                        continue
+                    eresource.mail_leakage = eresource.mail_leakage + ', ' + key
                 eresource.save()
                 # print('Found leakage!')
-                break
+                # break
+
+
 
     @staticmethod
     def generate_match_dict(mailaddr):
-
-        # two dicts for hashed values and for hashed and encoded values
         hashdict = {}
         encdict = {}
-        # also add plain email address in upper and lower
+
         hashdict.update({"plain": mailaddr})
-        # hashdict.update({"plain.low": mailaddr.lower()})
-        hashdict.update({"up(plain)": mailaddr.upper()})
-
         hashdict.update({"plainname": mailaddr.split('@')[0]})
+        hashdict.update({"domain": mailaddr.split('@')[1]})
 
-        # for all algo available do hashing in given + upper + lower
-        for algo in sorted(hashlib.algorithms_available):
-            # ignore shake algos
-            if algo.startswith('shake_'):
-                continue
-            # print(algo)
-            h = hashlib.new(algo)
-            h.update(mailaddr.encode("utf8"))
-            # print(h.hexdigest())
-            hashdict.update({algo + '(plain)': h.hexdigest()})
+        def create_upper_lower(dict, only_up=False):
+            tempdict = {}
+            for key, value in dict.items():
+                if not key.startswith('up'):
+                    tempdict.update({'up(' + key + ')': value.upper()})
+                if only_up:
+                    continue
+                if not key.startswith('plain') and not key.startswith('low') and not key.startswith('domain'):
+                    tempdict.update({'low(' + key + ')': value.lower()})
+            return tempdict
 
-            h = hashlib.new(algo)
-            h.update(mailaddr.encode("utf8").lower())
-            # print(h.hexdigest())
-            hashdict.update({algo + '(low(plain)))': h.hexdigest()})
+        def create_algo_dict(old_dict):
+            algorithms = ['md5', 'md4', 'sha1', 'sha256', 'sha512', 'sha384']
+            # Add upper and lower versions to be hashed, but don't add those to the enc dict. Comparison takes place on
+            # casefold URL
+            temp_dict = create_upper_lower(old_dict, True)
+            temp_dict.update(old_dict)
+            new_dict = {}
+            for key, value in temp_dict.items():
+                for algo in algorithms:
+                    h = hashlib.new(algo)
+                    h.update(value.encode("utf8"))
+                    new_dict.update({algo + '(' + key + ')': h.hexdigest()})
+            return new_dict
 
-            h = hashlib.new(algo)
-            h.update(mailaddr.encode("utf8").upper())
-            # print(h.hexdigest())
-            hashdict.update({algo + '(up(plain)))': h.hexdigest()})
+        hashdict.update(create_algo_dict(hashdict))
 
-        # do encodings
-        for key, val in hashdict.items():
-            encdict.update({'base64(' + key + ')': base64.b64encode(val.encode("utf8")).decode("utf-8", "replace")})
-            encdict.update({'base64(low(' + key + '))': base64.b64encode(val.encode("utf8").lower()).decode("utf-8", "replace")})
-            encdict.update({'base64(up(' + key + '))': base64.b64encode(val.encode("utf8").upper()).decode("utf-8", "replace")})
-
-            # encdict.update({key+"_base32": base64.b32encode(val.encode("utf8"))})
-            # encdict.update({key+"_base32.low": base64.b32encode(val.encode("utf8").lower())})
-            # encdict.update({key+"_base32.upp": base64.b32encode(val.encode("utf8").upper())})
-            #
-            # encdict.update({key+"_base16": base64.b16encode(val.encode("utf8"))})
-            # encdict.update({key+"_base16.low": base64.b16encode(val.encode("utf8").lower())})
-            # encdict.update({key+"_base16.upp": base64.b16encode(val.encode("utf8").upper())})
-            #
-            # encdict.update({key+"_base58": base58.b58encode(val.encode("utf8"))})
-            # encdict.update({key+"_base58.low": base58.b58encode(val.encode("utf8").lower())})
-            # encdict.update({key+"_base58.upp": base58.b58encode(val.encode("utf8").upper())})
-
-            encdict.update({'urlencode(' + key + ')': urllib.parse.quote(val)})
-            encdict.update({'urlencode(low(' + key + '))': urllib.parse.quote(val.lower())})
-            encdict.update({'urlencode(up(' + key + '))': urllib.parse.quote(val.upper())})
-
-
-            # for i in range(10):
-            #     encdict.update({key+"_zlib"+str(i) : zlib.compress(base64.b64encode(val.encode("utf8")),level=i)})
-            #     encdict.update({key+"_zlib"+str(i)+".low":zlib.compress(base64.b64encode(val.encode("utf8").lower()),level=i)})
-            #     encdict.update({key+"_zlib"+str(i)+".upp": zlib.compress(base64.b64encode(val.encode("utf8").upper()),level=i)})
-            #
-            # for i in range(10):
-            #     encdict.update({key+"_gzip"+str(i) :gzip.compress(val.encode("utf8"), i)})
-            #     encdict.update({key+"_gzip"+str(i)+".low":gzip.compress(val.encode("utf8").lower(),i)})
-            #     encdict.update({key+"_gzip"+str(i)+".upp": gzip.compress(val.encode("utf8").upper(),i)})
-
-            encdict.update({key+"_htmlentity": html.escape(val)})
-            encdict.update({key+"_htmlentity.low": html.escape(val.lower())})
-            encdict.update({key+"_htmlentity.up": html.escape(val.upper())})
-
-        # put dicts together
-        hashdict.update(encdict)
+        # One level of nesting
+        hashdict.update(create_algo_dict(hashdict))
 
         encdict = {}
+
         for key, val in hashdict.items():
-            encdict.update({'up(' + key + ')': val.upper()})
-            encdict.update({'low(' + key + ')': val.lower()})
-        #     # encdict.update({'upp(' + key + ')': str(val).upper()})
-        #     # encdict.update({'low(' + key + ')': str(val).lower()})
-        #     encdict.update({'a', 'b'})
+            encdict.update({'base64(' + key + ')': base64.b64encode(val.encode("utf8")).decode("utf-8", "replace")})
 
-        # hashdict.update({'md5cue': 'md5'})
-        # hashdict.update({'md5cue': 'MD5'})
-        # hashdict.update({'shacue': 'sha'})
-        # hashdict.update({'shacue': 'sha'})
+        encdict.update({'urlencode(plain)': urllib.parse.quote(mailaddr)})
 
+        # put dicts together
         hashdict.update(encdict)
 
         return hashdict
@@ -1074,7 +1044,7 @@ class Eresource(models.Model):
     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
     host = models.ForeignKey('Thirdparty', null=True, on_delete=models.SET_NULL)
     diff_eresource = models.ForeignKey('self', related_name='diff', on_delete=models.SET_NULL, null=True)
-    mail_leakage = models.CharField(max_length=20, null=True, blank=True)
+    mail_leakage = models.TextField(null=True, blank=True)
     # the eresource this one redirects to
     redirects_to = models.ForeignKey('self', related_name='redirect', on_delete=models.CASCADE, null=True)
     # the url of the eresource this one redirects to
