@@ -158,8 +158,8 @@ def create_service_cache(service, force=False):
     # Check for eMails leakage
     mail_leakage_resources = Eresource.objects.filter(mail_leakage__isnull=False, mail__in=service.mails())
     algos_string = ""
+    algos = []
     if mail_leakage_resources.exists():
-        algos = []
         for algorithms_list in mail_leakage_resources.values_list('mail_leakage').distinct():
             for algorithm in algorithms_list[0].split(', '):
                 if algorithm in algos or algorithm == '':
@@ -323,7 +323,7 @@ def create_service_cache(service, force=False):
         # 'unconfirmed_idents': Queryset of unconfiremd identities
         # 'sets_cookies':  Bool: Uses cookies in any way (view and click).
         # 'leaks_address': Bool: Discloses email address in any way (view and click).
-        'leak_algorithms': algos_string,
+        'leak_algorithms': algos,
         'cookies_set_avg': cookies_set_mean,  # done
         # 'num_different_thirdparties': Number of different third parties
         # List different third parties, how embedded, address leak : done
