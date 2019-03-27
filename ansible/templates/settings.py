@@ -256,6 +256,7 @@ EMAIL_HOST = 'mail.newsletterme.de'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = '{{ lookup('passwordstore', 'privacymail/admin/send-user' )}}'
 EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' )}}'
+EMAIL_SUBJECT_PREFIX = '[PMail]'
 # For debugging you may use the console backend
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

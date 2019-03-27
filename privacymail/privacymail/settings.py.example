@@ -246,6 +246,7 @@ EMAIL_HOST = ''  # TODO add eMail host
 EMAIL_PORT = 587
 EMAIL_HOST_USER = ''  # TODO Add eMail username
 EMAIL_HOST_PASSWORD = ''  # TODO Add eMail password
+EMAIL_SUBJECT_PREFIX = '[PMail]'
 # For debugging you may use the console backend
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
