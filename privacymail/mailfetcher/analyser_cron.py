@@ -304,7 +304,8 @@ def create_service_cache(service, force=False):
     # static_links =
     num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
     # Generate site params
-    site_params = {  # 'service': service,
+    site_params = {
+        # old params
         # 'idents': idents,
         # 'unconfirmed_idents': unconfirmed_idents,
         'resources': resources,
@@ -314,13 +315,17 @@ def create_service_cache(service, force=False):
         'measures': measures,
         'connections': connections,
         'tracker': tracker,
-        'third_party_spam': third_party_spam,
+
+        # new params
+        # 'service': The service itself
+        # 'idents': Queryset of identities of the service
+        # 'count_mails': Number of emails received by the service
+        # 'unconfirmed_idents': Queryset of unconfiremd identities
+        # 'sets_cookies':  Bool: Uses cookies in any way (view and click).
+        # 'leaks_address': Bool: Discloses email address in any way (view and click).
         'leak_algorithms': algos_string,
-        # Num of mails of service: done
-        # Number of (unconfirmed) identities: done
-        # sets any cookies : done
         'cookies_set_avg': cookies_set_mean,  # done
-        # Num different third parties embedded : done
+        # 'num_different_thirdparties': Number of different third parties
         # List different third parties, how embedded, address leak : done
         'third_parties': third_parties_dict,  # done
         # third_parties_dict = {
@@ -335,7 +340,7 @@ def create_service_cache(service, force=False):
         # 'personalised_url': 'example.url',  # URL of with (longest) identifier
         # compare DOM-Tree of similar mails
         'suspected_AB_testing': False,
-
+        'third_party_spam': third_party_spam,  # Marked as receiving third party spam.
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
     }
@@ -930,6 +935,8 @@ def thesis_link_personalisation_of_services():
                                                                     'max', 'mean', 'median'))
     for service in services:
         service_name = service.name
+        # if 'gruene.de' not in service.name:
+        #     continue
         num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
         service_mail_metrics[service] = {}
         service_mail_metrics[service]['ratio'] = ratio
