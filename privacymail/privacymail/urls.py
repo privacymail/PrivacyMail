@@ -32,5 +32,5 @@ urlpatterns = [
     path('imprint/', ImprintView.as_view(), name="Imprint"),
     # FIXME: This currently allows anyone to access silk without auth
     # This is a terrible idea and HAS to be changed before release.
-    re_path(r'^silk/', include('silk.urls', namespace='silk'))
+    # re_path(r'^silk/', include('silk.urls', namespace='silk'))
 ]
