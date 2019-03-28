@@ -4,7 +4,6 @@ from mailfetcher.models import Mail
 from django.conf import settings
 import threading
 import time
-import sys
 import imaplib
 import email
 import email.header
@@ -12,7 +11,6 @@ import http.server
 import mailfetcher.models
 import logging
 from django.core.cache import cache
-from pid import PidFile, PidFileError
 
 poplib._MAXLINE = 20480
 logger = logging.getLogger(__name__)
@@ -132,108 +130,102 @@ class ImapFetcher(CronJobBase):
             print('All inboxes are empty. No new mails to process.')
             return 0
 
-        # Ensure that no cron is currently running using a pidfile
-        # The library will automatically remove stale pidfiles
-        try:
-            with PidFile(pidname="fetchcron", piddir='/tmp/'):
-                # Start measuring the time from the beginning.
-                start_time = time.time()
-                mails_left = True
-                thread = startThread()
+        # Start measuring the time from the beginning.
+        start_time = time.time()
+        mails_left = True
+        thread = startThread()
 
-                # Continue until all mails processed.
-                while mails_left:
-                    # Check whether there are too many mail in the database waiting to be processed.
-                    viewed_mails = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED) \
-                        .exclude(processing_fails__gte=settings.OPENWPM_RETRIES).count()
-                    clicked_mails = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.LINK_CLICKED) \
-                        .exclude(processing_fails__gte=settings.OPENWPM_RETRIES).count()
-                    unprocessed_mails = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.UNPROCESSED) \
-                        .exclude(processing_fails__gte=settings.OPENWPM_RETRIES).count()
-                    failed_mails = Mail.objects.filter(processing_fails__gte=settings.OPENWPM_RETRIES).count()
+        # Continue until all mails processed.
+        while mails_left:
+            # Check whether there are too many mail in the database waiting to be processed.
+            viewed_mails = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED) \
+                .exclude(processing_fails__gte=settings.OPENWPM_RETRIES).count()
+            clicked_mails = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.LINK_CLICKED) \
+                .exclude(processing_fails__gte=settings.OPENWPM_RETRIES).count()
+            unprocessed_mails = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.UNPROCESSED) \
+                .exclude(processing_fails__gte=settings.OPENWPM_RETRIES).count()
+            failed_mails = Mail.objects.filter(processing_fails__gte=settings.OPENWPM_RETRIES).count()
 
-                    unfinished_mail_count = viewed_mails + clicked_mails + unprocessed_mails
+            unfinished_mail_count = viewed_mails + clicked_mails + unprocessed_mails
 
-                    print('{} unprocessed mails in database. Additional {} mails are in failed state'
-                          .format(unfinished_mail_count, failed_mails))
-                    print('{} unprocessed, {} viewed and {} link_clicked.'.format(unprocessed_mails, viewed_mails,
-                                                                                  clicked_mails))
+            print('{} unprocessed mails in database. Additional {} mails are in failed state'
+                  .format(unfinished_mail_count, failed_mails))
+            print('{} unprocessed, {} viewed and {} link_clicked.'.format(unprocessed_mails, viewed_mails,
+                                                                          clicked_mails))
 
-                    if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
-                        print('Too many unfinished mails in database. Continuing without fetching new ones.')
+            if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
+                print('Too many unfinished mails in database. Continuing without fetching new ones.')
+            else:
+                num_mails_to_fetch = settings.CRON_MAILQUEUE_SIZE - unfinished_mail_count
+                # Get new messages from the mailserver
+                messages_fetched = fetch_new_messages(num_mails_to_fetch)
+                if messages_fetched == 0:
+                    mails_left = False
+                if messages_fetched == -1:
+                    logger.warning('cron: An error occurred while fetching mails. Waiting and trying again.')
+                    time.sleep(20)
+                    continue
+
+            # mailQueue.append(mail)
+            mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.UNPROCESSED
+                                             ).exclude(processing_fails__gte=settings.OPENWPM_RETRIES
+                                                       )[:settings.CRON_MAILQUEUE_SIZE]
+            mail_queue_count = mail_queue.count()
+
+            # if len(mail_queue) == 0:
+            #     print('No mails in database which are "unprocessed".')
+            #     continue
+
+            # Run OpenWPM; View the Mail, then visit one of it's links.
+            if settings.RUN_OPENWPM and mail_queue_count > 0:
+                print('Viewing %s mails.' % mail_queue_count)
+                failed_mails = Mail.call_openwpm_view_mail(mail_queue)
+                print('{} mail views of {} failed in openWPM.'.format(len(failed_mails), mail_queue_count))
+
+            mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED
+                                             ).exclude(processing_fails__gte=settings.OPENWPM_RETRIES
+                                                       )[:settings.CRON_MAILQUEUE_SIZE]
+            mail_queue_count = mail_queue.count()
+
+            if settings.VISIT_LINKS and settings.RUN_OPENWPM and mail_queue_count > 0:
+                link_mail_map = {}
+                print('Visiting %s links.' % mail_queue_count)
+                for mail in mail_queue:
+                    link = mail.get_non_unsubscribe_link()
+                    if 'http' in link:
+                        link_mail_map[link] = mail
                     else:
-                        num_mails_to_fetch = settings.CRON_MAILQUEUE_SIZE - unfinished_mail_count
-                        # Get new messages from the mailserver
-                        messages_fetched = fetch_new_messages(num_mails_to_fetch)
-                        if messages_fetched == 0:
-                            mails_left = False
-                        if messages_fetched == -1:
-                            logger.warning('cron: An error occurred while fetching mails. Waiting and trying again.')
-                            time.sleep(20)
-                            continue
-
-                    # mailQueue.append(mail)
-                    mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.UNPROCESSED
-                                                     ).exclude(processing_fails__gte=settings.OPENWPM_RETRIES
-                                                               )[:settings.CRON_MAILQUEUE_SIZE]
-                    mail_queue_count = mail_queue.count()
-
-                    # if len(mail_queue) == 0:
-                    #     print('No mails in database which are "unprocessed".')
-                    #     continue
-
-                    # Run OpenWPM; View the Mail, then visit one of it's links.
-                    if settings.RUN_OPENWPM and mail_queue_count > 0:
-                        print('Viewing %s mails.' % mail_queue_count)
-                        failed_mails = Mail.call_openwpm_view_mail(mail_queue)
-                        print('{} mail views of {} failed in openWPM.'.format(len(failed_mails), mail_queue_count))
-
-                    mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED
-                                                     ).exclude(processing_fails__gte=settings.OPENWPM_RETRIES
-                                                               )[:settings.CRON_MAILQUEUE_SIZE]
-                    mail_queue_count = mail_queue.count()
-
-                    if settings.VISIT_LINKS and settings.RUN_OPENWPM and mail_queue_count > 0:
-                        link_mail_map = {}
-                        print('Visiting %s links.' % mail_queue_count)
-                        for mail in mail_queue:
-                            link = mail.get_non_unsubscribe_link()
-                            if 'http' in link:
-                                link_mail_map[link] = mail
-                            else:
-                                print("Couldn't find a link to click for mail: {}. Skipping.".format(mail))
-                                mail.processing_state = Mail.PROCESSING_STATES.NO_UNSUBSCRIBE_LINK
-                                mail.save()
-                        # Visit the links
-                        failed_urls = Mail.call_openwpm_click_links(link_mail_map)
-                        print('{} urls of {} failed in openWPM.'.format(len(failed_urls), mail_queue_count))
-
-                    if settings.VISIT_LINKS:
-                        mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.LINK_CLICKED)
-                    else:
-                        mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED)
-
-                    print('Analyzing {} mails for leakages.'.format(mail_queue.count()))
-                    for mail in mail_queue:
-                        mail.analyze_mail_connections_for_leakage()
-                        mail.create_service_third_party_connections()
-                        mail.processing_state = Mail.PROCESSING_STATES.DONE
+                        print("Couldn't find a link to click for mail: {}. Skipping.".format(mail))
+                        mail.processing_state = Mail.PROCESSING_STATES.NO_UNSUBSCRIBE_LINK
                         mail.save()
+                # Visit the links
+                failed_urls = Mail.call_openwpm_click_links(link_mail_map)
+                print('{} urls of {} failed in openWPM.'.format(len(failed_urls), mail_queue_count))
 
-                    # print('All mails processed.')
-                    end_time = time.time()
-                    print('Time elapsed: %s' % (end_time - start_time))
-                    print('Mails_left: %s' % mails_left)
-                    # print('%s have been processed until now.' % num_mails_processed)
+            if settings.VISIT_LINKS:
+                mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.LINK_CLICKED)
+            else:
+                mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED)
 
-                if len(mailfetcher.models.mails_without_unsubscribe_link) != 0:
-                    print('Messages for which no unsubscribe links have been found:')
-                    for subject in mailfetcher.models.mails_without_unsubscribe_link:
-                        print(subject)
-                else:
-                    print('No messages without possible unsubscribe links found.')
-                server.shutdown()
-                server.socket.close()
-                thread.join(5)
-        except PidFileError:
-            logger.warn("Mailfetcher-Cron: A different instance of this cron is currently running, quitting.")
+            print('Analyzing {} mails for leakages.'.format(mail_queue.count()))
+            for mail in mail_queue:
+                mail.analyze_mail_connections_for_leakage()
+                mail.create_service_third_party_connections()
+                mail.processing_state = Mail.PROCESSING_STATES.DONE
+                mail.save()
+
+            # print('All mails processed.')
+            end_time = time.time()
+            print('Time elapsed: %s' % (end_time - start_time))
+            print('Mails_left: %s' % mails_left)
+            # print('%s have been processed until now.' % num_mails_processed)
+
+        if len(mailfetcher.models.mails_without_unsubscribe_link) != 0:
+            print('Messages for which no unsubscribe links have been found:')
+            for subject in mailfetcher.models.mails_without_unsubscribe_link:
+                print(subject)
+        else:
+            print('No messages without possible unsubscribe links found.')
+        server.shutdown()
+        server.socket.close()
+        thread.join(5)
