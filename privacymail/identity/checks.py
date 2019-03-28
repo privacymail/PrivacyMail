@@ -2,6 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
 import logging
 from identity.models import ServiceThirdPartyEmbeds
+from identity.tags import DetailItem
 
 # Get named logger
 logger = logging.getLogger(__name__)
@@ -158,7 +159,7 @@ class OnViewThirdPartyConnectionCheck(Check):
                 # This 3rd party is not included when opening the eMail, skip it
                 continue
             # TODO in the long run, this should contain additional metadata, e.g. address leaks
-            load_parties.append(party)
+            load_parties.append(DetailItem(party.name, "#"))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -198,7 +199,7 @@ class OnClickThirdPartyConnectionCheck(Check):
                 # This 3rd party is not included when opening the eMail, skip it
                 continue
             # TODO in the long run, this should contain additional metadata, e.g. address leaks
-            load_parties.append(party)
+            load_parties.append(DetailItem(party.name, "#"))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties

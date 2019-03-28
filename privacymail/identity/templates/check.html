@@ -1,4 +1,5 @@
 {% load i18n %}
+{% load tags %}
 {% if display %}
 <div class="card card-status-{{ status }}">
     <div class="card-body">
@@ -8,7 +9,7 @@
             <p class="card-text">{{ interpretation }}</p>
             {% if add_data %}
             {% for item in add_data %}
-            {{ item }}&nbsp;&nbsp;&nbsp;
+            {% show_list_details item %}
             {% endfor %}
             {% endif %}
             <p class="card-text">{{ description }} <a data-toggle="collapse" href="#collapse{{ id }}" aria-expanded="false" aria-controls="collapse{{id}}">{% trans 'More information' %}.</a></p>

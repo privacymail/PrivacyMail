@@ -18,3 +18,23 @@ def show_check(check):
         "add_data": check.get_additional_data(),
         "display": check.should_display()
     }
+
+
+class DetailItem():
+    text = ""
+    icons = []
+    link = ""
+
+    def __init__(self, text, link, icons=[]):
+        self.text = text
+        self.link = link
+        self.icons = icons
+
+
+@register.inclusion_tag('detail.html')
+def show_list_details(item):
+    return {
+        "text": item.text,
+        "link": item.link,
+        "icons": item.icons
+    }
