@@ -237,4 +237,3 @@ class ImapFetcher(CronJobBase):
                 thread.join(5)
         except PidFileError:
             logger.info("Mailfetcher-Cron: A different instance of this cron is currently running, quitting.")
-        sys.exit()
