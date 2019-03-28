@@ -42,7 +42,7 @@ class Check():
     # strings, but also models that have a rendering function. Set to None if not used.
     check_additional_data = None
     # Should this check be displayed? (Some checks may want to be hidden in specific situations)
-    should_display = False
+    display = False
 
     def __init__(self):
         # We don't want people to use the base class, ever
@@ -76,7 +76,7 @@ class Check():
         return self.check_additional_data
 
     def should_display(self):
-        return self.should_display
+        return self.display
 
     def is_sane(self):
         """Ensure that the check is initialized properly"""
@@ -107,7 +107,7 @@ class ThirdPartySpamCheck(Check):
     def __init__(self, site_data):
         if "third_party_spam" not in site_data:
             logger.error("ThirdPartySpamCheck: Missing key in cache")
-            self.should_display = False
+            self.display = False
             return None
         tps = site_data["third_party_spam"]
         if tps == 0:
@@ -118,7 +118,7 @@ class ThirdPartySpamCheck(Check):
                                                        "%(count)d identities received third party messages.",
                                                        tps) % {'count': tps}
             self.check_status = STATUS_BAD
-        self.should_display = True
+        self.display = True
 
 
 class FirstPartyConnectionCheck(Check):
@@ -149,7 +149,7 @@ class OnViewThirdPartyConnectionCheck(Check):
     def __init__(self, site_data):
         if "third_parties" not in site_data:
             logger.error("OnViewThirdPartyConnectionCheck: Missing third_parties in cache.")
-            self.should_display = False
+            self.display = False
             return None
         parties = site_data["third_parties"]
         load_parties = []
@@ -173,7 +173,7 @@ class OnViewThirdPartyConnectionCheck(Check):
         else:
             self.check_status = STATUS_GOOD
             self.check_interpretation = _("No third parties are contacted when viewing the mail.")
-        self.should_display = True
+        self.display = True
 
 
 class OnClickThirdPartyConnectionCheck(Check):
@@ -188,7 +188,7 @@ class OnClickThirdPartyConnectionCheck(Check):
     def __init__(self, site_data):
         if "third_parties" not in site_data:
             logger.error("OnClickThirdPartyConnectionCheck: Missing third_parties in cache.")
-            self.should_display = False
+            self.display = False
             return None
 
         parties = site_data["third_parties"]
@@ -213,7 +213,7 @@ class OnClickThirdPartyConnectionCheck(Check):
         else:
             self.check_status = STATUS_GOOD
             self.check_interpretation = _("No third parties are contacted when clicking a link.")
-        self.should_display = True
+        self.display = True
 
 
 # class PersonalizedFirstPartyLinkCheck(Check):
