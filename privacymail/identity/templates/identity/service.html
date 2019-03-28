@@ -36,7 +36,7 @@
                     {% if count_mails > 0 %}
                     <div class="col-lg-8 text-left">
                         {% for check in checks %}
-                        <p>{{ check.check_title }}</p>
+                        {% show_check check %}
                         {% endfor %}
 
                         <h3>Hosts</h3>
