@@ -6,12 +6,12 @@ from identity.models import ServiceThirdPartyEmbeds
 # Get named logger
 logger = logging.getLogger(__name__)
 
-STATUS_GOOD = _("good")
-STATUS_NEUTRAL = _("neutral")
-STATUS_BAD = _("bad")
-STATUS_CRITICAL = _("critical")
-RELIABILITY_RELIABLE = _("reliable")
-RELIABILITY_UNRELIABLE = _("unreliable")
+STATUS_GOOD = "good"
+STATUS_NEUTRAL = "neutral"
+STATUS_BAD = "bad"
+STATUS_CRITICAL = "critical"
+RELIABILITY_RELIABLE = "reliable"
+RELIABILITY_UNRELIABLE = "unreliable"
 
 
 class Check():
@@ -21,6 +21,8 @@ class Check():
     The best strategy is to set all of these values in the constructor of the class.
     The frontend code will call the getter functions to receive the data to display.
     Please do not forget to use gettext / _('string') for localization support."""
+    # ID of the check - must be unique!
+    check_id = -1
     # Title of the check
     check_title = ""
     # Description
@@ -45,6 +47,9 @@ class Check():
     def __init__(self):
         # We don't want people to use the base class, ever
         raise AssertionError("Never initialize this class directly, always use a subclass!")
+
+    def get_id(self):
+        return self.check_id
 
     def get_title(self):
         return self.check_title
@@ -82,10 +87,12 @@ class Check():
         assert self.get_interpretation() != ""
         assert self.get_condition() != ""
         assert self.get_error() != ""
+        return True
 
 
 class ThirdPartySpamCheck(Check):
     """Checks if suspected spam was received from third parties."""
+    check_id = 1
     # Title of the check
     check_title = _("Third party spam")
     # Description
@@ -115,6 +122,7 @@ class ThirdPartySpamCheck(Check):
 
 
 class FirstPartyConnectionCheck(Check):
+    check_id = 2
     check_title = _("First party connections")
     check_description = _("Newsletters may contain resourced that are dynamically loaded from the newsletter provider, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
     check_condition = _("This check passes if no connections to the newsletter provider are established when opening the Mail.")
@@ -131,6 +139,7 @@ class FirstPartyConnectionCheck(Check):
 
 class OnViewThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when opening the message."""
+    check_id = 3
     check_title = _("Third party connections when opening the Mail")
     check_description = _("Newsletters may contain resourced that are dynamically loaded from other websites, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
     check_condition = _("This check passes if no connections to third parties are established when opening the Mail.")
@@ -169,6 +178,7 @@ class OnViewThirdPartyConnectionCheck(Check):
 
 class OnClickThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when clicking a link in the message."""
+    check_id = 4
     check_title = _("Third party connections when clicking a link")
     check_description = _("Links in the eMail may initially point to third party services such as trackers, which will forward the user to the correct address later. This check detects this kind of tracking behavior.")
     check_condition = _("This check passes if no connections to third parties are established when clicking links from the Mail.")
