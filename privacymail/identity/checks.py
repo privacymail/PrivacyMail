@@ -2,7 +2,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import ungettext_lazy
 import logging
 from identity.models import ServiceThirdPartyEmbeds
-from identity.tags import DetailItem
+from identity.templatetags.tags import DetailItem
 
 # Get named logger
 logger = logging.getLogger(__name__)
