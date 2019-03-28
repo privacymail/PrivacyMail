@@ -1,20 +1,14 @@
 from django_cron import CronJobBase, Schedule
 import poplib
-from mailfetcher.models import Mail, Eresource, Service
+from mailfetcher.models import Mail
 from django.conf import settings
-import queue
 import threading
 import time
 import sys
 import imaplib
-import getpass
 import email
 import email.header
-import datetime
 import http.server
-import sys
-import statistics
-import tldextract
 import mailfetcher.models
 import traceback
 import logging
@@ -30,15 +24,9 @@ class ImapFetcher(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'org.privacy-mail.imapfetcher'  # a unique code
 
-
     def do(self):
         cache.delete('ImapFetcher')
-        num_mails_processed = 0
 
-
-        # logger.debug('There was an error, with user context and tags', extra = {
-        #         'subject': {'test'},
-        #     })
         PORT = 5000
         DIRECTORY = "/tmp/"
 
@@ -143,7 +131,6 @@ class ImapFetcher(CronJobBase):
 
             print('All inboxes are empty. No new mails to process.')
             return 0
-
 
         # Start measuring the time from the beginning.
         start_time = time.time()
