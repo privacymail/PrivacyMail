@@ -318,7 +318,7 @@ LOGGING = {
         },
         'cron': {
             "level": "INFO",
-            'handlers': ['console', 'sentry'],
+            'handlers': ['sentry'],
             'propagate': False
         }
     }
