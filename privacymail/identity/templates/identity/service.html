@@ -38,14 +38,6 @@
                         {% for check in checks %}
                         {% show_check check %}
                         {% endfor %}
-
-                        <h3>Hosts</h3>
-                        <p>{% trans 'The following hosts receive data through tracking.' %}</p>
-                        <ul class="list-group">
-                            {% for t in tracker %}
-                            <li class="list-group-item">{{ t.host }}</li>
-                            {% endfor %}
-                        </ul>
                     </div>
                     {% else %}
                     <div class="col-lg-8 text-center">
