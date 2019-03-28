@@ -590,9 +590,9 @@ class Mail(models.Model):
         hashdict = {}
         encdict = {}
 
-        hashdict.update({"plain": mailaddr})
-        hashdict.update({"plainname": mailaddr.split('@')[0]})
-        hashdict.update({"domain": mailaddr.split('@')[1]})
+        hashdict.update({"Mailaddress": mailaddr})
+        hashdict.update({"Email Account": mailaddr.split('@')[0]})
+        hashdict.update({"Address Domain": mailaddr.split('@')[1]})
 
         def create_upper_lower(dict, only_up=False):
             tempdict = {}

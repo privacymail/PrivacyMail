@@ -316,5 +316,10 @@ LOGGING = {
             'handlers': ['console'],
             'propagate': False
         },
+        'cron': {
+            "level": "INFO",
+            'handlers': ['sentry'],
+            'propagate': False
+        }
     }
 }

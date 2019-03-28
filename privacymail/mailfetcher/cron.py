@@ -1,22 +1,14 @@
 from django_cron import CronJobBase, Schedule
 import poplib
-from mailfetcher.models import Mail, Eresource, Service
+from mailfetcher.models import Mail
 from django.conf import settings
-import queue
 import threading
 import time
-import sys
 import imaplib
-import getpass
 import email
 import email.header
-import datetime
 import http.server
-import sys
-import statistics
-import tldextract
 import mailfetcher.models
-import traceback
 import logging
 from django.core.cache import cache
 
@@ -30,15 +22,9 @@ class ImapFetcher(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'org.privacy-mail.imapfetcher'  # a unique code
 
-
     def do(self):
         cache.delete('ImapFetcher')
-        num_mails_processed = 0
 
-
-        # logger.debug('There was an error, with user context and tags', extra = {
-        #         'subject': {'test'},
-        #     })
         PORT = 5000
         DIRECTORY = "/tmp/"
 
@@ -62,16 +48,16 @@ class ImapFetcher(CronJobBase):
             mailbox = imaplib.IMAP4_SSL(mailserver['MAILHOST'])
             response, data = mailbox.login(mailserver['MAILUSERNAME'], mailserver['MAILPASSWORD'])
             if response != 'OK':
-                print('Login failed!')
+                logger.error('imap_connect: Login to %s failed! Response: %s' % (mailserver['MAILHOST'], response))
                 return None
             response, num_messages = mailbox.select('INBOX')
             if response != 'OK':
-                print('Unable to open INBOX: %s' % response)
+                logger.error('imap_connect: Unable to open INBOX on %s: %s' % (mailserver['MAILHOST'], response))
                 return None
 
             response, list_of_messages = mailbox.search(None, "ALL")
             if response != 'OK':
-                print("No messages found!")
+                logger.error("imap_connect: Error while looking for messages in %s: %s" % (mailserver['MAILHOST'], response))
                 mailbox.logout()
                 return None
             return mailbox, list_of_messages
@@ -101,7 +87,7 @@ class ImapFetcher(CronJobBase):
                         print("Parsing message: %s" % i)
                         response, data = mailbox.fetch(str(i), '(RFC822)')
                         if response != 'OK':
-                            print("ERROR fetching message %s" % i)
+                            logger.warn("fetch_new_messages: ERROR fetching message %s from %s: %s" % (i, mailserver['MAILHOST'], response))
                             return
 
                         raw = email.message_from_bytes(data[0][1])
@@ -118,7 +104,7 @@ class ImapFetcher(CronJobBase):
                             print('INBOX.processed mailbox does not exist. Creating it now...')
                             response, data = mailbox.create('INBOX.processed')
                             if response != 'OK':
-                                print('Something went wrong! Response: %s, %s' % (response, data))
+                                logger.error('fetch_new_messages: Something went wrong while creating processed inbox folder on %s: %s, %s' % (mailserver['MAILHOST'], response, data))
                         # Switch back to the main INBOX
                         response, data = mailbox.select('INBOX')
 
@@ -128,7 +114,7 @@ class ImapFetcher(CronJobBase):
                             # print("Copying message %s to processed folder." % i)
                             response, data = mailbox.copy(str(i), 'INBOX.processed')
                             if response != 'OK':
-                                print("ERROR copying message %s, Error: %s" % (i, response))
+                                logger.error("fetch_new_messages: error copying message %s on %s, Error: %s" % (i, mailserver['MAILHOST'], response))
                                 return
                             response, data = mailbox.store(str(i), '+FLAGS', '\\Deleted')
 
@@ -138,12 +124,11 @@ class ImapFetcher(CronJobBase):
                         mailbox.logout()
                     return messages_to_fetch
                 except:
-                    traceback.print_exc()
+                    logger.error("fetch_new_messages: Uncaught exception handled.", exc_info=True)
                     return -1
 
             print('All inboxes are empty. No new mails to process.')
             return 0
-
 
         # Start measuring the time from the beginning.
         start_time = time.time()
@@ -177,7 +162,7 @@ class ImapFetcher(CronJobBase):
                 if messages_fetched == 0:
                     mails_left = False
                 if messages_fetched == -1:
-                    print('An error occurred while fetching mails. Waiting and trying again.')
+                    logger.warning('cron: An error occurred while fetching mails. Waiting and trying again.')
                     time.sleep(20)
                     continue
 
@@ -244,5 +229,3 @@ class ImapFetcher(CronJobBase):
         server.shutdown()
         server.socket.close()
         thread.join(5)
-
-        sys.exit()

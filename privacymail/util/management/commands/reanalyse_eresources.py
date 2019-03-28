@@ -19,8 +19,8 @@ class Command(BaseCommand):
                 for eresource in mail.eresource_set.all():
                     if eresource.mail_leakage is None:
                         continue
-                    else:
-                        eresource.mail_leakage = None
+                    eresource.mail_leakage = None
+                    eresource.save()
                 # TODO what does analyze_mail_connections_for_leakage this do exactly again?
                 mail.analyze_mail_connections_for_leakage()
                 mail.processing_state = Mail.PROCESSING_STATES.DONE
