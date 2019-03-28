@@ -67,7 +67,7 @@ class Check():
         return self.check_interpretation
 
     def get_condition(self):
-        return self.get_condition
+        return self.check_condition
 
     def get_error(self):
         return self.check_error
