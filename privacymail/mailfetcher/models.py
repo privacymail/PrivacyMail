@@ -925,10 +925,28 @@ class Mail(models.Model):
 
         openWPM_entries = db_cursor.fetchall()
         num_openWpm_entries = len(openWPM_entries)
-        # scans through the database, checking for all external calls
-        # for url, top_url in cur.execute("SELECT DISTINCT h.url, v.site_url "
-        #                                 "FROM http_requests as h JOIN site_visits as v ON "
-        #                                 "h.visit_id = v.visit_id WHERE top_level_url = ?;", (filename,)):
+        # check whether the final url is from the service. If not discard this chain.
+        service_url = None
+        id = mail.identity.all()
+        print(id)
+        if id.exists():
+            service_url = id[0].service.url
+            for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
+                    in openWPM_entries:
+
+                if new_channel_id is None or new_channel_id == '':
+                    if service_url not in url:
+                        print('Clicked link did not end on services site. Possible link to another website. Skipping.')
+                        # print('service: {}'.format(service_url))
+                        # print('URL: {}'.format(url))
+                        # print('redirects_to: {}'.format(redirects_to))
+                        return True
+                    # print('Correctly ends on service domain.')
+                    # print('service: {}'.format(service_url))
+                    # print('URL: {}'.format(url))
+                    # print('redirects_to: {}'.format(redirects_to))
+        else:
+            print('Mail has no associated identities.')
 
         for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
                 in openWPM_entries:
