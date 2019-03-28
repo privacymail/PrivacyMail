@@ -17,3 +17,4 @@ validators==0.12.4
 django-silk==3.0.1
 django-countries==5.3.3
 django-widget-tweaks==1.4.3
+psutil==5.6.1
