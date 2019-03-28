@@ -6,6 +6,11 @@
         <div>
             <i class="fa fa-3x {% if status == "good" %}fa-check-circle{% endif %}{% if status == "neutral" %}fa-question-circle{% endif %}{% if status == "bad" %}fa-exclamation-circle{% endif %} color-{{ status }}" style="float:right; padding-left: 10px"></i>
             <p class="card-text">{{ interpretation }}</p>
+            {% if add_data %}
+            {% for item in add_data %}
+            {{ item }}&nbsp;&nbsp;&nbsp;
+            {% endfor %}
+            {% endif %}
             <p class="card-text">{{ description }} <a data-toggle="collapse" href="#collapse{{ id }}" aria-expanded="false" aria-controls="collapse{{id}}">{% trans 'More information' %}.</a></p>
         </div>
         <div class="collapse" id="collapse{{ id }}">
