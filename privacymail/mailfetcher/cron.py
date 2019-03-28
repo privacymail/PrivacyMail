@@ -11,6 +11,9 @@ import http.server
 import mailfetcher.models
 import logging
 from django.core.cache import cache
+import psutil
+import signal
+import os
 
 poplib._MAXLINE = 20480
 logger = logging.getLogger(__name__)
@@ -42,6 +45,33 @@ class ImapFetcher(CronJobBase):
             thread.start()
             print("--- WEB Server started on port 5000 ---")
             return thread
+
+        def kill_proc_tree(pid, sig=signal.SIGTERM, include_parent=True,
+                           timeout=None, on_terminate=None):
+            """Kill a process tree (including grandchildren) with signal
+            "sig" and return a (gone, still_alive) tuple.
+            "on_terminate", if specified, is a callabck function which is
+            called as soon as a child terminates.
+            """
+            assert pid != os.getpid(), "won't kill myself"
+            parent = psutil.Process(pid)
+            children = parent.children(recursive=True)
+            if include_parent:
+                children.append(parent)
+            for p in children:
+                p.send_signal(sig)
+            gone, alive = psutil.wait_procs(children, timeout=timeout,
+                                            callback=on_terminate)
+            return (gone, alive)
+
+        def kill_openwpm():
+            for proc in psutil.process_iter():
+                # check whether the process name matches
+                if proc.name() in ["geckodriver", "firefox", "firefox-bin"]:
+                    # Kill process tree
+                    kill_proc_tree(proc.pid)
+                    # Recursively call yourself to avoid dealing with a stale PID list
+                    return kill_openwpm()
 
         # Connect to the imapserver and select the INBOX mailbox.
         def imap_connect(mailserver):
@@ -187,6 +217,9 @@ class ImapFetcher(CronJobBase):
                                                        )[:settings.CRON_MAILQUEUE_SIZE]
             mail_queue_count = mail_queue.count()
 
+            # Clean up zombie processes
+            kill_openwpm()
+
             if settings.VISIT_LINKS and settings.RUN_OPENWPM and mail_queue_count > 0:
                 link_mail_map = {}
                 print('Visiting %s links.' % mail_queue_count)
@@ -219,6 +252,9 @@ class ImapFetcher(CronJobBase):
             print('Time elapsed: %s' % (end_time - start_time))
             print('Mails_left: %s' % mails_left)
             # print('%s have been processed until now.' % num_mails_processed)
+
+        # Clean up zombie processes
+        kill_openwpm()
 
         if len(mailfetcher.models.mails_without_unsubscribe_link) != 0:
             print('Messages for which no unsubscribe links have been found:')
