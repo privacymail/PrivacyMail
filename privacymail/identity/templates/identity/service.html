@@ -35,8 +35,8 @@
                 {% else %}
                     {% if count_mails > 0 %}
                     <div class="col-lg-8 text-left">
-                        {% for measure in measures %}
-                        {% show_measure measure.id measure.reliability measure.title measure.status_text measure.description measure.condition measure.errors measure.status %}
+                        {% for check in checks %}
+                        <p>{{ check.check_title }}</p>
                         {% endfor %}
 
                         <h3>Hosts</h3>
