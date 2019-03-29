@@ -161,7 +161,7 @@ class OnViewThirdPartyConnectionCheck(Check):
             icons = []
             if parties[party]["address_leak_view"]:
                 # Add a leak icon
-                icons.append("fa-tint")
+                icons.append({"icon": "fa-tint", "tooltip": "Receives Email leak"})
             load_parties.append(DetailItem(party.name, "#", icons=icons))
 
         # Include the detected third parties as additional data
@@ -204,7 +204,7 @@ class OnClickThirdPartyConnectionCheck(Check):
             icons = []
             if parties[party]["address_leak_click"]:
                 # Add a leak icon
-                icons.append("fa-tint")
+                icons.append({"icon": "fa-tint", "tooltip": "Receives Email leak"})
             load_parties.append(DetailItem(party.name, "#"))
 
         # Include the detected third parties as additional data

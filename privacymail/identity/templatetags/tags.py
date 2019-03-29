@@ -22,7 +22,7 @@ def show_check(check):
 
 class DetailItem():
     text = ""
-    icons = []
+    icons = []  # Each icon is specified as {"icon": "fa-icon-ident", "tooltip": "tooltip text"}
     link = ""
 
     def __init__(self, text, link, icons=[]):

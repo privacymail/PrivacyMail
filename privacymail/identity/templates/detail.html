@@ -1,4 +1,4 @@
 {% load i18n %}
-{% if icons %}<div class="card-detail-icon">{% for icon in icons %}<i class="fas {{ icon }}"></i>{% endfor %}</div>{% endif %}<div class="card-detail-label">
+{% if icons %}<div class="card-detail-icon">{% for icon in icons %}<i class="fas {{ icon.icon }}" data-toggle="tooltip" data-placement="bottom" title="{{ icon.tooltip }}"></i>{% endfor %}</div>{% endif %}<div class="card-detail-label">
     <a href="{{ link }}">{{ text }}</a>
 </div>
