@@ -232,6 +232,7 @@ class ServiceMetaView(View):
 class ServiceListView(ListView):
     model = Service
     context_object_name = "service_list"
+    paginate_by = 25
 
 
 class FaqView(View):

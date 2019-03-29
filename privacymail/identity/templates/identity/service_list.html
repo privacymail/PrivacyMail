@@ -40,6 +40,11 @@ Services - PrivacyMail
                         {% endfor %}
                         </tbody>
                     </table>
+                    {% if is_paginated %}
+                    I am paginated
+                    {% else %}
+                    I am not paginated
+                    {% endif %}
                 </div>
             </div>
         </div>
