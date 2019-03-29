@@ -148,13 +148,13 @@ def create_service_cache(service, force=False):
     count_mult_ident_mails = mails.exclude(mail_from_another_identity=None).count()
 
     # Get all ereseource
-    resources = Eresource.objects.filter(mail__in=mails)
+    # resources = Eresource.objects.filter(mail__in=mails)
     # Get links
-    links = service.avg('a')
+    # links = service.avg('a')
     # ...and connections
-    connections = service.avg('con')
+    # connections = service.avg('con')
     # Get known trackers
-    tracker = Thirdparty.objects.filter(eresource__in=resources, eresource__type='con').distinct()
+    # tracker = Thirdparty.objects.filter(eresource__in=resources, eresource__type='con').distinct()
     # Check for eMails leakage
     mail_leakage_resources = Eresource.objects.filter(mail_leakage__isnull=False, mail__in=service.mails())
     algos_string = ""
@@ -169,111 +169,7 @@ def create_service_cache(service, force=False):
 
     # Get all identities associated with this service
     idents = Identity.objects.filter(service=service, approved=True)
-    unconfirmed_idents = Identity.objects.filter(service=service, approved=False)
     # Create data structure for frontend
-    measures = [
-        {
-            'id': '1',
-            'reliability': 'reliable',
-            'title': 'Third party spam',
-            'status_text': '{} {} received third party messages.'.format(third_party_spam,
-                                                                         "identity" if third_party_spam == 1 else "identities"),
-            'description': 'One or more identities of this service got emails from another sender than the service. This could happen because the service leaked the email address to a untrusted thirdparty which now also sends emails to this address.',
-            'condition': 'If a mail arrives from another domain than the domain of the service and the admin approved it as spam.',
-            'errors': 'This check should not create errors, due to admin supervision.',
-            'status': 'good' if third_party_spam == 0 else 'bad'
-
-        },
-        {
-            'id': '2',
-            'reliability': 'reliable' if count_mult_ident_mails > 10 else 'unreliable',
-            'title': 'Personalized first party link',
-            'status_text': 'No mail for multiple identities' if links is None or links[
-                1] is None else 'Mails contain an average of {0:.2f} personalized first party links.'.format(
-                links[1]),
-            'description': 'In one or more emails from this service are more than two links to the service which are personalized. This means the service knows who klicks this link and can match the used browser to the newsletter user.',
-            'condition': 'Two links allowed for neutral, because of unsubscribe.',
-            'errors': 'This check should not create errors.',
-            'status': 'neutral' if links is None or links[1] is None else (
-                'bad' if links[1] > 2 else ('neutral' if links[1] != 0 else 'good'))
-        },
-        {
-            'id': '3',
-            'reliability': 'reliable' if count_mult_ident_mails > 10 else 'unreliable',
-            'title': 'Personalized third party link',
-            'status_text': 'No mail for multiple identities' if links is None or links[
-                3] is None else 'Mails contain an average of {0:.2f} personalized third party links.'.format(
-                links[3]),
-            'description': 'In one or more emails from this service are more than two links which are personalized and leads to a domain which is NOT the domain of the service. This means a EXTERNAL third party can link the newsletter user in the browser.',
-            'condition': 'Two links allowed for neutral, because of unsubscribe.',
-            'errors': 'It could be possible that this external domain is still in the ownership of the service.',
-            'status': 'neutral' if links is None or links[3] is None else (
-                'bad' if links[3] > 2 else ('neutral' if links[3] != 0 else 'good'))
-        },
-        {
-            'id': '4',
-            'reliability': 'reliable' if count_mails > 10 else 'unreliable',
-            'title': 'First party connections',
-            'status_text': 'No mails' if connections is None or connections[
-                0] is None else 'Mails perform an average of {0:.2f} first party connections.'.format(
-                connections[0]),
-            'description': 'One or more embedded graphic, css or other external resource is load from servers which domain matches the domain of the service.',
-            'condition': 'If one or more connections was established to a host which domain matches the domain of the service.',
-            'errors': 'This check should not create errors.',
-            'status': 'neutral' if connections is None or connections[0] is None else (
-                'bad' if connections[0] > 0 else 'good')
-        },
-        {
-            'id': '5',
-            'reliability': 'reliable' if count_mult_ident_mails > 10 else 'unreliable',
-            'title': 'Personalized first party  connections',
-            'status_text': 'No mail for multiple identities' if connections is None or connections[
-                1] is None else 'Mails perform an average of {0:.2f} personalized first party connections.'.format(
-                connections[1]),
-            'description': 'One or more embedded graphic, css or other external resource is load from servers which domain matches the domain of the service. The request of this resources is personalized. So if your email client displays the email including images when you open it, the service knows when you opened this mail, which client you used and with which IP address. This can leak your country, your provider and maybe also your aproximate geological position.',
-            'condition': 'If one or more connections was established to a host which domain matches the domain of the service. And the request was personalized.',
-            'errors': 'This check should not create errors.',
-            'status': 'neutral' if connections is None or connections[1] is None else (
-                'bad' if connections[1] > 0 else 'good')
-        },
-        {
-            'id': '6',
-            'reliability': 'reliable' if count_mails > 10 else 'unreliable',
-            'title': 'Third party connections',
-            'status_text': 'No mails' if connections is None or connections[
-                2] is None else 'Mails perform an average of {0:.2f} third party connections.'.format(
-                connections[2]),
-            'description': 'One or more embedded graphic, css or other external resource is load from servers which domain matches NOT the domain of the service. ',
-            'condition': 'If one or more connections was established to a host which domain matches NOT the domain of the service.',
-            'errors': 'It could be possible that this external domain is still in the ownership of the service.',
-            'status': 'neutral' if connections is None or connections[2] is None else (
-                'bad' if connections[2] > 0 else 'good')
-        },
-        {
-            'id': '7',
-            'reliability': 'reliable' if count_mult_ident_mails > 10 else 'unreliable',
-            'title': 'Personalized third party connections',
-            'status_text': 'No mail for multiple identities' if connections is None or connections[
-                3] is None else 'Mails perform an average of {0:.2f} personalized third party connections.'.format(
-                connections[3]),
-            'description': 'One or more embedded graphic, css or other external resource is load from servers which domain matches NOT the domain of the service. The request of this resources is personalized. So if your email client displays the email including images when you open it, the EXTERNAL party knows when you opened this mail, which client you used and with which IP address. This can leak your country, your provider and maybe also your aproximate geological position.',
-            'condition': 'If one or more connections was established to a host which domain matches NOT the domain of the service. And the request was personalized.',
-            'errors': 'It could be possible that this external domain is still in the ownership of the service.',
-            'status': 'neutral' if connections is None or connections[3] is None else (
-                'bad' if connections[3] > 0 else 'good')
-        },
-        {
-            'id': '8',
-            'reliability': 'unreliable',
-            'title': 'Information leakage',
-            'status_text': 'Information leakage could be detected' if mail_leakage_resources else "No Information leakage could be detected",
-            'description': 'Information leakage could be detected using the following algorithm(s): {}'.format(
-                algos_string) if mail_leakage_resources else "No Information leakage could be detected",
-            'condition': 'If the email address was leaked in an request. Checked for encodings and algorithms as mentioned above.',
-            'errors': 'If the service uses more than just the algorithms mentioned above, we could not detect it. Like HMAC or nested in more than one layers.',
-            'status': 'bad' if mail_leakage_resources else 'good'
-        },
-    ]
 
     # All identities of the service
     identities = Identity.objects.filter(service=service)
@@ -308,13 +204,12 @@ def create_service_cache(service, force=False):
         # old params
         # 'idents': idents,
         # 'unconfirmed_idents': unconfirmed_idents,
-        'resources': resources,
-        'links': links,
+        # 'resources': resources,
+        # 'links': links,
         'count_mails': count_mails,
         'count_mult_ident_mails': count_mult_ident_mails,
-        'measures': measures,
-        'connections': connections,
-        'tracker': tracker,
+        # 'connections': connections,
+        # 'tracker': tracker,
 
         # new params
         # 'service': The service itself

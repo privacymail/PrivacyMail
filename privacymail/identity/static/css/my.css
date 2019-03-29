@@ -202,3 +202,22 @@ h2 > small {
     background: linear-gradient(to right, #d6d6d6 0%,#d6d6d6 20px,#ffffff 25px,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fb901b', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
 }
+.card-detail-label {
+    display: inline-block;
+    padding: 0.3em 0.7em;
+    background-color: #eee;
+    color: #777;
+    margin: 0em 1em 0.5em 0em;
+    border: 1px solid #ccc;
+    font-size: 11px;
+}
+.card-detail-icon {
+    display: inline-block;
+    padding: 0.3em 0.7em;
+    color: #777;
+    margin: 0em 0em 0.5em 0em;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    border-left: 1px solid #ccc;
+    font-size: 11px;
+}

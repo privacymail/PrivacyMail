@@ -14,6 +14,7 @@ from django.conf import settings
 from mailfetcher import analyser_cron
 from . import forms
 from mailfetcher.analyser_cron import create_service_cache
+from identity import checks
 import logging
 import time
 
@@ -158,6 +159,11 @@ class ServiceView(View):
         else:
             site_params['form'] = form
         site_params['service'] = service
+        site_params['checks'] = []
+
+        # Run checks
+        for check in checks.ALL_CHECKS:
+            site_params['checks'].append(check(site_params))
         return render(request, 'identity/service.html', site_params)
 
     @staticmethod
@@ -188,7 +194,6 @@ class ServiceView(View):
         end_time = time.time()
         print('Get service_site_params took: {}s'.format(end_time - start_time))
         return site_params
-
 
 
 class ServiceMetaView(View):

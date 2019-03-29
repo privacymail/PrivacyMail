@@ -3,15 +3,38 @@ from django import template
 register = template.Library()
 
 
-@register.inclusion_tag('measure.html')
-def show_measure(id, reliability, title, status_text, description, condition, errors, status):
+@register.inclusion_tag('check.html')
+def show_check(check):
+    assert check.is_sane()
     return {
-        'id': id,
-        'reliability': reliability,
-        'title': title,
-        'status_text': status_text,
-        'description': description,
-        'condition': condition,
-        'errors': errors,
-        'status': status,
+        "id": check.get_id(),
+        "title": check.get_title(),
+        "description": check.get_description(),
+        "reliability": check.get_reliability(),
+        "status": check.get_status(),
+        "interpretation": check.get_interpretation(),
+        "condition": check.get_condition(),
+        "error": check.get_error(),
+        "add_data": check.get_additional_data(),
+        "display": check.should_display()
+    }
+
+
+class DetailItem():
+    text = ""
+    icons = []  # Each icon is specified as {"icon": "fa-icon-ident", "tooltip": "tooltip text"}
+    link = ""
+
+    def __init__(self, text, link, icons=[]):
+        self.text = text
+        self.link = link
+        self.icons = icons
+
+
+@register.inclusion_tag('detail.html')
+def show_list_details(item):
+    return {
+        "text": item.text,
+        "link": item.link,
+        "icons": item.icons
     }
