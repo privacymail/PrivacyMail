@@ -26,6 +26,7 @@ urlpatterns = [
     re_path('service/.+', ServiceView.as_view(), name='Service'),
     path('mail/<int:mail>/', mailview, name='Mail'),
     path('service/', ServiceView.as_view(), name='ServiceLookup'),
+    path('services/', ServiceListView.as_view(), name="ServiceList"),
     path('identity/', IdentityView.as_view(), name='IdentityCreation'),
     path('', HomeView.as_view(), name='Home'),
     path('faq/', FaqView.as_view(), name="FAQ"),

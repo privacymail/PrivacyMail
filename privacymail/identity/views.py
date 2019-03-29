@@ -1,7 +1,7 @@
 import site
 
 from django.shortcuts import render
-from django.views.generic import View
+from django.views.generic import View, ListView
 from identity.util import validate_domain
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from mailfetcher.models import Mail, Eresource, Thirdparty
@@ -227,6 +227,11 @@ class ServiceMetaView(View):
         service.sector = sector
         service.save()
         return redirect('Service', service=service.id)
+
+
+class ServiceListView(ListView):
+    model = Service
+    context_object_name = "service_list"
 
 
 class FaqView(View):
