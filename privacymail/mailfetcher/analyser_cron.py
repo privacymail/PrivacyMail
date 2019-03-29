@@ -1,25 +1,12 @@
 from django_cron import CronJobBase, Schedule
-from django_cron import CronJobBase, Schedule
-import quopri
-from mailfetcher.models import Mail, Eresource, Service, Thirdparty
+from mailfetcher.models import Mail, Eresource, Service
 from identity.models import Identity, ServiceThirdPartyEmbeds
-from django.conf import settings
-from identity.models import ServiceThirdPartyEmbeds
-import time
-import sys
-import email
-import email.header
-import sys
 import statistics
 import tldextract
-import mailfetcher.models
 import traceback
 import logging
 from django.core.cache import cache
 from datetime import datetime
-from django.db.models import Q
-
-
 
 logger = logging.getLogger(__name__)
 
@@ -543,7 +530,7 @@ class Analyser(CronJobBase):
                     third_parties_this_mail = {}
                     for mail in service.mails():
                         # check if we already have this service in our dict
-                        if not service.name in third_party_by_service:
+                        if service.name not in third_party_by_service:
                             third_party_by_service[service.name] = set()
 
                         service_ext = tldextract.extract(service.url)
@@ -585,7 +572,7 @@ class Analyser(CronJobBase):
                 for service in Service.objects.all():
                     for mail in service.mails():
                         # check if we already have this service in our dict
-                        if not service.name in third_party_by_service_clicked:
+                        if service.name not in third_party_by_service_clicked:
                             third_party_by_service_clicked[service.name] = set()
                         service_ext = tldextract.extract(service.url)
                         eresource_set = mail.eresource_set.filter(type__contains='con')
@@ -695,8 +682,6 @@ class Analyser(CronJobBase):
 
             # mail_set = Mail.objects.filter(id=567)
 
-
-
             # analyze_differences_between_similar_mails()
 
             # all_resources = Eresource.objects.filter(url__contains='privacymail.me').delete()
@@ -792,7 +777,7 @@ def analyze_differences_between_similar_mails(service):
         mean = statistics.mean(mean_diff_list)
         median = statistics.mean(median_diff_list)
         return pairs_analysed, ratio, minimum, maximum, mean, median
-    except (statistics.StatisticsError, UnboundLocalError) as e:
+    except (statistics.StatisticsError, UnboundLocalError):
         return -1, -1, -1, -1, -1, -1
 
     # if counter % 50 == 0:
@@ -805,19 +790,19 @@ def thesis_link_personalisation_of_services():
     services = Service.objects.all()
     service_mail_metrics = {}
 
-        # if service in service_mail_metrics:
-        #     service_mail_metrics[service]['ratios'].append(num_diff_links / total_num_links)
-        #     service_mail_metrics[service]['minimums'].append(min_difference)
-        #     service_mail_metrics[service]['maximums'].append(max_difference)
-        #     service_mail_metrics[service]['means'].append(mean)
-        #     service_mail_metrics[service]['medians'].append(median)
-        # else:
-        #     service_mail_metrics[service] = {}
-        #     service_mail_metrics[service]['ratios'] = [num_diff_links / total_num_links]
-        #     service_mail_metrics[service]['minimums'] = [min_difference]
-        #     service_mail_metrics[service]['maximums'] = [max_difference]
-        #     service_mail_metrics[service]['medians'] = [median]
-        #     service_mail_metrics[service]['means'] = [mean]
+    # if service in service_mail_metrics:
+    #     service_mail_metrics[service]['ratios'].append(num_diff_links / total_num_links)
+    #     service_mail_metrics[service]['minimums'].append(min_difference)
+    #     service_mail_metrics[service]['maximums'].append(max_difference)
+    #     service_mail_metrics[service]['means'].append(mean)
+    #     service_mail_metrics[service]['medians'].append(median)
+    # else:
+    #     service_mail_metrics[service] = {}
+    #     service_mail_metrics[service]['ratios'] = [num_diff_links / total_num_links]
+    #     service_mail_metrics[service]['minimums'] = [min_difference]
+    #     service_mail_metrics[service]['maximums'] = [max_difference]
+    #     service_mail_metrics[service]['medians'] = [median]
+    #     service_mail_metrics[service]['means'] = [mean]
 
     print('Results of comparing links between similar mails of a service (per mail pair mean).')
     print('#pairs = number of total pairs compared')
