@@ -13,7 +13,7 @@ class Command(BaseCommand):
         if options['service']:
             for sid in options['id']:
                 try:
-                    service = Service.get(pk=sid)
+                    service = Service.objects.get(pk=sid)
                     c = cache.get(service.derive_service_cache_path())
                     self.stdout.write(json.dumps(c))
                 except Service.DoesNotExist:
