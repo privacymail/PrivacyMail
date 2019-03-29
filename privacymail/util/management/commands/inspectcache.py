@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.cache import cache
 from identity.models import Service
-import json
+from pprint import pprint
 
 
 class Command(BaseCommand):
@@ -15,7 +15,7 @@ class Command(BaseCommand):
                 try:
                     service = Service.objects.get(pk=sid)
                     c = cache.get(service.derive_service_cache_path())
-                    self.stdout.write(json.dumps(c))
+                    pprint(c)
                 except Service.DoesNotExist:
                     raise CommandError('Service %s does not exist' % sid)
         else:
