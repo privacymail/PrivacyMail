@@ -7,7 +7,6 @@ import email
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from bs4 import BeautifulSoup
-import subprocess
 import sqlite3 as lite
 import hashlib
 import os
@@ -20,24 +19,16 @@ from datetime import datetime as dt
 import datetime
 from django.db import models
 import html2text
-import tldextract
 from django.db.utils import InterfaceError
 from django.utils.functional import cached_property
-from django.core.mail import send_mail, mail_admins
+from django.core.mail import mail_admins
 from django.template.loader import render_to_string
 import base64
-import base58
-import html.parser
 import urllib
-import zlib
-import gzip
-from django.utils import html
-from email.header import Header, decode_header, make_header
+from email.header import decode_header, make_header
 from model_utils import Choices
 from Levenshtein import ratio
-import html2text
-import re
-from email.utils import parsedate, parsedate_to_datetime
+from email.utils import parsedate_to_datetime
 import statistics
 import logging
 from django.db import connection
@@ -47,8 +38,6 @@ logger = logging.getLogger(__name__)
 
 
 class Mail(models.Model):
-
-
     PROCESSING_STATES = Choices(
         ('UNPROCESSED', 'unprocessed'),
         ('VIEWED', 'viewed'),
@@ -134,7 +123,6 @@ class Mail(models.Model):
     #     message = parser.close()
     #     return message
 
-
     def get_message(self):
         if self.message is None:
             parser = email.parser.FeedParser()
@@ -159,16 +147,16 @@ class Mail(models.Model):
                 if ctype == 'text/plain' and 'attachment' not in cdispo:
                     try:
                         body_plain = part.get_payload(decode=True).decode(charset)
-                    except UnicodeDecodeError as ex:
+                    except UnicodeDecodeError:
                         body_plain = part.get_payload()
 
                     # body_plain = part.get_payload(decode=True).decode(charset)  # decode
                 if ctype == 'text/html' and 'attachment' not in cdispo:
                     try:
                         body_html = part.get_payload(decode=True).decode(charset)
-                    except UnicodeDecodeError as ex:
+                    except UnicodeDecodeError:
                         body_html = part.get_payload()
-                    #body_html = part.get_payload(decode=True).decode(charset)  # decode
+                    # body_html = part.get_payload(decode=True).decode(charset)  # decode
         # not multipart - i.e. plain text, no attachments, keeping fingers crossed
         else:
             ctype = message.get_content_type()
@@ -181,14 +169,14 @@ class Mail(models.Model):
 
                 try:
                     body_plain = message.get_payload(decode=True).decode(charset)
-                except UnicodeDecodeError as ex:
+                except UnicodeDecodeError:
                     body_plain = message.get_payload()
                 # body_plain = message.get_payload(decode=True).decode(charset)
             if ctype == 'text/html' and 'attachment' not in cdispo:
 
                 try:
                     body_html = message.get_payload(decode=True).decode(charset)
-                except UnicodeDecodeError as ex:
+                except UnicodeDecodeError:
                     body_html = message.get_payload()
 
                 # body_html = message.get_payload(decode=True).decode(charset)
@@ -245,8 +233,6 @@ class Mail(models.Model):
                                                                                leaks_address=mail_leakage,
                                                                                sets_cookie=sets_cookie,
                                                                                embed_type=embed_type, mail=self)
-
-
 
     @staticmethod
     def addresses_from_field(field):
@@ -339,7 +325,7 @@ class Mail(models.Model):
         hashdict = None
 
         all_eresources = Eresource.objects.filter(mail=self).exclude(possible_unsub_link=True)
-        if self.h_x_original_to == None:
+        if self.h_x_original_to is None:
             print ('Did not find mailaddress. Mail: {}'.format(self))
             return
         hashdict = Mail.generate_match_dict(self.h_x_original_to)
@@ -478,7 +464,6 @@ class Mail(models.Model):
             return links, num_different_links, l1, min_difference, max_difference, -1, -1
         # l = [i for i in range(len(s1)) if s1[i] != s2[i]]
 
-
     def compare_text_of_mails(self, mail):
         """ Compare the html body of two mails via string similarity """
 
@@ -570,7 +555,7 @@ class Mail(models.Model):
     @staticmethod
     def analyze_eresource(eresource, dict):
         # check for leakage and if yes, set matched algorithm combination
-        #case insensitive
+        # case insensitive
         for key, val in dict.items():
             if str(val) in eresource.url or str(val).casefold() in eresource.url.replace('-', '').casefold():
                 if eresource.mail_leakage is None or eresource.mail == '':
@@ -582,8 +567,6 @@ class Mail(models.Model):
                 eresource.save()
                 # print('Found leakage!')
                 # break
-
-
 
     @staticmethod
     def generate_match_dict(mailaddr):
@@ -647,7 +630,7 @@ class Mail(models.Model):
                 message = render_to_string('identity_approval_mail.txt', {
                     'ident': ident,
                     'mail': self,
-                    'URL' : settings.SYSTEM_ROOT_URL
+                    'URL': settings.SYSTEM_ROOT_URL
                 })
                 subject = "A new identity needs approval"
                 if not settings.DISABLE_ADMIN_MAILS:
@@ -657,7 +640,7 @@ class Mail(models.Model):
 
     def check_for_unusual_sender(self):
         for ident in self.identity.all():
-            if not ident.service.url in self.h_from:
+            if ident.service.url not in self.h_from:
                 self.suspected_spam = True
                 subject = "Third-Party spam is suspected"
                 message = render_to_string('third_party_spam.txt', {
@@ -794,7 +777,7 @@ class Mail(models.Model):
                 in openWPM_entries:
             # check if the url has a parent and is therefore not the start of a chain.
             db_cursor.execute("select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
-                               (channel_id,))
+                              (channel_id,))
 
             is_start_of_chain = False
             if db_cursor.fetchone() is None:
@@ -811,7 +794,7 @@ class Mail(models.Model):
             # eresource redirects to other eresource
             else:
                 r, created = Eresource.objects.get_or_create(type="con", request_headers=request_headers,
-                                                             response_headers= response_headers, url=url,
+                                                             response_headers=response_headers, url=url,
                                                              channel_id=channel_id,
                                                              redirects_to_channel_id=new_channel_id,
                                                              redirects_to_url=redirects_to,
@@ -833,7 +816,6 @@ class Mail(models.Model):
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
         if os.path.exists(wpm_db):
             os.remove(wpm_db)
-
 
         print('Preparing data for OpenWPM.')
         sites = []
@@ -1123,4 +1105,3 @@ class Thirdparty(models.Model):
 # class RequestChain(models.Model):
 #     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
 #     host = models.ForeignKey('Trackhosts', null=True, on_delete=models.SET_NULL)
-
