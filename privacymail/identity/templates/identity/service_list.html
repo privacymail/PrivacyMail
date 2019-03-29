@@ -2,6 +2,10 @@
 {% load static %}
 {% load i18n %}
 
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'flags/sprite.css' %}">
+{% endblock %}
+
 {% block title %}
 Services - PrivacyMail
 {% endblock %}
@@ -26,7 +30,7 @@ Services - PrivacyMail
                         {% for service in service_list %}
                             <tr>
                                 <th scope="row"><a href="{% url 'Service' service.id %}">{{ service.name }}</a></th>
-                                <td>{% if service.country_of_origin %}{{ service.country_of_origin.name }}{% else %}{% trans 'Unknown' %}{% endif %}</td>
+                                <td>{% if service.country_of_origin %}<i class="{{ service.country_of_origin.flag_css }}"></i> {{ service.country_of_origin.name }}{% else %}{% trans 'Unknown' %}{% endif %}</td>
                                 <td>{{ service.get_sector_display }}</td>
                             </tr>
                         {% empty %}
