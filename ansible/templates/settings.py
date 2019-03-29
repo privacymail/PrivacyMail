@@ -117,7 +117,9 @@ CACHES = {
         "BACKEND": 'django.core.cache.backends.db.DatabaseCache',
         "LOCATION": 'pmail_cache',
         "TIMEOUT": None,  # Cache does not automatically expire
-        "MAX_ENTRIES": 10000,  # Allow a lot of entries in the cache to avoid culling
+        'OPTIONS': {
+            "MAX_ENTRIES": 10000,  # Allow a lot of entries in the cache to avoid culling
+        }
     }
 }
 
