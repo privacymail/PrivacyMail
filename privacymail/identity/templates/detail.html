@@ -1,4 +1,4 @@
 {% load i18n %}
-<div class="card-detail-label">
-    {% for icon in icons %}<i class="fas {{ icon }}"></i>{% endfor %}<a href="{{ link }}">{{ text }}</a>
+{% if icons %}<div class="card-detail-icon">{% for icon in icons %}<i class="fas {{ icon }}"></i>{% endfor %}</div>{% endif %}<div class="card-detail-label">
+    <a href="{{ link }}">{{ text }}</a>
 </div>
