@@ -125,7 +125,7 @@ class ThirdPartySpamCheck(Check):
 class FirstPartyConnectionCheck(Check):
     check_id = 2
     check_title = _("First party connections")
-    check_description = _("Newsletters may contain resourced that are dynamically loaded from the newsletter provider, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
+    check_description = _("Newsletters may contain resources that are dynamically loaded from the newsletter provider, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
     check_condition = _("This check passes if no connections to the newsletter provider are established when opening the Mail.")
     check_error = _("This check should not create errors.")
     check_reliability = RELIABILITY_RELIABLE
@@ -142,7 +142,7 @@ class OnViewThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when opening the message."""
     check_id = 3
     check_title = _("Third party connections when opening the Mail")
-    check_description = _("Newsletters may contain resourced that are dynamically loaded from other websites, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
+    check_description = _("Newsletters may contain resources that are dynamically loaded from other websites, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
     check_condition = _("This check passes if no connections to third parties are established when opening the Mail.")
     check_error = _("This check should not create errors.")
     check_reliability = RELIABILITY_RELIABLE
@@ -171,8 +171,8 @@ class OnViewThirdPartyConnectionCheck(Check):
         if len(self.check_additional_data) > 0:
             # TODO Potentially set to critical if eMail is leaked?
             self.check_status = STATUS_BAD
-            self.check_interpretation = ungettext_lazy("%(count)d third party is contacted when viewing the mail.",
-                                                       "%(count)d third parties are contacted when viewing the mail.",
+            self.check_interpretation = ungettext_lazy("%(count)d third party is contacted when viewing the mail with remote content enabled.",
+                                                       "%(count)d third parties are contacted when viewing the mail with remote content enabled.",
                                                        len(self.check_additional_data)) % {'count': len(self.check_additional_data)}
         else:
             self.check_status = STATUS_GOOD
