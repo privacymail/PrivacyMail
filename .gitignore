@@ -119,3 +119,7 @@ privacymail/privacymail/settings.py
 # SSH keys
 ansible/files/id_deploy
 ansible/files/id_deploy.pub
+
+# Local test files
+ansible/localdeploy.yml
+ansible/betadeploy.yml
