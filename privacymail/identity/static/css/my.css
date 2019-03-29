@@ -66,6 +66,10 @@ label {
     color: #aaa;
 }
 
+.text-deemph {
+    color: rgb(153, 153, 153);
+}
+
 .badge-color-reliable {
     background-color: #5bc0de;
 }

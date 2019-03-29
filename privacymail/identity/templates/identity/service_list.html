@@ -30,8 +30,8 @@ Services - PrivacyMail
                         {% for service in service_list %}
                             <tr>
                                 <th scope="row"><a href="{% url 'Service' service.id %}">{{ service.name }}</a></th>
-                                <td>{% if service.country_of_origin %}<i class="{{ service.country_of_origin.flag_css }}"></i> {{ service.country_of_origin.name }}{% else %}{% trans 'Unknown' %}{% endif %}</td>
-                                <td>{{ service.get_sector_display }}</td>
+                                <td>{% if service.country_of_origin %}<i class="{{ service.country_of_origin.flag_css }}"></i> {{ service.country_of_origin.name }}{% else %}<i class="text-deemph">{% trans 'Unknown' %}</i>{% endif %}</td>
+                                <td>{% if service.sector == 'unknown' %}<i class="text-deemph">{% trans 'Unknown' %}</i>{% else %}{{ service.get_sector_display }}{% endif %}</td>
                             </tr>
                         {% empty %}
                             <tr>
