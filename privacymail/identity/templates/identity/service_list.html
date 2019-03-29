@@ -26,8 +26,8 @@ Services - PrivacyMail
                         {% for service in service_list %}
                             <tr>
                                 <th scope="row"><a href="{% url 'Service' service.id %}">{{ service.name }}</a></th>
-                                <td>{{ service.country }}</td>
-                                <td>{{ service.category }}</td>
+                                <td>{{ service.country_of_origin.name }}</td>
+                                <td>{{ service.get_sector_display }}</td>
                             </tr>
                         {% empty %}
                             <tr>
