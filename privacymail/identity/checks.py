@@ -158,8 +158,11 @@ class OnViewThirdPartyConnectionCheck(Check):
             if ServiceThirdPartyEmbeds.ONVIEW not in parties[party]["embed_as"]:
                 # This 3rd party is not included when opening the eMail, skip it
                 continue
-            # TODO in the long run, this should contain additional metadata, e.g. address leaks
-            load_parties.append(DetailItem(party.name, "#"))
+            icons = []
+            if parties[party]["address_leak_view"]:
+                # Add a leak icon
+                icons.append("fa-tint")
+            load_parties.append(DetailItem(party.name, "#", icons=icons))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -198,7 +201,10 @@ class OnClickThirdPartyConnectionCheck(Check):
             if ServiceThirdPartyEmbeds.ONCLICK not in parties[party]["embed_as"]:
                 # This 3rd party is not included when opening the eMail, skip it
                 continue
-            # TODO in the long run, this should contain additional metadata, e.g. address leaks
+            icons = []
+            if parties[party]["address_leak_click"]:
+                # Add a leak icon
+                icons.append("fa-tint")
             load_parties.append(DetailItem(party.name, "#"))
 
         # Include the detected third parties as additional data
