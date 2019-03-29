@@ -14,16 +14,28 @@ Services - PrivacyMail
             <div class="row">
                 <div class="col-md-9">
                     <h2 class="text-left">{% trans "Service List" %}</h2>
-
-                    {% if service_list %}
-                    <ul>
-                    {% for service in service_list %}
-                        <li>{{service.name}}</li>
-                    {% endfor %}
-                    </ul>
-                    {% else %}
-                    {% trans 'No services found' %}
-                    {% endif %}
+                    <table class="table table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Country</th>
+                                <th scope="col">Sector</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for service in service_list %}
+                            <tr>
+                                <th scope="row"><a href="{% url 'Service' service.id %}">{{ service.name }}</a></th>
+                                <td>{{ service.country }}</td>
+                                <td>{{ service.category }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">{% trans 'No services found' %}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
