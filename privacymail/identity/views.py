@@ -231,7 +231,7 @@ class ServiceMetaView(View):
         return redirect('Service', service=service.id)
 
 
-class ServiceListView(django_filters.FilterView):
+class ServiceListView(django_filters.views.FilterView):
     model = Service
     context_object_name = "service_list"
     paginate_by = 25
