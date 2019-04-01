@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views.generic import View, ListView
 from identity.util import validate_domain
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
+from identity.filters import ServiceFilter
 from mailfetcher.models import Mail, Eresource, Thirdparty
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
@@ -233,6 +234,7 @@ class ServiceListView(ListView):
     model = Service
     context_object_name = "service_list"
     paginate_by = 25
+    filter_class = ServiceFilter
 
 
 class FaqView(View):
