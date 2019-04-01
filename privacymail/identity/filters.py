@@ -7,4 +7,4 @@ class ServiceFilter(django_filters.FilterSet):
 
     class Meta:
         model = Service
-        fields = ['sector']
+        fields = ['sector', 'country_of_origin']
