@@ -220,10 +220,11 @@ def create_service_cache(service, force=False):
             #     'sets_cookie': Bool }
         # Leaks email address to third party in any way : done
         # TODO Performance
+
         'percent_links_personalised': ratio * 100,  # done
         # 'personalised_url': 'example.url',  # URL of with (longest) identifier
         # compare DOM-Tree of similar mails
-        'suspected_AB_testing': False,
+        'suspected_AB_testing': emails.filter(possible_AB_testing=True).exists(),
         'third_party_spam': third_party_spam,  # Marked as receiving third party spam.
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
