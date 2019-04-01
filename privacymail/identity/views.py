@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.db.models import Count
-import django_filter
+import django_filters
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from mailfetcher import analyser_cron
