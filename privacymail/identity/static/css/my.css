@@ -225,3 +225,20 @@ h2 > small {
     border-left: 1px solid #ccc;
     font-size: 11px;
 }
+
+/* Table sort indicators */
+table.table thead th.orderable::before {
+    padding-right: 10px;
+    font-family: FontAwesome;
+    content: "\f0dc";
+}
+table.table thead th.asc::before {
+    padding-right: 10px;
+    font-family: FontAwesome;
+    content: "\f0dd";
+}
+table.table thead th.desc::before {
+    padding-right: 10px;
+    font-family: FontAwesome;
+    content: "\f0de";
+}

@@ -5,12 +5,14 @@ from django.views.generic import View
 from identity.util import validate_domain
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from identity.filters import ServiceFilter
+from identity.tables import ServiceTable
 from mailfetcher.models import Mail, Eresource, Thirdparty
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.db.models import Count
 from django_filters.views import FilterView
+from django_tables2.views import SingleTableMixin
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from mailfetcher import analyser_cron
@@ -231,9 +233,10 @@ class ServiceMetaView(View):
         return redirect('Service', service=service.id)
 
 
-class ServiceListView(FilterView):
+class ServiceListView(SingleTableMixin, FilterView):
     model = Service
-    context_object_name = "service_list"
+    table_class = ServiceTable
+    template_name = "service_filter.html"
     paginate_by = 25
     filterset_class = ServiceFilter
 
