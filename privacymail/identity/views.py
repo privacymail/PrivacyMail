@@ -235,7 +235,7 @@ class ServiceListView(FilterView):
     model = Service
     context_object_name = "service_list"
     paginate_by = 25
-    filter_class = ServiceFilter
+    filterset_class = ServiceFilter
 
 
 class FaqView(View):
