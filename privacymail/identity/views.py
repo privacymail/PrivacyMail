@@ -1,7 +1,7 @@
 import site
 
 from django.shortcuts import render
-from django.views.generic import View, ListView
+from django.views.generic import View
 from identity.util import validate_domain
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from identity.filters import ServiceFilter
@@ -10,6 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.cache import cache
 from django.shortcuts import redirect
 from django.db.models import Count
+import django_filter
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from mailfetcher import analyser_cron
@@ -230,15 +231,11 @@ class ServiceMetaView(View):
         return redirect('Service', service=service.id)
 
 
-class ServiceListView(ListView):
+class ServiceListView(django_filter.FilterView):
     model = Service
     context_object_name = "service_list"
     paginate_by = 25
-
-    def get_queryset(self):
-        qs = self.model.objects.all()
-        filtered_list = ServiceFilter(self.request.GET, queryset=qs)
-        return filtered_list.qs
+    filter_class = ServiceFilter
 
 
 class FaqView(View):
