@@ -65,7 +65,6 @@ Services - PrivacyMail
                 <div class="col-md-3">
                     <h4 class="text-left">{% trans 'Find services by...' %}</h4>
                     <form action="" method="GET">
-                        <input class="text" name="page" value="{% if page_obj %}{{ page_obj.number }}{% else %}1{% endif %}" type="hidden">
                         <div class="form-group">
                             {{ filter.form.sector.errors }}
                             <label for="{{ filter.form.sector.id_for_labels }}">{% trans 'Sector:' %}</label>
