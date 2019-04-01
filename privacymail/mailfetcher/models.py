@@ -321,6 +321,12 @@ class Mail(models.Model):
             unsub_word_in_link = Eresource.is_unsub_word_in_link(link)
             Eresource.create_clickable(link, unsub_word_in_link, self)
 
+        for img in soup.find_all('img'):
+            if 'http' not in link['src']:
+                continue
+            Eresource.create_image_resource(img, self)
+
+
     def analyze_mail_connections_for_leakage(self):
         hashdict = None
 
@@ -1045,6 +1051,7 @@ class Eresource(models.Model):
     host = models.ForeignKey('Thirdparty', null=True, on_delete=models.SET_NULL)
     diff_eresource = models.ForeignKey('self', related_name='diff', on_delete=models.SET_NULL, null=True)
     mail_leakage = models.TextField(null=True, blank=True)
+    personalised = models.BooleanField(default=False)
     # the eresource this one redirects to
     redirects_to = models.ForeignKey('self', related_name='redirect', on_delete=models.CASCADE, null=True)
     # the url of the eresource this one redirects to
@@ -1063,6 +1070,16 @@ class Eresource(models.Model):
         r, created = Eresource.objects.get_or_create(type="a", url=link["href"],
                                                      possible_unsub_link=possible_unsubscribe_link,
                                                      param=str(link.attrs) + str(link.contents),
+                                                     mail=mail)
+        if created:
+            mail.connect_tracker(eresource=r)
+            r.save()
+
+    @classmethod
+    def create_image_resource(cls, image, mail):
+        r, created = Eresource.objects.get_or_create(type="img", url=image["src"],
+                                                     possible_unsub_link=False,
+                                                     param=str(image.attrs) + str(image.contents),
                                                      mail=mail)
         if created:
             mail.connect_tracker(eresource=r)
