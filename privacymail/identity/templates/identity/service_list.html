@@ -41,7 +41,7 @@ Services - PrivacyMail
                         </tbody>
                     </table>
                     {% if is_paginated %}
-                        <nav aria-label="Service list pagination">
+                        <nav aria-label="Service list pagination" class="text-center">
                             <ul class="pagination">
                                 {% if page_obj.has_previous %}
                                 <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
