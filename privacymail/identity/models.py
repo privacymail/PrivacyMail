@@ -53,22 +53,24 @@ class Service(models.Model):
     POLITICS = "politics"
     ACTIVIST = "activist"
     SPORTS = "sports"
+    TRAVEL = "travel"
     UNKNOWN = "unknown"
 
-    SECTOR_CHOICES = ((ADULT, "Adult"),
+    SECTOR_CHOICES = ((ACTIVIST, "Activist"),
+                      (ADULT, "Adult"),
                       (ART, "Art"),
-                      (GAMES, "Games"),
-                      (ENTERTAINMENT, "Entertainment"),
-                      (HEALTH, "Health"),
-                      (FINANCE, "Financial"),
-                      (NEWS, "News"),
-                      (SHOPPING, "Shopping"),
                       (B2B, "Business-to-Business"),
+                      (ENTERTAINMENT, "Entertainment"),
+                      (FINANCE, "Financial"),
+                      (GAMES, "Games"),
+                      (HEALTH, "Health"),
+                      (NEWS, "News"),
+                      (POLITICS, "Political Party / Politician"),
                       (REFERENCE, "Reference"),
                       (SCIENCE, "Science"),
-                      (POLITICS, "Political Party / Politician"),
-                      (ACTIVIST, "Activist"),
+                      (SHOPPING, "Shopping"),
                       (SPORTS, "Sports"),
+                      (TRAVEL, "Travel"),
                       (UNKNOWN, "Unknown"))
 
     url = models.URLField()  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
