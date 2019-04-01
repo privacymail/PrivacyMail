@@ -75,6 +75,8 @@ target/
 
 # pyenv
 .python-version
+.python-virtualenv
+.envrc
 
 # celery beat schedule file
 celerybeat-schedule
@@ -124,3 +126,6 @@ ansible/files/id_deploy.pub
 ansible/localdeploy.yml
 ansible/betadeploy.yml
 ansible/*.retry
+
+# Temporary editor files
+*.swp
