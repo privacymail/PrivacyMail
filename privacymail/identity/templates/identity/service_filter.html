@@ -64,8 +64,14 @@ Services - PrivacyMail
                 <div class="col-md-3">
                     <h4 class="text-left">{% trans 'Filter services' %}</h4>
                     <form action="" method="GET">
-                        {{ filter.form.as_p }}
                         <input class="text" name="page" value="{% if page_obj %}{{ page_obj.number }}{% else %}1{% endif %}" type="hidden">
+                        <div class="form-group">
+                            {{ filter.form.sector.errors }}
+                            <label for="{{ filter.form.sector.id_for_labels }}">{% trans 'Sector:' %}</label>
+                            <div class="input-group">
+                                {% render_field filter.form.sector class="form-control selectpicker" %}
+                            </div>
+                        </div>
                         <button class="btn btn-info w-100" type="submit">{% trans 'Filter' %}</button>
                     </form>
 
