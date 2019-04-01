@@ -16,7 +16,7 @@ Services - PrivacyMail
 <div class="main main-raised">
     <div class="profile-content">
         <div class="container">
-            <h2 class="text-left">{% trans "Service List" %}</h2>
+            <h2 class="text-left">{% trans "Registered Services:" %}</h2>
             <div class="row">
                 <div class="col-md-9">
                     <table class="table table-sm">
@@ -63,7 +63,7 @@ Services - PrivacyMail
                 </div>
                 <!-- Filtering -->
                 <div class="col-md-3">
-                    <h4 class="text-left">{% trans 'Filter services' %}</h4>
+                    <h4 class="text-left">{% trans 'Find services by...' %}</h4>
                     <form action="" method="GET">
                         <input class="text" name="page" value="{% if page_obj %}{{ page_obj.number }}{% else %}1{% endif %}" type="hidden">
                         <div class="form-group">
