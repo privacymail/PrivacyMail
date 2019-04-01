@@ -63,7 +63,7 @@ class Mail(models.Model):
     identity = models.ManyToManyField(Identity, related_name='message')
     suspected_spam = models.BooleanField(default=False)
     mail_from_another_identity = models.ManyToManyField("self", symmetrical=True)
-    # processing_state = models.CharField(max_length=50, default='unprocessed', null=False, blank=False)
+    possible_AB_testing = models.BooleanField(default=False)
     processing_state = models.CharField(choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20)
     processing_fails = models.IntegerField(default=0)
 
@@ -422,6 +422,8 @@ class Mail(models.Model):
         :param print_links: prints the links with X for the chars that are different.
         :return: list with links, num_different_links, total_num_links, min_difference, max_difference, mean, median
         """
+        mail1_eresources = Eresource.objects.filter(mail=self, personalised=False).exclude(type='con').exclude(type='con_click')
+        mail2_eresources = Eresource.objects.filter(mail=mail, personalised=False).exclude(type='con').exclude(type='con_click')
         num_different_links = 0
         min_difference = 5000
         max_difference = 0
@@ -449,6 +451,16 @@ class Mail(models.Model):
 
             if len(index) < 1:
                 continue
+            # Mark eresources as personalised.
+            mail1_eresource = mail1_eresources.filter(url=link1)
+            for eresource in mail1_eresource:
+                eresource.personalised = True
+                eresource.save()
+            mail2_eresource = mail2_eresources.filter(url=link2)
+            for eresource in mail2_eresource:
+                eresource.personalised = True
+                eresource.save()
+
             if len(index) < min_difference:
                 min_difference = len(index)
             if len(index) > max_difference:

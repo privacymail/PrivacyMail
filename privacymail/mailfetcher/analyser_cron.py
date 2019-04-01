@@ -7,6 +7,8 @@ import traceback
 import logging
 from django.core.cache import cache
 from datetime import datetime
+from django.db.models import Q
+
 
 logger = logging.getLogger(__name__)
 
@@ -713,7 +715,6 @@ def analyze_differences_between_similar_mails(service):
     mean_diff_list = []
     median_diff_list = []
     ratio_list = []
-    # TODO Results from some services are weird, check this!
     for m in mail_set:
         # TODO look for pairs instead of single mails, that have already been processed
         if m.id in already_processed_mails:
@@ -745,12 +746,12 @@ def analyze_differences_between_similar_mails(service):
             if difference_measure < 0.985:
                 logger.warning('Possible A/B testing', extra={'ID first mail': m.id, 'ID second mail': el.id,
                                                               'differences': differences})
+                m.possible_AB_testing = True
+                m.save()
+                el.possible_AB_testing = True
+                el.save()
                 continue
-                # TODO possible A/B testing?
-                # print('Mail1 {}, subject: {}'.format(m.id, m.h_subject))
-                # print('Mail2 {}, subject: {}'.format(el.id, el.h_subject))
-                # print('Difference_metric: {}.'.format(difference_measure))
-                print(differences)
+                # print(differences)
             else:
                 # print(m.get_similar_links(el))
                 # m.get_similar_links(el)
@@ -826,13 +827,19 @@ def thesis_link_personalisation_of_services():
         service_mail_metrics[service]['mean'] = mean
         print('{:<25}: {:<6}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
               .format(service_name, num_pairs, ratio, minimum, maximum, mean, median))
-    # for service in service_mail_metrics:
-    #     total_mail_pairs_analyzed = len(service_mail_metrics[service]['maximums'])
-    #     mean_minimums = statistics.mean(service_mail_metrics[service]['minimums'])
-    #     mean_maximums = statistics.mean(service_mail_metrics[service]['maximums'])
-    #     mean_ratio = statistics.mean(service_mail_metrics[service]['ratios'])
-    #     mean_median = statistics.mean(service_mail_metrics[service]['medians'])
-    #     mean_mean = statistics.mean(service_mail_metrics[service]['means'])
-    #     print('{:<25}: {:<6}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'.
-    #           format(service, total_mail_pairs_analyzed, mean_ratio, mean_minimums, mean_maximums,
-    #                  mean_mean, mean_median))
+
+        counter = 0
+        personalised_links = []
+        total_links = []
+        for mail in service.mails():
+            counter += 1
+            all_mails = Eresource.objects.filter(mail=mail).\
+                filter(Q(type='a') | Q(type='link') | Q(type='img'))
+            total_links.append(all_mails.count())
+            personalised_mails = all_mails.filter(personalised=True)
+            personalised_links.append(personalised_mails.count())
+        if counter == 0:
+            print('Continue')
+            continue
+        ratio = statistics.mean(personalised_links) / statistics.mean(total_links)
+        print('Eresource Ratio: {}'.format(ratio))
