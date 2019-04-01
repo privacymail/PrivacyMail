@@ -86,8 +86,8 @@ class Mail(models.Model):
         print("Message ID: " + message_id + " Subject: " + str(make_header(decode_header(message['subject']))))
         try:
             mail = Mail.objects.get(raw=message_raw)
-            return mail
-            # TODO Only parse non-complete mails?
+            if mail.date_time is not None:
+                return mail
         except ObjectDoesNotExist:
             mail = cls(raw=message_raw, message_id=message_id)
             mail.save()
@@ -195,8 +195,8 @@ class Mail(models.Model):
         self.h_subject = make_header(decode_header(message['Subject']))
         self.h_date = message['Date']
         self.h_user_agent = message['User-Agent']
-        date_obj = parsedate_to_datetime(self.h_date)
-        self.date_time = date_obj
+        # date_obj = parsedate_to_datetime(self.h_date)
+        # self.date_time = date_obj
 
         identity_set = Identity.objects.filter(Q(mail__in=self.addresses_from_field(self.h_x_original_to)) | Q(mail__in=self.addresses_from_field(self.h_to)) | Q(mail__in=self.addresses_from_field(self.h_cc)))
 
@@ -322,10 +322,13 @@ class Mail(models.Model):
             Eresource.create_clickable(link, unsub_word_in_link, self)
 
         for img in soup.find_all('img'):
-            if 'http' not in link['src']:
-                continue
-            Eresource.create_image_resource(img, self)
+            Eresource.create_static_eresource(img, 'src', self)
 
+        for link in soup.find_all('link'):
+            Eresource.create_static_eresource(link, 'href', self)
+
+        for script in soup.find_all('script'):
+            Eresource.create_static_eresource(script, 'src', self)
 
     def analyze_mail_connections_for_leakage(self):
         hashdict = None
@@ -1076,10 +1079,13 @@ class Eresource(models.Model):
             r.save()
 
     @classmethod
-    def create_image_resource(cls, image, mail):
-        r, created = Eresource.objects.get_or_create(type="img", url=image["src"],
-                                                     possible_unsub_link=False,
-                                                     param=str(image.attrs) + str(image.contents),
+    def create_static_eresource(cls, element, source_string, mail, possible_unsubscribe_link=False):
+        if 'http' not in element[source_string] or element[source_string] is None:
+            return
+        element[source_string] = ''.join(element[source_string].split())
+        r, created = Eresource.objects.get_or_create(type=element.name, url=element[source_string],
+                                                     possible_unsub_link=possible_unsubscribe_link,
+                                                     param=str(element.attrs) + str(element.contents),
                                                      mail=mail)
         if created:
             mail.connect_tracker(eresource=r)
