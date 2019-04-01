@@ -24,7 +24,6 @@ class Command(BaseCommand):
                 # TODO what does analyze_mail_connections_for_leakage this do exactly again?
                 mail.analyze_mail_connections_for_leakage()
                 mail.processing_state = Mail.PROCESSING_STATES.DONE
-                mail.eresource_set
                 mail.save()
                 mail.create_service_third_party_connections()
                 if count % 20 == 0:
