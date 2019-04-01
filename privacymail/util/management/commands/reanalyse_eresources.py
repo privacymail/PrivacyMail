@@ -21,7 +21,6 @@ class Command(BaseCommand):
                         continue
                     eresource.mail_leakage = None
                     eresource.save()
-                # TODO what does analyze_mail_connections_for_leakage this do exactly again?
                 mail.analyze_mail_connections_for_leakage()
                 mail.processing_state = Mail.PROCESSING_STATES.DONE
                 mail.save()
