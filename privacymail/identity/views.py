@@ -234,7 +234,11 @@ class ServiceListView(ListView):
     model = Service
     context_object_name = "service_list"
     paginate_by = 25
-    filter_class = ServiceFilter
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        filtered_list = ServiceFilter(self.request.GET, queryset=qs)
+        return filtered_list.qs
 
 
 class FaqView(View):
