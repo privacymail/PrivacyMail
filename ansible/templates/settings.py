@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'bootstrap_themes',
     'raven.contrib.django.raven_compat',
     'django_extensions',
-    'django_filters'
+    'django_filters',
+    'django_tables2'
     # 'silk'
 ]
 
