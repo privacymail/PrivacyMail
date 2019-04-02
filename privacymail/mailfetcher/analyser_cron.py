@@ -211,6 +211,7 @@ def create_service_cache(service, force=False):
         third_party_dict['address_leak_view'] = embeds_onview.filter(leaks_address=True).exists()
         third_party_dict['address_leak_click'] = embeds_onclick.filter(leaks_address=True).exists()
         third_party_dict['sets_cookie'] = embeds.filter(sets_cookie=True).exists()
+        third_party_dict['receives_identifier'] = embeds.filter(receives_identifier=True).exists()
         third_parties_dict[third_party] = third_party_dict
     # static_links =
     # num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
@@ -243,7 +244,8 @@ def create_service_cache(service, force=False):
             #     'embed_as': list(embedtypes)
             #     'address_leak_view': Bool
             #     'address_leak_click': Bool
-            #     'sets_cookie': Bool }
+            #     'sets_cookie': Bool
+            #     'receives_identifier': Bool }
         # Leaks email address to third party in any way : done
         'percent_links_personalised': ratio * 100,  # done
         'avg_personalised_anchor_links': avg_personalised_anchor_links,
