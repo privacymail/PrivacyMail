@@ -734,7 +734,7 @@ class Mail(models.Model):
             command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)
 
             # dump_profile_cookies/dump_flash_cookies closes the current tab.
-            # TODO Not dumping cookies here, as they should be extractable from the response headers.
+            # Not dumping cookies here, as they should be extractable from the response headers.
             # command_sequence.dump_profile_cookies(120)
 
             # index=None browsers visit sites asynchronously
@@ -808,7 +808,6 @@ class Mail(models.Model):
                 is_start_of_chain = True
 
             # eresource is end of chain
-            # TODO set the type to the type of the return headers.
             if new_channel_id is None or new_channel_id == '':
                 r, created = Eresource.objects.get_or_create(type="con", request_headers=request_headers,
                                                              response_headers=response_headers,
@@ -876,7 +875,7 @@ class Mail(models.Model):
             # Start by visiting the page
             command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)
 
-            # todo Not dumping cookies here, as they can be extracted from the response headers
+            # Not dumping cookies here, as they can be extracted from the response headers
             # command_sequence.dump_profile_cookies(120)
 
             # index=None browsers visit sites asynchronously
