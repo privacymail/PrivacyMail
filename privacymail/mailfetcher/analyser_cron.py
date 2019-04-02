@@ -1,5 +1,5 @@
 from django_cron import CronJobBase, Schedule
-from mailfetcher.models import Mail, Eresource, Service
+from mailfetcher.models import Mail, Eresource, Service, Thirdparty
 from identity.models import Identity, ServiceThirdPartyEmbeds
 import statistics
 import tldextract
@@ -7,6 +7,8 @@ import traceback
 import logging
 from django.core.cache import cache
 from datetime import datetime
+from django.db.models import Q
+
 
 logger = logging.getLogger(__name__)
 
@@ -17,15 +19,37 @@ def create_summary_cache(force=False):
         if not site_params['cache_dirty']:
             return
     print('Building cache for summary')
+    all_services = Service.objects.all()
+    approved_services = all_services.filter(hasApprovedIdentity=True)
+    num_approved_services = approved_services.count()
+    services_using_cookies = 0
+    services_with_address_disclosure = 0
+    services_embedding_third_parties = 0
+    for service in approved_services:
+        third_party_connections = ServiceThirdPartyEmbeds.objects.filter(service=service)
+        if third_party_connections.filter(sets_cookie=True).exists():
+            services_using_cookies += 1
+        if third_party_connections.filter(leaks_address=True).exists():
+            services_with_address_disclosure += 1
+        if third_party_connections.exclude(thirdparty=service.url).exists():
+            services_embedding_third_parties += 1
+
+    hosts = Thirdparty.objects.all()
+    num_hosts = hosts.count()
+
+    all_mails = Mail.objects.all()
 
     # Generate site params
     site_params = {
         # Num services (num services without approved identities)
+        'num_services': all_services.count(),
+        'num_approved_services': num_approved_services,
         # Num emails
-        'percent_services_use_cookies': -1,  # % of services set cookies. (on view and click?)
-        # Num third parties
-        'percent_leak_address': -1,  # % of services leaking email address in any way
-        'percent_embed_thirdparty': -1,  # % of services embed third parties
+        'num_received_mails': all_mails.count(),
+        'percent_services_use_cookies': services_using_cookies / num_approved_services * 100,  # % of services set cookies. (on view and click?)
+        'hosts_receiving_connections': num_hosts,  # Num third parties
+        'percent_leak_address': services_with_address_disclosure / num_approved_services * 100,  # % of services leaking email address in any way
+        'percent_embed_thirdparty': services_embedding_third_parties / num_approved_services * 100,  # % of services embed third parties
         'thirdparties_on_view': {  # third parties that are loaded by emails on view
             'min': -1,
             'max': -1,
@@ -84,6 +108,8 @@ def create_third_party_cache(thirdparty, force=False):
         service_dict['receives_address_view'] = embeds_onview.filter(leaks_address=True).exists()
         service_dict['receives_address_click'] = embeds_onclick.filter(leaks_address=True).exists()
         service_dict['sets_cookie'] = embeds.filter(sets_cookie=True).exists()
+        service_dict['receives_identifiers'] = embeds.filter(receives_identifier=True).exists()
+
         services_dict[service] = service_dict
 
     receives_leaks = service_3p_conns.filter(leaks_address=True).exists()
@@ -92,6 +118,7 @@ def create_third_party_cache(thirdparty, force=False):
 
     site_params = {
         'thirdparty': thirdparty,
+        'used_by_num_services': services.count(),
         # How many services embed this third party
         'services': services_dict,
         # services_dict = {
@@ -100,11 +127,11 @@ def create_third_party_cache(thirdparty, force=False):
             #     'address_leak_view': Bool
             #     'address_leak_click': Bool
             #     'sets_cookie': Bool
+        #         'receives_identifiers': Bool
         #     }
         # }
-        # list of services embedding this third party
         'receives_address': receives_leaks,  # done
-        'leak_algorithms': [],  # TODO list of algorithms used to leak the address to this third party
+        # 'leak_algorithms': [],  # TODO list of algorithms used to leak the address to this third party
         'sets_cookies': sets_cookies,
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
@@ -174,6 +201,32 @@ def create_service_cache(service, force=False):
 
     third_parties_dict = {}
 
+    counter_personalised_links = 0
+    personalised_links = []
+    personalised_anchor_links = []
+    personalised_image_links = []
+    num_embedded_links = []
+    avg_personalised_image_links = 0
+    avg_personalised_anchor_links = 0
+    avg_num_embedded_links = 0
+    ratio = 0
+    for mail in service.mails():
+        counter_personalised_links += 1
+        all_static_eresources = Eresource.objects.filter(mail=mail). \
+            filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
+        num_embedded_links.append(all_static_eresources.count())
+        personalised_anchor_links.append(all_static_eresources.filter(type='a', personalised=True).count())
+        personalised_image_links.append(all_static_eresources.filter(type='img', personalised=True).count())
+        personalised_mails = all_static_eresources.filter(personalised=True)
+        personalised_links.append(personalised_mails.count())
+    if counter_personalised_links == 0:
+        ratio = -1
+    else:
+        avg_num_embedded_links = statistics.mean(num_embedded_links)
+        ratio = statistics.mean(personalised_links) / avg_num_embedded_links
+        avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
+        avg_personalised_image_links = statistics.mean(personalised_image_links)
+
     for third_party in third_parties:
         third_party_dict = {}
         embeds = service_3p_conns.filter(thirdparty=third_party)
@@ -183,9 +236,10 @@ def create_service_cache(service, force=False):
         third_party_dict['address_leak_view'] = embeds_onview.filter(leaks_address=True).exists()
         third_party_dict['address_leak_click'] = embeds_onclick.filter(leaks_address=True).exists()
         third_party_dict['sets_cookie'] = embeds.filter(sets_cookie=True).exists()
+        third_party_dict['receives_identifier'] = embeds.filter(receives_identifier=True).exists()
         third_parties_dict[third_party] = third_party_dict
     # static_links =
-    num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
+    # num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
     # Generate site params
     site_params = {
         # old params
@@ -215,19 +269,37 @@ def create_service_cache(service, force=False):
             #     'embed_as': list(embedtypes)
             #     'address_leak_view': Bool
             #     'address_leak_click': Bool
-            #     'sets_cookie': Bool }
+            #     'sets_cookie': Bool
+            #     'receives_identifier': Bool }
         # Leaks email address to third party in any way : done
-        # TODO Performance
         'percent_links_personalised': ratio * 100,  # done
+        'avg_personalised_anchor_links': avg_personalised_anchor_links,
+        'avg_personalised_image_links': avg_personalised_image_links,
+        'num_embedded_links': avg_num_embedded_links,
         # 'personalised_url': 'example.url',  # URL of with (longest) identifier
         # compare DOM-Tree of similar mails
-        'suspected_AB_testing': False,
+        'suspected_AB_testing': emails.filter(possible_AB_testing=True).exists(),
         'third_party_spam': third_party_spam,  # Marked as receiving third party spam.
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
     }
+    # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
     cache.set(service.derive_service_cache_path(), site_params)
+
+
+def analyse_dirty_services():
+    dirty_services = Service.objects.filter(resultsdirty=False)
+    for dirty_service in dirty_services:
+        print(dirty_service)
+        analyze_differences_between_similar_mails(dirty_service)
+        print('Differences Done')
+        for mail in dirty_service.mails():
+            mail.analyze_mail_connections_for_leakage()
+            mail.create_service_third_party_connections()
+        dirty_service.resultsdirty = False
+        dirty_service.save()
+        create_service_cache(dirty_service, True)
 
 
 class Analyser(CronJobBase):
@@ -244,6 +316,10 @@ class Analyser(CronJobBase):
     def do(self):
 
         try:
+            analyse_dirty_services()
+
+
+
             # Number of services that did not receive any mails.
             num_no_mails_received = 0
             identities_that_receive_mails = set()
@@ -713,7 +789,6 @@ def analyze_differences_between_similar_mails(service):
     mean_diff_list = []
     median_diff_list = []
     ratio_list = []
-    # TODO Results from some services are weird, check this!
     for m in mail_set:
         # TODO look for pairs instead of single mails, that have already been processed
         if m.id in already_processed_mails:
@@ -745,12 +820,12 @@ def analyze_differences_between_similar_mails(service):
             if difference_measure < 0.985:
                 logger.warning('Possible A/B testing', extra={'ID first mail': m.id, 'ID second mail': el.id,
                                                               'differences': differences})
+                m.possible_AB_testing = True
+                m.save()
+                el.possible_AB_testing = True
+                el.save()
                 continue
-                # TODO possible A/B testing?
-                # print('Mail1 {}, subject: {}'.format(m.id, m.h_subject))
-                # print('Mail2 {}, subject: {}'.format(el.id, el.h_subject))
-                # print('Difference_metric: {}.'.format(difference_measure))
-                print(differences)
+                # print(differences)
             else:
                 # print(m.get_similar_links(el))
                 # m.get_similar_links(el)
@@ -826,13 +901,19 @@ def thesis_link_personalisation_of_services():
         service_mail_metrics[service]['mean'] = mean
         print('{:<25}: {:<6}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
               .format(service_name, num_pairs, ratio, minimum, maximum, mean, median))
-    # for service in service_mail_metrics:
-    #     total_mail_pairs_analyzed = len(service_mail_metrics[service]['maximums'])
-    #     mean_minimums = statistics.mean(service_mail_metrics[service]['minimums'])
-    #     mean_maximums = statistics.mean(service_mail_metrics[service]['maximums'])
-    #     mean_ratio = statistics.mean(service_mail_metrics[service]['ratios'])
-    #     mean_median = statistics.mean(service_mail_metrics[service]['medians'])
-    #     mean_mean = statistics.mean(service_mail_metrics[service]['means'])
-    #     print('{:<25}: {:<6}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'.
-    #           format(service, total_mail_pairs_analyzed, mean_ratio, mean_minimums, mean_maximums,
-    #                  mean_mean, mean_median))
+
+        counter = 0
+        personalised_links = []
+        total_links = []
+        for mail in service.mails():
+            counter += 1
+            all_static_eresources = Eresource.objects.filter(mail=mail).\
+                filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
+            total_links.append(all_static_eresources.count())
+            personalised_mails = all_static_eresources.filter(personalised=True)
+            personalised_links.append(personalised_mails.count())
+        if counter == 0:
+            print('Continue')
+            continue
+        ratio = statistics.mean(personalised_links) / statistics.mean(total_links)
+        print('Eresource Ratio: {}'.format(ratio))

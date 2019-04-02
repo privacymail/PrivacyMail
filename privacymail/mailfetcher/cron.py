@@ -245,6 +245,10 @@ class ImapFetcher(CronJobBase):
                 mail.analyze_mail_connections_for_leakage()
                 mail.create_service_third_party_connections()
                 mail.processing_state = Mail.PROCESSING_STATES.DONE
+                service = mail.get_service()
+                if service is not None:
+                    service.resultsdirty = True
+                    service.save()
                 mail.save()
 
             # print('All mails processed.')

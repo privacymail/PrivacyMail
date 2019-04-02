@@ -63,9 +63,10 @@ class Mail(models.Model):
     identity = models.ManyToManyField(Identity, related_name='message')
     suspected_spam = models.BooleanField(default=False)
     mail_from_another_identity = models.ManyToManyField("self", symmetrical=True)
-    # processing_state = models.CharField(max_length=50, default='unprocessed', null=False, blank=False)
+    possible_AB_testing = models.BooleanField(default=False)
     processing_state = models.CharField(choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20)
     processing_fails = models.IntegerField(default=0)
+    contains_javascript = models.BooleanField(default=False)
 
     # The message will be saved here. It is not saved in the database and may be recalculated
     # Access by get_message
@@ -86,8 +87,8 @@ class Mail(models.Model):
         print("Message ID: " + message_id + " Subject: " + str(make_header(decode_header(message['subject']))))
         try:
             mail = Mail.objects.get(raw=message_raw)
-            return mail
-            # TODO Only parse non-complete mails?
+            if mail.date_time is not None:
+                return mail
         except ObjectDoesNotExist:
             mail = cls(raw=message_raw, message_id=message_id)
             mail.save()
@@ -105,13 +106,12 @@ class Mail(models.Model):
         mail.message = message
         mail.calc_bodies()
         mail.calc_header()
-        mail.extract_clickable_links()
+        mail.extract_static_links()
         # mail.extract_diff()
         mail.check_for_approved_identity()
         mail.check_for_unusual_sender()
         mail.parse_h_date_create_datetime()
         # mail.get_non_unsubscribe_link()
-
         return mail
 
     # # Raw is an array of lines
@@ -195,8 +195,8 @@ class Mail(models.Model):
         self.h_subject = make_header(decode_header(message['Subject']))
         self.h_date = message['Date']
         self.h_user_agent = message['User-Agent']
-        date_obj = parsedate_to_datetime(self.h_date)
-        self.date_time = date_obj
+        # date_obj = parsedate_to_datetime(self.h_date)
+        # self.date_time = date_obj
 
         identity_set = Identity.objects.filter(Q(mail__in=self.addresses_from_field(self.h_x_original_to)) | Q(mail__in=self.addresses_from_field(self.h_to)) | Q(mail__in=self.addresses_from_field(self.h_cc)))
 
@@ -214,6 +214,8 @@ class Mail(models.Model):
         service = identity.get().service
         for eresource in self.eresource_set.all():
             mail_leakage = eresource.mail_leakage is not None
+            # Mail disclosure is also an identifier.
+            receives_identifier = mail_leakage or eresource.personalised
             if eresource.response_headers is not None:
                 sets_cookie = 'Set-Cookie' in eresource.response_headers
             else:
@@ -222,6 +224,9 @@ class Mail(models.Model):
             def embed_switcher(argument):
                 switcher = {
                     'a': ServiceThirdPartyEmbeds.STATIC,
+                    'img': ServiceThirdPartyEmbeds.STATIC,
+                    'link': ServiceThirdPartyEmbeds.STATIC,
+                    'script': ServiceThirdPartyEmbeds.STATIC,
                     'con': ServiceThirdPartyEmbeds.ONVIEW,
                     'con_click': ServiceThirdPartyEmbeds.ONCLICK,
                 }
@@ -232,7 +237,9 @@ class Mail(models.Model):
                                                                                thirdparty=eresource.host,
                                                                                leaks_address=mail_leakage,
                                                                                sets_cookie=sets_cookie,
-                                                                               embed_type=embed_type, mail=self)
+                                                                               embed_type=embed_type,
+                                                                               receives_identifier=receives_identifier,
+                                                                               mail=self)
 
     @staticmethod
     def addresses_from_field(field):
@@ -266,7 +273,7 @@ class Mail(models.Model):
         # print('Chosen URL to click: %s' % type_a_urls[rand])
         return ''
 
-    def extract_clickable_links(self):
+    def extract_static_links(self):
         # extract external resources for more detailed analysis
         if not self.body_html:
             # TODO Do we want to analyze links of plaintext mails?
@@ -283,8 +290,8 @@ class Mail(models.Model):
                 # Touch the href
                 a["href"]
             except KeyError:
-                print("a tag has no href attribute")
-                print(a.attrs)
+                # print("a tag has no href attribute")
+                # print(a.attrs)
                 continue
             # Remove whitespace and newlines.
             # if a is not None:
@@ -321,12 +328,21 @@ class Mail(models.Model):
             unsub_word_in_link = Eresource.is_unsub_word_in_link(link)
             Eresource.create_clickable(link, unsub_word_in_link, self)
 
+        for img in soup.find_all('img'):
+            Eresource.create_static_eresource(img, 'src', self)
+
+        for link in soup.find_all('link'):
+            Eresource.create_static_eresource(link, 'href', self)
+
+        for script in soup.find_all('script'):
+            Eresource.create_static_eresource(script, 'src', self)
+
     def analyze_mail_connections_for_leakage(self):
         hashdict = None
 
         all_eresources = Eresource.objects.filter(mail=self).exclude(possible_unsub_link=True)
         if self.h_x_original_to is None:
-            print ('Did not find mailaddress. Mail: {}'.format(self))
+            print('Did not find mailaddress. Mail: {}'.format(self))
             return
         hashdict = Mail.generate_match_dict(self.h_x_original_to)
         for eresource in all_eresources:
@@ -413,6 +429,8 @@ class Mail(models.Model):
         :param print_links: prints the links with X for the chars that are different.
         :return: list with links, num_different_links, total_num_links, min_difference, max_difference, mean, median
         """
+        mail1_eresources = Eresource.objects.filter(mail=self, personalised=False).exclude(type='con').exclude(type='con_click')
+        mail2_eresources = Eresource.objects.filter(mail=mail, personalised=False).exclude(type='con').exclude(type='con_click')
         num_different_links = 0
         min_difference = 5000
         max_difference = 0
@@ -440,6 +458,16 @@ class Mail(models.Model):
 
             if len(index) < 1:
                 continue
+            # Mark eresources as personalised.
+            mail1_eresource = mail1_eresources.filter(url=link1)
+            for eresource in mail1_eresource:
+                eresource.personalised = True
+                eresource.save()
+            mail2_eresource = mail2_eresources.filter(url=link2)
+            for eresource in mail2_eresource:
+                eresource.personalised = True
+                eresource.save()
+
             if len(index) < min_difference:
                 min_difference = len(index)
             if len(index) > max_difference:
@@ -710,7 +738,7 @@ class Mail(models.Model):
             command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)
 
             # dump_profile_cookies/dump_flash_cookies closes the current tab.
-            # TODO Not dumping cookies here, as they should be extractable from the response headers.
+            # Not dumping cookies here, as they should be extractable from the response headers.
             # command_sequence.dump_profile_cookies(120)
 
             # index=None browsers visit sites asynchronously
@@ -784,7 +812,6 @@ class Mail(models.Model):
                 is_start_of_chain = True
 
             # eresource is end of chain
-            # TODO set the type to the type of the return headers.
             if new_channel_id is None or new_channel_id == '':
                 r, created = Eresource.objects.get_or_create(type="con", request_headers=request_headers,
                                                              response_headers=response_headers,
@@ -852,7 +879,7 @@ class Mail(models.Model):
             # Start by visiting the page
             command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)
 
-            # todo Not dumping cookies here, as they can be extracted from the response headers
+            # Not dumping cookies here, as they can be extracted from the response headers
             # command_sequence.dump_profile_cookies(120)
 
             # index=None browsers visit sites asynchronously
@@ -910,7 +937,6 @@ class Mail(models.Model):
         # check whether the final url is from the service. If not discard this chain.
         service_url = None
         id = mail.identity.all()
-        print(id)
         if id.exists():
             service_url = id[0].service.url
             for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
@@ -1027,12 +1053,23 @@ class Mail(models.Model):
                     third_party += 1
         return first_party, first_party_personalized, third_party, third_party_personalized
 
+    def get_service(self):
+        identities = self.identity.all()
+        try:
+            return identities[0].service
+        except:
+            return None
+
+
 
 class Eresource(models.Model):
     RESOURCE_TYPES = (
         ('a', 'Link'),
         ('img', 'Image'),
-        ('con', 'Connection')
+        ('con', 'Connection'),
+        ('con_click', 'Connection_clicked'),
+        ('link', 'css'),
+        ('script', 'JavaScript')
     )
     type = models.CharField(max_length=50, choices=RESOURCE_TYPES)
     url = models.TextField(max_length=2000, null=True, blank=True)
@@ -1045,6 +1082,7 @@ class Eresource(models.Model):
     host = models.ForeignKey('Thirdparty', null=True, on_delete=models.SET_NULL)
     diff_eresource = models.ForeignKey('self', related_name='diff', on_delete=models.SET_NULL, null=True)
     mail_leakage = models.TextField(null=True, blank=True)
+    personalised = models.BooleanField(default=False)
     # the eresource this one redirects to
     redirects_to = models.ForeignKey('self', related_name='redirect', on_delete=models.CASCADE, null=True)
     # the url of the eresource this one redirects to
@@ -1063,6 +1101,25 @@ class Eresource(models.Model):
         r, created = Eresource.objects.get_or_create(type="a", url=link["href"],
                                                      possible_unsub_link=possible_unsubscribe_link,
                                                      param=str(link.attrs) + str(link.contents),
+                                                     mail=mail)
+        if created:
+            mail.connect_tracker(eresource=r)
+            r.save()
+
+    @classmethod
+    def create_static_eresource(cls, element, source_string, mail, possible_unsubscribe_link=False):
+        element_string = str(element)
+        if 'javascript' in element_string:
+            mail.contains_javascript = True
+        try:
+            if 'http' not in element[source_string] or element[source_string] is None:
+                return
+        except KeyError:
+            return
+        element[source_string] = ''.join(element[source_string].split())
+        r, created = Eresource.objects.get_or_create(type=element.name, url=element[source_string],
+                                                     possible_unsub_link=possible_unsubscribe_link,
+                                                     param=str(element.attrs) + str(element.contents),
                                                      mail=mail)
         if created:
             mail.connect_tracker(eresource=r)
