@@ -105,7 +105,7 @@ class Mail(models.Model):
         mail.message = message
         mail.calc_bodies()
         mail.calc_header()
-        mail.extract_clickable_links()
+        mail.extract_static_links()
         # mail.extract_diff()
         mail.check_for_approved_identity()
         mail.check_for_unusual_sender()
@@ -266,7 +266,7 @@ class Mail(models.Model):
         # print('Chosen URL to click: %s' % type_a_urls[rand])
         return ''
 
-    def extract_clickable_links(self):
+    def extract_static_links(self):
         # extract external resources for more detailed analysis
         if not self.body_html:
             # TODO Do we want to analyze links of plaintext mails?
@@ -1053,7 +1053,10 @@ class Eresource(models.Model):
     RESOURCE_TYPES = (
         ('a', 'Link'),
         ('img', 'Image'),
-        ('con', 'Connection')
+        ('con', 'Connection'),
+        ('con_click', 'Connection_clicked'),
+        ('link', 'css'),
+        ('script', 'JavaScript')
     )
     type = models.CharField(max_length=50, choices=RESOURCE_TYPES)
     url = models.TextField(max_length=2000, null=True, blank=True)

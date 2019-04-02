@@ -834,10 +834,10 @@ def thesis_link_personalisation_of_services():
         total_links = []
         for mail in service.mails():
             counter += 1
-            all_mails = Eresource.objects.filter(mail=mail).\
-                filter(Q(type='a') | Q(type='link') | Q(type='img'))
-            total_links.append(all_mails.count())
-            personalised_mails = all_mails.filter(personalised=True)
+            all_static_eresources = Eresource.objects.filter(mail=mail).\
+                filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
+            total_links.append(all_static_eresources.count())
+            personalised_mails = all_static_eresources.filter(personalised=True)
             personalised_links.append(personalised_mails.count())
         if counter == 0:
             print('Continue')
