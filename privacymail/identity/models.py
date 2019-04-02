@@ -142,3 +142,4 @@ class ServiceThirdPartyEmbeds(models.Model):
     embed_type = models.CharField(choices=EMBED_TYPES, default=EMBED_TYPES.UNDETERMINED, max_length=20)
     mail = models.ForeignKey('mailfetcher.Mail', on_delete=models.CASCADE, null=True)
     sets_cookie = models.BooleanField(default=False)
+    receives_identifier = models.BooleanField(default=False)

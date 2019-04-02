@@ -213,6 +213,8 @@ class Mail(models.Model):
         service = identity.get().service
         for eresource in self.eresource_set.all():
             mail_leakage = eresource.mail_leakage is not None
+            # Mail disclosure is also an identifier.
+            receives_identifier = mail_leakage or eresource.personalised
             if eresource.response_headers is not None:
                 sets_cookie = 'Set-Cookie' in eresource.response_headers
             else:
@@ -234,7 +236,9 @@ class Mail(models.Model):
                                                                                thirdparty=eresource.host,
                                                                                leaks_address=mail_leakage,
                                                                                sets_cookie=sets_cookie,
-                                                                               embed_type=embed_type, mail=self)
+                                                                               embed_type=embed_type,
+                                                                               receives_identifier=receives_identifier,
+                                                                               mail=self)
 
     @staticmethod
     def addresses_from_field(field):

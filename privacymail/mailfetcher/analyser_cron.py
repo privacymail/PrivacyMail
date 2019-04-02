@@ -245,8 +245,6 @@ def create_service_cache(service, force=False):
             #     'address_leak_click': Bool
             #     'sets_cookie': Bool }
         # Leaks email address to third party in any way : done
-        # TODO Performance
-
         'percent_links_personalised': ratio * 100,  # done
         'avg_personalised_anchor_links': avg_personalised_anchor_links,
         'avg_personalised_image_links': avg_personalised_image_links,
@@ -264,7 +262,7 @@ def create_service_cache(service, force=False):
 
 
 def analyse_dirty_services():
-    dirty_services = Service.objects.filter(resultsdirty=True)
+    dirty_services = Service.objects.filter(resultsdirty=False)
     for dirty_service in dirty_services:
         print(dirty_service)
         analyze_differences_between_similar_mails(dirty_service)
