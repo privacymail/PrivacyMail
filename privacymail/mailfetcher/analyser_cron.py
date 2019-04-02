@@ -31,8 +31,14 @@ def create_summary_cache(force=False):
             services_using_cookies += 1
         if third_party_connections.filter(leaks_address=True).exists():
             services_with_address_disclosure += 1
-        if third_party_connections.exclude(thirdparty=service.url).exists():
-            services_embedding_third_parties += 1
+        tps = Thirdparty.objects.filter(name=service.url)
+        if tps.exists():
+            embeds = False
+            for tp in tps:
+                if third_party_connections.exclude(thirdparty=tp).exists():
+                    embeds = True
+            if embeds:
+                services_embedding_third_parties += 1
 
     hosts = Thirdparty.objects.all()
     num_hosts = hosts.count()
