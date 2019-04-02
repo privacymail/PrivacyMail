@@ -1,5 +1,5 @@
 from django_cron import CronJobBase, Schedule
-from mailfetcher.models import Mail, Eresource, Service
+from mailfetcher.models import Mail, Eresource, Service, Thirdparty
 from identity.models import Identity, ServiceThirdPartyEmbeds
 import statistics
 import tldextract
@@ -19,15 +19,37 @@ def create_summary_cache(force=False):
         if not site_params['cache_dirty']:
             return
     print('Building cache for summary')
+    all_services = Service.objects.all()
+    approved_services = all_services.filter(hasApprovedIdentity=True)
+    num_approved_services = approved_services.count()
+    services_using_cookies = 0
+    services_with_address_disclosure = 0
+    services_embedding_third_parties = 0
+    for service in approved_services:
+        third_party_connections = ServiceThirdPartyEmbeds.objects.filter(service=service)
+        if third_party_connections.filter(sets_cookie=True).exists():
+            services_using_cookies += 1
+        if third_party_connections.filter(leaks_address=True).exists():
+            services_with_address_disclosure += 1
+        if third_party_connections.exclude(thirdparty=service.url).exists():
+            services_embedding_third_parties += 1
+
+    hosts = Thirdparty.objects.all()
+    num_hosts = hosts.count()
+
+    all_mails = Mail.objects.all()
 
     # Generate site params
     site_params = {
         # Num services (num services without approved identities)
+        'num_services': all_services.count(),
+        'num_approved_services': num_approved_services,
         # Num emails
-        'percent_services_use_cookies': -1,  # % of services set cookies. (on view and click?)
-        # Num third parties
-        'percent_leak_address': -1,  # % of services leaking email address in any way
-        'percent_embed_thirdparty': -1,  # % of services embed third parties
+        'num_received_mails': all_mails.count(),
+        'percent_services_use_cookies': services_using_cookies / num_approved_services * 100,  # % of services set cookies. (on view and click?)
+        'hosts_receiving_connections': num_hosts,  # Num third parties
+        'percent_leak_address': services_with_address_disclosure / num_approved_services * 100,  # % of services leaking email address in any way
+        'percent_embed_thirdparty': services_embedding_third_parties / num_approved_services * 100,  # % of services embed third parties
         'thirdparties_on_view': {  # third parties that are loaded by emails on view
             'min': -1,
             'max': -1,
