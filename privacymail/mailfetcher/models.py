@@ -111,7 +111,6 @@ class Mail(models.Model):
         mail.check_for_unusual_sender()
         mail.parse_h_date_create_datetime()
         # mail.get_non_unsubscribe_link()
-
         return mail
 
     # # Raw is an array of lines
@@ -1049,6 +1048,14 @@ class Mail(models.Model):
                 else:
                     third_party += 1
         return first_party, first_party_personalized, third_party, third_party_personalized
+
+    def get_service(self):
+        identities = self.identity.all()
+        try:
+            return identities[0].service
+        except:
+            return None
+
 
 
 class Eresource(models.Model):

@@ -213,7 +213,7 @@ def create_service_cache(service, force=False):
         third_party_dict['sets_cookie'] = embeds.filter(sets_cookie=True).exists()
         third_parties_dict[third_party] = third_party_dict
     # static_links =
-    num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
+    # num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
     # Generate site params
     site_params = {
         # old params
@@ -258,9 +258,23 @@ def create_service_cache(service, force=False):
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
     }
-    # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
+    print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
     cache.set(service.derive_service_cache_path(), site_params)
+
+
+def analyse_dirty_services():
+    dirty_services = Service.objects.filter(resultsdirty=True)
+    for dirty_service in dirty_services:
+        print(dirty_service)
+        analyze_differences_between_similar_mails(dirty_service)
+        print('Differences Done')
+        for mail in dirty_service.mails():
+            mail.analyze_mail_connections_for_leakage()
+            mail.create_service_third_party_connections()
+        dirty_service.resultsdirty = False
+        dirty_service.save()
+        create_service_cache(dirty_service, True)
 
 
 class Analyser(CronJobBase):
@@ -277,7 +291,7 @@ class Analyser(CronJobBase):
     def do(self):
 
         try:
-
+            analyse_dirty_services()
 
 
 
