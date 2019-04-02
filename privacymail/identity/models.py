@@ -88,9 +88,8 @@ class Service(models.Model):
 
     def mails(self):
         Mail = apps.get_model('mailfetcher', 'Mail')
-        # TODO reenable only returning approved identities
-        # return Mail.objects.filter(identity__service=self, identity__approved=True)
-        return Mail.objects.filter(identity__service=self)
+        return Mail.objects.filter(identity__service=self, identity__approved=True)
+        # return Mail.objects.filter(identity__service=self)
 
     # calculate the avererage by Eresource type
     def avg(self, type):
