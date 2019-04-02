@@ -222,6 +222,9 @@ class Mail(models.Model):
             def embed_switcher(argument):
                 switcher = {
                     'a': ServiceThirdPartyEmbeds.STATIC,
+                    'img': ServiceThirdPartyEmbeds.STATIC,
+                    'link': ServiceThirdPartyEmbeds.STATIC,
+                    'script': ServiceThirdPartyEmbeds.STATIC,
                     'con': ServiceThirdPartyEmbeds.ONVIEW,
                     'con_click': ServiceThirdPartyEmbeds.ONCLICK,
                 }
