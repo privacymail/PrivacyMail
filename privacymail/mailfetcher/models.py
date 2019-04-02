@@ -183,7 +183,13 @@ class Mail(models.Model):
 
         self.body_html = body_html
         self.body_plain = body_plain
-        self.save()
+        try:
+            self.save()
+        except ValueError:
+            # Postgresql does not allow nullbytes.
+            self.body_html = body_html
+            self.body_plain = body_plain
+            self.save()
 
     def calc_header(self):
         message = self.get_message()
