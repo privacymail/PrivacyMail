@@ -66,6 +66,7 @@ class Mail(models.Model):
     possible_AB_testing = models.BooleanField(default=False)
     processing_state = models.CharField(choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20)
     processing_fails = models.IntegerField(default=0)
+    contains_javascript = models.BooleanField(default=False)
 
     # The message will be saved here. It is not saved in the database and may be recalculated
     # Access by get_message
@@ -341,7 +342,7 @@ class Mail(models.Model):
 
         all_eresources = Eresource.objects.filter(mail=self).exclude(possible_unsub_link=True)
         if self.h_x_original_to is None:
-            print ('Did not find mailaddress. Mail: {}'.format(self))
+            print('Did not find mailaddress. Mail: {}'.format(self))
             return
         hashdict = Mail.generate_match_dict(self.h_x_original_to)
         for eresource in all_eresources:
@@ -936,7 +937,6 @@ class Mail(models.Model):
         # check whether the final url is from the service. If not discard this chain.
         service_url = None
         id = mail.identity.all()
-        print(id)
         if id.exists():
             service_url = id[0].service.url
             for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
@@ -1108,7 +1108,13 @@ class Eresource(models.Model):
 
     @classmethod
     def create_static_eresource(cls, element, source_string, mail, possible_unsubscribe_link=False):
-        if 'http' not in element[source_string] or element[source_string] is None:
+        element_string = str(element)
+        if 'javascript' in element_string:
+            mail.contains_javascript = True
+        try:
+            if 'http' not in element[source_string] or element[source_string] is None:
+                return
+        except KeyError:
             return
         element[source_string] = ''.join(element[source_string].split())
         r, created = Eresource.objects.get_or_create(type=element.name, url=element[source_string],
