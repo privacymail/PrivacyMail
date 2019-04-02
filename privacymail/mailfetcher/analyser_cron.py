@@ -86,6 +86,8 @@ def create_third_party_cache(thirdparty, force=False):
         service_dict['receives_address_view'] = embeds_onview.filter(leaks_address=True).exists()
         service_dict['receives_address_click'] = embeds_onclick.filter(leaks_address=True).exists()
         service_dict['sets_cookie'] = embeds.filter(sets_cookie=True).exists()
+        service_dict['receives_identifiers'] = embeds.filter(receives_identifier=True).exists()
+
         services_dict[service] = service_dict
 
     receives_leaks = service_3p_conns.filter(leaks_address=True).exists()
@@ -94,6 +96,7 @@ def create_third_party_cache(thirdparty, force=False):
 
     site_params = {
         'thirdparty': thirdparty,
+        'used_by_num_services': services.count(),
         # How many services embed this third party
         'services': services_dict,
         # services_dict = {
@@ -102,11 +105,11 @@ def create_third_party_cache(thirdparty, force=False):
             #     'address_leak_view': Bool
             #     'address_leak_click': Bool
             #     'sets_cookie': Bool
+        #         'receives_identifiers': Bool
         #     }
         # }
-        # list of services embedding this third party
         'receives_address': receives_leaks,  # done
-        'leak_algorithms': [],  # TODO list of algorithms used to leak the address to this third party
+        # 'leak_algorithms': [],  # TODO list of algorithms used to leak the address to this third party
         'sets_cookies': sets_cookies,
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
@@ -258,7 +261,7 @@ def create_service_cache(service, force=False):
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
     }
-    print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
+    # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
     cache.set(service.derive_service_cache_path(), site_params)
 
