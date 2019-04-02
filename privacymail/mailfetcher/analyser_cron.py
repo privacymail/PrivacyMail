@@ -176,6 +176,32 @@ def create_service_cache(service, force=False):
 
     third_parties_dict = {}
 
+    counter_personalised_links = 0
+    personalised_links = []
+    personalised_anchor_links = []
+    personalised_image_links = []
+    num_embedded_links = []
+    avg_personalised_image_links = 0
+    avg_personalised_anchor_links = 0
+    avg_num_embedded_links = 0
+    ratio = 0
+    for mail in service.mails():
+        counter_personalised_links += 1
+        all_static_eresources = Eresource.objects.filter(mail=mail). \
+            filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
+        num_embedded_links.append(all_static_eresources.count())
+        personalised_anchor_links.append(all_static_eresources.filter(type='a', personalised=True).count())
+        personalised_image_links.append(all_static_eresources.filter(type='img', personalised=True).count())
+        personalised_mails = all_static_eresources.filter(personalised=True)
+        personalised_links.append(personalised_mails.count())
+    if counter_personalised_links == 0:
+        ratio = -1
+    else:
+        avg_num_embedded_links = statistics.mean(num_embedded_links)
+        ratio = statistics.mean(personalised_links) / avg_num_embedded_links
+        avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
+        avg_personalised_image_links = statistics.mean(personalised_image_links)
+
     for third_party in third_parties:
         third_party_dict = {}
         embeds = service_3p_conns.filter(thirdparty=third_party)
@@ -222,6 +248,9 @@ def create_service_cache(service, force=False):
         # TODO Performance
 
         'percent_links_personalised': ratio * 100,  # done
+        'avg_personalised_anchor_links': avg_personalised_anchor_links,
+        'avg_personalised_image_links': avg_personalised_image_links,
+        'num_embedded_links': avg_num_embedded_links,
         # 'personalised_url': 'example.url',  # URL of with (longest) identifier
         # compare DOM-Tree of similar mails
         'suspected_AB_testing': emails.filter(possible_AB_testing=True).exists(),
@@ -229,6 +258,7 @@ def create_service_cache(service, force=False):
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
     }
+    print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
     cache.set(service.derive_service_cache_path(), site_params)
 
@@ -247,6 +277,10 @@ class Analyser(CronJobBase):
     def do(self):
 
         try:
+
+
+
+
             # Number of services that did not receive any mails.
             num_no_mails_received = 0
             identities_that_receive_mails = set()
