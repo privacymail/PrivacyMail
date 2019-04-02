@@ -258,7 +258,7 @@ def create_service_cache(service, force=False):
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time()
     }
-    print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
+    # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
     cache.set(service.derive_service_cache_path(), site_params)
 
