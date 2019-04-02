@@ -246,8 +246,9 @@ class ImapFetcher(CronJobBase):
                 mail.create_service_third_party_connections()
                 mail.processing_state = Mail.PROCESSING_STATES.DONE
                 service = mail.get_service()
-                service.resultsdirty = True
-                service.save()
+                if service is not None:
+                    service.resultsdirty = True
+                    service.save()
                 mail.save()
 
             # print('All mails processed.')
