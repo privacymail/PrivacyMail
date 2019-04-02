@@ -290,8 +290,8 @@ class Mail(models.Model):
                 # Touch the href
                 a["href"]
             except KeyError:
-                print("a tag has no href attribute")
-                print(a.attrs)
+                # print("a tag has no href attribute")
+                # print(a.attrs)
                 continue
             # Remove whitespace and newlines.
             # if a is not None:
