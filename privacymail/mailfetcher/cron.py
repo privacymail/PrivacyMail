@@ -47,7 +47,7 @@ class ImapFetcher(CronJobBase):
             return thread
 
         def kill_proc_tree(pid, sig=signal.SIGTERM, include_parent=True,
-                           timeout=None, on_terminate=None):
+                           timeout=1, on_terminate=None):
             """Kill a process tree (including grandchildren) with signal
             "sig" and return a (gone, still_alive) tuple.
             "on_terminate", if specified, is a callabck function which is
@@ -64,12 +64,16 @@ class ImapFetcher(CronJobBase):
                                             callback=on_terminate)
             return (gone, alive)
 
-        def kill_openwpm():
+        def kill_openwpm(ignore=[]):
             for proc in psutil.process_iter():
                 # check whether the process name matches
+                if proc.pid in ignore:
+                    continue
                 if proc.name() in ["geckodriver", "firefox", "firefox-bin"]:
                     # Kill process tree
-                    kill_proc_tree(proc.pid)
+                    gone, alive = kill_proc_tree(proc.pid)
+                    for p in alive:
+                        ignore.append(p.pid)
                     # Recursively call yourself to avoid dealing with a stale PID list
                     return kill_openwpm()
 
