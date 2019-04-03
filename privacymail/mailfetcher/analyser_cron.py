@@ -295,7 +295,7 @@ def create_service_cache(service, force=False):
 
 
 def analyse_dirty_services():
-    dirty_services = Service.objects.filter(resultsdirty=False)
+    dirty_services = Service.objects.filter(resultsdirty=True)
     for dirty_service in dirty_services:
         print(dirty_service)
         analyze_differences_between_similar_mails(dirty_service)
