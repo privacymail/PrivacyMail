@@ -249,3 +249,8 @@ class FaqView(View):
 class ImprintView(View):
     def get(self, request, *args, **kwargs):
         return render(request, 'imprint.html')
+
+
+class PrivacyPolicyView(View):
+    def get(self, request, *args, **kwargs):
+        return render(request, 'privacy.html')
