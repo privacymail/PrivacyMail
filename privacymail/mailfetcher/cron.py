@@ -75,7 +75,7 @@ class ImapFetcher(CronJobBase):
                     for p in alive:
                         ignore.append(p.pid)
                     # Recursively call yourself to avoid dealing with a stale PID list
-                    return kill_openwpm()
+                    return kill_openwpm(ignore=ignore)
 
         # Connect to the imapserver and select the INBOX mailbox.
         def imap_connect(mailserver):
