@@ -24,11 +24,13 @@ class DetailItem():
     text = ""
     icons = []  # Each icon is specified as {"icon": "fa-icon-ident", "tooltip": "tooltip text"}
     link = ""
+    properties = []  # Additional properties of the item
 
-    def __init__(self, text, link, icons=[]):
+    def __init__(self, text, link, icons=[], properties=[]):
         self.text = text
         self.link = link
         self.icons = icons
+        self.properties = properties
 
 
 @register.inclusion_tag('detail.html')
@@ -36,5 +38,6 @@ def show_list_details(item):
     return {
         "text": item.text,
         "link": item.link,
-        "icons": item.icons
+        "icons": item.icons,
+        "properties": item.properties
     }
