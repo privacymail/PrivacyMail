@@ -294,11 +294,8 @@ def create_service_cache(service, force=False):
         'third_party_spam': third_party_spam,  # Marked as receiving third party spam.
         'cache_dirty': False,
         'cache_timestamp': datetime.now().time(),
-        # Information about the service itself
-        'service': {
-            'name': service.name,
-            'url': service.url
-        }
+        # Information about the service itself is added by the wrapper loading the cache.
+        # The service object will be available as site_params["service"].
     }
     # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
