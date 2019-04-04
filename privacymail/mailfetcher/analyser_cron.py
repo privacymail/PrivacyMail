@@ -311,7 +311,7 @@ def analyse_dirty_services():
 
 
 class Analyser(CronJobBase):
-    RUN_EVERY_MINS = 12 * 60  # every 2 hours
+    RUN_EVERY_MINS = 2 * 60  # every 2 hours
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'org.privacy-mail.analyser'    # a unique code
