@@ -324,7 +324,7 @@ class Analyser(CronJobBase):
     def notify_webhook(self, case):
         if settings.CRON_WEBHOOKS:
             try:
-                url = settings.CRON_WEBHOOKS['mailfetcher.analyser_cron.Analyser']['start']
+                url = settings.CRON_WEBHOOKS['mailfetcher.analyser_cron.Analyser'][case]
                 if url:
                     requests.get(url)
             except Exception:
