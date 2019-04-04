@@ -122,22 +122,6 @@ class ThirdPartySpamCheck(Check):
         self.display = True
 
 
-class FirstPartyConnectionCheck(Check):
-    check_id = 2
-    check_title = _("First party connections")
-    check_description = _("Newsletters may contain resources that are dynamically loaded from the newsletter provider, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
-    check_condition = _("This check passes if no connections to the newsletter provider are established when opening the Mail.")
-    check_error = _("This check should not create errors.")
-    check_reliability = RELIABILITY_RELIABLE
-
-    def __init__(self, site_data):
-        if site_data["count_emails"] < 10:
-            self.check_reliability = RELIABILITY_UNRELIABLE
-        # TODO Wait for the new cache format to become available
-        # We probably don't want to count the number of connections, but just have a binary information if a connection is established.
-        pass
-
-
 class OnViewThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when opening the message."""
     check_id = 3
