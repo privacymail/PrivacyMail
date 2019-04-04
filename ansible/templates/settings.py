@@ -170,6 +170,26 @@ CRON_CLASSES = [
     "mailfetcher.analyser_cron.Analyser",
 ]
 
+# Specifies a series of URLs to send GET requests to in specific conditions.
+# Can be used for monitoring scripts, like healtchecks.io, Dead Man's Snitch, ...
+# Structure:
+# CRON_WEBHOOKS = {
+#     "mailfetcher.cron.ImapFetcher": {
+#         "start": None,
+#         "fail": None,
+#         "success": None,
+#     },
+#     "mailfetcher.analyser_cron.Analyser": {
+#         "start": None,
+#         "fail": None,
+#         "success": None,
+#     }
+# }
+# Leave any hooks you do not want to use set to None, and add any URLs you want called as strings
+# You can also set the entire dictionary to None if you don't want to use this feature.
+
+CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
+
 OPENWPM_PATH = '{{ home_dir }}/privacymail/privacymail/runopenwpm.py'
 # Change these in runopenwpm.py as well, if you want to change them
 OPENWPM_DATA_DIR = '{{ home_dir }}/openwpm/data/'
