@@ -122,18 +122,18 @@ class ThirdPartySpamCheck(Check):
         self.display = True
 
 
-class OnViewThirdPartyConnectionCheck(Check):
+class OnViewConnectionCheck(Check):
     """Check if third party services are contacted when opening the message."""
     check_id = 3
-    check_title = _("Third party connections when opening the Mail")
-    check_description = _("Newsletters may contain resources that are dynamically loaded from other websites, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
-    check_condition = _("This check passes if no connections to third parties are established when opening the Mail.")
+    check_title = _("External connections when opening the Mail")
+    check_description = _("Newsletters may contain resources that are dynamically loaded from either the service provider or other websites, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
+    check_condition = _("This check passes if no connections are established when opening the Mail.")
     check_error = _("This check should not create errors.")
     check_reliability = RELIABILITY_RELIABLE
 
     def __init__(self, site_data):
         if "third_parties" not in site_data:
-            logger.error("OnViewThirdPartyConnectionCheck: Missing third_parties in cache.")
+            logger.error("OnViewConnectionCheck: Missing third_parties in cache.")
             self.display = False
             return None
         parties = site_data["third_parties"]
@@ -143,10 +143,14 @@ class OnViewThirdPartyConnectionCheck(Check):
                 # This 3rd party is not included when opening the eMail, skip it
                 continue
             icons = []
+            properties = []
             if parties[party]["address_leak_view"]:
                 # Add a leak icon
                 icons.append({"icon": "fa-tint", "tooltip": "Receives Email leak"})
-            load_parties.append(DetailItem(party.name, "#", icons=icons))
+            if party.name == site_data["service"].name:
+                # Connections to the first party
+                properties.append("first-party")
+            load_parties.append(DetailItem(party.name, "#", icons=icons, properties=properties))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -155,12 +159,12 @@ class OnViewThirdPartyConnectionCheck(Check):
         if len(self.check_additional_data) > 0:
             # TODO Potentially set to critical if eMail is leaked?
             self.check_status = STATUS_BAD
-            self.check_interpretation = ungettext_lazy("%(count)d third party is contacted when viewing the mail with remote content enabled.",
-                                                       "%(count)d third parties are contacted when viewing the mail with remote content enabled.",
+            self.check_interpretation = ungettext_lazy("%(count)d domain is contacted when viewing the mail with remote content enabled.",
+                                                       "%(count)d domains are contacted when viewing the mail with remote content enabled.",
                                                        len(self.check_additional_data)) % {'count': len(self.check_additional_data)}
         else:
             self.check_status = STATUS_GOOD
-            self.check_interpretation = _("No third parties are contacted when viewing the mail.")
+            self.check_interpretation = _("No external domains are contacted when viewing the mail.")
         self.display = True
 
 
@@ -184,6 +188,9 @@ class OnClickThirdPartyConnectionCheck(Check):
         for party in parties.keys():
             if ServiceThirdPartyEmbeds.ONCLICK not in parties[party]["embed_as"]:
                 # This 3rd party is not included when opening the eMail, skip it
+                continue
+            if party.name == site_data["service"].name:
+                # Connections to the service itself are expected
                 continue
             icons = []
             if parties[party]["address_leak_click"]:
@@ -216,4 +223,4 @@ class OnClickThirdPartyConnectionCheck(Check):
 #     check_reliability = RELIABILITY_RELIABLE
 
 
-ALL_CHECKS = [ThirdPartySpamCheck, OnViewThirdPartyConnectionCheck, OnClickThirdPartyConnectionCheck]
+ALL_CHECKS = [ThirdPartySpamCheck, OnViewConnectionCheck, OnClickThirdPartyConnectionCheck]
