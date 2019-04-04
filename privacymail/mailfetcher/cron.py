@@ -14,6 +14,7 @@ from django.core.cache import cache
 import psutil
 import signal
 import os
+import requests
 
 poplib._MAXLINE = 20480
 logger = logging.getLogger(__name__)
@@ -25,7 +26,19 @@ class ImapFetcher(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'org.privacy-mail.imapfetcher'  # a unique code
 
+    def notify_webhook(self, case):
+        if settings.CRON_WEBHOOKS:
+            try:
+                url = settings.CRON_WEBHOOKS['mailfetcher.cron.ImapFetcher'][case]
+                if url:
+                    requests.get(url)
+            except Exception:
+                logger.warning("ImapFetcher: Failed to send start signal.", exc_info=True)
+                # No matter what happens here
+                pass
+
     def do(self):
+        self.notify_webhook('start')
         cache.delete('ImapFetcher')
 
         PORT = 5000
@@ -273,3 +286,4 @@ class ImapFetcher(CronJobBase):
         server.shutdown()
         server.socket.close()
         thread.join(5)
+        self.notify_webhook('success')

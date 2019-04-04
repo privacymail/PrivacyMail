@@ -6,8 +6,10 @@ import tldextract
 import traceback
 import logging
 from django.core.cache import cache
+from django.conf import settings
 from datetime import datetime
 from django.db.models import Q
+import requests
 
 
 logger = logging.getLogger(__name__)
@@ -319,12 +321,22 @@ class Analyser(CronJobBase):
     # embedding = ServiceThirdPartyEmbeds.objects.create(
     #     service=ser, thirdparty=tp)
 
+    def notify_webhook(self, case):
+        if settings.CRON_WEBHOOKS:
+            try:
+                url = settings.CRON_WEBHOOKS['mailfetcher.analyser_cron.Analyser']['start']
+                if url:
+                    requests.get(url)
+            except Exception:
+                logger.warning("ImapFetcher: Failed to send start signal.", exc_info=True)
+                # No matter what happens here
+                pass
+
     def do(self):
 
         try:
+            self.notify_webhook('start')
             analyse_dirty_services()
-
-
 
             # Number of services that did not receive any mails.
             num_no_mails_received = 0
@@ -772,8 +784,11 @@ class Analyser(CronJobBase):
             #     # print(e)
             #     e.delete()
 
-        except Exception:
+            self.notify_webhook('success')
+        except Exception as e:
+            logger.error("AnalyserCron: Exception encoutered: %s" % e.__class__.__name__, exc_info=True)
             traceback.print_exc()
+            self.notify_webhook('fail')
 
 
 def analyze_differences_between_similar_mails(service):
