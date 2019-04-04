@@ -289,7 +289,12 @@ def create_service_cache(service, force=False):
         'suspected_AB_testing': emails.filter(possible_AB_testing=True).exists(),
         'third_party_spam': third_party_spam,  # Marked as receiving third party spam.
         'cache_dirty': False,
-        'cache_timestamp': datetime.now().time()
+        'cache_timestamp': datetime.now().time(),
+        # Information about the service itself
+        'service': {
+            'name': service.name,
+            'url': service.url
+        }
     }
     # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
