@@ -328,7 +328,7 @@ class Analyser(CronJobBase):
                 if url:
                     requests.get(url)
             except Exception:
-                logger.warning("ImapFetcher: Failed to send start signal.", exc_info=True)
+                logger.warning("Analyser.notify_webhook: Failed to send signal.", exc_info=True)
                 # No matter what happens here
                 pass
 
