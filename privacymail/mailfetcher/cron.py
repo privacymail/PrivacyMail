@@ -82,7 +82,7 @@ class ImapFetcher(CronJobBase):
                 # check whether the process name matches
                 if proc.pid in ignore:
                     continue
-                if proc.name() in ["geckodriver", "firefox", "firefox-bin"]:
+                if proc.name() in ["geckodriver", "firefox", "firefox-bin", "Xvfb"]:
                     # Kill process tree
                     gone, alive = kill_proc_tree(proc.pid)
                     for p in alive:
