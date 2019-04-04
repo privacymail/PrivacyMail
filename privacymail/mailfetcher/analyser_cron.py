@@ -231,7 +231,11 @@ def create_service_cache(service, force=False):
         ratio = -1
     else:
         avg_num_embedded_links = statistics.mean(num_embedded_links)
-        ratio = statistics.mean(personalised_links) / avg_num_embedded_links
+        # TODO When does this happen?
+        if avg_num_embedded_links == 0:
+            ratio = 0
+        else:
+            ratio = statistics.mean(personalised_links) / avg_num_embedded_links
         avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
         avg_personalised_image_links = statistics.mean(personalised_image_links)
 
