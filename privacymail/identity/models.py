@@ -86,6 +86,15 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+    def set_has_apprived_identity(self):
+        if self.hasApprovedIdentity:
+            return
+        for identity in self.identity_set.all():
+            if identity.approved:
+                self.hasApprovedIdentity = True
+                self.save()
+
+
     def mails(self):
         Mail = apps.get_model('mailfetcher', 'Mail')
         return Mail.objects.filter(identity__service=self, identity__approved=True)
