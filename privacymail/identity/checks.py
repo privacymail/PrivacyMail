@@ -97,40 +97,9 @@ class Check():
         return True
 
 
-class ServiceThirdPartySpamCheck(Check):
-    """Checks if suspected spam was received from third parties."""
-    check_id = 1
-    # Title of the check
-    check_title = _("Third party spam")
-    # Description
-    check_description = _("Service providers may intentionally or unintentionally disclose your eMail address to third parties, including spammers. We try to detect this by tracking if identities associated with this service start receiving eMails from other senders.")
-    # What is needed to pass this check?
-    check_condition = _("This check fails if a mail arrives from another domain than the domain of the service and the admin manually marked it as spam.")
-    # Errors
-    check_error = _('Due to admin supervision this check should not create errors.')
-    # Reliability
-    check_reliability = RELIABILITY_RELIABLE
-
-    def __init__(self, site_data):
-        if "third_party_spam" not in site_data:
-            logger.error("ServiceThirdPartySpamCheck: Missing key in cache")
-            self.display = False
-            return None
-        tps = site_data["third_party_spam"]
-        if tps == 0:
-            self.check_interpretation = _("No third party spam was detected.")
-            self.check_status = STATUS_GOOD
-        else:
-            self.check_interpretation = ungettext_lazy("%(count)d identity received third party messages.",
-                                                       "%(count)d identities received third party messages.",
-                                                       tps) % {'count': tps}
-            self.check_status = STATUS_BAD
-        self.display = True
-
-
 class ServiceOnViewConnectionCheck(Check):
     """Check if third party services are contacted when opening the message."""
-    check_id = 3
+    check_id = 1
     check_title = _("External connections when opening the Mail")
     check_description = _("Newsletters may contain resources that are dynamically loaded from either the service provider or other websites, allowing them to track when you open the eMail. This check detects the presence of these external resources.")
     check_condition = _("This check passes if no connections are established when opening the Mail.")
@@ -177,7 +146,7 @@ class ServiceOnViewConnectionCheck(Check):
 
 class ServiceOnClickThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when clicking a link in the message."""
-    check_id = 4
+    check_id = 2
     check_title = _("Third party connections when clicking a link")
     check_description = _("Links in the eMail may initially point to third party services such as trackers, which will forward the user to the correct address later. This check detects this kind of tracking behavior.")
     check_condition = _("This check passes if no connections to third parties are established when clicking links from the Mail.")
@@ -218,6 +187,37 @@ class ServiceOnClickThirdPartyConnectionCheck(Check):
         else:
             self.check_status = STATUS_GOOD
             self.check_interpretation = _("No third parties are contacted when clicking a link.")
+        self.display = True
+
+
+class ServiceThirdPartySpamCheck(Check):
+    """Checks if suspected spam was received from third parties."""
+    check_id = 3
+    # Title of the check
+    check_title = _("Third party spam")
+    # Description
+    check_description = _("Service providers may intentionally or unintentionally disclose your eMail address to third parties, including spammers. We try to detect this by tracking if identities associated with this service start receiving eMails from other senders.")
+    # What is needed to pass this check?
+    check_condition = _("This check fails if a mail arrives from another domain than the domain of the service and the admin manually marked it as spam.")
+    # Errors
+    check_error = _('Due to admin supervision this check should not create errors.')
+    # Reliability
+    check_reliability = RELIABILITY_RELIABLE
+
+    def __init__(self, site_data):
+        if "third_party_spam" not in site_data:
+            logger.error("ServiceThirdPartySpamCheck: Missing key in cache")
+            self.display = False
+            return None
+        tps = site_data["third_party_spam"]
+        if tps == 0:
+            self.check_interpretation = _("No third party spam was detected.")
+            self.check_status = STATUS_GOOD
+        else:
+            self.check_interpretation = ungettext_lazy("%(count)d identity received third party messages.",
+                                                       "%(count)d identities received third party messages.",
+                                                       tps) % {'count': tps}
+            self.check_status = STATUS_BAD
         self.display = True
 
 
@@ -326,5 +326,5 @@ class EmbedOnClickThirdPartyConnectionCheck(Check):
 #     check_reliability = RELIABILITY_RELIABLE
 
 
-SERVICE_CHECKS = [ServiceThirdPartySpamCheck, ServiceOnViewConnectionCheck, ServiceOnClickThirdPartyConnectionCheck]
+SERVICE_CHECKS = [ServiceOnViewConnectionCheck, ServiceOnClickThirdPartyConnectionCheck, ServiceThirdPartySpamCheck]
 EMBED_CHECKS = [EmbedOnViewConnectionCheck, EmbedOnClickThirdPartyConnectionCheck]
