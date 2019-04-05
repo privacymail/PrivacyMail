@@ -132,8 +132,8 @@ def create_third_party_cache(thirdparty, force=False):
         # services_dict = {
         #     service:{
         #         embed_as: list{embedtypes}
-            #     'address_leak_view': Bool
-            #     'address_leak_click': Bool
+            #     'receives_address_view': Bool
+            #     'receives_address_click': Bool
             #     'sets_cookie': Bool
         #         'receives_identifiers': Bool
         #     }
