@@ -73,7 +73,7 @@ class Service(models.Model):
                       (TRAVEL, "Travel"),
                       (UNKNOWN, "Unknown"))
 
-    url = models.URLField()  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
+    url = models.CharField(max_length=255)  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
     name = models.CharField(max_length=50)
     thirdparties = models.ManyToManyField('mailfetcher.Thirdparty', through='ServiceThirdPartyEmbeds',
                                           related_name='services')
