@@ -1,4 +1,4 @@
 {% load i18n %}
-{% if icons %}<div class="card-detail-icon">{% for icon in icons %}<i class="fas {{ icon.icon }}" data-toggle="tooltip" data-placement="bottom" title="{{ icon.tooltip }}"></i>{% endfor %}</div>{% endif %}<div class="card-detail-label {% if "first-party" in properties %}card-detail-first-party{% endif %}">
+{% if icons %}<div class="card-detail-icon">{% for icon in icons %}&nbsp;<i class="fas {{ icon.icon }}" data-toggle="tooltip" data-placement="bottom" title="{{ icon.tooltip }}"></i>&nbsp;{% endfor %}</div>{% endif %}<div class="card-detail-label {% if "first-party" in properties %}card-detail-first-party{% endif %}">
     <a href="{{ link }}">{{ text }}</a>
 </div>
