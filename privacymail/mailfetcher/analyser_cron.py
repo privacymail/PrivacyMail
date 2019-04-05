@@ -108,7 +108,7 @@ def create_third_party_cache(thirdparty, force=False):
     services_dict = {}
     for service in services:
         service_dict = {}
-        embeds = service_3p_conns.filter(thirdparty=thirdparty)
+        embeds = service_3p_conns.filter(service=service)
         embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
         embeds_onclick = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONCLICK)
         # TODO check these
@@ -240,6 +240,8 @@ def create_service_cache(service, force=False):
         avg_personalised_image_links = statistics.mean(personalised_image_links)
 
     for third_party in third_parties:
+        # if 'pearl' in service.name:
+        #     print ('')
         third_party_dict = {}
         embeds = service_3p_conns.filter(thirdparty=third_party)
         embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
