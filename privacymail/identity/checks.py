@@ -15,9 +15,13 @@ RELIABILITY_RELIABLE = "reliable"
 RELIABILITY_UNRELIABLE = "unreliable"
 
 
+# Icon definitions
+ICON_LEAK = {"icon": "fa-tint", "tooltip": _("Receives Email leak")}
+
+
 class Check():
     """Template for all checks, subclass this to create new checks, then add the
-    class to ALL_CHECKS above.
+    class to SERVICE_CHECKS or EMBED_CHECKS below.
 
     The best strategy is to set all of these values in the constructor of the class.
     The frontend code will call the getter functions to receive the data to display.
@@ -91,7 +95,7 @@ class Check():
         return True
 
 
-class ThirdPartySpamCheck(Check):
+class ServiceThirdPartySpamCheck(Check):
     """Checks if suspected spam was received from third parties."""
     check_id = 1
     # Title of the check
@@ -107,7 +111,7 @@ class ThirdPartySpamCheck(Check):
 
     def __init__(self, site_data):
         if "third_party_spam" not in site_data:
-            logger.error("ThirdPartySpamCheck: Missing key in cache")
+            logger.error("ServiceThirdPartySpamCheck: Missing key in cache")
             self.display = False
             return None
         tps = site_data["third_party_spam"]
@@ -122,7 +126,7 @@ class ThirdPartySpamCheck(Check):
         self.display = True
 
 
-class OnViewConnectionCheck(Check):
+class ServiceOnViewConnectionCheck(Check):
     """Check if third party services are contacted when opening the message."""
     check_id = 3
     check_title = _("External connections when opening the Mail")
@@ -133,7 +137,7 @@ class OnViewConnectionCheck(Check):
 
     def __init__(self, site_data):
         if "third_parties" not in site_data:
-            logger.error("OnViewConnectionCheck: Missing third_parties in cache.")
+            logger.error("ServiceOnViewConnectionCheck: Missing third_parties in cache.")
             self.display = False
             return None
         parties = site_data["third_parties"]
@@ -146,7 +150,7 @@ class OnViewConnectionCheck(Check):
             properties = []
             if parties[party]["address_leak_view"]:
                 # Add a leak icon
-                icons.append({"icon": "fa-tint", "tooltip": "Receives Email leak"})
+                icons.append(ICON_LEAK)
             if party.name == site_data["service"].name:
                 # Connections to the first party
                 properties.append("first-party")
@@ -168,7 +172,7 @@ class OnViewConnectionCheck(Check):
         self.display = True
 
 
-class OnClickThirdPartyConnectionCheck(Check):
+class ServiceOnClickThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when clicking a link in the message."""
     check_id = 4
     check_title = _("Third party connections when clicking a link")
@@ -179,7 +183,7 @@ class OnClickThirdPartyConnectionCheck(Check):
 
     def __init__(self, site_data):
         if "third_parties" not in site_data:
-            logger.error("OnClickThirdPartyConnectionCheck: Missing third_parties in cache.")
+            logger.error("ServiceOnClickThirdPartyConnectionCheck: Missing third_parties in cache.")
             self.display = False
             return None
 
@@ -195,8 +199,8 @@ class OnClickThirdPartyConnectionCheck(Check):
             icons = []
             if parties[party]["address_leak_click"]:
                 # Add a leak icon
-                icons.append({"icon": "fa-tint", "tooltip": "Receives Email leak"})
-            load_parties.append(DetailItem(party.name, "#"))
+                icons.append(ICON_LEAK)
+            load_parties.append(DetailItem(party.name, "#", icons=icons))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -223,4 +227,4 @@ class OnClickThirdPartyConnectionCheck(Check):
 #     check_reliability = RELIABILITY_RELIABLE
 
 
-ALL_CHECKS = [ThirdPartySpamCheck, OnViewConnectionCheck, OnClickThirdPartyConnectionCheck]
+SERVICE_CHECKS = [ServiceThirdPartySpamCheck, ServiceOnViewConnectionCheck, ServiceOnClickThirdPartyConnectionCheck]

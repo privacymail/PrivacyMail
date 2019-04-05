@@ -166,7 +166,7 @@ class ServiceView(View):
         site_params['checks'] = []
 
         # Run checks
-        for check in checks.ALL_CHECKS:
+        for check in checks.SERVICE_CHECKS:
             site_params['checks'].append(check(site_params))
         return render(request, 'identity/service.html', site_params)
 
