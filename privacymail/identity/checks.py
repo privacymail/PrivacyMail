@@ -218,6 +218,101 @@ class ServiceOnClickThirdPartyConnectionCheck(Check):
         self.display = True
 
 
+# ------------
+# Embed Checks
+# ------------
+class EmbedOnViewConnectionCheck(Check):
+    """Check if third party services are contacted when opening the message."""
+    check_id = 5
+    check_title = _("Contacted on view")
+    check_description = _("If this domain is contacted when opening a newsletter, it may be able to track who is reading the newsletter and when they are doing it.")
+    check_condition = _("This check passes if the website is never contacted when newsletters are opened.")
+    check_error = _("This check should not create errors.")
+    check_reliability = RELIABILITY_RELIABLE
+
+    def __init__(self, site_data):
+        if "services" not in site_data:
+            logger.error("EmbedOnViewConnectionCheck: Missing services in cache.")
+            self.display = False
+            return None
+        parties = site_data["services"]
+        load_parties = []
+        for party in parties.keys():
+            if ServiceThirdPartyEmbeds.ONVIEW not in parties[party]["embed_as"]:
+                # This 3rd party is not included when opening the eMail, skip it
+                continue
+            icons = []
+            properties = []
+            if parties[party]["receives_address_view"]:
+                # Add a leak icon
+                icons.append(ICON_LEAK)
+            if party.url == site_data["embed"].host:
+                # Connections to the first party
+                properties.append("first-party")
+            load_parties.append(DetailItem(party.name, "#", icons=icons, properties=properties))
+
+        # Include the detected third parties as additional data
+        self.check_additional_data = load_parties
+
+        # Set status
+        if len(self.check_additional_data) > 0:
+            # TODO Potentially set to critical if eMail is leaked?
+            self.check_status = STATUS_BAD
+            self.check_interpretation = ungettext_lazy("%(count)d newsletter contacts this domain when viewing the mail with remote content enabled.",
+                                                       "%(count)d newsletters contact this domain when viewing the mail with remote content enabled.",
+                                                       len(self.check_additional_data)) % {'count': len(self.check_additional_data)}
+        else:
+            self.check_status = STATUS_GOOD
+            self.check_interpretation = _("No newsletter contacts this website when being viewed.")
+        self.display = True
+
+
+class EmbedOnClickThirdPartyConnectionCheck(Check):
+    """Check if third party services are contacted when clicking a link in the message."""
+    check_id = 6
+    check_title = _("Contacted on click")
+    check_description = _("If this domain is contacted when clicking a link from a newsletter, it is able to track who is clicking which links and when they are doing it. It may also be able to link this information to additional data it may already have about the user.")
+    check_condition = _("This check passes if no newsletters (except newsletters sent out by this domain) contact this domain when users click a link.")
+    check_error = _("The clicked link from the mail is determined randomly, thus some newsletters may be missed.")
+    check_reliability = RELIABILITY_UNRELIABLE
+
+    def __init__(self, site_data):
+        if "services" not in site_data:
+            logger.error("EmbedOnClickThirdPartyConnectionCheck: Missing services in cache.")
+            self.display = False
+            return None
+
+        parties = site_data["services"]
+        load_parties = []
+        for party in parties.keys():
+            if ServiceThirdPartyEmbeds.ONCLICK not in parties[party]["embed_as"]:
+                # This 3rd party is not included when opening the eMail, skip it
+                continue
+            if party.name == site_data["service"].name:
+                # Connections to the service itself are expected
+                continue
+            icons = []
+            if parties[party]["receives_address_click"]:
+                # Add a leak icon
+                icons.append(ICON_LEAK)
+            load_parties.append(DetailItem(party.name, "#", icons=icons))
+
+        # Include the detected third parties as additional data
+        self.check_additional_data = load_parties
+
+        # Set status
+        if len(self.check_additional_data) > 0:
+            # TODO Potentially set to critical if eMail is leaked?
+            self.check_status = STATUS_BAD
+            self.check_interpretation = ungettext_lazy("%(count)d newsletter contacts this domain when clicking a link.",
+                                                       "%(count)d newsletters contact this domain when clicking a link.",
+                                                       len(self.check_additional_data)) % {'count': len(self.check_additional_data)}
+        else:
+            self.check_status = STATUS_GOOD
+            self.check_interpretation = _("No newsletters contact this domain when links are clicked.")
+        self.display = True
+
+
 # class PersonalizedFirstPartyLinkCheck(Check):
 #     """Check if the eMail contains personalized links to the domain of the first party."""
 #     check_title = _("Personalized links to service")
@@ -228,3 +323,4 @@ class ServiceOnClickThirdPartyConnectionCheck(Check):
 
 
 SERVICE_CHECKS = [ServiceThirdPartySpamCheck, ServiceOnViewConnectionCheck, ServiceOnClickThirdPartyConnectionCheck]
+EMBED_CHECKS = [EmbedOnViewConnectionCheck, EmbedOnClickThirdPartyConnectionCheck]
