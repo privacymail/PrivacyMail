@@ -17,6 +17,7 @@ RELIABILITY_UNRELIABLE = "unreliable"
 
 # Icon definitions
 ICON_LEAK = {"icon": "fa-tint", "tooltip": _("Receives Email leak")}
+ICON_FIRSTPARTY = {"icon": "fa-home", "tooltip": _("Sends the Newsletter")}
 
 
 class Check():
@@ -154,6 +155,7 @@ class ServiceOnViewConnectionCheck(Check):
             if party.name == site_data["service"].name:
                 # Connections to the first party
                 properties.append("first-party")
+                icons.append(ICON_FIRSTPARTY)
             load_parties.append(DetailItem(party.name, "#", icons=icons, properties=properties))
 
         # Include the detected third parties as additional data
@@ -249,6 +251,7 @@ class EmbedOnViewConnectionCheck(Check):
             if party.url == site_data["embed"].host:
                 # Connections to the first party
                 properties.append("first-party")
+                icons.append(ICON_FIRSTPARTY)
             load_parties.append(DetailItem(party.name, "#", icons=icons, properties=properties))
 
         # Include the detected third parties as additional data
