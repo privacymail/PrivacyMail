@@ -292,7 +292,7 @@ class EmbedOnClickThirdPartyConnectionCheck(Check):
             if ServiceThirdPartyEmbeds.ONCLICK not in parties[party]["embed_as"]:
                 # This 3rd party is not included when opening the eMail, skip it
                 continue
-            if party.name == site_data["service"].name:
+            if party.url == site_data["embed"].host:
                 # Connections to the service itself are expected
                 continue
             icons = []
