@@ -3,6 +3,7 @@ from django.utils.translation import ungettext_lazy
 import logging
 from identity.models import ServiceThirdPartyEmbeds
 from identity.templatetags.tags import DetailItem
+from django.urls import reverse
 
 # Get named logger
 logger = logging.getLogger(__name__)
@@ -156,7 +157,7 @@ class ServiceOnViewConnectionCheck(Check):
                 # Connections to the first party
                 properties.append("first-party")
                 icons.append(ICON_FIRSTPARTY)
-            load_parties.append(DetailItem(party.name, "#", icons=icons, properties=properties))
+            load_parties.append(DetailItem(party.name, reverse('Embed', args=(party.pk, )), icons=icons, properties=properties))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -202,7 +203,7 @@ class ServiceOnClickThirdPartyConnectionCheck(Check):
             if parties[party]["address_leak_click"]:
                 # Add a leak icon
                 icons.append(ICON_LEAK)
-            load_parties.append(DetailItem(party.name, "#", icons=icons))
+            load_parties.append(DetailItem(party.name, reverse('Embed', args=(party.pk, )), icons=icons))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -252,7 +253,7 @@ class EmbedOnViewConnectionCheck(Check):
                 # Connections to the first party
                 properties.append("first-party")
                 icons.append(ICON_FIRSTPARTY)
-            load_parties.append(DetailItem(party.name, "#", icons=icons, properties=properties))
+            load_parties.append(DetailItem(party.name, reverse('Service', args=(party.pk, )), icons=icons, properties=properties))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
@@ -298,7 +299,7 @@ class EmbedOnClickThirdPartyConnectionCheck(Check):
             if parties[party]["receives_address_click"]:
                 # Add a leak icon
                 icons.append(ICON_LEAK)
-            load_parties.append(DetailItem(party.name, "#", icons=icons))
+            load_parties.append(DetailItem(party.name, reverse('Service', args=(party.pk, )), icons=icons))
 
         # Include the detected third parties as additional data
         self.check_additional_data = load_parties
