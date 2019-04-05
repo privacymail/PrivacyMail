@@ -32,6 +32,7 @@ from email.utils import parsedate_to_datetime
 import statistics
 import logging
 from django.db import connection
+from django_countries.fields import CountryField
 
 mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
@@ -1155,9 +1156,23 @@ class Eresource(models.Model):
 
 
 class Thirdparty(models.Model):
+    TRACKER = "tracker"
+    CDN = "cdn"
+    ALT_DOMAIN = "altdomain"
+    UNKNOWN = "unknown"
+
+    SECTOR_CHOICES = ((TRACKER, "Tracking / Advertising"),
+                      (CDN, "Hosting / Content Distribution"),
+                      (ALT_DOMAIN, "Alternative Domain of first party"),
+                      (UNKNOWN, "Unknown"))
+
     name = models.CharField(max_length=200, null=False, blank=False)
     host = models.CharField(max_length=200, null=False, blank=False, unique=True)
     resultsdirty = models.BooleanField(default=True)
+
+    # Metadata
+    country_of_origin = CountryField(blank_label='(select country)', blank=True)
+    sector = models.CharField(choices=SECTOR_CHOICES, max_length=30, default=UNKNOWN)
 
     def __str__(self):
         return "({})|{}".format(self.name, self.host)
