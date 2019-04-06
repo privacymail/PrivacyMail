@@ -1,8 +1,8 @@
 from django.core.management.base import BaseCommand
 from django.core.cache import cache
 from identity.models import Service
-from mailfetcher.models import Thirdparty
-from mailfetcher.analyser_cron import thesis_link_personalisation_of_services
+from mailfetcher.models import Thirdparty, Mail, Eresource
+from mailfetcher import analyser_cron
 from identity.views import ServiceView
 import traceback
 
@@ -26,7 +26,13 @@ class Command(BaseCommand):
         # for thirdparty in Thirdparty.objects.all():
         #     create_third_party_cache(thirdparty, force=True)
         try:
-            thesis_link_personalisation_of_services()
+
+            # analyser_cron.thesis_link_personalisation_of_services()
+            analyser_cron.third_party_analization_general()
+            # analyser_cron.address_leakage_statistics()
+            # analyser_cron.long_chains_calculation()
+            # analyser_cron.analyse_ab_testing()
+
         except Exception:
             traceback.print_exc()
 
