@@ -758,7 +758,6 @@ def third_party_analization_general():
 
     # services_to_analyse = Service.objects.filter(pk=1)
     for service in Service.objects.all():
-    # for service in services_to_analyse:
         third_parties_this_mail = {}
         for mail in service.mails():
             # check if we already have this service in our dict
@@ -799,8 +798,6 @@ def third_party_analization_general():
 
     for k, v in s:
         print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service[k])))
-    # for service in third_party_by_service:
-    #     print('{:<25}: {:<5}: {}'.format(service, len(third_party_by_service[service]), third_party_by_service[service]))
 
     third_party_by_service_clicked = {}  # service : third parties
 
@@ -907,15 +904,9 @@ def third_party_analization_general():
     for third_party in service_by_third_party:
         num_service_by_third_party[third_party] = len(service_by_third_party[third_party])
 
-    # s = [(k, num_third_party_by_service_clicked[k])
-    #      for k in sorted(num_third_party_by_service_clicked, key=num_third_party_by_service_clicked.get,
-    #                      reverse=True)]
-
     s = [(k, num_service_by_third_party[k]) for k in sorted(num_service_by_third_party, key=num_service_by_third_party
                                                             .get, reverse=True)]
 
-    # s = [(k, service_by_third_party[k]) for k in sorted(service_by_third_party,
-    #                                                     key=service_by_third_party.get, reverse=True)]
     for k, v in s:
         print('{:<25}: {:<5}: {}: {}'.format(k, str(v), str(third_parties[k]), service_by_third_party[k]))
 
@@ -924,6 +915,7 @@ def third_party_analization_general():
         statistics.mean(third_party_count_per_mail), statistics.median(third_party_count_per_mail)))
     print('Min third parties in a mail: {}'.format(third_parties_min))
     print('Max third parties in a mail: {}'.format(third_parties_max))
+    print('####################\n')
 
 
 def num_services_without_mails():
