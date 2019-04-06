@@ -965,7 +965,7 @@ class Mail(models.Model):
 
                 # If the last domain of a chain is not of our service, it was most likely an external link.
                 # In many cases this would be unfair for the newsletter to track this as a thirdParty/ Tracker.
-                url_domain = tldextract.extract(url).registered_domain()
+                url_domain = tldextract.extract(url).registered_domain
                 if service_url not in url_domain:
                     continue
 
@@ -990,9 +990,9 @@ class Mail(models.Model):
                 r.save()
                 num_eresources = num_eresources + 1
         print('Number of Eresources added to the Database: %s' % num_eresources)
-        if (num_openWpm_entries != num_eresources):
-            print('Different number of entries have been added, than the OpenWPM database returned!')
-            logger.error('Different number of entries have been added, than the OpenWPM database returned!')
+        # if (num_openWpm_entries != num_eresources):
+        #     print('Different number of entries have been added, than the OpenWPM database returned!')
+        #     logger.error('Different number of entries have been added, than the OpenWPM database returned!')
         return True
 
     @staticmethod
