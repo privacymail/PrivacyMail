@@ -602,50 +602,72 @@ def thesis_link_personalisation_of_services():
 
 
 def thesis_link_personalisation_of_services_only_eresources():
-    # services = Service.objects.filter(hasApprovedIdentity=True)
+    # Compute summaries for personalisation of statically extracted URLs.
     services = Service.objects.all()
-    service_mail_metrics = {}
-
-    print('Results of comparing links between similar mails of a service (per mail pair mean).')
-    print('#pairs = number of total pairs compared')
-    print('ratio =mean(number of different links/total number of links)')
-    print('min = the mean minimum of different chars per different link')
-    print('max = the mean maximum of different chars per different link')
-    print('mean = the mean number of different chars per different link')
-    print('median = the mean median of different chars per different link')
-    print('{:<25}: {:<6}: {:<7}: {:<7}: {:<7}: {:<7}: {:<7}'.format('Service', '#pairs', 'ratio', 'min',
-                                                                    'max', 'mean', 'median'))
+    print('Results of comparing links between similar mails of a service (per mail mean).')
+    print('Ratio Total = Ratio of all embedded URLs in the HTML Body that are personalised')
+    print('Ratio Images = Ratio of embedded image URLs in the HTML Body that are personalised')
+    print('Ratio Links = Ratio of embedded link (anchor tags) URLs in the HTML Body that are personalised')
+    print('Ratio Other = Ratio of other (script and link tags) embedded URLs in the HTML Body that are personalised')
+    print('{:<25}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}:'
+          .format('Service', 'Mean Total', 'Ratio Total', 'Mean Images', 'Ratio Images', 'Mean Links', 'Ratio Links',
+                  'Mean Total', 'Ratio Other'))
     for service in services:
         service_name = service.name
-        # if 'gruene.de' not in service.name:
-        #     continue
-        num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
-        service_mail_metrics[service] = {}
-        service_mail_metrics[service]['ratio'] = ratio
-        service_mail_metrics[service]['minimum'] = minimum
-        service_mail_metrics[service]['maximum'] = maximum
-        service_mail_metrics[service]['median'] = median
-        service_mail_metrics[service]['mean'] = mean
-        if num_pairs == 0:
-            continue
-
 
         counter = 0
         personalised_links = []
-        total_links = []
+        personalised_anchor_urls = []
+        personalised_img_urls = []
+        personalised_other_urls = []
+        total_anchor_urls = []
+        total_img_urls = []
+        total_other_urls = []
+        total_urls = []
         for mail in service.mails():
             counter += 1
             all_static_eresources = Eresource.objects.filter(mail=mail).\
                 filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
-            total_links.append(all_static_eresources.count())
-            personalised_mails = all_static_eresources.filter(personalised=True)
-            personalised_links.append(personalised_mails.count())
+            personalised_anchor_urls_eresources = all_static_eresources.filter(type='a')
+            personalised_img_urls_eresources = all_static_eresources.filter(type='img')
+            personalised_other_eresources = all_static_eresources.exclude(type='a').exclude(type='img')
+
+            total_urls.append(all_static_eresources.count())
+            total_anchor_urls.append(personalised_anchor_urls_eresources.count())
+            total_img_urls.append(personalised_img_urls_eresources.count())
+            total_other_urls.append(personalised_other_eresources.count())
+
+            personalised_anchor_urls.append(personalised_anchor_urls_eresources.filter(personalised=True).count())
+            personalised_img_urls.append(personalised_img_urls_eresources.filter(personalised=True).count())
+            personalised_other_urls.append(personalised_other_eresources.filter(personalised=True).count())
+            personalised_links.append(all_static_eresources.filter(personalised=True).count())
         if counter == 0:
             # print('Continue')
             continue
-        ratio = statistics.mean(personalised_links) / statistics.mean(total_links)
-        print('{:<25}: {:<6}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
-              .format(service_name, num_pairs, ratio, minimum, maximum, mean, median))
+
+        mean_total = statistics.mean(total_urls)
+        if mean_total > 0:
+            ratio_total = statistics.mean(personalised_links) / mean_total
+        else:
+            ratio_total = 0
+        mean_personalised_images = statistics.mean(total_img_urls)
+        if mean_personalised_images > 0:
+            ratio_personalised_images = statistics.mean(personalised_img_urls) / mean_personalised_images
+        else:
+            ratio_personalised_images = 0
+        mean_personalised_anchors = statistics.mean(total_anchor_urls)
+        if mean_personalised_anchors > 0:
+            ratio_personalised_anchors = statistics.mean(personalised_anchor_urls) / mean_personalised_anchors
+        else:
+            ratio_personalised_anchors = 0
+        mean_other_urls = statistics.mean(total_other_urls)
+        if mean_other_urls > 0:
+            ratio_other_urls = statistics.mean(personalised_other_urls) / mean_other_urls
+        else:
+            ratio_other_urls = 0
+        print('{:<25}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}'
+              .format(service_name, mean_total, ratio_total, mean_personalised_images, ratio_personalised_images,
+                      mean_personalised_anchors, ratio_personalised_anchors, mean_other_urls, ratio_other_urls))
 
 
 def long_chains_calculation():
