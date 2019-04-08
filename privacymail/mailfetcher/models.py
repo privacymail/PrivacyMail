@@ -1169,6 +1169,10 @@ class Thirdparty(models.Model):
     resultsdirty = models.BooleanField(default=True)
 
     # Metadata
+    # Do not access country_of_origin and sector directly. Instead, use get_country()
+    # and get_sector(), as they also take connections to services into account.
+    # (If a service is associated with this host, the metadata of the service are
+    # used instead of that saved here)
     country_of_origin = CountryField(blank_label='(select country)', blank=True)
     sector = models.CharField(choices=SECTOR_CHOICES, max_length=30, default=UNKNOWN)
     service = models.OneToOneField(Service, on_delete=models.SET_NULL, null=True)
@@ -1193,6 +1197,18 @@ class Thirdparty(models.Model):
     def set_dirty(self):
         self.resultsdirty = True
         self.save()
+
+    def get_country(self):
+        if self.service:
+            return self.service.country_of_origin
+        else:
+            return self.country_of_origin
+
+    def get_sector(self):
+        if self.service:
+            return self.service.get_sector_display()
+        else:
+            return self.get_sector_display()
 
 # class RequestChain(models.Model):
 #     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
