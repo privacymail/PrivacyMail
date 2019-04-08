@@ -941,27 +941,15 @@ class Mail(models.Model):
 
         openWPM_entries = db_cursor.fetchall()
         num_openWpm_entries = len(openWPM_entries)
+
         # check whether the final url is from the service. If not discard this chain.
-        service_url = None
+        service_url = ''
         id = mail.identity.all()
         if id.exists():
             service_url = id[0].service.url
-            for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
-                    in openWPM_entries:
-
-                if new_channel_id is None or new_channel_id == '':
-                    if service_url not in url:
-                        print('Clicked link did not end on services site. Possible link to another website. Skipping.')
-                        # print('service: {}'.format(service_url))
-                        # print('URL: {}'.format(url))
-                        # print('redirects_to: {}'.format(redirects_to))
-                        return True
-                    # print('Correctly ends on service domain.')
-                    # print('service: {}'.format(service_url))
-                    # print('URL: {}'.format(url))
-                    # print('redirects_to: {}'.format(redirects_to))
         else:
             print('Mail has no associated identities.')
+            return True
 
         for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
                 in openWPM_entries:
@@ -975,6 +963,13 @@ class Mail(models.Model):
 
             # eresource is end of chain
             if new_channel_id is None or new_channel_id == '':
+
+                # If the last domain of a chain is not of our service, it was most likely an external link.
+                # In many cases this would be unfair for the newsletter to track this as a thirdParty/ Tracker.
+                url_domain = tldextract.extract(url).registered_domain
+                if service_url not in url_domain:
+                    continue
+
                 r, created = Eresource.objects.get_or_create(type="con_click", request_headers=request_headers,
                                                              response_headers=response_headers, url=url,
                                                              channel_id=channel_id,
@@ -996,9 +991,9 @@ class Mail(models.Model):
                 r.save()
                 num_eresources = num_eresources + 1
         print('Number of Eresources added to the Database: %s' % num_eresources)
-        if (num_openWpm_entries != num_eresources):
-            print('Different number of entries have been added, than the OpenWPM database returned!')
-            logger.error('Different number of entries have been added, than the OpenWPM database returned!')
+        # if (num_openWpm_entries != num_eresources):
+        #     print('Different number of entries have been added, than the OpenWPM database returned!')
+        #     logger.error('Different number of entries have been added, than the OpenWPM database returned!')
         return True
 
     @staticmethod
