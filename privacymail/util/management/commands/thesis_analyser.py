@@ -28,8 +28,8 @@ class Command(BaseCommand):
         try:
 
             # analyser_cron.thesis_link_personalisation_of_services()
-            # analyser_cron.third_party_analization_general()
             # analyser_cron.thesis_link_personalisation_of_services_only_eresources()
+            # analyser_cron.third_party_analization_general()
             # analyser_cron.address_leakage_statistics()
             analyser_cron.long_chains_calculation()
             # analyser_cron.analyse_ab_testing()

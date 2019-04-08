@@ -13,7 +13,7 @@ import requests
 
 
 logger = logging.getLogger(__name__)
-
+LONG_SEPERATOR = '##########################################################'
 
 def create_summary_cache(force=False):
     site_params = cache.get('result_summary')
@@ -507,8 +507,8 @@ def analyze_differences_between_similar_mails(service):
         if len(similar_mails) == 0:
             continue
         for el in similar_mails:
-            if el.id in already_processed_mails:
-                continue
+            # if el.id in already_processed_mails:
+            #     continue
             pairs_analysed += 1
             already_processed_mails[el.id] = True
             # print(el)
@@ -566,7 +566,7 @@ def thesis_link_personalisation_of_services():
     print('max = the mean maximum of different chars per different link')
     print('mean = the mean number of different chars per different link')
     print('median = the mean median of different chars per different link')
-    print('{:<25}: {:<6}: {:<7}: {:<7}: {:<7}: {:<7}: {:<7}'.format('Service', '#pairs', 'ratio', 'min',
+    print('{:<25}: {:<6} : {:<7}: {:<7}: {:<7}: {:<7}'.format('Service', '#pairs', 'min',
                                                                     'max', 'mean', 'median'))
     for service in services:
         service_name = service.name
@@ -581,24 +581,24 @@ def thesis_link_personalisation_of_services():
         service_mail_metrics[service]['mean'] = mean
         if num_pairs == 0:
             continue
-        print('{:<25}: {:<6}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
-              .format(service_name, num_pairs, ratio, minimum, maximum, mean, median))
+        print('{:<25}: {:<6} : {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
+              .format(service_name, num_pairs, minimum, maximum, mean, median))
+    print('\n\n')
+        # counter = 0
+        # personalised_links = []
+        # total_links = []
+        # for mail in service.mails():
+        #     counter += 1
+        #     all_static_eresources = Eresource.objects.filter(mail=mail).\
+        #         filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
+        #     total_links.append(all_static_eresources.count())
+        #     personalised_mails = all_static_eresources.filter(personalised=True)
+        #     personalised_links.append(personalised_mails.count())
+        # if counter == 0:
+        #     # print('Continue')
+        #     continue
+        # ratio = statistics.mean(personalised_links) / statistics.mean(total_links)
 
-        counter = 0
-        personalised_links = []
-        total_links = []
-        for mail in service.mails():
-            counter += 1
-            all_static_eresources = Eresource.objects.filter(mail=mail).\
-                filter(Q(type='a') | Q(type='link') | Q(type='img') | Q(type='script'))
-            total_links.append(all_static_eresources.count())
-            personalised_mails = all_static_eresources.filter(personalised=True)
-            personalised_links.append(personalised_mails.count())
-        if counter == 0:
-            # print('Continue')
-            continue
-        ratio = statistics.mean(personalised_links) / statistics.mean(total_links)
-        print('Eresource Ratio: {}'.format(ratio))
 
 
 def thesis_link_personalisation_of_services_only_eresources():
@@ -717,9 +717,9 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
             print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}'.format(service.name, mean_length, median_length, max_length))
         print('\n')
         print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}'.format('All Services Mean',
-                                                             statistics.mean(mean_length),
-                                                             statistics.mean(median_length),
-                                                             statistics.mean(max_length)))
+                                                             statistics.mean(total_means),
+                                                             statistics.mean(total_medians),
+                                                             statistics.mean(total_max)))
         print('\n')
 
     if print_long_chains:
@@ -733,6 +733,7 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
 
 
 def long_chains_calculation():
+    print(LONG_SEPERATOR)
     print('############# The longest chains that leak the mailaddress when viewing: #############')
     # longest_chain = 0
     eresource_set = Eresource.objects.exclude(mail_leakage__isnull=True).exclude(possible_unsub_link=True) \
@@ -740,12 +741,14 @@ def long_chains_calculation():
             # .filter(url__contains='washingtonexaminer')
     chains_calculation_helper(eresource_set, True, True)
 
+    print(LONG_SEPERATOR)
     print('############# The longest chains for an embedded external resource: #############')
     eresource_set = Eresource.objects.filter(mail_leakage__isnull=False).exclude(possible_unsub_link=True) \
             .filter(type='con').exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
     # .filter(url__contains='washingtonexaminer')
     chains_calculation_helper(eresource_set, True, True)
 
+    print(LONG_SEPERATOR)
     print('############# The longest chain after clicking a link: #############')
     eresource_set = Eresource.objects.filter(type='con_click').exclude(possible_unsub_link=True)\
         .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
@@ -809,6 +812,7 @@ def third_party_analization_general():
                 service_by_third_party[third_party_domain] = set()
                 service_by_third_party[third_party_domain].add(service.name)
 
+    print(LONG_SEPERATOR)
     print('Services that embed third parties without clicking links:')
     # Count, how many third parties each service uses.
     num_third_party_by_service = {}
@@ -820,6 +824,8 @@ def third_party_analization_general():
 
     for k, v in s:
         print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service[k])))
+    print('\n\n')
+
 
     third_party_by_service_clicked = {}  # service : third parties
 
@@ -838,7 +844,7 @@ def third_party_analization_general():
                         tldextract.extract(settings.LOCALHOST_URL).registered_domain in third_party_domain:
                     continue
                 third_party_by_service_clicked[service.name].add(third_party_domain)
-
+    print(LONG_SEPERATOR)
     print('Services that embed third parties with clicking links:')
     # Count, how many third parties each service uses.
     num_third_party_by_service_clicked = {}
@@ -849,6 +855,7 @@ def third_party_analization_general():
                          reverse=True)]
     for k, v in s:
         print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service_clicked[k])))
+    print('\n\n')
 
     # How many % of mails embed third party resources?
     all_mails = Mail.objects.all()
@@ -917,6 +924,7 @@ def third_party_analization_general():
     print('Min. ext resources of a mail: {}'.format(low))
     print('Max. ext resources of a mail: {}\n'.format(high))
 
+    print(LONG_SEPERATOR)
     print('{} different third parties found.'.format(len(third_parties)))
     print('#mails = Number of mails that try load the third party')
     print('usage = Number of services using the third party')
@@ -932,12 +940,12 @@ def third_party_analization_general():
     for k, v in s:
         print('{:<25}: {:<5}: {}: {}'.format(k, str(v), str(third_parties[k]), service_by_third_party[k]))
 
-    print('#########\n')
+    print(LONG_SEPERATOR)
     print('{:.2f} third parties on average per mail with a median of {}'.format(
         statistics.mean(third_party_count_per_mail), statistics.median(third_party_count_per_mail)))
     print('Min third parties in a mail: {}'.format(third_parties_min))
     print('Max third parties in a mail: {}'.format(third_parties_max))
-    print('####################\n')
+    print(LONG_SEPERATOR + '\n')
 
 
 def num_services_without_mails():
