@@ -1007,10 +1007,13 @@ class Mail(models.Model):
         if localHost in host:
             return
 
-        thirdparty, created = Thirdparty.objects.update_or_create(name=host, host=host,
-                                                                  defaults={'resultsdirty': True}, )
+        try:
+            thirdparty = Thirdparty.objects.get(name=host, host=host)
+        except ObjectDoesNotExist:
+            thirdparty = Thirdparty.create(name=host, host=host)
         eresource.host = thirdparty
         eresource.save()
+        thirdparty.set_dirty()
 
     @cached_property
     def get_cleartext(self):
@@ -1175,6 +1178,21 @@ class Thirdparty(models.Model):
 
     def derive_thirdparty_cache_path(self):
         return 'frontend.ThirdPartyView.result.' + str(self.id) + ".site_params"
+
+    @classmethod
+    def create(cls, name, host):
+        tp = cls(name=name, host=host)
+        try:
+            service = Service.objects.get(url=host)
+            tp.service = service
+        except ObjectDoesNotExist:
+            pass
+        tp.save()
+        return tp
+
+    def set_dirty(self):
+        self.resultsdirty = True
+        self.save()
 
 # class RequestChain(models.Model):
 #     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
