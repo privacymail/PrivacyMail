@@ -307,7 +307,7 @@ def create_service_cache(service, force=False):
 def analyse_dirty_services():
     dirty_services = Service.objects.filter(resultsdirty=True)
     for dirty_service in dirty_services:
-        dirty_service.set_has_apprived_identity()
+        dirty_service.set_has_approved_identity()
         print(dirty_service)
         analyze_differences_between_similar_mails(dirty_service)
         print('Differences Done')
