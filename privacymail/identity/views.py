@@ -276,8 +276,6 @@ class EmbedView(View):
         else:
             site_params['form'] = form
 
-        site_params['embed'] = embed
-
         site_params['checks'] = []
         # Add any checks that should be run on embeds
         for check in checks.EMBED_CHECKS:
@@ -294,6 +292,8 @@ class EmbedView(View):
             return None
 
         # TODO Add additional uncached metadata here
+        site_params['country'] = embed.get_country()
+        site_params['sector'] = embed.get_sector()
         return site_params
 
 

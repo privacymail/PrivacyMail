@@ -54,6 +54,11 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title text-center">{% trans 'More information' %}</h4>
+                            {% if embed.service %}
+                                <p class="card-text"><strong>{% trans 'Sector' %}</strong>: {{ sector }} <br> 
+                                    <strong>{% trans 'Country' %}</strong>: {% if country %}{{country.name}}{% else %}{% trans 'Unknown' %}{% endif %}</p>
+                                <p class="card-text"><strong>{% trans 'Want to update this?' %}</strong> {% trans 'This data was loaded from the information of the associated newsletter.' %} <a href="/service/{{ embed.service.id }}/">{% trans 'Update it there' %}</a>.</p>
+                            {% else %}
                                 {% if embed.country_of_origin != "" and embed.sector != "unknown" %}
                                 <p class="card-text"><strong>{% trans 'Sector' %}</strong>: {{ embed.get_sector_display }} <br> 
                                     <strong>{% trans 'Country' %}</strong>: {{embed.country_of_origin.name}}</p>
@@ -66,6 +71,7 @@
                                     {% bootstrap_button "Update" button_type="submit" button_class="btn-info w-100" %}
                                 </form>
                                 {% endif %}{# End if-country-is-set #}
+                            {% endif %}{# End if-related-service-is-set #}
                         </div>
                     </div>
                 </div>
