@@ -40,13 +40,13 @@
                     {% endfor %}
                 </div>
                 <div class="col-lg-4 text-left">
-                    {% if service %}
+                    {% if thirdparty.service %}
                     <div class="card bg-success">
                         <div class="card-body">
                             <h4 class="card-title text-center">Registered Newsletter</h4>
                             <p class="card-text">
                                 {% trans 'This Domain sends out a newsletter.' %}
-                                <a href="/service/{{ service.id }}/">{% trans 'See results' %}</a>.
+                                <a href="/service/{{ thirdparty.service.id }}/">{% trans 'See results' %}</a>.
                             </p>
                         </div>
                     </div>

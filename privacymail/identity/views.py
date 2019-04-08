@@ -294,13 +294,6 @@ class EmbedView(View):
             return None
 
         # TODO Add additional uncached metadata here
-        try:
-            # Check if we have an associated newsletter service
-            assoc_service = Service.objects.get(url=embed.host)
-            site_params["service"] = assoc_service
-        except ObjectDoesNotExist:
-            site_params["service"] = None
-
         return site_params
 
 
