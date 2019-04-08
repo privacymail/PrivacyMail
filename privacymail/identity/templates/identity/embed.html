@@ -40,13 +40,13 @@
                     {% endfor %}
                 </div>
                 <div class="col-lg-4 text-left">
-                    {% if thirdparty.service %}
+                    {% if embed.service %}
                     <div class="card bg-success">
                         <div class="card-body">
                             <h4 class="card-title text-center">Registered Newsletter</h4>
                             <p class="card-text">
                                 {% trans 'This Domain sends out a newsletter.' %}
-                                <a href="/service/{{ thirdparty.service.id }}/">{% trans 'See results' %}</a>.
+                                <a href="/service/{{ embed.service.id }}/">{% trans 'See results' %}</a>.
                             </p>
                         </div>
                     </div>
@@ -54,18 +54,18 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title text-center">{% trans 'More information' %}</h4>
-                            {% if embed.country_of_origin != "" and embed.sector != "unknown" %}
+                                {% if embed.country_of_origin != "" and embed.sector != "unknown" %}
                                 <p class="card-text"><strong>{% trans 'Sector' %}</strong>: {{ embed.get_sector_display }} <br> 
                                     <strong>{% trans 'Country' %}</strong>: {{embed.country_of_origin.name}}</p>
-                            {% else %}
-                            <p class="card-text">{% trans 'Know this website? Tell us more about it:' %}</p>
-                            <form action='/embed/{{embed.id}}/set_meta/' method="POST">
-                                {% csrf_token %}
-                                <input type="text" name="embedID" value="{{embed.id}}" class="d-none" />
-                                {% bootstrap_form form %}
-                                {% bootstrap_button "Update" button_type="submit" button_class="btn-info w-100" %}
-                            </form>
-                            {% endif %}
+                                {% else %}
+                                <p class="card-text">{% trans 'Know this website? Tell us more about it:' %}</p>
+                                <form action='/embed/{{embed.id}}/set_meta/' method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" name="embedID" value="{{embed.id}}" class="d-none" />
+                                    {% bootstrap_form form %}
+                                    {% bootstrap_button "Update" button_type="submit" button_class="btn-info w-100" %}
+                                </form>
+                                {% endif %}{# End if-country-is-set #}
                         </div>
                     </div>
                 </div>

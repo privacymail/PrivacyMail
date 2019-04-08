@@ -125,7 +125,7 @@ def create_third_party_cache(thirdparty, force=False):
     # Generate site params
 
     site_params = {
-        'thirdparty': thirdparty,
+        'embed': thirdparty,
         'used_by_num_services': services.count(),
         # How many services embed this third party
         'services': services_dict,
