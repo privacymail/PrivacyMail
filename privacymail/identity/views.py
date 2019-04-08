@@ -106,7 +106,7 @@ class IdentityView(View):
             return redirect('Home')
 
         # Get or create service
-        service, created = Service.objects.get_or_create(url=domain, name=domain)
+        service, created = Service.get_or_create(url=domain, name=domain)
         service.save()
 
         # Select a domain to use for the identity

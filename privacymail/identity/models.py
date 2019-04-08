@@ -1,4 +1,5 @@
 from django.db import models
+from django.core import exceptions
 import names
 import random
 from django.apps import apps
@@ -87,6 +88,36 @@ class Service(models.Model):
 
     def __str__(self):
         return self.name
+
+    @classmethod
+    def create(cls, url, name):
+        # Create the service
+        i = cls(url=url, name=name)
+        i.save()
+        # Check if the service already exists as a third party
+        try:
+            tp = apps.get_model('mailfetcher', 'Thirdparty').objects.get(host=url)
+            print("Found third party")
+            # Third party found, set service foreign key and save
+            tp.service = i
+            tp.save()
+            # Check if the third party already has a country of origin associated with it
+            if tp.country_of_origin:
+                # Country defined, take over metadata for the newly created service
+                i.country_of_origin = tp.country_of_origin
+                i.save()
+        except exceptions.ObjectDoesNotExist:
+            # Not yet a known third party host, ignore
+            pass
+        return i
+
+    @classmethod
+    def get_or_create(cls, url, name):
+        cls._for_write = True
+        try:
+            return (cls.objects.get(url=url, name=name), False)
+        except exceptions.ObjectDoesNotExist:
+            return (cls.create(url=url, name=name), True)
 
     def set_has_approved_identity(self):
         if self.hasApprovedIdentity:
