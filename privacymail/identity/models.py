@@ -41,6 +41,7 @@ class Identity(models.Model):
 class Service(models.Model):
     ADULT = "adult"
     ART = "art"
+    ADVERTISING = "ads"
     GAMES = "games"
     ENTERTAINMENT = "entertainment"
     HEALTH = "health"
@@ -58,6 +59,7 @@ class Service(models.Model):
 
     SECTOR_CHOICES = ((ACTIVIST, "Activist"),
                       (ADULT, "Adult"),
+                      (ADVERTISING, "Advertising"),
                       (ART, "Art"),
                       (B2B, "Business-to-Business"),
                       (ENTERTAINMENT, "Entertainment"),
