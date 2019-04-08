@@ -1168,6 +1168,7 @@ class Thirdparty(models.Model):
     # Metadata
     country_of_origin = CountryField(blank_label='(select country)', blank=True)
     sector = models.CharField(choices=SECTOR_CHOICES, max_length=30, default=UNKNOWN)
+    service = models.OneToOneField(Service, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return "({})|{}".format(self.name, self.host)
