@@ -33,6 +33,8 @@ class Command(BaseCommand):
             # analyser_cron.address_leakage_statistics()
             analyser_cron.long_chains_calculation()
             # analyser_cron.analyse_ab_testing()
+            # hm_service = Service.objects.get(name='hm.com')
+            # analyser_cron.analyze_differences_between_similar_mails(hm_service)
 
         except Exception:
             traceback.print_exc()

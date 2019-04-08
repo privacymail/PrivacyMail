@@ -706,7 +706,8 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
         print('mean = Mean length of redirection chains')
         print('median = Median length of redirection chains')
         print('max = Maximum length of redirection chains')
-        print('{:<25} :{:<6}: {:<6}: {:<6}'.format('####### Service', 'mean', 'median', 'max ######'))
+        print('{:<25} :{:<6}: {:<6}: {:<6}: {:<6}'.format('####### Service', 'mean', 'median', 'max',
+                                                          'num_found_chains ######'))
         for service in service_dict.keys():
             mean_length = statistics.mean(service_dict[service]['chain_lengths'])
             total_means.append(mean_length)
@@ -714,7 +715,8 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
             total_medians.append(median_length)
             max_length = max(service_dict[service]['chain_lengths'])
             total_max.append(max_length)
-            print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}'.format(service.name, mean_length, median_length, max_length))
+            print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<6.2f}'.format(
+                service.name, mean_length, median_length, max_length, len(service_dict[service]['chain_lengths'])))
         print('\n')
         print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}'.format('All Services Mean',
                                                              statistics.mean(total_means),
@@ -725,8 +727,9 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
     if print_long_chains:
         for service in service_dict.keys():
             print('Printing longest chains of each service:')
-            print(service)
+
             if len(service_dict[service]['longest_chain']) >= chains_lengths_to_print:
+                print(service)
                 for url in service_dict[service]['longest_chain']:
                     print(url.url)
                 print('\n')
@@ -736,22 +739,22 @@ def long_chains_calculation():
     print(LONG_SEPERATOR)
     print('############# The longest chains that leak the mailaddress when viewing: #############')
     # longest_chain = 0
-    eresource_set = Eresource.objects.exclude(mail_leakage__isnull=True).exclude(possible_unsub_link=True) \
-            .filter(type='con').exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
+    eresource_set = Eresource.objects.filter(type='con').exclude(possible_unsub_link=True) \
+            .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True).exclude(mail_leakage__isnull=True)
             # .filter(url__contains='washingtonexaminer')
     chains_calculation_helper(eresource_set, True, True)
 
     print(LONG_SEPERATOR)
     print('############# The longest chains for an embedded external resource: #############')
-    eresource_set = Eresource.objects.filter(mail_leakage__isnull=False).exclude(possible_unsub_link=True) \
-            .filter(type='con').exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
+    eresource_set = Eresource.objects.filter('con').exclude(possible_unsub_link=True) \
+            .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
     # .filter(url__contains='washingtonexaminer')
     chains_calculation_helper(eresource_set, True, True)
 
     print(LONG_SEPERATOR)
     print('############# The longest chain after clicking a link: #############')
-    eresource_set = Eresource.objects.filter(type='con_click').exclude(possible_unsub_link=True)\
-        .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
+    eresource_set = Eresource.objects.filter(type='con_click').exclude(is_start_of_chain=False)\
+        .exclude(is_end_of_chain=True)
     chains_calculation_helper(eresource_set, True, True)
 
 
