@@ -671,6 +671,7 @@ def thesis_link_personalisation_of_services_only_eresources():
 
 
 def chains_calculation_helper(eresource_set, show_statistics=False, print_long_chains=False, chains_lengths_to_print=5):
+    # This function is very inefficient and memory intensive! Rewrite this!
     leak_chains = {}
     service_dict = {}
     for e in eresource_set:  # \
@@ -703,9 +704,11 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
         total_means = []
         total_medians = []
         total_max = []
+        total_num_chains_per_mail = []
         print('mean = Mean length of redirection chains')
         print('median = Median length of redirection chains')
         print('max = Maximum length of redirection chains')
+        print('num_found_chains = Number of chains per mail')
         print('{:<25} :{:<6}: {:<6}: {:<6}: {:<6}'.format('####### Service', 'mean', 'median', 'max',
                                                           'num_found_chains ######'))
         for service in service_dict.keys():
@@ -715,19 +718,21 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
             total_medians.append(median_length)
             max_length = max(service_dict[service]['chain_lengths'])
             total_max.append(max_length)
+            num_chains_per_mail = len(service_dict[service]['chain_lengths'])/service.mails().count()
+            total_num_chains_per_mail.append(num_chains_per_mail)
             print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<6.2f}'.format(
-                service.name, mean_length, median_length, max_length, len(service_dict[service]['chain_lengths'])))
+                service.name, mean_length, median_length, max_length, num_chains_per_mail))
         print('\n')
-        print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}'.format('All Services Mean',
+        print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<6.2f}'.format('All Services Mean',
                                                              statistics.mean(total_means),
                                                              statistics.mean(total_medians),
-                                                             statistics.mean(total_max)))
+                                                             statistics.mean(total_max),
+                                                             statistics.mean(total_num_chains_per_mail)))
         print('\n')
 
     if print_long_chains:
+        print('Printing longest chains of each service:')
         for service in service_dict.keys():
-            print('Printing longest chains of each service:')
-
             if len(service_dict[service]['longest_chain']) >= chains_lengths_to_print:
                 print(service)
                 for url in service_dict[service]['longest_chain']:
@@ -737,7 +742,7 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
 
 def long_chains_calculation():
     print(LONG_SEPERATOR)
-    print('############# The longest chains that leak the mailaddress when viewing: #############')
+    print('############# The longest chains that leaks the mailaddress when viewing: #############')
     # longest_chain = 0
     eresource_set = Eresource.objects.filter(type='con').exclude(possible_unsub_link=True) \
             .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True).exclude(mail_leakage__isnull=True)
@@ -746,7 +751,7 @@ def long_chains_calculation():
 
     print(LONG_SEPERATOR)
     print('############# The longest chains for an embedded external resource: #############')
-    eresource_set = Eresource.objects.filter('con').exclude(possible_unsub_link=True) \
+    eresource_set = Eresource.objects.filter(type='con').exclude(possible_unsub_link=True) \
             .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
     # .filter(url__contains='washingtonexaminer')
     chains_calculation_helper(eresource_set, True, True)
@@ -785,7 +790,7 @@ def third_party_analization_general():
     third_party_by_service = {}  # service : third parties
 
     # services_to_analyse = Service.objects.filter(pk=1)
-    for service in Service.objects.all():
+    for service in services_receiving_mails():
         third_parties_this_mail = {}
         for mail in service.mails():
             # check if we already have this service in our dict
@@ -826,19 +831,19 @@ def third_party_analization_general():
                                                             reverse=True)]
 
     for k, v in s:
+        if len(third_party_by_service[k]) == 0:
+            third_party_by_service[k] = {}
         print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service[k])))
     print('\n\n')
 
-
     third_party_by_service_clicked = {}  # service : third parties
-
-    for service in Service.objects.all():
+    for service in services_receiving_mails():
         for mail in service.mails():
             # check if we already have this service in our dict
             if service.name not in third_party_by_service_clicked:
                 third_party_by_service_clicked[service.name] = set()
             service_ext = tldextract.extract(service.url)
-            eresource_set = mail.eresource_set.filter(type__contains='con')
+            eresource_set = mail.eresource_set.filter(type='con_click')
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
@@ -848,7 +853,7 @@ def third_party_analization_general():
                     continue
                 third_party_by_service_clicked[service.name].add(third_party_domain)
     print(LONG_SEPERATOR)
-    print('Services that embed third parties with clicking links:')
+    print('Services that embed third parties when only clicking links:')
     # Count, how many third parties each service uses.
     num_third_party_by_service_clicked = {}
     for service in third_party_by_service:
@@ -857,6 +862,8 @@ def third_party_analization_general():
          for k in sorted(num_third_party_by_service_clicked, key=num_third_party_by_service_clicked.get,
                          reverse=True)]
     for k, v in s:
+        if len(third_party_by_service_clicked[k]) == 0:
+            third_party_by_service_clicked[k] = {}
         print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service_clicked[k])))
     print('\n\n')
 
@@ -1021,6 +1028,15 @@ def address_leakage_statistics():
 
 def num_services_receiving_mails():
     return Service.objects.all().count() - num_services_without_mails()
+
+
+def services_receiving_mails():
+    services = Service.objects.all()
+    valid_services = []
+    for service in services:
+        if service.mails().exists():
+            valid_services.append(service)
+    return valid_services
 
 
 def analyse_ab_testing():
