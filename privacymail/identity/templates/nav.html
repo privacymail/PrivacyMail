@@ -13,15 +13,10 @@
             </button>
         </div>
         <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link {% if '/services' in request.path %}active{% endif %}" href="/services">{% trans 'Services' context "Main menu" %}</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {% if '/tracker' in request.path %}active{% endif %}" href="#">{% trans 'Trackers' context "Main menu" %}</a>
-                </li>
-            </ul>
             <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link {% if '/services' in request.path %}active{% endif %}" href="/services">{% trans 'Newsletter List' context "Main menu" %}</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {% if '/learn' in request.path %}active{% endif %}" href="#">{% trans 'Learn' context "Main Menu" %}</a>
                 </li>

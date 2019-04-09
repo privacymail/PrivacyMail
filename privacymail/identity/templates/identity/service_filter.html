@@ -18,14 +18,14 @@ Services - PrivacyMail
 <div class="main main-raised">
     <div class="profile-content">
         <div class="container">
-            <h2 class="text-left">{% trans "Registered Services:" %}</h2>
+            <h2 class="text-left">{% trans "Registered Newsletters:" %}</h2>
             <div class="row">
                 <div class="col-md-9">
                     {% render_table table 'identity/bootstrap4_responsive.html' %}
                 </div>
                 <!-- Filtering -->
                 <div class="col-md-3">
-                    <h4 class="text-left">{% trans 'Find services by...' %}</h4>
+                    <h4 class="text-left">{% trans 'Find newsletter by...' %}</h4>
                     {% if filter %}
                     <form action="" method="GET">
                         {% bootstrap_form filter.form %}

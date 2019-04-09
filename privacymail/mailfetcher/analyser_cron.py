@@ -125,15 +125,15 @@ def create_third_party_cache(thirdparty, force=False):
     # Generate site params
 
     site_params = {
-        'thirdparty': thirdparty,
+        'embed': thirdparty,
         'used_by_num_services': services.count(),
         # How many services embed this third party
         'services': services_dict,
         # services_dict = {
         #     service:{
         #         embed_as: list{embedtypes}
-            #     'address_leak_view': Bool
-            #     'address_leak_click': Bool
+            #     'receives_address_view': Bool
+            #     'receives_address_click': Bool
             #     'sets_cookie': Bool
         #         'receives_identifiers': Bool
         #     }
@@ -307,7 +307,7 @@ def create_service_cache(service, force=False):
 def analyse_dirty_services():
     dirty_services = Service.objects.filter(resultsdirty=True)
     for dirty_service in dirty_services:
-        dirty_service.set_has_apprived_identity()
+        dirty_service.set_has_approved_identity()
         print(dirty_service)
         analyze_differences_between_similar_mails(dirty_service)
         print('Differences Done')

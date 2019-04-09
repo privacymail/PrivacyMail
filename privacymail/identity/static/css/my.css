@@ -184,11 +184,11 @@ h2 > small {
 
 /** Result cards **/
 .card-status-bad {
-    background: #fb901b; /* Old browsers */
-    background: -moz-linear-gradient(left, #fb901b 0%, #fb901b 20px, #ffffff 25px, #ffffff 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(left, #fb901b 0%,#fb901b 20px,#ffffff 25px,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to right, #fb901b 0%,#fb901b 20px,#ffffff 25px,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fb901b', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
+    background: #ff9800; /* Old browsers */
+    background: -moz-linear-gradient(left, #ff9800 0%, #ff9800 20px, #ffffff 25px, #ffffff 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(left, #ff9800 0%,#ff9800 20px,#ffffff 25px,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to right, #ff9800 0%,#ff9800 20px,#ffffff 25px,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ff9800', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
 }
 
 .card-status-good {
@@ -204,7 +204,7 @@ h2 > small {
     background: -moz-linear-gradient(left, #d6d6d6 0%, #d6d6d6 20px, #ffffff 25px, #ffffff 100%); /* FF3.6-15 */
     background: -webkit-linear-gradient(left, #d6d6d6 0%,#d6d6d6 20px,#ffffff 25px,#ffffff 100%); /* Chrome10-25,Safari5.1-6 */
     background: linear-gradient(to right, #d6d6d6 0%,#d6d6d6 20px,#ffffff 25px,#ffffff 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fb901b', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d6d6d6', endColorstr='#ffffff',GradientType=1 ); /* IE6-9 */
 }
 .card-detail-label {
     display: inline-block;

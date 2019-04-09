@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load tags %}
+{% load countries %}
+{% load widget_tweaks %}
+{% load i18n %}
+{% load bootstrap4 %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'flags/sprite.css' %}">
+{% endblock %}
+
+{% block title %}
+{{ embed.name }} - PrivacyMail
+{% endblock%}
+
+{% block page %}
+<div class="page-header header-filter" data-parallax="true" style="background-image: url('{% static 'img/letter.jpg' %}');"></div>
+<div class="main main-raised">
+    <div class="profile-content">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h5 class="mb-0">{% trans 'SHOWING RESULTS FOR' %}</h5>
+                    <h2 class="mt-0">{{ embed.name }}</h2>
+                </div>
+            </div>
+            <div class="row">
+                {% if error %}
+                <div class="col-lg-8 text-center">
+                    <p><i class="fas fa-5x fa-exclamation-triangle"></i></p>
+                    <p>{% trans 'Server Error' %}</p>
+                    <p class="text-left">{% blocktrans %}Looks like there is a problem on our end. Please check back in a couple of minutes, or contact us if the problem persists.{% endblocktrans %}</p>
+                    <!-- Error: {{ error }} -->
+                </div>
+                {% else %}
+                <div class="col-lg-8 text-left">
+                    {% for check in checks %}
+                    {% show_check check %}
+                    {% endfor %}
+                </div>
+                <div class="col-lg-4 text-left">
+                    {% if embed.service %}
+                    <div class="card bg-success">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">Registered Newsletter</h4>
+                            <p class="card-text">
+                                {% trans 'This Domain sends out a newsletter.' %}
+                                <a href="/service/{{ embed.service.id }}/">{% trans 'See results' %}</a>.
+                            </p>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title text-center">{% trans 'More information' %}</h4>
+                            {% if embed.service %}
+                                <p class="card-text"><strong>{% trans 'Sector' %}</strong>: {{ sector }} <br> 
+                                    <strong>{% trans 'Country' %}</strong>: {% if country %}{{country.name}}{% else %}{% trans 'Unknown' %}{% endif %}</p>
+                                <p class="card-text"><strong>{% trans 'Want to update this?' %}</strong> {% trans 'This data was loaded from the information of the associated newsletter.' %} <a href="/service/{{ embed.service.id }}/">{% trans 'Update it there' %}</a>.</p>
+                            {% else %}
+                                {% if embed.country_of_origin != "" and embed.sector != "unknown" %}
+                                <p class="card-text"><strong>{% trans 'Sector' %}</strong>: {{ embed.get_sector_display }} <br> 
+                                    <strong>{% trans 'Country' %}</strong>: {{embed.country_of_origin.name}}</p>
+                                {% else %}
+                                <p class="card-text">{% trans 'Know this website? Tell us more about it:' %}</p>
+                                <form action='/embed/{{embed.id}}/set_meta/' method="POST">
+                                    {% csrf_token %}
+                                    <input type="text" name="embedID" value="{{embed.id}}" class="d-none" />
+                                    {% bootstrap_form form %}
+                                    {% bootstrap_button "Update" button_type="submit" button_class="btn-info w-100" %}
+                                </form>
+                                {% endif %}{# End if-country-is-set #}
+                            {% endif %}{# End if-related-service-is-set #}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

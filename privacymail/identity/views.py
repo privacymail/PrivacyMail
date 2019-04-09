@@ -106,7 +106,7 @@ class IdentityView(View):
             return redirect('Home')
 
         # Get or create service
-        service, created = Service.objects.get_or_create(url=domain, name=domain)
+        service, created = Service.get_or_create(url=domain, name=domain)
         service.save()
 
         # Select a domain to use for the identity
@@ -166,7 +166,7 @@ class ServiceView(View):
         site_params['checks'] = []
 
         # Run checks
-        for check in checks.ALL_CHECKS:
+        for check in checks.SERVICE_CHECKS:
             site_params['checks'].append(check(site_params))
         return render(request, 'identity/service.html', site_params)
 
@@ -239,6 +239,95 @@ class ServiceListView(SingleTableMixin, FilterView):
     template_name = "service_filter.html"
     paginate_by = 25
     filterset_class = ServiceFilter
+
+
+class EmbedView(View):
+    def get(self, request, *args, **kwargs):
+        # Check if the kwarg is even set
+        try:
+            sid = kwargs['embed']
+        except KeyError:
+            # No service kwarg is set, warn
+            logger.info('EmbedView.get: Malformed GET request received', extra={'request': request})
+            # TODO: Add code to display a warning on homepage
+            return redirect('Home')
+
+        try:
+            embed = Thirdparty.objects.get(id=sid)
+        except ObjectDoesNotExist:
+            logger.info("EmbedView.get: Invalid service requested", extra={'request': request, 'service_id': sid})
+            # TODO: Add code to display a warning on homepage
+            return redirect('Home')
+        return self.render_embed(request, embed)
+
+    @staticmethod
+    def render_embed(request, embed, form=None):
+
+        site_params = EmbedView.get_embed_site_params(embed)
+        if site_params is None:
+            logger.warn("EmbedView.render_embed: Cache miss", extra={'request': request, 'embed_id': embed.id})
+            # Display a warning that the cache isn't up to date
+            # TODO We probably also want to mark the embed as dirty to ensure its generated, just in case stuff went wrong somewhere
+            return render(request, 'identity/embed.html', {"error": "cache miss", "embed": embed})
+
+        # Render the site
+        if form is None:
+            site_params['form'] = forms.EmbedMetadataForm(instance=embed)
+        else:
+            site_params['form'] = form
+
+        site_params['checks'] = []
+        # Add any checks that should be run on embeds
+        for check in checks.EMBED_CHECKS:
+            site_params['checks'].append(check(site_params))
+
+        # Add the object itself
+        return render(request, 'identity/embed.html', site_params)
+
+    @staticmethod
+    def get_embed_site_params(embed):
+        site_params = cache.get(embed.derive_thirdparty_cache_path())
+
+        if site_params is None:
+            return None
+
+        # TODO Add additional uncached metadata here
+        site_params['country'] = embed.get_country()
+        site_params['sector'] = embed.get_sector()
+        return site_params
+
+
+class EmbedMetaView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            sid = request.POST['embedID']
+            if str(sid) != str(kwargs['embed']):
+                # Someone is messing with us
+                logger.warn('EmbedMetaView.post: Provided embed did not match POSTed embed', extra={'request': request, "providedID": kwargs["embed"], "postID": sid})
+                return redirect('Home')
+            # Get service from database
+            embed = Thirdparty.objects.get(id=sid)
+        except KeyError:
+            # No embed kwarg is set, warn
+            logger.warn('EmbedMetaView.post: Malformed POST request received', extra={'request': request})
+            # TODO: Add code to display a warning on homepage
+            return redirect('Home')
+        except ObjectDoesNotExist:
+            logger.warn('EmbedMetaView.post: POST request for non-existing Thirdparty', extra={'request': request})
+            return redirect('Home')
+
+        form = forms.EmbedMetadataForm(request.POST)
+        if not form.is_valid():
+            logger.info('EmbedMetaView.post: Invalid data submitted on metadata form', extra={'request': request, 'form': form})
+            return EmbedView.render(request, embed, form)
+
+        # Form is valid
+        sector = form.cleaned_data['sector']
+        country = form.cleaned_data['country_of_origin']
+        embed.country_of_origin = country
+        embed.sector = sector
+        embed.save()
+        return redirect('Embed', embed=embed.id)
 
 
 class FaqView(View):
