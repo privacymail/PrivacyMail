@@ -170,10 +170,10 @@ class ServiceThirdPartyEmbeds(models.Model):
     UNDETERMINED = 'UNDETERMINED'
 
     EMBED_TYPES = Choices(
-        ('STATIC', 'static'),
-        ('ONVIEW', 'onView'),
-        ('ONCLICK', 'onClick'),
-        ('UNDETERMINED', 'undetermined')
+        (STATIC, 'static'),
+        (ONVIEW, 'onView'),
+        (ONCLICK, 'onClick'),
+        (UNDETERMINED, 'undetermined')
     )
 
     service = models.ForeignKey(Service, related_name='embeds', on_delete=models.SET_NULL, null=True)
