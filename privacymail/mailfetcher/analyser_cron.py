@@ -670,25 +670,30 @@ def thesis_link_personalisation_of_services_only_eresources():
                       mean_personalised_anchors, ratio_personalised_anchors, mean_other_urls, ratio_other_urls))
 
 
-def chains_calculation_helper(eresource_set, show_statistics=False, print_long_chains=False, chains_lengths_to_print=5):
-    # This function is very inefficient and memory intensive! Rewrite this!
+def chains_calculation_helper(eresource_set, show_statistics=False, print_long_chains=False, chains_lengths_to_print=5,
+                              analyse_syncs=False):
+    # This function is very inefficient and memory intensive! Think of a better way to get the median and rewrite this!
     leak_chains = {}
     service_dict = {}
     for e in eresource_set:  # \
         # .exclude(url__icontains='examiner').exclude(url__icontains='nbcnews'):
-        chain = get_url_chain(e)
+        resource_chain = get_url_chain(e)
+        chain = []
+        for u in resource_chain:
+            chain.append(u.url)
 
-        len_chain = len(chain)
+        if len(chain) <= 1:
+            continue
         # if len_chain > 5:
         # longest_chain = len_chain
     #     leak_chains.set(chain)
     # for chain in leak_chains:
-        r = chain[0]
+        r = resource_chain[0]
         identity = r.mail.identity.all()
         if identity.count() > 0:
             service_name = r.mail.identity.get().service
             if service_name in service_dict:
-                if len(chain) > len(service_dict[service_name]['longest_chain']) :
+                if len(chain) > len(service_dict[service_name]['longest_chain']):
                     service_dict[service_name]['longest_chain'] = chain
                     service_dict[service_name]['chain_lengths'].append(len(chain))
                 else:
@@ -696,39 +701,74 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
             else:
                 service_dict[service_name] = {
                     'longest_chain': chain,
-                    'chain_lengths': [len(chain)]
+                    'chain_lengths': [len(chain)],
+                    'sync_chains': [],
+                    'syncing': False
                 }
+
+            # check if we visit a domain a second time, after visiting other domains.
+            if analyse_syncs:
+                prev_domains = set()
+
+                domain_chain = []
+                last_domain = ''
+                for url in chain:
+                    domain_chain.append(tldextract.extract(url).registered_domain)
+                for counter, domain in enumerate(domain_chain):
+                    if counter == 1:
+                        prev_domains.add(domain)
+                        last_domain = domain
+                        continue
+                    if domain == last_domain:
+                        continue
+                    if domain != last_domain:
+                        if domain in prev_domains:
+                            # service_dict[service_name]['sync_chains'].append(chain)
+                            service_dict[service_name]['syncing'] = True
+                            continue
+                        else:
+                            prev_domains.add(domain)
 
     if show_statistics:
         # print('Service = Number of mails that try load the third party')
-        total_means = []
-        total_medians = []
-        total_max = []
-        total_num_chains_per_mail = []
+        total_means = 0
+        total_medians = 0
+        total_max = 0
+        total_num_chains_per_mail = 0
+        service_count = 1
         print('mean = Mean length of redirection chains')
         print('median = Median length of redirection chains')
         print('max = Maximum length of redirection chains')
         print('num_found_chains = Number of chains per mail')
-        print('{:<25} :{:<6}: {:<6}: {:<6}: {:<6}'.format('####### Service', 'mean', 'median', 'max',
-                                                          'num_found_chains ######'))
+        print('{:<25} : {:<6}: {:<6}: {:<6}: {:<11}: {:<6}'.format('####### Service', 'mean', 'median', 'max',
+                                                                   'chains/mail', ' Syncing ######'))
         for service in service_dict.keys():
             mean_length = statistics.mean(service_dict[service]['chain_lengths'])
-            total_means.append(mean_length)
+            total_means += mean_length
             median_length = statistics.median(service_dict[service]['chain_lengths'])
-            total_medians.append(median_length)
+            total_medians += median_length
             max_length = max(service_dict[service]['chain_lengths'])
-            total_max.append(max_length)
+            total_max += max_length
             num_chains_per_mail = len(service_dict[service]['chain_lengths'])/service.mails().count()
-            total_num_chains_per_mail.append(num_chains_per_mail)
-            print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<6.2f}'.format(
-                service.name, mean_length, median_length, max_length, num_chains_per_mail))
+            total_num_chains_per_mail += num_chains_per_mail
+            service_count += 1
+            print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<11.2f}: {:<6}'.format(
+                service.name, mean_length, median_length, max_length, num_chains_per_mail,
+                service_dict[service]['syncing']))
         print('\n')
-        print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<6.2f}'.format('All Services Mean',
-                                                             statistics.mean(total_means),
-                                                             statistics.mean(total_medians),
-                                                             statistics.mean(total_max),
-                                                             statistics.mean(total_num_chains_per_mail)))
-        print('\n')
+        print('{:<25} : {:<6.2f}: {:<6.2f}: {:<6.2f}: {:<6.2f}'.format('All Services Mean', total_means / service_count,
+                                                                       total_medians / service_count,
+                                                                       total_max / service_count,
+                                                                       total_num_chains_per_mail / service_count))
+        # if analyse_syncs:
+        #     print('Printing syncchains of each service:')
+        #     for service in service_dict.keys():
+        #         print(service)
+        #         for url in service_dict[service]['sync_chains']:
+        #             print(url)
+        #         print('\n')
+        #     print(LONG_SEPERATOR)
+        #     print('\n')
 
     if print_long_chains:
         print('Printing longest chains of each service:')
@@ -736,7 +776,7 @@ def chains_calculation_helper(eresource_set, show_statistics=False, print_long_c
             if len(service_dict[service]['longest_chain']) >= chains_lengths_to_print:
                 print(service)
                 for url in service_dict[service]['longest_chain']:
-                    print(url.url)
+                    print(url)
                 print('\n')
 
 
@@ -747,10 +787,18 @@ def long_chains_calculation():
     eresource_set = Eresource.objects.filter(type='con').exclude(possible_unsub_link=True) \
             .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True).exclude(mail_leakage__isnull=True)
             # .filter(url__contains='washingtonexaminer')
+    chains_calculation_helper(eresource_set, True, True, analyse_syncs=True)
+
+    print(LONG_SEPERATOR)
+    print('############# The longest chains that leaks the mailaddress when clicking: #############')
+    # longest_chain = 0
+    eresource_set = Eresource.objects.filter(type='con_click').exclude(possible_unsub_link=True) \
+        .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True).exclude(mail_leakage__isnull=True)
+    # .filter(url__contains='washingtonexaminer')
     chains_calculation_helper(eresource_set, True, True)
 
     print(LONG_SEPERATOR)
-    print('############# The longest chains for an embedded external resource: #############')
+    print('############# The longest chains for an embedded (viewing) external resource: #############')
     eresource_set = Eresource.objects.filter(type='con').exclude(possible_unsub_link=True) \
             .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
     # .filter(url__contains='washingtonexaminer')
