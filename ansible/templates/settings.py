@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'mailfetcher',
     'util',
     'identity',
+    'api',
     'fontawesome',
     'bootstrap_themes',
     'raven.contrib.django.raven_compat',
