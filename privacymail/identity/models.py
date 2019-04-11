@@ -20,18 +20,28 @@ class Identity(models.Model):
 
     @classmethod
     def create(cls, service, domain):
+        def gen_name(gender):
+            if gender:  # if male
+                first_name = names.get_first_name(gender='male')
+            else:
+                first_name = names.get_first_name(gender='female')
+            surname = names.get_last_name()
+            return (first_name, surname)
+
         i = cls(service=service)
         # Generate random gender and name
         i.gender = bool(random.getrandbits(1))
-        if i.gender:  # if male
-            i.first_name = names.get_first_name(gender='male')
-        else:
-            i.first_name = names.get_first_name(gender='female')
-        i.surname = names.get_last_name()
 
-        # A lot of random names can be generated. Therefor we expect the mail to be unique
-        # TODO Ensure that name is not already taken
+        # Keep generating names until we find a pair that is not yet taken
+        while True:
+            first_name, surname = gen_name(i.gender)
+            if not Identity.objects.filter(first_name=first_name, surname=surname).exists():
+                break
+
+        i.first_name = first_name
+        i.surname = surname
         i.mail = "{}.{}@{}".format(i.first_name, i.surname, domain).lower()
+
         i.save()
         return i
 
