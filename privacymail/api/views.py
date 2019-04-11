@@ -6,6 +6,9 @@ from identity.util import validate_domain
 from django.conf import settings
 from identity.models import Identity, Service
 from mailfetcher.analyser_cron import create_service_cache
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class BookmarkletApiView(View):
@@ -46,10 +49,11 @@ class BookmarkletApiView(View):
                 "gender": "Male" if ident.gender else "Female"
             })
         except KeyError:
-            print(request.POST)
+            logger.warning("BookmarkletApiView.post: Malformed request received, missing url.", extra={'request': request})
             r = JsonResponse({"error": "No URL passed"})
         except AssertionError:
             # Invalid URL passed
+            logger.warning("BookmarkletApiView.post: Malformed request received, malformed URL.", extra={'request': request})
             r = JsonResponse({"error": "Invalid URL passed."})
         r["Access-Control-Allow-Origin"] = "*"
         return r
