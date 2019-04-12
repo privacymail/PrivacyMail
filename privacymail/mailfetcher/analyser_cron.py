@@ -928,6 +928,40 @@ def third_party_analization_general():
         print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service_clicked[k])))
     print('\n\n')
 
+    # Clicked and viewed combined
+    third_party_by_service_clicked = {}  # service : third parties
+    for service in services_receiving_mails():
+        for mail in service.mails():
+            # check if we already have this service in our dict
+            if service.name not in third_party_by_service_clicked:
+                third_party_by_service_clicked[service.name] = set()
+            service_ext = tldextract.extract(service.url)
+            eresource_set = mail.eresource_set.filter(type__contains='con')
+            # also not our local host
+            for eresource in eresource_set:
+                resource_ext = tldextract.extract(eresource.url)
+                third_party_domain = resource_ext.domain + '.' + resource_ext.suffix
+                if service_ext.domain in resource_ext.domain or \
+                        tldextract.extract(settings.LOCALHOST_URL).registered_domain in third_party_domain:
+                    continue
+                third_party_by_service_clicked[service.name].add(third_party_domain)
+    print(LONG_SEPERATOR)
+    print('Services that embed third parties combined:')
+    # Count, how many third parties each service uses.
+    num_third_party_by_service_clicked = {}
+    for service in third_party_by_service:
+        num_third_party_by_service_clicked[service] = len(third_party_by_service_clicked[service])
+    s = [(k, num_third_party_by_service_clicked[k])
+         for k in sorted(num_third_party_by_service_clicked, key=num_third_party_by_service_clicked.get,
+                         reverse=True)]
+    for k, v in s:
+        if len(third_party_by_service_clicked[k]) == 0:
+            third_party_by_service_clicked[k] = {}
+        print('{:<25}: {:<5}: {}'.format(k, v, str(third_party_by_service_clicked[k])))
+    print('\n\n')
+
+
+
     # How many % of mails embed third party resources?
     all_mails = Mail.objects.all()
     third_party_embeds = 0  # total embeds
@@ -985,7 +1019,7 @@ def third_party_analization_general():
             third_party_count_per_mail.append(third_parties_this_mail_count)
     percent_of_mail_embed = len(service_set_embedding_resources) / (Service.objects.all().count()
                                                                     - num_services_without_mails()) * 100
-
+    print(LONG_SEPERATOR)
     print('{:.2f}% of services have third party resources embedded. ({} of total {})'
           .format(percent_of_mail_embed, len(service_set_embedding_resources),
                   Service.objects.all().count() - num_services_without_mails()))
