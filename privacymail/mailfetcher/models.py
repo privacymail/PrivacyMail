@@ -677,6 +677,8 @@ class Mail(models.Model):
         for ident in self.identity.all():
             for permitted_domain in ident.service.permitted_senders:
                 if permitted_domain in self.h_from:
+                    self.suspected_spam = False
+                    self.save()
                     return
             # If we reach this point, h_from is not in any permitted sender list
             # Set it to be suspected spam and send a notification.
