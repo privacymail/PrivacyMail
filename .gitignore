@@ -129,3 +129,6 @@ ansible/*.retry
 
 # Temporary editor files
 *.swp
+
+# Personal scripts
+dev.sh
