@@ -10,6 +10,22 @@ View eMail - PrivacyMail
 <div class="page-header header-filter" data-parallax="true" style="background-image: url('{% static 'img/letter.jpg' %}');"></div>
 <div class="main main-raised">
     <div class="profile-content">
+        {% for ident in mail.identity.all %}
+        {% if not ident.approved %}
+        <div class="alert alert-danger">
+            <div class="container"><div class="alert-icon"><i class="material-icons">error_outline</i></div> Unconfirmed Identity</div>
+        </div>
+        {% else %}
+        <div class="alert alert-success">
+            <div class="container"><div class="alert-icon"><i class="material-icons">check</i></div> Identity Confirmed</div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% if mail.suspected_spam %}
+        <div class="alert alert-danger">
+            <div class="container"><div class="alert-icon"><i class="material-icons">error_outline</i></div> Suspected Spam, please verify</div>
+        </div>
+        {% endif %}
         <div class="container">
             <div class="row">
                 <div class="col-md-12">
