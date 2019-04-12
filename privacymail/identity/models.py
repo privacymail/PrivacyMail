@@ -5,6 +5,7 @@ import random
 from django.apps import apps
 from model_utils import Choices
 from django_countries.fields import CountryField
+from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
@@ -88,6 +89,7 @@ class Service(models.Model):
 
     url = models.CharField(max_length=255)  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
     name = models.CharField(max_length=50)
+    permitted_senders = ArrayField(models.CharField(max_length=255))  # List of permitted senders
     thirdparties = models.ManyToManyField('mailfetcher.Thirdparty', through='ServiceThirdPartyEmbeds',
                                           related_name='services')
     resultsdirty = models.BooleanField(default=True)
