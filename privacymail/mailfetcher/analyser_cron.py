@@ -795,20 +795,20 @@ def long_chains_calculation():
     eresource_set = Eresource.objects.filter(type='con_click').exclude(possible_unsub_link=True) \
         .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True).exclude(mail_leakage__isnull=True)
     # .filter(url__contains='washingtonexaminer')
-    chains_calculation_helper(eresource_set, True, True)
+    chains_calculation_helper(eresource_set, True, True, analyse_syncs=True)
 
     print(LONG_SEPERATOR)
     print('############# The longest chains for an embedded (viewing) external resource: #############')
     eresource_set = Eresource.objects.filter(type='con').exclude(possible_unsub_link=True) \
             .exclude(is_start_of_chain=False).exclude(is_end_of_chain=True)
     # .filter(url__contains='washingtonexaminer')
-    chains_calculation_helper(eresource_set, True, True)
+    chains_calculation_helper(eresource_set, True, True, analyse_syncs=True)
 
     print(LONG_SEPERATOR)
     print('############# The longest chain after clicking a link: #############')
     eresource_set = Eresource.objects.filter(type='con_click').exclude(is_start_of_chain=False)\
         .exclude(is_end_of_chain=True)
-    chains_calculation_helper(eresource_set, True, True)
+    chains_calculation_helper(eresource_set, True, True, analyse_syncs=True)
 
 
 def get_url_chain(eresource):
@@ -837,7 +837,6 @@ def third_party_analization_general():
     service_by_third_party = {}  # third_party : number of services
     third_party_by_service = {}  # service : third parties
 
-    # services_to_analyse = Service.objects.filter(pk=1)
     for service in services_receiving_mails():
         third_parties_this_mail = {}
         for mail in service.mails():
@@ -859,6 +858,20 @@ def third_party_analization_general():
                     third_parties_this_mail[third_party_domain] += 1
                 else:
                     third_parties_this_mail[third_party_domain] = 1
+
+            eresource_set = mail.eresource_set.all()
+            # also not our local host
+            for eresource in eresource_set:
+                resource_ext = tldextract.extract(eresource.url)
+                third_party_domain = resource_ext.domain + '.' + resource_ext.suffix
+                if service_ext.domain in resource_ext.domain or \
+                        tldextract.extract(settings.LOCALHOST_URL).registered_domain in third_party_domain:
+                    continue
+                if third_party_domain in third_parties_this_mail:
+                    third_parties_this_mail[third_party_domain] += 1
+                else:
+                    third_parties_this_mail[third_party_domain] = 1
+
         for third_party_domain in third_parties_this_mail.keys():
             if third_party_domain in service_by_third_party:
 
@@ -868,7 +881,7 @@ def third_party_analization_general():
                 service_by_third_party[third_party_domain] = set()
                 service_by_third_party[third_party_domain].add(service.name)
 
-    print(LONG_SEPERATOR)
+    print(LONG_SEPERATOR + '\n')
     print('Services that embed third parties without clicking links:')
     # Count, how many third parties each service uses.
     num_third_party_by_service = {}
@@ -936,7 +949,7 @@ def third_party_analization_general():
             # all resources, that are pulled when viewing mail that don't contain the domain of the
             # service in their url
             service_ext = tldextract.extract(id_of_mail[0].service.url)
-            eresource_set = mail.eresource_set.filter(type='con')
+            eresource_set = mail.eresource_set.all()
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
