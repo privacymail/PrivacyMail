@@ -12,7 +12,7 @@ View eMail - PrivacyMail
     <div class="profile-content">
         <div class="container">
             <div class="row">
-                <div class="col-md-9">
+                <div class="col-md-12">
                     <div class="row">
                         <form action="." method="post">{% csrf_token %}
                             <input type="hidden" name="action" value="markRegistered">
@@ -21,6 +21,11 @@ View eMail - PrivacyMail
                         <form action="." method="post">{% csrf_token %}
                             <input type="hidden" name="action" value="markSpam">
                             <button type="submit" class="btn btn-danger">Mark as Third-Party-Spam</button>
+                        </form>
+                        <form action="." method="post">{% csrf_token %}
+                            <input type="hidden" name="action" value="markPermittedSender">
+                            <input type="text" name="payload" value="{{ mail.h_from }}">
+                            <button type="submit" class="btn btn-info">Mark as permitted sender</button>
                         </form>
                     </div>
                     <p>
