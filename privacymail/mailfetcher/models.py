@@ -355,6 +355,7 @@ class Mail(models.Model):
         for eresource in all_eresources:
             Mail.analyze_eresource(eresource, hashdict)
 
+    # Deprecated, not used.
     def extract_diff(self):
         hashdictowner = None
         hashdictmatch = None
