@@ -1060,3 +1060,52 @@ def general_statistics():
     for service in services_receiving_mails():
         number_of_identities_per_service_list.append(service.identity_set.count())
     print('Average number of identities per Service: {}'.format(statistics.mean(number_of_identities_per_service_list)))
+    num_identities_receiving_mails = 0
+    for identity in Identity.objects.all():
+        if identity.message.count() != 0:
+            num_identities_receiving_mails += 1
+    print('Number of identities that do receive mails: {}'.format(num_identities_receiving_mails))
+
+    embedded_type_statistics()
+
+def embedded_type_statistics():
+    print(LONG_SEPERATOR)
+    print('Statistics embedded URLs in emails.')
+
+    def analyse_one_type(type):
+        number_of_embeds = []
+        for mail in Mail.objects.all():
+            # if 'a' not in type and 'img' not in type:
+            #     eresource_set = mail.eresource_set.filter(Q(type='script') | Q(type='link'))
+            # else:
+            eresource_set = mail.eresource_set.filter(type=type)
+            number_of_embeds.append(eresource_set.count())
+        mean_embeds = statistics.mean(number_of_embeds)
+        median_embeds = statistics.median(number_of_embeds)
+        max_embeds = max(number_of_embeds)
+        min_embeds = min(number_of_embeds)
+        num_without_embeds = number_of_embeds.count(0)
+        num_all_mails = Mail.objects.all().count()
+        num_with_embeds = num_all_mails - num_without_embeds
+
+        type_description = 'unknownType'
+        if 'a' in type:
+            type_description = 'Clickable links'
+        elif 'img' in type:
+            type_description = 'Embedded image'
+        elif 'script' in type:
+            type_description = 'JavaScript embedded'
+        elif 'link' in type:
+            type_description = 'link (CSS)'
+
+        print('{:<20}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<14.2f}: {:<14.2f}: {:<14.2f}'.format(type_description, min_embeds, max_embeds,
+                                                                      mean_embeds, median_embeds, num_with_embeds, num_without_embeds, num_with_embeds/num_all_mails *100))
+
+    print('{:<20}: {:<7}: {:<7}: {:<7}: {:<7}: {:<14}: {:<14}: {:<14}'.format('Embedded Type', 'min', 'max', 'mean',
+                                                                              'median', 'mails with', 'mails without',
+                                                                              'percent of mails embed this kind'))
+    analyse_one_type('a')
+    analyse_one_type('img')
+    analyse_one_type('link')
+    analyse_one_type('script')
+
