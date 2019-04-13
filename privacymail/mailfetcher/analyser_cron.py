@@ -347,118 +347,7 @@ class Analyser(CronJobBase):
             self.notify_webhook('start')
             analyse_dirty_services()
 
-            # returns the number of third party resources in the set and a list of the third parties involved.
-            def third_parties_in_eresource_set(mail, eresource_set):
-                third_party_embeds = 0  # total embeds
-                # What kind of third parties
-                third_parties = {}
-                # identities of mail
-                id_of_mail = mail.identity.all()
-                if id_of_mail.count() > 0:
-                    # all resources, that are pulled when viewing mail that don't contain the domain of the
-                    # service in their url
-                    service_ext = tldextract.extract(id_of_mail[0].service.url)
-                    # eresource_set = eresource_set.exclude(url__contains=ext.domain)
-                    # also not our local host
-                    # eresource_set = eresource_set.exclude(url__contains=settings.LOCALHOST_URL)
-                    # third_party_embeds = eresource_set.count()
-
-                    for eresource in eresource_set:
-                        resource_ext = tldextract.extract(eresource.url)
-                        if service_ext.domain in resource_ext.domain or \
-                                tldextract.extract(settings.LOCALHOST_URL).registered_domain in (resource_ext.domain + '.' + resource_ext.suffix):
-                            continue
-                        third_party_domain = resource_ext.domain + '.' + resource_ext.suffix
-                        third_party_embeds += 1
-                        if third_party_domain in third_parties:
-                            third_parties[third_party_domain] += 1
-                        else:
-                            third_parties[third_party_domain] = 1
-                third_parties_list = []
-                for third_party in third_parties.keys():
-                    third_parties_list.append(third_party)
-                return third_party_embeds, third_parties_list
-
-            def is_third_party(identity, eresource):
-                service_ext = tldextract.extract(identity.service.url)
-                resource_ext = tldextract.extract(eresource.url)
-                if service_ext.domain in resource_ext.domain or \
-                        tldextract.extract(settings.LOCALHOST_URL).registered_domain in (resource_ext.domain + '.' + resource_ext.suffix):
-                    return False
-                else:
-                    return True
-
-            # analyze one mail in more detail.
-            def get_stats_of_mail(mail):
-                num_third_parties_view = 0
-                num_third_parties_static = 0
-                print('Analyzing mail of service: {}'.format(mail.identity.all()[0].service))
-                eresources_on_view = Eresource.objects.filter(mail=mail).filter(type='con')
-                print('{} eresources loaded when viewing mail.'.format(eresources_on_view.count()))
-
-                eresources_static = eresources_on_view.filter(is_start_of_chain=True)
-                directly_embedded_third_party_count, directly_embedded_parties = \
-                    third_parties_in_eresource_set(mail, eresources_static)
-                print('{} links directly embedded ({} of them third party) in mail.'.
-                      format(eresources_static.count(), directly_embedded_third_party_count))
-                print('Third parties: {}'.format(directly_embedded_parties))
-
-                additionaly_loaded_eresource_set = eresources_on_view.filter(is_start_of_chain=False)
-                additionaly_loaded__third_party_count, additionaly_loaded_parties = \
-                    third_parties_in_eresource_set(mail, additionaly_loaded_eresource_set)
-                print('{} additional ones loaded through forwards ({} of them third party)'.
-                      format(additionaly_loaded_eresource_set.count(), additionaly_loaded__third_party_count))
-                print('Third parties: {}'.format(additionaly_loaded_parties))
-                print('')
-
-                leak_eresource_set = Eresource.objects.filter(mail=mail).filter(possible_unsub_link=False). \
-                    exclude(mail_leakage__isnull=True)
-                leak_eresource_set_count = leak_eresource_set.count()
-
-                num_of_leaks_to_third_parties = 0
-                num_of_leaks_through_forwards = 0
-                ids_of_mail = mail.identity.all()
-                chains = []
-                leaking_methods = []
-                if ids_of_mail.count() > 0:
-                    for r in leak_eresource_set:
-                        if is_third_party(ids_of_mail[0], r):
-                            num_of_leaks_to_third_parties += 1
-                        if not r.is_start_of_chain:
-                            num_of_leaks_through_forwards += 1
-                            chains.append(get_url_chain(r))
-                            leaking_methods.append(r.mail_leakage)
-                print('{} of included urls/websites (including first party, nondistinct) receive eMail address as'
-                      ' hash, {} of them third party url and {} through forwards.'.
-                      format(leak_eresource_set_count, num_of_leaks_to_third_parties,
-                             num_of_leaks_through_forwards))
-                print('The url chains, leaking the address via {}'.format(leaking_methods))
-                for chain in chains:
-                    for r in chain:
-                        print(r.url)
-                    print('')
-
-                link_clicked_eresource_set = Eresource.objects.filter(mail=mail).filter(type='con_click')
-                longest_chain_len = 0
-                longest_chain = []
-                if ids_of_mail.count() > 0:
-                    for r in link_clicked_eresource_set:
-                        if not is_third_party(ids_of_mail[0], r):
-                            continue
-                        chain = get_url_chain(r)
-                        if len(chain) > longest_chain_len:
-                            longest_chain_len = len(chain)
-                            longest_chain = chain
-                    print('{} urls are in the longest redirect chain that can be triggered by clicking a link'
-                          .format(longest_chain_len))
-                    for r in longest_chain:
-                        print(r.url)
-                print('End of mail analyzation')
-
             # get_stats_of_mail(Mail.objects.get(id=1899))
-
-
-
             # address_leakage_statistics()
 
             self.notify_webhook('success')
@@ -859,7 +748,7 @@ def third_party_analization_general():
                 else:
                     third_parties_this_mail[third_party_domain] = 1
 
-            eresource_set = mail.eresource_set.all()
+            eresource_set = mail.eresource_set.filter(type__contains='con')
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
@@ -983,7 +872,7 @@ def third_party_analization_general():
             # all resources, that are pulled when viewing mail that don't contain the domain of the
             # service in their url
             service_ext = tldextract.extract(id_of_mail[0].service.url)
-            eresource_set = mail.eresource_set.all()
+            eresource_set = mail.eresource_set.filter(type__contains='con')
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
@@ -1142,3 +1031,32 @@ def analyse_ab_testing():
     print('Services with suspected A/B testing: {}'.format(services_with_ab_testing))
 
 
+def general_statistics():
+    print(LONG_SEPERATOR)
+    all_mails_queryset = Mail.objects.all()
+    num_all_mails = all_mails_queryset.count()
+    print('Number of Mails in Database: {}'.format(num_all_mails))
+
+    failed_mails_qeryset = all_mails_queryset.filter(processing_fails=settings.OPENWPM_RETRIES)
+    num_failed_mails = failed_mails_qeryset.count()
+    print('Number of failed Mails in the Database: {}'. format(num_failed_mails))
+
+    done_mails_qeryset = all_mails_queryset.filter(processing_state='DONE')
+    num_done_mails = done_mails_qeryset.count()
+    print('Number of done Mails in the Database: {}'.format(num_done_mails))
+
+    no_unsubscribe_mails_qeryset = all_mails_queryset.filter(processing_state='NO_UNSUBSCRIBE_LINK')
+    num_no_unsubscribe_mails = no_unsubscribe_mails_qeryset.count()
+    print('Number of failed Mails in the Database: {}'.format(num_no_unsubscribe_mails))
+
+
+    all_services_queryset = Service.objects.all()
+    num_all_services = all_services_queryset.count()
+    print('Number of all services: {}'.format(num_all_services))
+    print('Number of services receiving Mails: {}'.format(len(services_receiving_mails())))
+    print('Number of services not receiving any mails: {}'.format(num_services_without_mails()))
+    print('Number of registered Identities: {}'.format(Identity.objects.all().count()))
+    number_of_identities_per_service_list = []
+    for service in services_receiving_mails():
+        number_of_identities_per_service_list.append(service.identity_set.count())
+    print('Average number of identities per Service: {}'.format(statistics.mean(number_of_identities_per_service_list)))
