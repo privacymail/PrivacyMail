@@ -569,6 +569,12 @@ def thesis_link_personalisation_of_services():
     print('median = the mean median of different chars per different link')
     print('{:<25}: {:<6} : {:<7}: {:<7}: {:<7}: {:<7}'.format('Service', '#pairs', 'min',
                                                                     'max', 'mean', 'median'))
+    ratios = []
+    minimums = []
+    maximums = []
+    medians = []
+    means = []
+
     for service in services:
         service_name = service.name
         # if 'gruene.de' not in service.name:
@@ -577,13 +583,24 @@ def thesis_link_personalisation_of_services():
         service_mail_metrics[service] = {}
         service_mail_metrics[service]['ratio'] = ratio
         service_mail_metrics[service]['minimum'] = minimum
+        minimums.append(minimum)
         service_mail_metrics[service]['maximum'] = maximum
+        maximums.append(maximum)
         service_mail_metrics[service]['median'] = median
+        medians.append(median)
         service_mail_metrics[service]['mean'] = mean
+        means.append(mean)
         if num_pairs == 0:
             continue
         print('{:<25}: {:<6} : {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
               .format(service_name, num_pairs, minimum, maximum, mean, median))
+    mean_minimum = statistics.mean(minimums)
+    mean_maximum = statistics.mean(maximums)
+    mean_median = statistics.mean(medians)
+    mean_mean = statistics.mean(means)
+    print('{:<25}: {:<6} : {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'.format('Total Mean', '', mean_minimum, mean_maximum,
+                                                                          mean_mean, mean_median))
+
     print('\n\n')
         # counter = 0
         # personalised_links = []
@@ -1239,22 +1256,23 @@ def embedded_type_statistics():
         num_all_mails = Mail.objects.all().count()
         num_with_embeds = num_all_mails - num_without_embeds
 
-        type_description = 'unknownType'
-        if 'a' in type:
-            type_description = 'Clickable links'
-        elif 'img' in type:
-            type_description = 'Embedded image'
-        elif 'script' in type:
-            type_description = 'JavaScript embedded'
-        elif 'link' in type:
-            type_description = 'link (CSS)'
+        # type_description = 'unknownType'
+        # if 'a' in type:
+        #     type_description = 'Clickable links'
+        # elif 'img' in type:
+        #     type_description = 'Embedded image'
+        # elif 'script' in type:
+        #     type_description = 'JavaScript embedded'
+        # elif 'link' in type:
+        #     type_description = 'link (CSS)'
+        type_description = '<' + type + '>'
 
-        print('{:<20}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<14.2f}: {:<14.2f}: {:<14.2f}'.format(type_description, min_embeds, max_embeds,
+        print('{:<20}: {:<7.2f}: {:<7.2f}: {:<7}: {:<14}: {:<14}: {:<.2f}%'.format(type_description, max_embeds,
                                                                       mean_embeds, median_embeds, num_with_embeds, num_without_embeds, num_with_embeds/num_all_mails *100))
 
-    print('{:<20}: {:<7}: {:<7}: {:<7}: {:<7}: {:<14}: {:<14}: {:<14}'.format('Embedded Type', 'min', 'max', 'mean',
+    print('{:<20}: {:<7}: {:<7}: {:<7}: {:<14}: {:<14}: {:<14}'.format('Embedded Type', 'max', 'mean',
                                                                               'median', 'mails with', 'mails without',
-                                                                              'percent of mails embed this kind'))
+                                                                              'emails embedding this type'))
     analyse_one_type('a')
     analyse_one_type('img')
     analyse_one_type('link')
