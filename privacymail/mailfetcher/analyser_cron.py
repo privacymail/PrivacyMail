@@ -557,7 +557,7 @@ def analyze_differences_between_similar_mails(service):
 
 def thesis_link_personalisation_of_services():
     # services = Service.objects.filter(hasApprovedIdentity=True)
-    services = Service.objects.all()
+    services = services_receiving_mails()
     service_mail_metrics = {}
 
     print('Results of comparing links between similar mails of a service (per mail pair mean).')
@@ -574,10 +574,12 @@ def thesis_link_personalisation_of_services():
     maximums = []
     medians = []
     means = []
+    num_services_without_pairs = 0
+    services_without_pairs = []
 
     for service in services:
         service_name = service.name
-        # if 'gruene.de' not in service.name:
+        # if 'pearl' not in service.name:
         #     continue
         num_pairs, ratio, minimum, maximum, mean, median = analyze_differences_between_similar_mails(service)
         service_mail_metrics[service] = {}
@@ -591,6 +593,8 @@ def thesis_link_personalisation_of_services():
         service_mail_metrics[service]['mean'] = mean
         means.append(mean)
         if num_pairs == 0:
+            num_services_without_pairs += 1
+            services_without_pairs.append(service_name)
             continue
         print('{:<25}: {:<6} : {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'
               .format(service_name, num_pairs, minimum, maximum, mean, median))
@@ -600,6 +604,8 @@ def thesis_link_personalisation_of_services():
     mean_mean = statistics.mean(means)
     print('{:<25}: {:<6} : {:<7.2f}: {:<7.2f}: {:<7.2f}: {:<7.2f}'.format('Total Mean', '', mean_minimum, mean_maximum,
                                                                           mean_mean, mean_median))
+    print('Services without pairs: {}'.format(num_services_without_pairs))
+    print(services_without_pairs)
 
     print('\n\n')
         # counter = 0
@@ -619,7 +625,7 @@ def thesis_link_personalisation_of_services():
 
 
 
-def thesis_link_personalisation_of_services_only_eresources():
+def thesis_link_personalisation_of_services_only_eresources(services_to_skip=''):
     # Compute summaries for personalisation of statically extracted URLs.
     services = Service.objects.all()
     print('Results of comparing links between similar mails of a service (per mail mean).')
@@ -633,6 +639,8 @@ def thesis_link_personalisation_of_services_only_eresources():
                   'Mean Other', 'Ratio Other'))
     for service in services:
         service_name = service.name
+        if service_name in services_to_skip:
+            continue
 
         counter = 0
         personalised_links = []
@@ -696,7 +704,7 @@ def thesis_link_personalisation_of_services_only_eresources():
               .format(service_name, mean_personalised_total, mean_total, ratio_total, mean_personalised_img_urls,
                       mean_images, ratio_personalised_images, mean_personalised_anchor_urls, mean_anchors
                       , ratio_personalised_anchors, mean_personalised_other_urls, mean_other_urls, ratio_other_urls))
-
+    print('\n\n')
 
 def chains_calculation_helper(eresource_set, show_statistics=False, print_long_chains=False, chains_lengths_to_print=5,
                               analyse_syncs=False):
@@ -1079,7 +1087,7 @@ def third_party_analization_general():
             # all resources, that are pulled when viewing mail that don't contain the domain of the
             # service in their url
             service_ext = tldextract.extract(id_of_mail[0].service.url)
-            eresource_set = mail.eresource_set.filter(type__contains='con')
+            eresource_set = mail.eresource_set.filter(type='con')
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
@@ -1273,7 +1281,9 @@ def general_statistics():
             num_identities_receiving_mails += 1
     print('Number of identities that do receive mails: {}'.format(num_identities_receiving_mails))
 
-    embedded_type_statistics()
+
+    # embedded_type_statistics()
+
 
 def embedded_type_statistics():
     print(LONG_SEPERATOR)
