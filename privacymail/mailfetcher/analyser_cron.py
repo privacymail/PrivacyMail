@@ -627,8 +627,9 @@ def thesis_link_personalisation_of_services_only_eresources():
     print('Ratio Images = Ratio of embedded image URLs in the HTML Body that are personalised')
     print('Ratio Links = Ratio of embedded link (anchor tags) URLs in the HTML Body that are personalised')
     print('Ratio Other = Ratio of other (script and link tags) embedded URLs in the HTML Body that are personalised')
-    print('{:<25}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}:'
-          .format('Service', 'Mean Total', 'Ratio Total', 'Mean Images', 'Ratio Images', 'Mean Links', 'Ratio Links',
+    print('{:<25}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}: {:<12}'
+          .format('Service', 'Pers mean', 'Mean Total', 'Ratio Total', 'pers images', 'Mean Images', 'Ratio Images',
+                   'pers links', 'Mean Links', 'Ratio Links', 'pers other',
                   'Mean Other', 'Ratio Other'))
     for service in services:
         service_name = service.name
@@ -663,19 +664,24 @@ def thesis_link_personalisation_of_services_only_eresources():
             # print('Continue')
             continue
 
+        mean_personalised_total = statistics.mean(personalised_links)
+        mean_personalised_img_urls = statistics.mean(personalised_img_urls)
+        mean_personalised_anchor_urls = statistics.mean(personalised_anchor_urls)
+        mean_personalised_other_urls = statistics.mean(personalised_other_urls)
+
         mean_total = statistics.mean(total_urls)
         if mean_total > 0:
             ratio_total = statistics.mean(personalised_links) / mean_total
         else:
             ratio_total = 0
-        mean_personalised_images = statistics.mean(total_img_urls)
-        if mean_personalised_images > 0:
-            ratio_personalised_images = statistics.mean(personalised_img_urls) / mean_personalised_images
+        mean_images = statistics.mean(total_img_urls)
+        if mean_images > 0:
+            ratio_personalised_images = statistics.mean(personalised_img_urls) / mean_images
         else:
             ratio_personalised_images = 0
-        mean_personalised_anchors = statistics.mean(total_anchor_urls)
-        if mean_personalised_anchors > 0:
-            ratio_personalised_anchors = statistics.mean(personalised_anchor_urls) / mean_personalised_anchors
+        mean_anchors = statistics.mean(total_anchor_urls)
+        if mean_anchors > 0:
+            ratio_personalised_anchors = statistics.mean(personalised_anchor_urls) / mean_anchors
         else:
             ratio_personalised_anchors = 0
         mean_other_urls = statistics.mean(total_other_urls)
@@ -683,9 +689,13 @@ def thesis_link_personalisation_of_services_only_eresources():
             ratio_other_urls = statistics.mean(personalised_other_urls) / mean_other_urls
         else:
             ratio_other_urls = 0
-        print('{:<25}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}'
-              .format(service_name, mean_total, ratio_total, mean_personalised_images, ratio_personalised_images,
-                      mean_personalised_anchors, ratio_personalised_anchors, mean_other_urls, ratio_other_urls))
+        # if service_name == 'spd.de':
+        #     print('')
+        print('{:<25}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}:'
+              ' {:<12.2f}: {:<12.2f}: {:<12.2f}: {:<12.2f}'
+              .format(service_name, mean_personalised_total, mean_total, ratio_total, mean_personalised_img_urls,
+                      mean_images, ratio_personalised_images, mean_personalised_anchor_urls, mean_anchors
+                      , ratio_personalised_anchors, mean_personalised_other_urls, mean_other_urls, ratio_other_urls))
 
 
 def chains_calculation_helper(eresource_set, show_statistics=False, print_long_chains=False, chains_lengths_to_print=5,
@@ -854,25 +864,54 @@ def get_url_chain(eresource):
 # def third_party_analization_general_new():
 
 def analyse_contacted_domains_from_cache():
-    contacted_third_party_domains = {}
-    contacted_domains_queryset = Thirdparty.objects.all()
-    num_contacted_domains_queryset = contacted_domains_queryset.count()
-    for contacted_domain in contacted_domains_queryset:
+    contacted_domains = {}
+    services_queryset = services_receiving_mails()
 
-        contacted_domain_cache = cache.get(contacted_domain.derive_thirdparty_cache_path())
-        if contacted_domain_cache is None:
-            create_third_party_cache(contacted_domain, force=False)
-            contacted_domain_cache = cache.get(contacted_domain.derive_thirdparty_cache_path())
-        services = contacted_domain_cache['services']
-        services_list = []
-        for i in list(services.keys()):
-            services_list.append(i.name)
-        contacted_third_party_domains[contacted_domain] = services_list
+    services_that_open_connections_click = 0
+    services_that_open_connections_view = 0
+    services_that_open_connections_combined = 0
+    for service in services_queryset:
+        contacted_domains_set_click = ServiceThirdPartyEmbeds.objects.filter(embed_type='ONCLICK').filter(service=service)
+        contacted_domains_set_view = ServiceThirdPartyEmbeds.objects.filter(embed_type='ONVIEW').filter(service=service)
+        contacted_domains_set_combined = ServiceThirdPartyEmbeds.objects.filter(Q(embed_type='ONCLICK') |
+                                                                                Q(embed_type='ONVIEW')).filter(service=service)
+        if contacted_domains_set_click.exists():
+            services_that_open_connections_click += 1
+        if contacted_domains_set_view.exists():
+            services_that_open_connections_view += 1
+        if contacted_domains_set_combined.exists():
+            services_that_open_connections_combined += 1
 
-    for contacted_domain in sorted(contacted_third_party_domains, key=lambda k: len(contacted_third_party_domains[k]), reverse=True):
-        print(
-            '{:<30} : {:<4} : {:<4}'.format(contacted_domain.name, len(contacted_third_party_domains[contacted_domain])
-                                            , str(contacted_third_party_domains[contacted_domain])))
+    ratio_on_view = services_that_open_connections_view / num_services_receiving_mails() * 100
+    ratio_on_click = services_that_open_connections_click / num_services_receiving_mails() * 100
+    ratio_on_combined = services_that_open_connections_combined / num_services_receiving_mails() * 100
+
+    print('Services that open Connections:')
+    print('{:<10} : {:<17}: {:<5}'.format('Scenario','number of services', '%'))
+
+    print('{:<10} : {:<17} : {:<5.2f}'.format('VIEW', services_that_open_connections_view , ratio_on_view))
+    print('{:<10} : {:<17} : {:<5.2f}'.format('CLICK', services_that_open_connections_click , ratio_on_click))
+    print('{:<10} : {:<17} : {:<5.2f}'.format('COMBINED', services_that_open_connections_combined , ratio_on_combined))
+
+    # print('OnView: {:5<2f}%, OnClick: {:<2f}%, Combined: {:<2f}%'.format(ratio_on_click, ratio_on_view, ratio_on_combined))
+
+
+
+
+    #     service_cache = cache.get(service.derive_thirdparty_cache_path())
+    #     if service_cache is None:
+    #         create_service_cache(service, force=False)
+    #         service_cache = cache.get(service.derive_thirdparty_cache_path())
+    #     services = service_cache['services']
+    #     services_list = []
+    #     for i in list(services.keys()):
+    #         services_list.append(i.name)
+    #     contacted_domains[service_cache] = services_list
+    #
+    # for contacted_domain in sorted(contacted_domains, key=lambda k: len(contacted_domains[k]), reverse=True):
+    #     print(
+    #         '{:<30} : {:<4} : {:<4}'.format(contacted_domain.name, len(contacted_domains[contacted_domain])
+    #                                         , str(contacted_domains[contacted_domain])))
     # for contacted_domain in contacted_third_party_domains:
     #     print('{:<16} : {:<4} : {:<4}'.format(contacted_domain.name, len(contacted_third_party_domains[contacted_domain])
     #           , str(contacted_third_party_domains[contacted_domain])))
