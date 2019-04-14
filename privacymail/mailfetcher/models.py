@@ -414,8 +414,8 @@ class Mail(models.Model):
 
     def get_similar_mails_of_different_identities(self):
         mail_date = self.date_time
-        earliest_date = mail_date - datetime.timedelta(minutes=20)
-        last_date = mail_date + datetime.timedelta(minutes=20)
+        earliest_date = mail_date - datetime.timedelta(minutes=11*60 + 30) # 11 hours and 30 minutes
+        last_date = mail_date + datetime.timedelta(minutes=11*60 + 30)
         mails_in_timeframe = Mail.objects.filter(date_time__range=(earliest_date, last_date))
 
         service_mail_set = mails_in_timeframe.filter(identity__service__in=Service.objects.filter(identity__in=self.identity.all()))\
