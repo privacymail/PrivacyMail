@@ -37,5 +37,6 @@ urlpatterns = [
     # FIXME: This currently allows anyone to access silk without auth
     # This is a terrible idea and HAS to be changed before release.
     # re_path(r'^silk/', include('silk.urls', namespace='silk'))
-    path('api/', include('api.urls'))
+    path('api/', include('api.urls')),
+    path('i18n/', include('django.conf.urls.i18n')),
 ]
