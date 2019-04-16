@@ -938,6 +938,8 @@ def analyse_contacted_domains_from_cache():
 
 
 def third_party_analization_general():
+    # This function is a mess and needs refactoring badly. :/
+
     service_by_third_party = {}  # third_party : number of services
     third_party_by_service = {}  # service : third parties
 
@@ -1087,15 +1089,17 @@ def third_party_analization_general():
             # all resources, that are pulled when viewing mail that don't contain the domain of the
             # service in their url
             service_ext = tldextract.extract(id_of_mail[0].service.url)
-            eresource_set = mail.eresource_set.filter(type='con')
+            eresource_set = mail.eresource_set.filter(type__contains='con')
+            new_eresource_set = []
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
                 third_party_domain = resource_ext.domain + '.' + resource_ext.suffix
-                if service_ext.domain in resource_ext.domain or \
-                        tldextract.extract(settings.LOCALHOST_URL).registered_domain in third_party_domain:
-                    continue
+                if tldextract.extract(settings.LOCALHOST_URL).registered_domain in third_party_domain or \
+                        service_ext.domain in resource_ext.domain:
 
+                    continue
+                new_eresource_set.append(eresource)
                 service_set_embedding_resources.add(id_of_mail[0].service)
 
                 if third_party_domain in third_parties_this_mail:
@@ -1107,7 +1111,7 @@ def third_party_analization_general():
                     third_parties[third_party_domain] += 1
                 else:
                     third_parties[third_party_domain] = 1
-            i = eresource_set.count()
+            i = len(new_eresource_set)
             list_third_party_per_mail.append(i)
             if i > 0:
                 third_party_embeds = third_party_embeds + 1
