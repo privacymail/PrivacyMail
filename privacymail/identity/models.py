@@ -104,7 +104,7 @@ class Service(models.Model):
     @classmethod
     def create(cls, url, name):
         # Create the service
-        i = cls(url=url, name=name)
+        i = cls(url=url, name=name, permitted_senders=[url])
         i.save()
         # Check if the service already exists as a third party
         try:
