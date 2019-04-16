@@ -1,0 +1,771 @@
+# Translation for PrivacyMail frontend, German version.
+# Copyright (C) 2019 PrivacyMail Team
+# This file is distributed under the same license as the PrivacyMail package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-16 11:22+0200\n"
+"PO-Revision-Date: 2019-04-16 11:19+0200\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2.1\n"
+
+#: identity/checks.py:20
+msgid "Receives Email leak"
+msgstr "Erhält eMail-Adresse"
+
+#: identity/checks.py:21
+msgid "Sends the Newsletter"
+msgstr "Sendet den Newsletter"
+
+#: identity/checks.py:103
+msgid "External connections when opening the Mail"
+msgstr "Externe Verbindungen beim Öffnen der Mail"
+
+#: identity/checks.py:104
+msgid ""
+"Newsletters may contain resources that are dynamically loaded from either "
+"the service provider or other websites, allowing them to track when you open "
+"the eMail. This check detects the presence of these external resources."
+msgstr ""
+"Newsletter können Ressourcen enthalten, die dynamisch vom Dienstleister oder "
+"von anderen Websites geladen werden, so dass sie beim Öffnen der E-Mail "
+"verfolgt werden können. Dieser Check erkennt die Nutzung dieser externen "
+"Ressourcen."
+
+#: identity/checks.py:105
+msgid ""
+"This check passes if no connections are established when opening the Mail."
+msgstr ""
+"Ein Newsletter besteht diesen Check, wenn beim Öffnen der eMail keine "
+"Verbindungen aufgebaut werden."
+
+#: identity/checks.py:106 identity/checks.py:233
+msgid "This check should not create errors."
+msgstr "Dieser Check sollte keine Fehler verursachen."
+
+#: identity/checks.py:138
+#, python-format
+msgid ""
+"%(count)d domain is contacted when viewing the mail with remote content "
+"enabled."
+msgid_plural ""
+"%(count)d domains are contacted when viewing the mail with remote content "
+"enabled."
+msgstr[0] ""
+"%(count)d Domain werden beim Öffnen dieser eMail mit aktivierten externen "
+"Inhalten kontaktiert."
+msgstr[1] ""
+"%(count)d Domains werden beim Öffnen dieser eMail mit aktivierten externen "
+"Inhalten kontaktiert."
+
+#: identity/checks.py:143
+msgid "No external domains are contacted when viewing the mail."
+msgstr "Beim Öffnen dieser eMail werden keine externen Domains kontaktiert."
+
+#: identity/checks.py:150
+msgid "Third party connections when clicking a link"
+msgstr ""
+
+#: identity/checks.py:151
+msgid ""
+"Links in the eMail may initially point to third party services such as "
+"trackers, which will forward the user to the correct address later. This "
+"check detects this kind of tracking behavior."
+msgstr ""
+
+#: identity/checks.py:152
+msgid ""
+"This check passes if no connections to third parties are established when "
+"clicking links from the Mail."
+msgstr ""
+
+#: identity/checks.py:153
+msgid ""
+"The clicked link from the mail is determined randomly, thus some third "
+"parties may be missed."
+msgstr ""
+
+#: identity/checks.py:184
+#, python-format
+msgid "%(count)d third party is contacted when clicking a link."
+msgid_plural "%(count)d third parties are contacted when clicking a link."
+msgstr[0] ""
+msgstr[1] ""
+
+#: identity/checks.py:189
+msgid "No third parties are contacted when clicking a link."
+msgstr ""
+
+#: identity/checks.py:197
+msgid "Third party spam"
+msgstr ""
+
+#: identity/checks.py:199
+msgid ""
+"Service providers may intentionally or unintentionally disclose your eMail "
+"address to third parties, including spammers. We try to detect this by "
+"tracking if identities associated with this service start receiving eMails "
+"from other senders."
+msgstr ""
+
+#: identity/checks.py:201
+msgid ""
+"This check fails if a mail arrives from another domain than the domain of "
+"the service and the admin manually marked it as spam."
+msgstr ""
+
+#: identity/checks.py:203
+msgid "Due to admin supervision this check should not create errors."
+msgstr ""
+
+#: identity/checks.py:214
+msgid "No third party spam was detected."
+msgstr ""
+
+#: identity/checks.py:217
+#, python-format
+msgid "%(count)d identity received third party messages."
+msgid_plural "%(count)d identities received third party messages."
+msgstr[0] ""
+msgstr[1] ""
+
+#: identity/checks.py:230
+msgid "Contacted on view"
+msgstr ""
+
+#: identity/checks.py:231
+msgid ""
+"If this domain is contacted when opening a newsletter, it may be able to "
+"track who is reading the newsletter and when they are doing it."
+msgstr ""
+
+#: identity/checks.py:232
+msgid ""
+"This check passes if the website is never contacted when newsletters are "
+"opened."
+msgstr ""
+
+#: identity/checks.py:265
+#, python-format
+msgid ""
+"%(count)d newsletter contacts this domain when viewing the mail with remote "
+"content enabled."
+msgid_plural ""
+"%(count)d newsletters contact this domain when viewing the mail with remote "
+"content enabled."
+msgstr[0] ""
+msgstr[1] ""
+
+#: identity/checks.py:270
+msgid "No newsletter contacts this website when being viewed."
+msgstr ""
+
+#: identity/checks.py:277
+msgid "Contacted on click"
+msgstr ""
+
+#: identity/checks.py:278
+msgid ""
+"If this domain is contacted when clicking a link from a newsletter, it is "
+"able to track who is clicking which links and when they are doing it. It may "
+"also be able to link this information to additional data it may already have "
+"about the user."
+msgstr ""
+
+#: identity/checks.py:279
+msgid ""
+"This check passes if no newsletters (except newsletters sent out by this "
+"domain) contact this domain when users click a link."
+msgstr ""
+
+#: identity/checks.py:280
+msgid ""
+"The clicked link from the mail is determined randomly, thus some newsletters "
+"may be missed."
+msgstr ""
+
+#: identity/checks.py:311
+#, python-format
+msgid "%(count)d newsletter contacts this domain when clicking a link."
+msgid_plural "%(count)d newsletters contact this domain when clicking a link."
+msgstr[0] ""
+msgstr[1] ""
+
+#: identity/checks.py:316
+msgid "No newsletters contact this domain when links are clicked."
+msgstr ""
+
+#: identity/templates/check.html:6
+msgid "reliable"
+msgstr ""
+
+#: identity/templates/check.html:6
+msgid "unreliable"
+msgstr ""
+
+#: identity/templates/check.html:15 identity/templates/identity/embed.html:56
+#: identity/templates/identity/service.html:72
+msgid "More information"
+msgstr ""
+
+#: identity/templates/check.html:19
+msgid "Conditions for passing"
+msgstr ""
+
+#: identity/templates/check.html:20
+msgid "Reliability"
+msgstr ""
+
+#: identity/templates/check.html:21
+msgid "Potential scan errors"
+msgstr ""
+
+#: identity/templates/check.html:23
+msgid "Result wrong?"
+msgstr ""
+
+#: identity/templates/check.html:26
+msgid "report error"
+msgstr ""
+
+#: identity/templates/faq.html:16
+msgid "Frequently asked Questions"
+msgstr ""
+
+#: identity/templates/faq.html:17
+msgid ""
+"On this page, we will try to answer a few common questions. If you have a "
+"question that is not answered here, feel free to get in touch."
+msgstr ""
+
+#: identity/templates/faq.html:20
+msgid "What is PrivacyMail?"
+msgstr ""
+
+#: identity/templates/faq.html:21
+msgid ""
+"Privacymail is an automated scanning system that helps you determine if the "
+"companies that are sending you newsletters are using tracking technologies "
+"to find out which mails you are reading, and which links you are clicking. "
+"It is intended to help you inform yourself, and establish transparency in "
+"this often murky area of online privacy. It is also a research tool, "
+"operated by the <a href=\"https://seemoo.de/\" target=\"blank\">Secure "
+"Mobile Networking Lab</a> at TU Darmstadt, Germany."
+msgstr ""
+
+#: identity/templates/faq.html:23
+msgid "Is this service free? How do you make money?"
+msgstr ""
+
+#: identity/templates/faq.html:24
+msgid ""
+"PrivacyMail is a non-commercial open source project, paid for as a research "
+"tool by the <a href=\"https://seemoo.de/\" target=\"blank\">Secure Mobile "
+"Networking Lab (SEEMOO)</a> at TU Darmstadt. Ongoing development is "
+"performed by members of the SEEMOO team, students (as part of coursework, "
+"theses, or student jobs), and volunteers. We will never charge for use of "
+"the service or show advertisements. However, we may use the data generated "
+"by the platform in our research (see next question for details)."
+msgstr ""
+
+#: identity/templates/faq.html:26
+msgid "What will you do with the collected data?"
+msgstr ""
+
+#: identity/templates/faq.html:27
+msgid ""
+"First off: <b>We do not collect data about you.</b> All collected data is "
+"related to the newsletters that you and others register with this service, "
+"and no data about our users is collected or shared in any way."
+msgstr ""
+
+#: identity/templates/faq.html:28
+msgid ""
+"That being said: We perform analyses on the mails we receive to display the "
+"results on this website, and may combine it with data from <a href=\"https://"
+"privacyscore.org\" target=\"blank\">other projects</a> to create a more "
+"detailed view of the online tracking ecosystem. Data may be shared with "
+"other researchers on a case-by-case basis, or released as part of larger "
+"datasets to facilitate <a href=\"https://en.wikipedia.org/wiki/"
+"Reproducibility\" target=\"blank\">reproducible research</a>. If you are a "
+"researcher and want to work with our data, feel free to get in touch."
+msgstr ""
+
+#: identity/templates/faq.html:30
+msgid "What is your relationship to the PrivacyScore project?"
+msgstr ""
+
+#: identity/templates/faq.html:31
+msgid ""
+"Some members of the PrivacyMail team also contribute to the <a href="
+"\"https://privacyscore.org/\" target=\"blank\">PrivacyScore platform</a>, "
+"and vice versa. Some of the technology and infrastructure is shared between "
+"the projects. Other than this, they are independent projects. "
+msgstr ""
+
+#: identity/templates/faq.html:34
+msgid "For service operators"
+msgstr ""
+
+#: identity/templates/faq.html:35
+msgid "Why are you scanning my newsletters?"
+msgstr ""
+
+#: identity/templates/faq.html:36
+msgid ""
+"We are scanning your newsletter because one of our users registered it with "
+"our service."
+msgstr ""
+
+#: identity/templates/faq.html:38
+msgid "Can you remove me from your system?"
+msgstr ""
+
+#: identity/templates/faq.html:39
+msgid ""
+"If you do not want your newsletter to be scanned by our system, please get "
+"in touch and we will remove existing subscriptions and ensure that no new "
+"subscriptions can be created. <b>Please note that we will not delete "
+"existing data, and that your decision to opt out of our analyses will be "
+"made public.</b> As the goal of this platform is to establish transparency, "
+"users trying to inspect your service will be shown a message that you "
+"requested to be excluded from future analyses, together with any existing "
+"result data we may have on your service. We may also show your service in a "
+"list of services that have asked to be excluded."
+msgstr ""
+
+#: identity/templates/footer.html:6 identity/templates/imprint.html:6
+#: identity/templates/imprint.html:16
+msgid "Imprint"
+msgstr ""
+
+#: identity/templates/footer.html:7
+msgid "Privacy Policy"
+msgstr ""
+
+#: identity/templates/home.html:15
+msgid "Who is watching you read your eMails?"
+msgstr ""
+
+#: identity/templates/home.html:16
+msgid ""
+"Did you know that many companies track if you are opening their newsletters? "
+"Find out more about the practices of your favourite company here."
+msgstr ""
+
+#: identity/templates/home.html:33
+msgid "Shining a Light on eMail Tracking"
+msgstr ""
+
+#: identity/templates/home.html:34
+msgid ""
+"PrivacyMail makes the invisible tracking in newsletters visible. Email "
+"tracking is widely used to track which eMails you read, which links you "
+"click, and how successful marketing campaigns are. To achieve this, they use "
+"the services of other companies, which may in turn use the data to profile "
+"you for targeted advertisements."
+msgstr ""
+
+#: identity/templates/home.html:39
+msgctxt "Section heading"
+msgid "How eMail Tracking Works"
+msgstr ""
+
+#: identity/templates/home.html:44
+msgid "The company sends you an eMail."
+msgstr ""
+
+#: identity/templates/home.html:48
+msgid ""
+"When you open the eMail, images are loaded from the company, or one of its "
+"partners. The companies thus knows that you have opened the eMail."
+msgstr ""
+
+#: identity/templates/home.html:52
+msgid ""
+"Links in the eMail are personalized - if you click them, the company knows "
+"it was you who clicked the link."
+msgstr ""
+
+#: identity/templates/home.html:56
+msgid ""
+"All this data can be used by the companies to optimize their newsletters - "
+"or target advertisements."
+msgstr ""
+
+#: identity/templates/home.html:62
+msgctxt "section heading"
+msgid "How We Detect It"
+msgstr ""
+
+#: identity/templates/home.html:67
+msgid ""
+"People like you sign up a newsletter to a special eMail address provided by "
+"us."
+msgstr ""
+
+#: identity/templates/home.html:71
+msgid ""
+"We receive them and analyze them using an automated scanning system that "
+"inspects them for common types of tracking."
+msgstr ""
+
+#: identity/templates/home.html:71
+msgid "learn more"
+msgstr ""
+
+#: identity/templates/home.html:75
+msgid ""
+"Information about newsletters and tracking companies is published on this "
+"website to allow you to inform yourself."
+msgstr ""
+
+#: identity/templates/home.html:79
+msgid ""
+"Others see the results, allowing them to make more informed decisions about "
+"their newsletter consumption."
+msgstr ""
+
+#: identity/templates/home.html:88
+msgid "Why You Should Use PrivacyMail"
+msgstr ""
+
+#: identity/templates/home.html:97
+msgctxt "Section heading"
+msgid "Inform Yourself"
+msgstr ""
+
+#: identity/templates/home.html:98
+msgid ""
+"Knowing is half the battle. Find out if the newsletters you are reading are "
+"tracking you, who they are sending your data to, and what these companies "
+"are up to."
+msgstr ""
+
+#: identity/templates/home.html:106
+msgctxt "Section heading"
+msgid "Raise Your Voice"
+msgstr ""
+
+#: identity/templates/home.html:107
+msgid ""
+"Don't want to be tracked and profiled? Share the results with others to warn "
+"them and demand companies change their behavior."
+msgstr ""
+
+#: identity/templates/home.html:115
+msgctxt "Section heading"
+msgid "Support Research"
+msgstr ""
+
+#: identity/templates/home.html:116
+msgid ""
+"By using PrivacyMail, you support our research on the state of online "
+"privacy by helping us collect a large dataset of newsletters."
+msgstr ""
+
+#: identity/templates/home.html:124
+msgctxt "Section heading"
+msgid "A Few Statistics"
+msgstr ""
+
+#: identity/templates/home.html:133
+msgctxt "statistic description"
+msgid "Newsletters Registered"
+msgstr ""
+
+#: identity/templates/home.html:141
+msgctxt "statistic description"
+msgid "eMails Processed"
+msgstr ""
+
+#: identity/templates/home.html:149
+msgid "3rd Party Domains Found"
+msgstr ""
+
+#: identity/templates/home.html:189
+msgid "Add this site"
+msgstr ""
+
+#: identity/templates/home.html:189
+msgid ""
+"Looks like we don't have this website in our database yet - you can add it "
+"yourself!"
+msgstr ""
+
+#: identity/templates/home.html:189
+msgid "Learn more"
+msgstr ""
+
+#: identity/templates/identity/embed.html:24
+#: identity/templates/identity/service.html:24
+msgid "SHOWING RESULTS FOR"
+msgstr ""
+
+#: identity/templates/identity/embed.html:32
+#: identity/templates/identity/service.html:32
+msgid "Server Error"
+msgstr ""
+
+#: identity/templates/identity/embed.html:33
+#: identity/templates/identity/service.html:33
+msgid ""
+"Looks like there is a problem on our end. Please check back in a couple of "
+"minutes, or contact us if the problem persists."
+msgstr ""
+
+#: identity/templates/identity/embed.html:48
+msgid "This Domain sends out a newsletter."
+msgstr ""
+
+#: identity/templates/identity/embed.html:49
+msgid "See results"
+msgstr ""
+
+#: identity/templates/identity/embed.html:58
+#: identity/templates/identity/embed.html:63
+#: identity/templates/identity/service.html:74
+msgid "Sector"
+msgstr ""
+
+#: identity/templates/identity/embed.html:59
+#: identity/templates/identity/embed.html:64
+#: identity/templates/identity/service.html:75
+msgid "Country"
+msgstr ""
+
+#: identity/templates/identity/embed.html:59
+msgid "Unknown"
+msgstr ""
+
+#: identity/templates/identity/embed.html:60
+msgid "Want to update this?"
+msgstr ""
+
+#: identity/templates/identity/embed.html:60
+msgid "This data was loaded from the information of the associated newsletter."
+msgstr ""
+
+#: identity/templates/identity/embed.html:60
+msgid "Update it there"
+msgstr ""
+
+#: identity/templates/identity/embed.html:66
+#: identity/templates/identity/service.html:77
+msgid "Know this website? Tell us more about it:"
+msgstr ""
+
+#: identity/templates/identity/identity.html:6
+msgctxt "Action / page title"
+msgid "New Identity"
+msgstr ""
+
+#: identity/templates/identity/identity.html:15
+msgctxt "Action / page title"
+msgid "Adding a new Service"
+msgstr ""
+
+#: identity/templates/identity/identity.html:29
+msgctxt "Person"
+msgid "Name"
+msgstr ""
+
+#: identity/templates/identity/identity.html:30
+msgctxt "Person"
+msgid "Gender"
+msgstr ""
+
+#. Translators: Sentence fragment, e.g. Created for website spiegel.de
+#: identity/templates/identity/identity.html:32
+msgid "Created for the website"
+msgstr ""
+
+#: identity/templates/identity/identity.html:41
+msgctxt "Title"
+msgid "Important"
+msgstr ""
+
+#: identity/templates/identity/identity.html:44
+#, python-format
+msgid ""
+"\n"
+"                                    Please use the above eMail address "
+"<strong>only for the website %(servicename)s</strong>. If you sign it up for "
+"a different website, things will break and the results may become incorrect. "
+"If you want to sign up another website, generate a new identity for it.\n"
+"                                    "
+msgstr ""
+
+#. Translators: Sentence fragment, e.g. we created a new identity for the website spiegel.de
+#: identity/templates/identity/identity.html:54
+msgid "We created a new identity for the website"
+msgstr ""
+
+#: identity/templates/identity/identity.html:55
+msgid "What's next?"
+msgstr ""
+
+#: identity/templates/identity/identity.html:60
+msgid ""
+"Please copy the eMail address shown on the left and sign it up for the "
+"newsletter of"
+msgstr ""
+
+#: identity/templates/identity/identity.html:64
+msgid ""
+"Get a cup of coffee - we will receive the confirmation eMail and confirm it."
+msgstr ""
+
+#: identity/templates/identity/identity.html:68
+msgid ""
+"As soon as we receive a newsletter from this website, we will analyze it. "
+"Note that depending on how frequently newsletters are sent, this may take a "
+"few days."
+msgstr ""
+
+#: identity/templates/identity/identity.html:72
+msgid "The results of the analysis will be published"
+msgstr ""
+
+#: identity/templates/identity/identity.html:72
+msgctxt "location"
+msgid "here"
+msgstr ""
+
+#: identity/templates/identity/identity.html:76
+msgid "Common Questions and Problems"
+msgstr ""
+
+#: identity/templates/identity/identity.html:77
+msgid "There is more than one newsletter"
+msgstr ""
+
+#: identity/templates/identity/identity.html:78
+msgid ""
+"If more than one newsletter is offered by the same website, please sign up "
+"the eMail address to <strong>all of them</strong>."
+msgstr ""
+
+#: identity/templates/identity/identity.html:80
+msgid "I need to create a user account to sign up for newsletters"
+msgstr ""
+
+#. Translators: Sentence fragment, e.g. please send us an eMail and we'll see...
+#: identity/templates/identity/identity.html:82
+msgid ""
+"<strong>For security and privacy reasons, we will not confirm the "
+"registration of user accounts using the above eMail address.</strong> If you "
+"are interested in the newsletters sent out by this website, please"
+msgstr ""
+
+#: identity/templates/identity/identity.html:82
+msgid "send us an eMail </a> and we'll see if we can add it manually."
+msgstr ""
+
+#: identity/templates/identity/identity.html:84
+msgid "The website does not have any newsletters"
+msgstr ""
+
+#: identity/templates/identity/identity.html:85
+msgid ""
+"Don't worry, simply forget about it, no harm done! There is no need to "
+"contact us about this."
+msgstr ""
+
+#: identity/templates/identity/service.html:46
+msgid "No results available (yet)"
+msgstr ""
+
+#: identity/templates/identity/service.html:47
+msgid ""
+"We have not yet received any eMails for this service, and thus cannot show "
+"any results. Please check back at a later time."
+msgstr ""
+
+#: identity/templates/identity/service.html:55
+#, python-format
+msgid ""
+"\n"
+"                                %(cnt)s identity registered (and %(unc)s "
+"unconfirmed).<br/>\n"
+"                                "
+msgid_plural ""
+"\n"
+"                                %(cnt)s identities registered (and %(unc)s "
+"unconfirmed).<br/>\n"
+"                                "
+msgstr[0] ""
+msgstr[1] ""
+
+#: identity/templates/identity/service.html:60
+#, python-format
+msgid ""
+"\n"
+"                                %(cnt_mails)s eMails processed.<br/>\n"
+"                                %(cnt_mult_ident_mails)s eMails received on "
+"more than one identity.\n"
+"                                "
+msgstr ""
+
+#: identity/templates/identity/service.html:66
+msgid "Add another identity"
+msgstr ""
+
+#: identity/templates/identity/service_filter.html:21
+msgid "Registered Newsletters:"
+msgstr ""
+
+#: identity/templates/identity/service_filter.html:28
+msgid "Find newsletter by..."
+msgstr ""
+
+#: identity/templates/nav.html:18
+msgctxt "Main menu"
+msgid "Newsletter List"
+msgstr ""
+
+#: identity/templates/nav.html:21
+msgctxt "Main Menu"
+msgid "Learn"
+msgstr ""
+
+#: identity/templates/nav.html:24
+msgctxt "Main Menu"
+msgid "FAQ"
+msgstr ""
+
+#: identity/templates/nav.html:27
+msgctxt "Main Menu"
+msgid "Research"
+msgstr ""
+
+#: identity/templates/nav.html:30
+msgctxt "Main Menu"
+msgid "Code"
+msgstr ""
+
+#: identity/views.py:67
+msgid "Internal error"
+msgstr ""
+
+#: identity/views.py:67
+msgid ""
+"You sent a request the server did not understand. Please try again, or "
+"contact us if the problem persists."
+msgstr ""
+
+#: identity/views.py:72
+msgid "Invalid Address"
+msgstr ""
+
+#: identity/views.py:72
+msgid "This does not look like a website - please try again"
+msgstr ""
