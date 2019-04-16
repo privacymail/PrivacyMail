@@ -1337,3 +1337,25 @@ def embedded_type_statistics():
     analyse_one_type('link')
     analyse_one_type('script')
 
+
+def any_connection_overview():
+    # Count for each scenario how many emails open open a connection
+    mails = Mail.objects.filter(processing_state='DONE')
+    print('{} Mails'.format(mails.count()))
+    mails_with_view_connections = 0
+    mails_with_click_connections = 0
+    mails_with_any_connections = 0
+    for mail in mails:
+        if mail.eresource_set.all().filter(type='con').exists():
+            mails_with_view_connections += 1
+        if mail.eresource_set.all().filter(type='con_click').exists():
+            mails_with_click_connections += 1
+        if mail.eresource_set.all().filter(type__contains='con').exists():
+            mails_with_any_connections += 1
+    print('Mails opening view connection: {}, Ratio:{:.2f}'.format(mails_with_view_connections,
+                                                                   mails_with_view_connections / mails.count() * 100))
+    print('Mails opening click connection: {}, Ratio:{:.2f}'.format(mails_with_click_connections,
+                                                                    mails_with_click_connections / mails.count() * 100))
+    print('Mails opening any connection: {}, Ratio:{:.2f}'.format(mails_with_any_connections,
+                                                                  mails_with_any_connections / mails.count() * 100))
+
