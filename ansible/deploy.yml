@@ -168,13 +168,14 @@
         . ../venv/bin/activate
         python manage.py migrate
         python manage.py createcachetable
-    - name: Collect static files
+    - name: Collect static files and update translations
       become_user: privacymail
       shell: |
         set -e
         cd /opt/privacymail/privacymail/privacymail
         . ../venv/bin/activate
         python manage.py collectstatic --noinput
+        django-admin compilemessages
     # Prepare webserver
     - name: Install mod_wsgi from pip
       become_user: privacymail
