@@ -943,7 +943,7 @@ def third_party_analization_general():
 
     for service in services_receiving_mails():
         third_parties_this_mail = {}
-        for mail in service.mails():
+        for mail in service.mails().exclude(processing_fails=3):
             # check if we already have this service in our dict
             if service.name not in third_party_by_service:
                 third_party_by_service[service.name] = set()
@@ -1003,7 +1003,7 @@ def third_party_analization_general():
 
     third_party_by_service_clicked = {}  # service : third parties
     for service in services_receiving_mails():
-        for mail in service.mails():
+        for mail in service.mails().exclude(processing_fails=3):
             # check if we already have this service in our dict
             if service.name not in third_party_by_service_clicked:
                 third_party_by_service_clicked[service.name] = set()
@@ -1035,7 +1035,7 @@ def third_party_analization_general():
     # Clicked and viewed combined
     third_party_by_service_clicked = {}  # service : third parties
     for service in services_receiving_mails():
-        for mail in service.mails():
+        for mail in service.mails().exclude(processing_fails=3):
             # check if we already have this service in our dict
             if service.name not in third_party_by_service_clicked:
                 third_party_by_service_clicked[service.name] = set()
@@ -1067,7 +1067,7 @@ def third_party_analization_general():
 
 
     # How many % of mails embed third party resources?
-    all_mails = Mail.objects.all()
+    all_mails = Mail.objects.all().exclude(processing_fails=3)
     third_party_embeds = 0  # total embeds
     list_third_party_per_mail = []  # number of third parties per mail
     high = 0  # highest number of embeds per mail
@@ -1250,19 +1250,25 @@ def general_statistics():
     print(LONG_SEPERATOR)
     all_mails_queryset = Mail.objects.all()
     num_all_mails = all_mails_queryset.count()
-    print('Number of Mails in Database: {}'.format(num_all_mails))
+    print('Number of mails in Database: {}'.format(num_all_mails))
 
     failed_mails_qeryset = all_mails_queryset.filter(processing_fails=settings.OPENWPM_RETRIES)
     num_failed_mails = failed_mails_qeryset.count()
-    print('Number of failed Mails in the Database: {}'. format(num_failed_mails))
+    print('Number of failed mails in the Database: {}'. format(num_failed_mails))
+
+    num_failed_mails = failed_mails_qeryset.filter(processing_state='UNPROCESSED').count()
+    print('Number of failed mails in the Database while viewing: {}'.format(num_failed_mails))
+
+    num_failed_mails = failed_mails_qeryset.filter(processing_state='VIEWED').count()
+    print('Number of failed mails in the Database while clicking a link: {}'.format(num_failed_mails))
 
     done_mails_qeryset = all_mails_queryset.filter(processing_state='DONE')
     num_done_mails = done_mails_qeryset.count()
-    print('Number of done Mails in the Database: {}'.format(num_done_mails))
+    print('Number of done mails in the Database: {}'.format(num_done_mails))
 
     no_unsubscribe_mails_qeryset = all_mails_queryset.filter(processing_state='NO_UNSUBSCRIBE_LINK')
     num_no_unsubscribe_mails = no_unsubscribe_mails_qeryset.count()
-    print('Number of failed Mails in the Database: {}'.format(num_no_unsubscribe_mails))
+    print('Number of mails without unsub link found in the Database: {}'.format(num_no_unsubscribe_mails))
 
 
     all_services_queryset = Service.objects.all()
