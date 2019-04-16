@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-16 11:22+0200\n"
-"PO-Revision-Date: 2019-04-16 11:19+0200\n"
+"POT-Creation-Date: 2019-04-16 15:06+0200\n"
+"PO-Revision-Date: 2019-04-16 15:07+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.1\n"
 
-#: identity/checks.py:20
+#: checks.py:20
 msgid "Receives Email leak"
 msgstr "Erhält eMail-Adresse"
 
-#: identity/checks.py:21
+#: checks.py:21
 msgid "Sends the Newsletter"
 msgstr "Sendet den Newsletter"
 
-#: identity/checks.py:103
+#: checks.py:103
 msgid "External connections when opening the Mail"
 msgstr "Externe Verbindungen beim Öffnen der Mail"
 
-#: identity/checks.py:104
+#: checks.py:104
 msgid ""
 "Newsletters may contain resources that are dynamically loaded from either "
 "the service provider or other websites, allowing them to track when you open "
@@ -40,18 +40,18 @@ msgstr ""
 "verfolgt werden können. Dieser Check erkennt die Nutzung dieser externen "
 "Ressourcen."
 
-#: identity/checks.py:105
+#: checks.py:105
 msgid ""
 "This check passes if no connections are established when opening the Mail."
 msgstr ""
 "Ein Newsletter besteht diesen Check, wenn beim Öffnen der eMail keine "
 "Verbindungen aufgebaut werden."
 
-#: identity/checks.py:106 identity/checks.py:233
+#: checks.py:106 checks.py:233
 msgid "This check should not create errors."
 msgstr "Dieser Check sollte keine Fehler verursachen."
 
-#: identity/checks.py:138
+#: checks.py:138
 #, python-format
 msgid ""
 "%(count)d domain is contacted when viewing the mail with remote content "
@@ -66,94 +66,114 @@ msgstr[1] ""
 "%(count)d Domains werden beim Öffnen dieser eMail mit aktivierten externen "
 "Inhalten kontaktiert."
 
-#: identity/checks.py:143
+#: checks.py:143
 msgid "No external domains are contacted when viewing the mail."
 msgstr "Beim Öffnen dieser eMail werden keine externen Domains kontaktiert."
 
-#: identity/checks.py:150
+#: checks.py:150
 msgid "Third party connections when clicking a link"
-msgstr ""
+msgstr "Verbindungen zu Drittanbietern beim öffnen eines Links"
 
-#: identity/checks.py:151
+#: checks.py:151
 msgid ""
 "Links in the eMail may initially point to third party services such as "
 "trackers, which will forward the user to the correct address later. This "
 "check detects this kind of tracking behavior."
 msgstr ""
+"Links in der E-Mail können zunächst auf Dienste Dritter, wie z.B. Tracker, "
+"verweisen, die den Nutzer später an die richtige Adresse weiterleiten. "
+"Dieser Check erkennt diese Art von Tracking-Verhalten."
 
-#: identity/checks.py:152
+#: checks.py:152
 msgid ""
 "This check passes if no connections to third parties are established when "
 "clicking links from the Mail."
 msgstr ""
+"Ein Newsletter besteht diesen Check, wenn das Klicken von Links keine "
+"Verbindungen zu Drittanbietern aufbaut."
 
-#: identity/checks.py:153
+#: checks.py:153
 msgid ""
 "The clicked link from the mail is determined randomly, thus some third "
 "parties may be missed."
 msgstr ""
+"Der Link wird zufällig ausgewählt, daher können ggf. Drittanbieter übersehen "
+"werden."
 
-#: identity/checks.py:184
+#: checks.py:184
 #, python-format
 msgid "%(count)d third party is contacted when clicking a link."
 msgid_plural "%(count)d third parties are contacted when clicking a link."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(count)d Drittanbieter wird beim Klicken eines Links kontaktiert."
+msgstr[1] "%(count)d Drittanbieter wird beim Klicken eines Links kontaktiert."
 
-#: identity/checks.py:189
+#: checks.py:189
 msgid "No third parties are contacted when clicking a link."
-msgstr ""
+msgstr "Beim Klicken eines Links werden keine Drittanbieter kontaktiert."
 
-#: identity/checks.py:197
+#: checks.py:197
 msgid "Third party spam"
-msgstr ""
+msgstr "Spam von Dritten"
 
-#: identity/checks.py:199
+#: checks.py:199
 msgid ""
 "Service providers may intentionally or unintentionally disclose your eMail "
 "address to third parties, including spammers. We try to detect this by "
 "tracking if identities associated with this service start receiving eMails "
 "from other senders."
 msgstr ""
+"Newsletter-Anbieter können Ihre E-Mail-Adresse absichtlich oder "
+"unabsichtlich an Dritte weitergeben, inklusive Spammern. Wir versuchen dies "
+"zu erkennen, indem wir verfolgen, ob Identitäten, die mit diesem Dienst "
+"verbunden sind, beginnen, E-Mails von anderen Absendern zu empfangen."
 
-#: identity/checks.py:201
+#: checks.py:201
 msgid ""
 "This check fails if a mail arrives from another domain than the domain of "
 "the service and the admin manually marked it as spam."
 msgstr ""
+"Ein Newsletter fällt durch, wenn eine E-Mail von einer anderen Domain als "
+"der Domain des Dienstes kommt und ein Administrator sie manuell als Spam "
+"markiert."
 
-#: identity/checks.py:203
+#: checks.py:203
 msgid "Due to admin supervision this check should not create errors."
 msgstr ""
+"Da Ergebnisse von einem Menschen überprüft werden, sollte dieser Check keine "
+"Fehler verursachen."
 
-#: identity/checks.py:214
+#: checks.py:214
 msgid "No third party spam was detected."
-msgstr ""
+msgstr "Es wurde kein Spam detektiert."
 
-#: identity/checks.py:217
+#: checks.py:217
 #, python-format
 msgid "%(count)d identity received third party messages."
 msgid_plural "%(count)d identities received third party messages."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%(count)d Identität erhält Spam von Dritten."
+msgstr[1] "%(count)d Identitäten erhalten Spam von Dritten."
 
-#: identity/checks.py:230
+#: checks.py:230
 msgid "Contacted on view"
-msgstr ""
+msgstr "Beim Lesen einer Mail kontaktiert"
 
-#: identity/checks.py:231
+#: checks.py:231
 msgid ""
 "If this domain is contacted when opening a newsletter, it may be able to "
 "track who is reading the newsletter and when they are doing it."
 msgstr ""
+"Wenn diese Domain beim Öffnen eines Newsletters kontaktiert wird, ist sie in "
+"der Lage, zu verfolgen, wer diesen Newsletter wann liest."
 
-#: identity/checks.py:232
+#: checks.py:232
 msgid ""
 "This check passes if the website is never contacted when newsletters are "
 "opened."
 msgstr ""
+"Eine Domain besteht diesen Check, wenn sie nie beim öffnen eines Newsletters "
+"kontaktiert wird."
 
-#: identity/checks.py:265
+#: checks.py:265
 #, python-format
 msgid ""
 "%(count)d newsletter contacts this domain when viewing the mail with remote "
@@ -162,95 +182,117 @@ msgid_plural ""
 "%(count)d newsletters contact this domain when viewing the mail with remote "
 "content enabled."
 msgstr[0] ""
+"%(count)d Newsletter kontaktiert diese Domain wenn eine Nachricht mit "
+"aktivierten externen Inhalten geöffnet wird."
 msgstr[1] ""
+"%(count)d Newsletter kontaktieren diese Domain wenn eine Nachricht mit "
+"aktivierten externen Inhalten geöffnet wird."
 
-#: identity/checks.py:270
+#: checks.py:270
 msgid "No newsletter contacts this website when being viewed."
-msgstr ""
+msgstr "Diese Domain wird von keinem Newsletter kontaktiert."
 
-#: identity/checks.py:277
+#: checks.py:277
 msgid "Contacted on click"
-msgstr ""
+msgstr "Beim anklicken von Links kontaktiert"
 
-#: identity/checks.py:278
+#: checks.py:278
 msgid ""
 "If this domain is contacted when clicking a link from a newsletter, it is "
 "able to track who is clicking which links and when they are doing it. It may "
 "also be able to link this information to additional data it may already have "
 "about the user."
 msgstr ""
+"Wenn diese Domain beim anklicken eines Links aus einem Newsletter "
+"kontaktiert wird, ist sie in der Lage, nachzuverfolgen, wer wann welche "
+"Links anklickt. Sie könnte diese Information außerdem mit anderen Daten, die "
+"sie bereits über die Nutzerin gespeichert hat, zusammenführen."
 
-#: identity/checks.py:279
+#: checks.py:279
 msgid ""
 "This check passes if no newsletters (except newsletters sent out by this "
 "domain) contact this domain when users click a link."
 msgstr ""
+"Eine Domain besteht diesen Check, wenn sie von keinen Newslettern (außer "
+"denen, die sie selbst aussendet) beim anklicken eines Links kontaktiert wird."
 
-#: identity/checks.py:280
+#: checks.py:280
 msgid ""
 "The clicked link from the mail is determined randomly, thus some newsletters "
 "may be missed."
 msgstr ""
+"Der geklickte Link wird zufällig gewählt. Dadurch können einzelne Newsletter "
+"eventuell nicht erkannt werden."
 
-#: identity/checks.py:311
+#: checks.py:311
 #, python-format
 msgid "%(count)d newsletter contacts this domain when clicking a link."
 msgid_plural "%(count)d newsletters contact this domain when clicking a link."
 msgstr[0] ""
+"%(count)d Newsletter kontaktiert diese Domain, wenn ein Link angeklickt wird."
 msgstr[1] ""
+"%(count)d Newsletter kontaktieren diese Domain, wenn ein Link angeklickt "
+"wird."
 
-#: identity/checks.py:316
+#: checks.py:316
 msgid "No newsletters contact this domain when links are clicked."
-msgstr ""
+msgstr "Diese Domain wird von keinem Newsletter kontaktiert."
 
-#: identity/templates/check.html:6
+#: templates/check.html:6
 msgid "reliable"
-msgstr ""
+msgstr "Verlässlich"
 
-#: identity/templates/check.html:6
+#: templates/check.html:6
 msgid "unreliable"
-msgstr ""
+msgstr "Unzuverlässig"
 
-#: identity/templates/check.html:15 identity/templates/identity/embed.html:56
-#: identity/templates/identity/service.html:72
+#: templates/check.html:15 templates/identity/embed.html:56
+#: templates/identity/service.html:72
 msgid "More information"
-msgstr ""
+msgstr "Mehr Informationen"
 
-#: identity/templates/check.html:19
+#: templates/check.html:19
 msgid "Conditions for passing"
-msgstr ""
+msgstr "Bedingungen für bestehen"
 
-#: identity/templates/check.html:20
+#: templates/check.html:20
 msgid "Reliability"
-msgstr ""
+msgstr "Verlässlichkeit"
 
-#: identity/templates/check.html:21
+#: templates/check.html:21
 msgid "Potential scan errors"
-msgstr ""
+msgstr "Mögliche Fehlerquellen"
 
-#: identity/templates/check.html:23
+#: templates/check.html:23
 msgid "Result wrong?"
-msgstr ""
+msgstr "Ergebnis falsch?"
 
-#: identity/templates/check.html:26
+#: templates/check.html:26
 msgid "report error"
-msgstr ""
+msgstr "fehler melden"
 
-#: identity/templates/faq.html:16
+#: templates/faq.html:16
 msgid "Frequently asked Questions"
-msgstr ""
+msgstr "Häufige Fragen"
 
-#: identity/templates/faq.html:17
+#: templates/faq.html:17
 msgid ""
 "On this page, we will try to answer a few common questions. If you have a "
 "question that is not answered here, feel free to get in touch."
 msgstr ""
+"Auf dieser Seite versuchen wir, einige häufig gestellte Fragen zu "
+"beantworten. Wenn Du eine Frage hast, die hier nicht beantwortet wird, melde "
+"Dich gerne bei uns."
 
-#: identity/templates/faq.html:20
+#: templates/faq.html:19
+msgid "For Users"
+msgstr "Für Nutzer*innen"
+
+#: templates/faq.html:20
 msgid "What is PrivacyMail?"
-msgstr ""
+msgstr "Was ist PrivacyMail?"
 
-#: identity/templates/faq.html:21
+#: templates/faq.html:21
 msgid ""
 "Privacymail is an automated scanning system that helps you determine if the "
 "companies that are sending you newsletters are using tracking technologies "
@@ -260,12 +302,20 @@ msgid ""
 "operated by the <a href=\"https://seemoo.de/\" target=\"blank\">Secure "
 "Mobile Networking Lab</a> at TU Darmstadt, Germany."
 msgstr ""
+"PrivacyMail ist ein automatisches System das dir dabei hilft, "
+"herauszufinden, ob die Firmen, die dir Newsletter schicken, Tracking-"
+"Technologien nutzen, um herauszufinden welche Mails du liest und welche "
+"Links du anklickst. Es soll dir dabei helfen, dich zu informieren und "
+"Transparenz in diesen oft intransparenten Bereich bringen. PrivacyMail ist "
+"außerdem auch ein Forschungswerkzeug, betrieben durch das <a href=\"https://"
+"seemoo.de/\" target=\"blank\">Secure Mobile Networking Lab</a> an der TU "
+"Darmstadt in Deutschland."
 
-#: identity/templates/faq.html:23
+#: templates/faq.html:23
 msgid "Is this service free? How do you make money?"
-msgstr ""
+msgstr "Was kostet PrivacyMail? Wie verdient ihr Geld?"
 
-#: identity/templates/faq.html:24
+#: templates/faq.html:24
 msgid ""
 "PrivacyMail is a non-commercial open source project, paid for as a research "
 "tool by the <a href=\"https://seemoo.de/\" target=\"blank\">Secure Mobile "
@@ -275,19 +325,30 @@ msgid ""
 "the service or show advertisements. However, we may use the data generated "
 "by the platform in our research (see next question for details)."
 msgstr ""
+"PrivacyMail ist ein nicht-kommerzielles Forschungsprojekt. Die laufenden "
+"Kosten werden aktuell vom <a href=\"https://seemoo.de/\" target=\"blank"
+"\">Secure Mobile Networking Lab (SEEMOO)</a> an der TU Darmstadt übernommen. "
+"Die Weiterentwicklung geschieht durch das SEEMOO-Team, Studierende (als Teil "
+"von Projekten oder Abschlussarbeiten), und Freiwilligen. PrivacyMail ist "
+"Open Source und wird niemals Geld für die Nutzung verlangen oder Werbung "
+"zeigen. Die gesammelten Daten werden für Forschungszwecke ausgewertet (siehe "
+"nächste Frage)."
 
-#: identity/templates/faq.html:26
+#: templates/faq.html:26
 msgid "What will you do with the collected data?"
-msgstr ""
+msgstr "Was passiert mit den gesammelten Daten?"
 
-#: identity/templates/faq.html:27
+#: templates/faq.html:27
 msgid ""
 "First off: <b>We do not collect data about you.</b> All collected data is "
 "related to the newsletters that you and others register with this service, "
 "and no data about our users is collected or shared in any way."
 msgstr ""
+"Um eine Sache von Anfang an klarzustellen: <b>Wir sammeln keine Daten über "
+"Dich!</b> Die Daten, die wir sammeln, beziehen sich ausschließlich auf die "
+"Newsletter, die Du und andere bei uns angemeldet haben."
 
-#: identity/templates/faq.html:28
+#: templates/faq.html:28
 msgid ""
 "That being said: We perform analyses on the mails we receive to display the "
 "results on this website, and may combine it with data from <a href=\"https://"
@@ -298,38 +359,52 @@ msgid ""
 "Reproducibility\" target=\"blank\">reproducible research</a>. If you are a "
 "researcher and want to work with our data, feel free to get in touch."
 msgstr ""
+"Wir analysieren ankommende eMails, um die auf der Webseite gezeigten "
+"Ergebnisse zu erzeugen, und kombinieren sie mit Daten aus <a href=\"https://"
+"privacyscore.org\" target=\"blank\">anderen Projekten</a> um ein klareres "
+"Bild der Online-Tracking-Industrie zu erhalten. Die Daten werden auf Anfrage "
+"mit anderen Forschenden geteilt, oder als Teil größerer Datensätze "
+"veröffentlicht, um <a href=\"https://de.wikipedia.org/wiki/"
+"Reproduzierbarkeit#Wissenschaft\" target=\"blank\">reproduzierbare "
+"Forschung</a> zu ermöglichen. Wenn Du Forschung betreibst und mit unseren "
+"Daten arbeiten möchtest, melde dich gerne bei uns."
 
-#: identity/templates/faq.html:30
+#: templates/faq.html:30
 msgid "What is your relationship to the PrivacyScore project?"
-msgstr ""
+msgstr "In welchem Zusammenhang stehen PrivacyMail und PrivacyScore?"
 
-#: identity/templates/faq.html:31
+#: templates/faq.html:31
 msgid ""
 "Some members of the PrivacyMail team also contribute to the <a href="
 "\"https://privacyscore.org/\" target=\"blank\">PrivacyScore platform</a>, "
 "and vice versa. Some of the technology and infrastructure is shared between "
 "the projects. Other than this, they are independent projects. "
 msgstr ""
+"Einige Mitglieder des PrivacyMail-Teams arbeiten auch an <a href=\"https://"
+"privacyscore.org\" target=\"blank\">PrivacyScore</a>. Ein Teil der "
+"Infrastruktur und Technologie wird von beiden Projekten gemeinsam genutzt. "
+"Bis darauf sind die beiden Projekte allerdings unabhängig. "
 
-#: identity/templates/faq.html:34
+#: templates/faq.html:34
 msgid "For service operators"
-msgstr ""
+msgstr "Für Newsletter-Betreiber"
 
-#: identity/templates/faq.html:35
+#: templates/faq.html:35
 msgid "Why are you scanning my newsletters?"
-msgstr ""
+msgstr "Warum untersucht Ihr meinen Newsletter?"
 
-#: identity/templates/faq.html:36
+#: templates/faq.html:36
 msgid ""
 "We are scanning your newsletter because one of our users registered it with "
 "our service."
 msgstr ""
+"Wir untersuchen alle Newsletter, die von Nutzer*innen angemeldet wurden."
 
-#: identity/templates/faq.html:38
+#: templates/faq.html:38
 msgid "Can you remove me from your system?"
-msgstr ""
+msgstr "Könnt Ihr mich aus Eurem System entfernen?"
 
-#: identity/templates/faq.html:39
+#: templates/faq.html:39
 msgid ""
 "If you do not want your newsletter to be scanned by our system, please get "
 "in touch and we will remove existing subscriptions and ensure that no new "
@@ -341,31 +416,43 @@ msgid ""
 "result data we may have on your service. We may also show your service in a "
 "list of services that have asked to be excluded."
 msgstr ""
+"Wenn Sie nicht wollen, dass wir Ihren Newsletter untersuchen, schicken Sie "
+"uns bitte eine eMail. Wir werden dann alle Abonnements beenden und dafür "
+"sorgen, dass keine neuen angelegt werden können. <strong>Wir weisen "
+"ausdrücklich darauf hin, dass dies keinen Einfluss auf existierende "
+"Ergebnisse hat (sie werden nicht entfernt). Die Entscheidung, sich aus dem "
+"System entfernen zu lassen, wir öffentlich dokumentiert.</strong> "
+"Nutzer*innen, die sich für Ihren Newsletter interessieren, werden mit einer "
+"Nachricht darauf hingewisen, dass Sie darum geben haben, aus dem System "
+"entfernt zu werden, und können die historischen Ergebnisse betrachten. Alle "
+"auf diese Art deaktivierten Newsletter werden in einer öffentlichen Liste "
+"geführt."
 
-#: identity/templates/footer.html:6 identity/templates/imprint.html:6
-#: identity/templates/imprint.html:16
+#: templates/footer.html:6 templates/imprint.html:6 templates/imprint.html:16
 msgid "Imprint"
-msgstr ""
+msgstr "Impressum"
 
-#: identity/templates/footer.html:7
+#: templates/footer.html:7
 msgid "Privacy Policy"
-msgstr ""
+msgstr "Datenschutz"
 
-#: identity/templates/home.html:15
+#: templates/home.html:15
 msgid "Who is watching you read your eMails?"
-msgstr ""
+msgstr "Wer sieht Dir beim eMails lesen über die Schulter?"
 
-#: identity/templates/home.html:16
+#: templates/home.html:16
 msgid ""
 "Did you know that many companies track if you are opening their newsletters? "
 "Find out more about the practices of your favourite company here."
 msgstr ""
+"Wusstest Du, dass viele Firmen nachverfolgen, wer ihre Newsletter liest? "
+"Hier kannst du herausfinden, was sich in deinen Newslettern versteckt."
 
-#: identity/templates/home.html:33
+#: templates/home.html:33
 msgid "Shining a Light on eMail Tracking"
-msgstr ""
+msgstr "Wir machen eMail-Tracking sichtbar"
 
-#: identity/templates/home.html:34
+#: templates/home.html:34
 msgid ""
 "PrivacyMail makes the invisible tracking in newsletters visible. Email "
 "tracking is widely used to track which eMails you read, which links you "
@@ -373,227 +460,251 @@ msgid ""
 "the services of other companies, which may in turn use the data to profile "
 "you for targeted advertisements."
 msgstr ""
+"PrivacyMail macht die unsichtbaren Tracking-Methoden in Newslettern "
+"sichtbar. eMail-Tracking wird von vielen Firmen eingesetzt, um "
+"festzustellen, welche eMails gelesen und welche Links angeklickt werden. "
+"Dafür setzen sie die Dienstleistungen anderer Firmen ein, welche die Daten "
+"auch für Werbezwecke einsetzen können."
 
-#: identity/templates/home.html:39
+#: templates/home.html:39
 msgctxt "Section heading"
 msgid "How eMail Tracking Works"
-msgstr ""
+msgstr "So funktioniert eMail-Tracking"
 
-#: identity/templates/home.html:44
+#: templates/home.html:44
 msgid "The company sends you an eMail."
-msgstr ""
+msgstr "Die Firma sendet Dir eine eMail."
 
-#: identity/templates/home.html:48
+#: templates/home.html:48
 msgid ""
 "When you open the eMail, images are loaded from the company, or one of its "
 "partners. The companies thus knows that you have opened the eMail."
 msgstr ""
+"Wenn Du die eMail öffnest werden Bilder von Servern der Firma oder einer "
+"ihrer Partner geladen. Die Firmen wissen dadurch, dass Du die eMail geöffnet "
+"hast."
 
-#: identity/templates/home.html:52
+#: templates/home.html:52
 msgid ""
 "Links in the eMail are personalized - if you click them, the company knows "
 "it was you who clicked the link."
 msgstr ""
+"Links in der eMail sind personalisiert - wenn Du sie anklickst, weiß die "
+"Firma, dass Du diesen Link geklickt hast."
 
-#: identity/templates/home.html:56
+#: templates/home.html:56
 msgid ""
 "All this data can be used by the companies to optimize their newsletters - "
 "or target advertisements."
 msgstr ""
+"Diese Daten können von den Firmen genutzt werden, um ihre Newsletter zu "
+"verbessern - oder gezielte Werbung zu schalten."
 
-#: identity/templates/home.html:62
+#: templates/home.html:62
 msgctxt "section heading"
 msgid "How We Detect It"
-msgstr ""
+msgstr "So erkennen wir Tracking"
 
-#: identity/templates/home.html:67
+#: templates/home.html:67
 msgid ""
 "People like you sign up a newsletter to a special eMail address provided by "
 "us."
 msgstr ""
+"Menschen wie Du melden eine unserer eMail-Adressen für einen Newsletter an."
 
-#: identity/templates/home.html:71
+#: templates/home.html:71
 msgid ""
 "We receive them and analyze them using an automated scanning system that "
 "inspects them for common types of tracking."
 msgstr ""
+"Wir erhalten diese Newsletter und analysieren sie mit einem automatisierten "
+"System auf typische Tracking-Methoden."
 
-#: identity/templates/home.html:71
+#: templates/home.html:71
 msgid "learn more"
-msgstr ""
+msgstr "Mehr Informationen"
 
-#: identity/templates/home.html:75
+#: templates/home.html:75
 msgid ""
 "Information about newsletters and tracking companies is published on this "
 "website to allow you to inform yourself."
 msgstr ""
+"Informationen über die Newsletter und Tracking-Firmen werden auf dieser "
+"Webseite veröffentlicht, damit Du Dich informieren kannst."
 
-#: identity/templates/home.html:79
+#: templates/home.html:79
 msgid ""
 "Others see the results, allowing them to make more informed decisions about "
 "their newsletter consumption."
 msgstr ""
+"Andere können die Ergebnisse sehen und sich bewusst für oder gegen bestimmte "
+"Newsletter entscheiden."
 
-#: identity/templates/home.html:88
+#: templates/home.html:88
 msgid "Why You Should Use PrivacyMail"
-msgstr ""
+msgstr "Warum Du PrivacyMail nutzen solltest"
 
-#: identity/templates/home.html:97
+#: templates/home.html:97
 msgctxt "Section heading"
 msgid "Inform Yourself"
-msgstr ""
+msgstr "Informiere Dich"
 
-#: identity/templates/home.html:98
+#: templates/home.html:98
 msgid ""
 "Knowing is half the battle. Find out if the newsletters you are reading are "
 "tracking you, who they are sending your data to, and what these companies "
 "are up to."
 msgstr ""
+"Wissen ist Macht. Finde heraus ob die Newsletter, die du liest, dich "
+"tracken, an wen sie deine Daten schicken, und was das für Firmen sind."
 
-#: identity/templates/home.html:106
+#: templates/home.html:106
 msgctxt "Section heading"
 msgid "Raise Your Voice"
-msgstr ""
+msgstr "Beschwer' Dich"
 
-#: identity/templates/home.html:107
+#: templates/home.html:107
 msgid ""
 "Don't want to be tracked and profiled? Share the results with others to warn "
 "them and demand companies change their behavior."
 msgstr ""
+"Keine Lust auf Tracking und Profiling? Teile die Ergebnisse mit deinen "
+"Freunden und beschwer' dich bei den Firmen."
 
-#: identity/templates/home.html:115
+#: templates/home.html:115
 msgctxt "Section heading"
 msgid "Support Research"
-msgstr ""
+msgstr "Hilf der Forschung"
 
-#: identity/templates/home.html:116
+#: templates/home.html:116
 msgid ""
 "By using PrivacyMail, you support our research on the state of online "
 "privacy by helping us collect a large dataset of newsletters."
 msgstr ""
+"Deine Nutzung von PrivacyMail unterstützt unsere Forschung im Bereich der "
+"Online-Privacy."
 
-#: identity/templates/home.html:124
+#: templates/home.html:124
 msgctxt "Section heading"
 msgid "A Few Statistics"
-msgstr ""
+msgstr "Ein paar Statistiken"
 
-#: identity/templates/home.html:133
+#: templates/home.html:133
 msgctxt "statistic description"
 msgid "Newsletters Registered"
-msgstr ""
+msgstr "Registrierte Newsletter"
 
-#: identity/templates/home.html:141
+#: templates/home.html:141
 msgctxt "statistic description"
 msgid "eMails Processed"
-msgstr ""
+msgstr "eMails analysiert"
 
-#: identity/templates/home.html:149
+#: templates/home.html:149
 msgid "3rd Party Domains Found"
-msgstr ""
+msgstr "Drittanbieter gefunden"
 
-#: identity/templates/home.html:189
+#: templates/home.html:189
 msgid "Add this site"
-msgstr ""
+msgstr "Seite hinzufügen"
 
-#: identity/templates/home.html:189
+#: templates/home.html:189
 msgid ""
 "Looks like we don't have this website in our database yet - you can add it "
 "yourself!"
 msgstr ""
+"Sieht so aus, als hätten wir diese Seite noch nicht in unserer Datenbank - "
+"Du kannst sie aber hinzufügen!"
 
-#: identity/templates/home.html:189
+#: templates/home.html:189
 msgid "Learn more"
-msgstr ""
+msgstr "Mehr Informationen"
 
-#: identity/templates/identity/embed.html:24
-#: identity/templates/identity/service.html:24
+#: templates/identity/embed.html:24 templates/identity/service.html:24
 msgid "SHOWING RESULTS FOR"
-msgstr ""
+msgstr "ERGEBNISSE FÜR"
 
-#: identity/templates/identity/embed.html:32
-#: identity/templates/identity/service.html:32
+#: templates/identity/embed.html:32 templates/identity/service.html:32
 msgid "Server Error"
-msgstr ""
+msgstr "Fehler"
 
-#: identity/templates/identity/embed.html:33
-#: identity/templates/identity/service.html:33
+#: templates/identity/embed.html:33 templates/identity/service.html:33
 msgid ""
 "Looks like there is a problem on our end. Please check back in a couple of "
 "minutes, or contact us if the problem persists."
 msgstr ""
+"Sieht so aus als gäbe es ein kleines Problem bei uns. Bitte schau' in ein "
+"paar Minuten noch einmal vorbei, oder schreib' uns eine eMail, wenn das "
+"Problem nicht verschwindet."
 
-#: identity/templates/identity/embed.html:48
+#: templates/identity/embed.html:48
 msgid "This Domain sends out a newsletter."
-msgstr ""
+msgstr "Diese Domain versendet einen Newsletter."
 
-#: identity/templates/identity/embed.html:49
+#: templates/identity/embed.html:49
 msgid "See results"
-msgstr ""
+msgstr "Ergebnisse"
 
-#: identity/templates/identity/embed.html:58
-#: identity/templates/identity/embed.html:63
-#: identity/templates/identity/service.html:74
+#: templates/identity/embed.html:58 templates/identity/embed.html:63
+#: templates/identity/service.html:74
 msgid "Sector"
-msgstr ""
+msgstr "Branche"
 
-#: identity/templates/identity/embed.html:59
-#: identity/templates/identity/embed.html:64
-#: identity/templates/identity/service.html:75
+#: templates/identity/embed.html:59 templates/identity/embed.html:64
+#: templates/identity/service.html:75
 msgid "Country"
-msgstr ""
+msgstr "Land"
 
-#: identity/templates/identity/embed.html:59
+#: templates/identity/embed.html:59
 msgid "Unknown"
-msgstr ""
+msgstr "Unbekannt"
 
-#: identity/templates/identity/embed.html:60
+#: templates/identity/embed.html:60
 msgid "Want to update this?"
-msgstr ""
+msgstr "Daten aktualisieren?"
 
-#: identity/templates/identity/embed.html:60
+#: templates/identity/embed.html:60
 msgid "This data was loaded from the information of the associated newsletter."
-msgstr ""
+msgstr "Diese Daten wurden von dem zugehörigen Newsletter importiert."
 
-#: identity/templates/identity/embed.html:60
+#: templates/identity/embed.html:60
 msgid "Update it there"
-msgstr ""
+msgstr "Du kannst sie hier aktualisieren"
 
-#: identity/templates/identity/embed.html:66
-#: identity/templates/identity/service.html:77
+#: templates/identity/embed.html:66 templates/identity/service.html:77
 msgid "Know this website? Tell us more about it:"
-msgstr ""
+msgstr "Du kennst diese Webseite? Erzähl uns etwas über sie:"
 
-#: identity/templates/identity/identity.html:6
+#: templates/identity/identity.html:6
 msgctxt "Action / page title"
 msgid "New Identity"
-msgstr ""
+msgstr "Neue Identität"
 
-#: identity/templates/identity/identity.html:15
+#: templates/identity/identity.html:15
 msgctxt "Action / page title"
 msgid "Adding a new Service"
-msgstr ""
+msgstr "Neuen Service hinzufügen"
 
-#: identity/templates/identity/identity.html:29
+#: templates/identity/identity.html:29
 msgctxt "Person"
 msgid "Name"
-msgstr ""
+msgstr "Name"
 
-#: identity/templates/identity/identity.html:30
+#: templates/identity/identity.html:30
 msgctxt "Person"
 msgid "Gender"
-msgstr ""
+msgstr "Geschlecht"
 
 #. Translators: Sentence fragment, e.g. Created for website spiegel.de
-#: identity/templates/identity/identity.html:32
+#: templates/identity/identity.html:32
 msgid "Created for the website"
-msgstr ""
+msgstr "Erstellt für die Webseite"
 
-#: identity/templates/identity/identity.html:41
+#: templates/identity/identity.html:41
 msgctxt "Title"
 msgid "Important"
-msgstr ""
+msgstr "Wichtig"
 
-#: identity/templates/identity/identity.html:44
+#: templates/identity/identity.html:44
 #, python-format
 msgid ""
 "\n"
@@ -603,94 +714,116 @@ msgid ""
 "If you want to sign up another website, generate a new identity for it.\n"
 "                                    "
 msgstr ""
+"\n"
+"Bitte nutze diese eMail-Adresse <strong>nur für die Webseite "
+"%(servicename)s</strong>. Wenn Du sie für andere Newsletter anmeldest, "
+"werden die Ergebnisse falsch. Wenn Du einen weiteren Newsletter anmelden "
+"möchtest, erzeuge bitte eine eigene Identität für sie."
 
 #. Translators: Sentence fragment, e.g. we created a new identity for the website spiegel.de
-#: identity/templates/identity/identity.html:54
+#: templates/identity/identity.html:54
 msgid "We created a new identity for the website"
-msgstr ""
+msgstr "Neue Identität für die Webseite"
 
-#: identity/templates/identity/identity.html:55
+#: templates/identity/identity.html:55
 msgid "What's next?"
-msgstr ""
+msgstr "Und jetzt?"
 
-#: identity/templates/identity/identity.html:60
+#: templates/identity/identity.html:60
 msgid ""
 "Please copy the eMail address shown on the left and sign it up for the "
 "newsletter of"
 msgstr ""
+"Bitte kopiere die eMail-Adresse links und melde sie an für den Newsletter von"
 
-#: identity/templates/identity/identity.html:64
+#: templates/identity/identity.html:64
 msgid ""
 "Get a cup of coffee - we will receive the confirmation eMail and confirm it."
 msgstr ""
+"Hol' dir einen Kaffee - wir bekommen die Bestätigungs-eMail und bestätigen "
+"die Anmeldung."
 
-#: identity/templates/identity/identity.html:68
+#: templates/identity/identity.html:68
 msgid ""
 "As soon as we receive a newsletter from this website, we will analyze it. "
 "Note that depending on how frequently newsletters are sent, this may take a "
 "few days."
 msgstr ""
+"Sobald wir einen Newsletter von der Webseite erhalten, werden wir ihn "
+"analysieren. Je nachdem, wie oft die Newsletter geschickt werden, könnte das "
+"eine Weile dauern."
 
-#: identity/templates/identity/identity.html:72
+#: templates/identity/identity.html:72
 msgid "The results of the analysis will be published"
-msgstr ""
+msgstr "Die Ergebnisse der Analyse werden"
 
-#: identity/templates/identity/identity.html:72
+#: templates/identity/identity.html:72
 msgctxt "location"
 msgid "here"
-msgstr ""
+msgstr "hier veröffentlicht"
 
-#: identity/templates/identity/identity.html:76
+#: templates/identity/identity.html:76
 msgid "Common Questions and Problems"
-msgstr ""
+msgstr "Häufige Fragen und Probleme"
 
-#: identity/templates/identity/identity.html:77
+#: templates/identity/identity.html:77
 msgid "There is more than one newsletter"
-msgstr ""
+msgstr "Es gibt mehr als einen Newsletter"
 
-#: identity/templates/identity/identity.html:78
+#: templates/identity/identity.html:78
 msgid ""
 "If more than one newsletter is offered by the same website, please sign up "
 "the eMail address to <strong>all of them</strong>."
 msgstr ""
+"Wenn die Webseite mehr als einen Newsletter anbietet, melde die eMailadresse "
+"bitte für <strong>alle</strong> an."
 
-#: identity/templates/identity/identity.html:80
+#: templates/identity/identity.html:80
 msgid "I need to create a user account to sign up for newsletters"
-msgstr ""
+msgstr "Ich muss einen Account anlegen, um einen Newsletter zu bekommen"
 
 #. Translators: Sentence fragment, e.g. please send us an eMail and we'll see...
-#: identity/templates/identity/identity.html:82
+#: templates/identity/identity.html:82
 msgid ""
 "<strong>For security and privacy reasons, we will not confirm the "
 "registration of user accounts using the above eMail address.</strong> If you "
 "are interested in the newsletters sent out by this website, please"
 msgstr ""
+"<strong>Um Missbrauch zu vermeiden lassen wir das Erstellen von Accounts "
+"nicht zu.</strong>. Wenn Du dich für die Newsletter dieser Webseite "
+"interessierst,"
 
-#: identity/templates/identity/identity.html:82
+#: templates/identity/identity.html:82
 msgid "send us an eMail </a> and we'll see if we can add it manually."
 msgstr ""
+"schick uns eine eMail</a> und wir werden sehen, ob wir sie selbst hinzufügen "
+"können."
 
-#: identity/templates/identity/identity.html:84
+#: templates/identity/identity.html:84
 msgid "The website does not have any newsletters"
-msgstr ""
+msgstr "Die Webseite bietet keinen Newsletter an"
 
-#: identity/templates/identity/identity.html:85
+#: templates/identity/identity.html:85
 msgid ""
 "Don't worry, simply forget about it, no harm done! There is no need to "
 "contact us about this."
 msgstr ""
+"Kein Problem! Vergiss die oben genannte eMailadresse einfach wieder. Du "
+"musst uns keine eMail dazu schreiben."
 
-#: identity/templates/identity/service.html:46
+#: templates/identity/service.html:46
 msgid "No results available (yet)"
-msgstr ""
+msgstr "(Noch) keine Ergebnisse vorhanden"
 
-#: identity/templates/identity/service.html:47
+#: templates/identity/service.html:47
 msgid ""
 "We have not yet received any eMails for this service, and thus cannot show "
 "any results. Please check back at a later time."
 msgstr ""
+"Wir haben noch keine eMails von diesem Newsletter erhalten und können daher "
+"noch keine Ergebnisse zeigen. Bitte schau in ein paar Tagen nochmal vorbei."
 
-#: identity/templates/identity/service.html:55
+#: templates/identity/service.html:55
 #, python-format
 msgid ""
 "\n"
@@ -703,9 +836,13 @@ msgid_plural ""
 "unconfirmed).<br/>\n"
 "                                "
 msgstr[0] ""
+"\n"
+"%(cnt)s Identität registriert (und %(unc)s nicht bestätigt).<br/>"
 msgstr[1] ""
+"\n"
+"%(cnt)s Identitäten registriert (und %(unc)s nicht bestätigt).<br/>"
 
-#: identity/templates/identity/service.html:60
+#: templates/identity/service.html:60
 #, python-format
 msgid ""
 "\n"
@@ -714,58 +851,64 @@ msgid ""
 "more than one identity.\n"
 "                                "
 msgstr ""
+"\n"
+"%(cnt_mails)s eMails empfangen.<br />\n"
+"%(cnt_mult_ident_mails)s eMails von mehr als einer Identität empfangen."
 
-#: identity/templates/identity/service.html:66
+#: templates/identity/service.html:66
 msgid "Add another identity"
-msgstr ""
+msgstr "Weitere Identität hinzufügen"
 
-#: identity/templates/identity/service_filter.html:21
+#: templates/identity/service_filter.html:21
 msgid "Registered Newsletters:"
-msgstr ""
+msgstr "Registrierte Newsletter:"
 
-#: identity/templates/identity/service_filter.html:28
+#: templates/identity/service_filter.html:28
 msgid "Find newsletter by..."
-msgstr ""
+msgstr "Zeige Newsletter aus..."
 
-#: identity/templates/nav.html:18
+#: templates/nav.html:17
 msgctxt "Main menu"
 msgid "Newsletter List"
-msgstr ""
+msgstr "Angemeldete Newsletter"
 
-#: identity/templates/nav.html:21
+#: templates/nav.html:20
 msgctxt "Main Menu"
 msgid "Learn"
-msgstr ""
+msgstr "Mehr Informationen"
 
-#: identity/templates/nav.html:24
+#: templates/nav.html:23
 msgctxt "Main Menu"
 msgid "FAQ"
-msgstr ""
+msgstr "FAQ"
 
-#: identity/templates/nav.html:27
+#: templates/nav.html:26
 msgctxt "Main Menu"
 msgid "Research"
-msgstr ""
+msgstr "Forschung"
 
-#: identity/templates/nav.html:30
+#: templates/nav.html:29
 msgctxt "Main Menu"
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
-#: identity/views.py:67
+#: views.py:67
 msgid "Internal error"
-msgstr ""
+msgstr "Interner Fehler"
 
-#: identity/views.py:67
+#: views.py:67
 msgid ""
 "You sent a request the server did not understand. Please try again, or "
 "contact us if the problem persists."
 msgstr ""
+"Du hast eine Anfrage geschickt, die unser Server nicht verstanden hat. Bitte "
+"versuche es nochmal, oder schreib' uns eine eMail, wenn das Problem weiter "
+"besteht."
 
-#: identity/views.py:72
+#: views.py:72
 msgid "Invalid Address"
-msgstr ""
+msgstr "Ungültige Adresse"
 
-#: identity/views.py:72
+#: views.py:72
 msgid "This does not look like a website - please try again"
-msgstr ""
+msgstr "Das sieht nicht wie eine Webseite aus - versuche es nochmal"
