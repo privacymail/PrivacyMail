@@ -28,8 +28,9 @@ class Command(BaseCommand):
         try:
 
             # analyser_cron.thesis_link_personalisation_of_services()
-            analyser_cron.any_connection_overview()
-
+            # analyser_cron.any_connection_overview()
+            analyser_cron.services_setting_cookies()
+            # analyser_cron.any_connection_overview()
             # analyser_cron.third_party_analization_general()
             # analyser_cron.analyse_contacted_domains_from_cache()
             # analyser_cron.address_leakage_statistics()
