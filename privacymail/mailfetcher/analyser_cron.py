@@ -1263,11 +1263,42 @@ def services_setting_cookies():
     service_without_cookies = []
     service_without_cookies_view = []
     service_without_cookies_click = []
+    third_party_cookies = []
+    third_party_cookies_view = []
+    third_party_cookies_click = []
+    services_with_tp_cookies = 0
+    services_with_tp_view = 0
+    services_with_tp_click = 0
     for service in ser_receiving_mails:
         connections = ServiceThirdPartyEmbeds.objects.filter(service=service).filter(sets_cookie=True)
         connections_view = connections.filter(embed_type='ONVIEW')
         connections_click = connections.filter(embed_type='ONCLICK')
+        third_party_cookies_this_service = []
+        third_party_names_all = set()
+        third_party_names_view = set()
+        third_party_names_click = set()
+        for con in connections:
+            third_party_names_all.add(con.thirdparty.name)
+        for con in connections_view:
+            third_party_names_view.add(con.thirdparty.name)
+        for con in connections_click:
+            third_party_names_click.add(con.thirdparty.name)
 
+        third_party_names_all.discard(service.name)
+        third_party_names_all.discard(tldextract.extract(settings.LOCALHOST_URL).registered_domain)
+
+        third_party_names_view.discard(service.name)
+        third_party_names_view.discard(tldextract.extract(settings.LOCALHOST_URL).registered_domain)
+
+        third_party_names_click.discard(service.name)
+        third_party_names_click.discard(tldextract.extract(settings.LOCALHOST_URL).registered_domain)
+
+        third_party_cookies.append(len(third_party_names_all))
+        third_party_cookies_view.append(len(third_party_names_view))
+        third_party_cookies_click.append(len(third_party_names_click))
+
+        if len(third_party_names_all) == 0:
+            services_with_tp_cookies += 1
         if not connections.exists():
             service_without_cookies.append(service.name)
         if not connections_view.exists():
@@ -1284,12 +1315,17 @@ def services_setting_cookies():
     print('{:.2f}% of services set cookies click, {} do not.'.format(
         (len(ser_receiving_mails) - len(service_without_cookies_click))
         / len(ser_receiving_mails) * 100, len(service_without_cookies_click)))
-        # third_parties_tuple_list = list(connections.values_list('thirdparty_id').distinct())
-        # domains = []
-        # for tuple in third_parties_tuple_list:
-        #     domains.append(Thirdparty.objects.get(id=tuple[0]).name)
-        #
-        # print('{:<20}: {:<5} : {}'.format(service.name, len(third_parties_tuple_list), domains))
+    print('{:.2f}% of services set third party cookies'.format(services_with_tp_cookies/len(ser_receiving_mails)* 100))
+    third_party_cookies.sort()
+    print('Number of third party cookies per service:')
+    print(third_party_cookies)
+    print('Number of third party cookies per service on view:')
+    third_party_cookies_view.sort()
+    print(third_party_cookies_view)
+    print('Number of third party cookies per service on click:')
+    third_party_cookies_click.sort()
+    print(third_party_cookies_click)
+
 
 
 def analyse_ab_testing():
