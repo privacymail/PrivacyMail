@@ -22,9 +22,11 @@
                 <li class="nav-item">
                     <a class="nav-link {% if '/faq' in request.path %}active{% endif %}" href="{% url 'FAQ' %}">{% trans 'FAQ' context "Main Menu" %}</a>
                 </li>
+                {% comment %}
                 <li class="nav-item">
                     <a class="nav-link {% if '/research' in request.path %}active{% endif %}" href="#">{% trans 'Research' context "Main Menu" %}</a>
                 </li>
+                {% endcomment %}
                 <li class="nav-item">
                     <a class="nav-link {% if '/code' in request.path %}active{% endif %}" href="#">{% trans 'Code' context "Main Menu" %}</a>
                 </li>
