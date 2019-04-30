@@ -1,6 +1,6 @@
 # PrivacyMail
 
-Privacy as an eMail privacy analysis system. For more information about the platform, visit [privacymail.info](https://privacymail.info).
+PrivacyMail is an eMail privacy analysis system. For more information about the platform, visit [privacymail.info](https://privacymail.info).
 
 ## Installation
 PrivacyMail is a Django-based website. The `ansible` folder contains a deployment script that uses [Ansible](https://www.ansible.com/). See the README in that folder for additional details on what you need to set up to allow the system to deploy correctly. There are also some additional manual steps involved in setting up the necessary cronjobs to automate the retrieval and analysis of eMails. These steps are also described in the README file.
@@ -18,10 +18,10 @@ If you use PrivacyMail in a scientific project, please cite our paper at the Ann
 
 ```
 @article{PrivacyMail,
-	title = {{Towards Transparency in Email Tracking}},
-	author = {Maass, Max and Schwär, Stephan and Hollick, Matthias},
-	journal = {Annual Privacy Forum},
-	year = {2019}
+    title = {{Towards Transparency in Email Tracking}},
+    author = {Maass, Max and Schwär, Stephan and Hollick, Matthias},
+    journal = {Annual Privacy Forum},
+    year = {2019}
 }
 ```
 
