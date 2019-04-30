@@ -34,9 +34,6 @@ urlpatterns = [
     path('faq/', FaqView.as_view(), name="FAQ"),
     path('imprint/', ImprintView.as_view(), name="Imprint"),
     path('privacy/', PrivacyPolicyView.as_view(), name="PrivacyPolicy"),
-    # FIXME: This currently allows anyone to access silk without auth
-    # This is a terrible idea and HAS to be changed before release.
-    # re_path(r'^silk/', include('silk.urls', namespace='silk'))
     path('api/', include('api.urls')),
     path('i18n/', include('django.conf.urls.i18n')),
 ]
