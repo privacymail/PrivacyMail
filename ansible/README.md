@@ -29,4 +29,14 @@ Check templates/settings.py and the deploy.yml for the meaning of all of these v
 
 Afterwards, you should be able to run `ansible-playbook deploy.yml` to get a fully featured copy of PrivacyMail set up. The site will be served on port 80, and does not support TLS by default - if you want to expose it on the internet, please add TLS support etc., however, we decided against making this part of the standard setup, as it is overkill for local debugging installations, and may break more complex setups (e.g. those using proxies).
 
-Also note that we currently do not install the processing cronjobs, as they may cause problems on our setup. For production use, do not forget to install the cronjobs as required. More information on this will be added here eventually.
+Also note that we currently do not install the processing cronjobs, as they may cause problems on our setup. The system requires a call to `manage.py runcrons` that should be run approximately every 5 minutes (django-cron will take care of ensuring that the actual cronjobs are only run when they are needed). As we are using a virtualenv, we recommend wrapping the call in a bash script:
+
+```bash
+#!/bin/bash
+set -e
+cd /opt/privacymail/privacymail/privacymail
+source ../venv/bin/activate
+python manage.py runcrons >/dev/null
+```
+
+You can then call this script from a cronjob.
