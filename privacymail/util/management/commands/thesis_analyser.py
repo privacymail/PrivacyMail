@@ -6,7 +6,7 @@ from mailfetcher import analyser_cron
 from identity.views import ServiceView
 import traceback
 
-
+# This command was mainly used to call functions of the analyser cron for the thesis evaluation.
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         # cache.clear()
@@ -33,7 +33,7 @@ class Command(BaseCommand):
             # analyser_cron.any_connection_overview()
             # analyser_cron.third_party_analization_general()
             # analyser_cron.analyse_contacted_domains_from_cache()
-            # analyser_cron.address_leakage_statistics()
+            analyser_cron.address_leakage_statistics()
             # analyser_cron.long_chains_calculation()
             # analyser_cron.analyse_ab_testing()
             # analyser_cron.general_statistics()
