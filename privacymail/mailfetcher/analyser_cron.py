@@ -1401,15 +1401,6 @@ def embedded_type_statistics():
         num_all_mails = Mail.objects.all().count()
         num_with_embeds = num_all_mails - num_without_embeds
 
-        # type_description = 'unknownType'
-        # if 'a' in type:
-        #     type_description = 'Clickable links'
-        # elif 'img' in type:
-        #     type_description = 'Embedded image'
-        # elif 'script' in type:
-        #     type_description = 'JavaScript embedded'
-        # elif 'link' in type:
-        #     type_description = 'link (CSS)'
         type_description = '<' + type + '>'
 
         print('{:<20}: {:<7.2f}: {:<7.2f}: {:<7}: {:<14}: {:<14}: {:<.2f}%'.format(type_description, max_embeds,
