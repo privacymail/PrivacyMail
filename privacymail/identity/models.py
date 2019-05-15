@@ -5,6 +5,7 @@ import random
 from django.apps import apps
 from model_utils import Choices
 from django_countries.fields import CountryField
+from django.contrib.postgres.fields import ArrayField
 
 
 # Create your models here.
@@ -20,18 +21,28 @@ class Identity(models.Model):
 
     @classmethod
     def create(cls, service, domain):
+        def gen_name(gender):
+            if gender:  # if male
+                first_name = names.get_first_name(gender='male')
+            else:
+                first_name = names.get_first_name(gender='female')
+            surname = names.get_last_name()
+            return (first_name, surname)
+
         i = cls(service=service)
         # Generate random gender and name
         i.gender = bool(random.getrandbits(1))
-        if i.gender:  # if male
-            i.first_name = names.get_first_name(gender='male')
-        else:
-            i.first_name = names.get_first_name(gender='female')
-        i.surname = names.get_last_name()
 
-        # A lot of random names can be generated. Therefor we expect the mail to be unique
-        # TODO Ensure that name is not already taken
+        # Keep generating names until we find a pair that is not yet taken
+        while True:
+            first_name, surname = gen_name(i.gender)
+            if not Identity.objects.filter(first_name=first_name, surname=surname).exists():
+                break
+
+        i.first_name = first_name
+        i.surname = surname
         i.mail = "{}.{}@{}".format(i.first_name, i.surname, domain).lower()
+
         i.save()
         return i
 
@@ -78,6 +89,7 @@ class Service(models.Model):
 
     url = models.CharField(max_length=255)  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
     name = models.CharField(max_length=50)
+    permitted_senders = ArrayField(models.CharField(max_length=255))  # List of permitted senders
     thirdparties = models.ManyToManyField('mailfetcher.Thirdparty', through='ServiceThirdPartyEmbeds',
                                           related_name='services')
     resultsdirty = models.BooleanField(default=True)
@@ -92,7 +104,7 @@ class Service(models.Model):
     @classmethod
     def create(cls, url, name):
         # Create the service
-        i = cls(url=url, name=name)
+        i = cls(url=url, name=name, permitted_senders=[url])
         i.save()
         # Check if the service already exists as a third party
         try:
@@ -170,10 +182,10 @@ class ServiceThirdPartyEmbeds(models.Model):
     UNDETERMINED = 'UNDETERMINED'
 
     EMBED_TYPES = Choices(
-        ('STATIC', 'static'),
-        ('ONVIEW', 'onView'),
-        ('ONCLICK', 'onClick'),
-        ('UNDETERMINED', 'undetermined')
+        (STATIC, 'static'),
+        (ONVIEW, 'onView'),
+        (ONCLICK, 'onClick'),
+        (UNDETERMINED, 'undetermined')
     )
 
     service = models.ForeignKey(Service, related_name='embeds', on_delete=models.SET_NULL, null=True)

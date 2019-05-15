@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 import os
 import raven
 from raven.transport.requests import RequestsHTTPTransport
-
+from django.utils.translation import gettext_lazy as _
 
 
 
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'mailfetcher',
     'util',
     'identity',
+    'api',
     'fontawesome',
     'bootstrap_themes',
     'raven.contrib.django.raven_compat',
@@ -57,15 +58,14 @@ INSTALLED_APPS = [
     'django_filters',
     'django_tables2',
     'bootstrap4'
-    # 'silk'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    # 'silk.middleware.SilkyMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -148,7 +148,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
+
+LANGUAGES = [
+  ('de', _('German')),
+  ('en', _('English')),
+]
 
 TIME_ZONE = 'UTC'
 
@@ -276,7 +281,7 @@ EMAIL_HOST = 'mail.newsletterme.de'
 EMAIL_PORT = 587
 EMAIL_HOST_USER = '{{ lookup('passwordstore', 'privacymail/admin/send-user' )}}'
 EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' )}}'
-EMAIL_SUBJECT_PREFIX = '[PMail]'
+EMAIL_SUBJECT_PREFIX = '[PMail] '
 # For debugging you may use the console backend
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

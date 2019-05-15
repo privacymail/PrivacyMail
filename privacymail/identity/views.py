@@ -21,6 +21,7 @@ from mailfetcher.analyser_cron import create_service_cache
 from identity import checks
 import logging
 import time
+from random import shuffle
 
 # Get named logger
 logger = logging.getLogger(__name__)
@@ -110,12 +111,18 @@ class IdentityView(View):
         service.save()
 
         # Select a domain to use for the identity
-        # TODO this is a strange piece of code - if the break is never hit, it will create all further domains
-        # with the last domain from the list? Double-check
-        for mailcred in settings.MAILCREDENTIALS:
-            identityDomain = mailcred['DOMAIN']
+        # Create a list of possible domains
+        domains = [cred["DOMAIN"] for cred in settings.MAILCREDENTIALS]
+        # Shuffle it
+        shuffle(domains)
+        # Iterate through it
+        for identityDomain in domains:
+            # If the domain has not yet been used, stop the loop, otherwise try the next
             if Identity.objects.filter(service_id=service.pk).filter(mail__contains=identityDomain).count() == 0:
                 break
+        # At this point, we have either selected a domain that has not yet been used for the
+        # provided service, or the service already has at least one identity for each domain,
+        # in which case we have picked one domain at random (by shuffling the list first).
 
         # Create an identity and save it
         ident = Identity.create(service, identityDomain)

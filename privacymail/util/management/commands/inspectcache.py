@@ -20,7 +20,7 @@ class Command(BaseCommand):
                     pprint(c)
                 except Service.DoesNotExist:
                     raise CommandError('Service %s does not exist' % sid)
-        if options['embed']:
+        elif options['embed']:
             for sid in options['id']:
                 try:
                     embed = Thirdparty.objects.get(pk=sid)

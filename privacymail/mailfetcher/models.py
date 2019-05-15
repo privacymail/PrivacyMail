@@ -676,17 +676,23 @@ class Mail(models.Model):
 
     def check_for_unusual_sender(self):
         for ident in self.identity.all():
-            if ident.service.url not in self.h_from:
-                self.suspected_spam = True
-                subject = "Third-Party spam is suspected"
-                message = render_to_string('third_party_spam.txt', {
-                    'ident': ident,
-                    'mail': self,
-                    'URL': settings.SYSTEM_ROOT_URL
-                })
-                if not settings.DISABLE_ADMIN_MAILS:
-                    mail_admins(subject, message)
-                self.save()
+            for permitted_domain in ident.service.permitted_senders:
+                if permitted_domain in self.h_from:
+                    self.suspected_spam = False
+                    self.save()
+                    return
+            # If we reach this point, h_from is not in any permitted sender list
+            # Set it to be suspected spam and send a notification.
+            self.suspected_spam = True
+            subject = "Third-Party spam is suspected"
+            message = render_to_string('third_party_spam.txt', {
+                'ident': ident,
+                'mail': self,
+                'URL': settings.SYSTEM_ROOT_URL
+            })
+            if not settings.DISABLE_ADMIN_MAILS:
+                mail_admins(subject, message)
+            self.save()
 
     @staticmethod
     def call_openwpm_view_mail(mailQueue):
