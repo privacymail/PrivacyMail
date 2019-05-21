@@ -127,6 +127,11 @@
       pip:
         virtualenv: /opt/privacymail/privacymail/venv
         requirements: /opt/privacymail/privacymail/privacymail/OpenWPM/requirements.txt
+    - name: Block Firefox software updates in Hosts file
+      lineinfile: 
+        dest: /etc/hosts 
+        line: '127.0.0.1 aus5.mozilla.org'
+        state: present
     - name: Create folder structure for OpenWPM - Part 1
       become_user: privacymail
       file:
