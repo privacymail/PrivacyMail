@@ -3,7 +3,7 @@
   become: true
   become_user: root
   vars:
-    pm_domain: "beta.privacymail.info"
+    pm_domain: "privacymail.info"
     db_user: "{{ lookup('passwordstore', 'privacymail/postgres-user') }}"
     db_pass: "{{ lookup('passwordstore', 'privacymail/postgres-password') }}"
     host_locale: en_US.UTF-8
