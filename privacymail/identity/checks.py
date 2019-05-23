@@ -190,9 +190,37 @@ class ServiceOnClickThirdPartyConnectionCheck(Check):
         self.display = True
 
 
+class ServiceABTestingCheck(Check):
+    """Checks if the service performs A/B testing."""
+    check_id = 3
+    # Title of the check
+    check_title = _("A/B Testing")
+    # Description
+    check_description = _("Service providers may perform so-called A/B testing by sending different versions of Emails to different recipients to test which wording generates more clicks. While this is not a privacy problem in itself, it indicates that marketing analysis is taking place.")
+    # What is needed to pass this check?
+    check_condition = _("This check fails if we observe indications that A/B testing is being performed.")
+    # Errors
+    check_error = _('This check works by finding and comparing related pairs of Emails sent to different identities. If Emails are matched incorrectly, this check may give incorrect results. As A/B testing is a random process, we may also miss instances of A/B testing if only a small number of identities is signed up for the service.')
+    # Reliability
+    check_reliability = RELIABILITY_UNRELIABLE
+
+    def __init__(self, site_data):
+        if "suspected_AB_testing" not in site_data:
+            logger.error("ServiceABTestingCheck: Missing key in cache")
+            self.display = False
+            return None
+        if not site_data["suspected_AB_testing"]:
+            self.check_interpretation = _("No indications of A/B testing were found.")
+            self.check_status = STATUS_GOOD
+        else:
+            self.check_interpretation = _("This newsletter appears to be using A/B testing.")
+            self.check_status = STATUS_BAD
+        self.display = True
+
+
 class ServiceThirdPartySpamCheck(Check):
     """Checks if suspected spam was received from third parties."""
-    check_id = 3
+    check_id = 4
     # Title of the check
     check_title = _("Third party spam")
     # Description
@@ -326,5 +354,5 @@ class EmbedOnClickThirdPartyConnectionCheck(Check):
 #     check_reliability = RELIABILITY_RELIABLE
 
 
-SERVICE_CHECKS = [ServiceOnViewConnectionCheck, ServiceOnClickThirdPartyConnectionCheck, ServiceThirdPartySpamCheck]
+SERVICE_CHECKS = [ServiceOnViewConnectionCheck, ServiceOnClickThirdPartyConnectionCheck, ServiceABTestingCheck, ServiceThirdPartySpamCheck]
 EMBED_CHECKS = [EmbedOnViewConnectionCheck, EmbedOnClickThirdPartyConnectionCheck]
