@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-16 15:06+0200\n"
-"PO-Revision-Date: 2019-04-16 15:07+0200\n"
+"POT-Creation-Date: 2019-05-23 15:44+0200\n"
+"PO-Revision-Date: 2019-05-23 15:59+0200\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: de\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.1\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #: checks.py:20
 msgid "Receives Email leak"
@@ -47,7 +47,7 @@ msgstr ""
 "Ein Newsletter besteht diesen Check, wenn beim Öffnen der eMail keine "
 "Verbindungen aufgebaut werden."
 
-#: checks.py:106 checks.py:233
+#: checks.py:106 checks.py:261
 msgid "This check should not create errors."
 msgstr "Dieser Check sollte keine Fehler verursachen."
 
@@ -112,10 +112,58 @@ msgid "No third parties are contacted when clicking a link."
 msgstr "Beim Klicken eines Links werden keine Drittanbieter kontaktiert."
 
 #: checks.py:197
+msgid "A/B Testing"
+msgstr "A/B Testing"
+
+#: checks.py:199
+msgid ""
+"Service providers may perform so-called A/B testing by sending different "
+"versions of Emails to different recipients to test which wording generates "
+"more clicks. While this is not a privacy problem in itself, it indicates "
+"that marketing analysis is taking place."
+msgstr ""
+"Newsletter-Anbieter führen manchmal sogenanntes A/B-Testing durch. Dabei "
+"werden unterschiedliche Versionen einer Email an verschiedene Empfänger "
+"gesendet, um zu testen, welche Version erfolgreicher ist. Auch wenn dies "
+"keinen direkten Einfluss auf die Privatheit hat, ist es ein Indikator, dass "
+"Statistiken über die Newsletter gesammelt werden."
+
+#: checks.py:201
+msgid ""
+"This check fails if we observe indications that A/B testing is being "
+"performed."
+msgstr ""
+"Ein Newsletter besteht diesen Check, wenn wir keine Indikation sehen, dass A/"
+"B-testing stattfindet."
+
+#: checks.py:203
+msgid ""
+"This check works by finding and comparing related pairs of Emails sent to "
+"different identities. If Emails are matched incorrectly, this check may give "
+"incorrect results. As A/B testing is a random process, we may also miss "
+"instances of A/B testing if only a small number of identities is signed up "
+"for the service."
+msgstr ""
+"Dieser Check sucht und vergleicht zusammengehörige Paare von Emails, die an "
+"verschiedene Identitäten geschickt wurden. Wenn diese Paare inkorrekt "
+"identifiziert werden, kann der Check falsche Resultate liefern. Da die "
+"Zuordnung zu den verschiedenen Gruppen bei A/B-testing zufällig passiert, "
+"kann das System unter Umständen A/B-testing nicht erkennen, wenn nicht genug "
+"Identitäten für den Newsletter angemeldet sind."
+
+#: checks.py:213
+msgid "No indications of A/B testing were found."
+msgstr "Keine Anzeichen von A/B-Testing gefunden"
+
+#: checks.py:216
+msgid "This newsletter appears to be using A/B testing."
+msgstr "Der Newsletter scheint A/B-testing zu nutzen."
+
+#: checks.py:225
 msgid "Third party spam"
 msgstr "Spam von Dritten"
 
-#: checks.py:199
+#: checks.py:227
 msgid ""
 "Service providers may intentionally or unintentionally disclose your eMail "
 "address to third parties, including spammers. We try to detect this by "
@@ -127,7 +175,7 @@ msgstr ""
 "zu erkennen, indem wir verfolgen, ob Identitäten, die mit diesem Dienst "
 "verbunden sind, beginnen, E-Mails von anderen Absendern zu empfangen."
 
-#: checks.py:201
+#: checks.py:229
 msgid ""
 "This check fails if a mail arrives from another domain than the domain of "
 "the service and the admin manually marked it as spam."
@@ -136,28 +184,28 @@ msgstr ""
 "der Domain des Dienstes kommt und ein Administrator sie manuell als Spam "
 "markiert."
 
-#: checks.py:203
+#: checks.py:231
 msgid "Due to admin supervision this check should not create errors."
 msgstr ""
 "Da Ergebnisse von einem Menschen überprüft werden, sollte dieser Check keine "
 "Fehler verursachen."
 
-#: checks.py:214
+#: checks.py:242
 msgid "No third party spam was detected."
 msgstr "Es wurde kein Spam detektiert."
 
-#: checks.py:217
+#: checks.py:245
 #, python-format
 msgid "%(count)d identity received third party messages."
 msgid_plural "%(count)d identities received third party messages."
 msgstr[0] "%(count)d Identität erhält Spam von Dritten."
 msgstr[1] "%(count)d Identitäten erhalten Spam von Dritten."
 
-#: checks.py:230
+#: checks.py:258
 msgid "Contacted on view"
 msgstr "Beim Lesen einer Mail kontaktiert"
 
-#: checks.py:231
+#: checks.py:259
 msgid ""
 "If this domain is contacted when opening a newsletter, it may be able to "
 "track who is reading the newsletter and when they are doing it."
@@ -165,7 +213,7 @@ msgstr ""
 "Wenn diese Domain beim Öffnen eines Newsletters kontaktiert wird, ist sie in "
 "der Lage, zu verfolgen, wer diesen Newsletter wann liest."
 
-#: checks.py:232
+#: checks.py:260
 msgid ""
 "This check passes if the website is never contacted when newsletters are "
 "opened."
@@ -173,7 +221,7 @@ msgstr ""
 "Eine Domain besteht diesen Check, wenn sie nie beim öffnen eines Newsletters "
 "kontaktiert wird."
 
-#: checks.py:265
+#: checks.py:293
 #, python-format
 msgid ""
 "%(count)d newsletter contacts this domain when viewing the mail with remote "
@@ -188,15 +236,15 @@ msgstr[1] ""
 "%(count)d Newsletter kontaktieren diese Domain wenn eine Nachricht mit "
 "aktivierten externen Inhalten geöffnet wird."
 
-#: checks.py:270
+#: checks.py:298
 msgid "No newsletter contacts this website when being viewed."
 msgstr "Diese Domain wird von keinem Newsletter kontaktiert."
 
-#: checks.py:277
+#: checks.py:305
 msgid "Contacted on click"
 msgstr "Beim anklicken von Links kontaktiert"
 
-#: checks.py:278
+#: checks.py:306
 msgid ""
 "If this domain is contacted when clicking a link from a newsletter, it is "
 "able to track who is clicking which links and when they are doing it. It may "
@@ -208,7 +256,7 @@ msgstr ""
 "Links anklickt. Sie könnte diese Information außerdem mit anderen Daten, die "
 "sie bereits über die Nutzerin gespeichert hat, zusammenführen."
 
-#: checks.py:279
+#: checks.py:307
 msgid ""
 "This check passes if no newsletters (except newsletters sent out by this "
 "domain) contact this domain when users click a link."
@@ -216,7 +264,7 @@ msgstr ""
 "Eine Domain besteht diesen Check, wenn sie von keinen Newslettern (außer "
 "denen, die sie selbst aussendet) beim anklicken eines Links kontaktiert wird."
 
-#: checks.py:280
+#: checks.py:308
 msgid ""
 "The clicked link from the mail is determined randomly, thus some newsletters "
 "may be missed."
@@ -224,7 +272,7 @@ msgstr ""
 "Der geklickte Link wird zufällig gewählt. Dadurch können einzelne Newsletter "
 "eventuell nicht erkannt werden."
 
-#: checks.py:311
+#: checks.py:339
 #, python-format
 msgid "%(count)d newsletter contacts this domain when clicking a link."
 msgid_plural "%(count)d newsletters contact this domain when clicking a link."
@@ -234,7 +282,7 @@ msgstr[1] ""
 "%(count)d Newsletter kontaktieren diese Domain, wenn ein Link angeklickt "
 "wird."
 
-#: checks.py:316
+#: checks.py:344
 msgid "No newsletters contact this domain when links are clicked."
 msgstr "Diese Domain wird von keinem Newsletter kontaktiert."
 
@@ -872,22 +920,12 @@ msgctxt "Main menu"
 msgid "Newsletter List"
 msgstr "Angemeldete Newsletter"
 
-#: templates/nav.html:20
-msgctxt "Main Menu"
-msgid "Learn"
-msgstr "Mehr Informationen"
-
-#: templates/nav.html:23
+#: templates/nav.html:26
 msgctxt "Main Menu"
 msgid "FAQ"
 msgstr "FAQ"
 
-#: templates/nav.html:26
-msgctxt "Main Menu"
-msgid "Research"
-msgstr "Forschung"
-
-#: templates/nav.html:29
+#: templates/nav.html:35
 msgctxt "Main Menu"
 msgid "Code"
 msgstr "Code"
@@ -912,3 +950,11 @@ msgstr "Ungültige Adresse"
 #: views.py:72
 msgid "This does not look like a website - please try again"
 msgstr "Das sieht nicht wie eine Webseite aus - versuche es nochmal"
+
+#~ msgctxt "Main Menu"
+#~ msgid "Learn"
+#~ msgstr "Mehr Informationen"
+
+#~ msgctxt "Main Menu"
+#~ msgid "Research"
+#~ msgstr "Forschung"
