@@ -2,7 +2,8 @@ from __future__ import absolute_import
 from six.moves import range
 from OpenWPM.automation import CommandSequence, TaskManager
 import sys
-from random import randint
+from random import randint, choice
+import string
 import email
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
@@ -85,7 +86,9 @@ class Mail(models.Model):
 
         message_raw = message.as_bytes().decode(encoding='UTF-8', errors='replace')
         message_id = message['Message-ID']
-        print("Message ID: " + message_id + " Subject: " + str(make_header(decode_header(message['subject']))))
+        if message_id is None:
+            message_id = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(32))
+        print("Message ID:", message_id, " Subject:", str(make_header(decode_header(message['subject']))))
         try:
             mail = Mail.objects.get(raw=message_raw)
             if mail.date_time is not None:
