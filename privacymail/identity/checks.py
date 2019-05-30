@@ -148,7 +148,7 @@ class ServiceOnClickThirdPartyConnectionCheck(Check):
     """Check if third party services are contacted when clicking a link in the message."""
     check_id = 2
     check_title = _("Third party connections when clicking a link")
-    check_description = _("Links in the eMail may initially point to third party services such as trackers, which will forward the user to the correct address later. This check detects this kind of tracking behavior.")
+    check_description = _("Links in the eMail may initially point to third party services such as trackers, which will forward the user to the correct address later. This check detects this kind of tracking behavior. <b>Warning:</b> This check currently <a href='https://github.com/privacymail/privacymail/issues/2' target=_blank> sometimes returns incorrect results</a>, which will be resolved in the near future.")
     check_condition = _("This check passes if no connections to third parties are established when clicking links from the Mail.")
     check_error = _("The clicked link from the mail is determined randomly, thus some third parties may be missed.")
     check_reliability = RELIABILITY_UNRELIABLE
