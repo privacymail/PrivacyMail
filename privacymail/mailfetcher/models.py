@@ -936,6 +936,7 @@ class Mail(models.Model):
     @staticmethod
     def import_openwpmresults_click(url, mail, db_cursor):
         num_eresources = 0
+        num_eresources_dropped = 0
         # connect to the input database
         db_cursor.execute("SELECT * from crawl_history where arguments = ? and bool_success = 1;", (url,))
         if len(db_cursor.fetchall()) == 0:
@@ -961,6 +962,9 @@ class Mail(models.Model):
             print('Mail has no associated identities.')
             return True
 
+        eresources_to_save = []
+        drop_host = ""
+
         for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
                 in openWPM_entries:
             # check if the url has a parent and is therefore not the start of a chain.
@@ -978,29 +982,37 @@ class Mail(models.Model):
                 # In many cases this would be unfair for the newsletter to track this as a thirdParty/ Tracker.
                 url_domain = tldextract.extract(url).registered_domain
                 if service_url not in url_domain:
+                    drop_host = url_domain
+                    num_eresources_dropped = 1
                     continue
 
-                r, created = Eresource.objects.get_or_create(type="con_click", request_headers=request_headers,
-                                                             response_headers=response_headers, url=url,
-                                                             channel_id=channel_id,
-                                                             param=top_url, mail=mail,
-                                                             is_start_of_chain=is_start_of_chain, is_end_of_chain=True)
+                e = Eresource(type="con_click", request_headers=request_headers,
+                              response_headers=response_headers, url=url,
+                              channel_id=channel_id,
+                              param=top_url, mail=mail,
+                              is_start_of_chain=is_start_of_chain, is_end_of_chain=True)
+                eresources_to_save.append(e)
             # eresource redirects to other eresource
             else:
-                r, created = Eresource.objects.get_or_create(type="con_click", request_headers=request_headers,
-                                                             response_headers=response_headers, url=url,
-                                                             channel_id=channel_id,
-                                                             redirects_to_channel_id=new_channel_id,
-                                                             redirects_to_url=redirects_to,
-                                                             param=top_url, mail=mail,
-                                                             is_start_of_chain=is_start_of_chain, is_end_of_chain=False)
+                e = Eresource(type="con_click", request_headers=request_headers,
+                              response_headers=response_headers, url=url,
+                              channel_id=channel_id,
+                              redirects_to_channel_id=new_channel_id,
+                              redirects_to_url=redirects_to,
+                              param=top_url, mail=mail,
+                              is_start_of_chain=is_start_of_chain, is_end_of_chain=False)
+                eresources_to_save.append(e)
 
-            # save load resources in eresource of type connection
-            if created:
-                mail.connect_tracker(eresource=r)
-                r.save()
-                num_eresources = num_eresources + 1
-        print('Number of Eresources added to the Database: %s' % num_eresources)
+        # save load resources in eresource of type connection
+        for e in eresources_to_save:
+            if drop_host is None or drop_host not in e.url:
+                e.save()
+                mail.connect_tracker(eresource=e)
+                e.save()
+                num_eresources += + 1
+            else:
+                num_eresources_dropped += 1
+        print('Added %s Eresources to the database (%s dropped)' % (num_eresources, num_eresources_dropped))
         # if (num_openWpm_entries != num_eresources):
         #     print('Different number of entries have been added, than the OpenWPM database returned!')
         #     logger.error('Different number of entries have been added, than the OpenWPM database returned!')
