@@ -124,10 +124,8 @@ class Mail(models.Model):
         self.processing_fails = 0
         self.contains_javascript = False
         self.possible_AB_testing = False
-        # Delete associated Eresources
-        Eresource.objects.filter(mail=self).delete()
-        # Regenerate static link eresources
-        self.extract_static_links()
+        # Delete associated dynamic Eresources (leave static in)
+        Eresource.objects.filter(mail=self, type__contains='con').delete()
         self.save()
 
     # # Raw is an array of lines
