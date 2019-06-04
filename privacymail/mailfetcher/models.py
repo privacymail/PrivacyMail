@@ -973,7 +973,7 @@ class Mail(models.Model):
             return True
 
         eresources_to_save = []
-        drop_host = ""
+        drop_host = None
 
         for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
                 in openWPM_entries:
