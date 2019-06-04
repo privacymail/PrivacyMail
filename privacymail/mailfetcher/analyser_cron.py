@@ -10,7 +10,6 @@ from django.conf import settings
 from datetime import datetime
 from django.db.models import Q
 import requests
-import progressbar
 
 logger = logging.getLogger(__name__)
 LONG_SEPERATOR = '##########################################################'
@@ -1191,7 +1190,7 @@ def address_leakage_statistics():
     algos_services = {}
     algos_trackers = {}
 
-    for r in progressbar.progressbar(leaking_resources):
+    for r in leaking_resources:
         # leaking_mails.append(r.mail)
         leaking_algorithms = r.mail_leakage.split(", ")
         #for id in r.mail.identity.all():
