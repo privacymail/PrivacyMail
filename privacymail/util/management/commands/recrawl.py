@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from identity.models import Service
-from mailfetcher.models import Mail, Eresource
+from identity.models import Service, ServiceThirdPartyEmbeds
+from mailfetcher.models import Mail
 from datetime import datetime
 import sys
 
@@ -87,4 +87,12 @@ class Command(BaseCommand):
         print("Resetting state of selected mails to prepare for recrawl")
         for mail in mails:
             mail.reset_for_recrawl()
+
+        print("Deleting saved third party embed relations")
+        if options['sid']:
+            services = [Service.objects.get(pk=options['sid'])]
+        else:
+            services = Service.objects.all()
+        for serv in services:
+            ServiceThirdPartyEmbeds.objects.filter(service=serv).delete()
         print("Done.")
