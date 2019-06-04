@@ -993,8 +993,6 @@ class Mail(models.Model):
                 url_domain = tldextract.extract(url).registered_domain
                 if service_url not in url_domain:
                     drop_host = url_domain
-                    num_eresources_dropped = 1
-                    continue
 
                 e = Eresource(type="con_click", request_headers=request_headers,
                               response_headers=response_headers, url=url,
