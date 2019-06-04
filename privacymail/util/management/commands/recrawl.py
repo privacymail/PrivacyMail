@@ -84,12 +84,7 @@ class Command(BaseCommand):
 
         # Actually perform the operation on the Mails:
         # TODO Do we also need to deal with any third party references etc.? Double-check
-        print("Deleting associated eresources.")
+        print("Resetting state of selected mails to prepare for recrawl")
         for mail in mails:
-            # Delete existing eresources
-            Eresource.objects.filter(mail=mail).delete()
-
-        # Mark mails for recrawl
-        print("Marking Messages for recrawl.")
-        mails.update(processing_state=Mail.PROCESSING_STATES.UNPROCESSED, processing_fails=0, contains_javascript=False, possible_AB_testing=False)
+            mail.reset_for_recrawl()
         print("Done.")

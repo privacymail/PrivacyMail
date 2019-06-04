@@ -118,6 +118,17 @@ class Mail(models.Model):
         # mail.get_non_unsubscribe_link()
         return mail
 
+    def reset_for_recrawl(self):
+        """Reset the state of this message to be ready for recrawling."""
+        self.processing_state = self.PROCESSING_STATES.UNPROCESSED
+        self.processing_fails = 0
+        self.contains_javascript = False
+        self.possible_AB_testing = False
+        # Delete associated Eresources
+        Eresource.objects.filter(mail=self).delete()
+        # Regenerate static link eresources
+        self.extract_static_links()
+
     # # Raw is an array of lines
     # @classmethod
     # def parse_raw(cls, raw):
