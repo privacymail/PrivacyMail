@@ -10,7 +10,7 @@ from django.conf import settings
 from datetime import datetime
 from django.db.models import Q
 import requests
-
+import progressbar
 
 logger = logging.getLogger(__name__)
 LONG_SEPERATOR = '##########################################################'
@@ -965,7 +965,7 @@ def third_party_analization_general():
                 else:
                     third_parties_this_mail[third_party_domain] = 1
 
-            eresource_set = mail.eresource_set.filter(type__contains='con')
+            eresource_set = mail.eresource_set.filter(type='con')
             # also not our local host
             for eresource in eresource_set:
                 resource_ext = tldextract.extract(eresource.url)
@@ -1184,34 +1184,50 @@ def num_services_without_mails():
 
 def address_leakage_statistics():
     # Get the number of trackers that receive the mailaddress in plain or as hash
-    leaking_resources = Eresource.objects.exclude(mail_leakage=None).exclude(possible_unsub_link=True)
+    leaking_resources = Eresource.objects.exclude(mail_leakage=None).exclude(possible_unsub_link=True).filter(Q(type="con") | Q(type="con_click"))
+    print("Eresources:", leaking_resources.count())
     leaking_services = {}
     trackers = {}
+    algos_services = {}
+    algos_trackers = {}
 
-    for r in leaking_resources:
+    for r in progressbar.progressbar(leaking_resources):
         # leaking_mails.append(r.mail)
-        leaking_algorithm = r.mail_leakage
-        # if 'plainname' in leaking_algorithm:
-        #     leaking_algorithm = 'plain'
-        # record all identities that leak information and their algorithm
-        for id in r.mail.identity.all():
-            if id.service.name in leaking_services:
-                leaking_services[id.service.name].add(leaking_algorithm)
-            else:
-                leaking_services[id.service.name] = set()
-                leaking_services[id.service.name].add(leaking_algorithm)
+        leaking_algorithms = r.mail_leakage.split(", ")
+        #for id in r.mail.identity.all():
+        #    if id.service.name not in leaking_services:
+        #        leaking_services[id.service.name] = set()
+        #    for algo in leaking_algorithms:
+        #        leaking_services[id.service.name].add(algo)
 
         # record all trackers and how they receive the address
-        if r.host.name in trackers:
-            trackers[r.host.name].add(leaking_algorithm)
-        else:
-            trackers[r.host.name] = set()
-            trackers[r.host.name].add(leaking_algorithm)
-    print('{} different trackers (including the service itself) found,'
-          ' that receive the mailaddress in plain or as a hash.'
-          .format(len(trackers)))
-    for tracker in trackers.keys():
-        print('{:<25} : {}'.format(tracker, trackers[tracker]))
+        #if r.host.name not in trackers:
+        #    trackers[r.host.name] = set()
+        #for algo in leaking_algorithms:
+        #    trackers[r.host.name].add(algo)
+        for algo in leaking_algorithms:
+            if algo not in algos_services:
+                algos_services[algo] = set([])
+            if algo not in algos_trackers:
+                algos_trackers[algo] = set([])
+            # Add service
+            for id in r.mail.identity.all():
+                algos_services[algo].add(id.service.name)
+            algos_trackers[algo].add(r.host.name)
+
+    #print('{} different trackers (including the service itself) found,'
+    #      ' that receive the mailaddress in plain or as a hash.'
+    #      .format(len(trackers)))
+    #for tracker in trackers.keys():
+    #    print('{:<25} : {}'.format(tracker, trackers[tracker]))
+    print("Algos leaked by services:")
+    for algo in algos_services.keys():
+        print(algo, "\t", len(algos_services[algo]), "\t", algos_services[algo])
+
+    print("Algos leaked to trackers")
+    for algo in algos_trackers:
+        print(algo, "\t", len(algos_trackers[algo]), "\t", algos_trackers[algo])
+
     print('')
 
     # services = {}
