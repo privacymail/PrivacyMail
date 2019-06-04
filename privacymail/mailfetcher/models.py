@@ -128,6 +128,7 @@ class Mail(models.Model):
         Eresource.objects.filter(mail=self).delete()
         # Regenerate static link eresources
         self.extract_static_links()
+        self.save()
 
     # # Raw is an array of lines
     # @classmethod
