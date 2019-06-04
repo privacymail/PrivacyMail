@@ -1016,11 +1016,13 @@ class Mail(models.Model):
         # save load resources in eresource of type connection
         for e in eresources_to_save:
             if drop_host is None or drop_host not in e.url:
+                print(e.url)
                 e.save()
                 mail.connect_tracker(eresource=e)
                 e.save()
                 num_eresources += + 1
             else:
+                print("Dropped:", e.url)
                 num_eresources_dropped += 1
         print('Added %s Eresources to the database (%s dropped)' % (num_eresources, num_eresources_dropped))
         # if (num_openWpm_entries != num_eresources):
