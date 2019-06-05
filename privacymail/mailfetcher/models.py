@@ -753,6 +753,9 @@ class Mail(models.Model):
             # browser_params[i]['disable_flash'] = False
             browser_params[i]['headless'] = True
             browser_params[i]['spoof_mailclient'] = True
+            browser_params[i]['prefs'] = {
+                'browser.chrome.site_icons': False
+            }
 
         # Update TaskManager configuration (use this for crawl-wide settings)
         manager_params['data_directory'] = settings.OPENWPM_DATA_DIR
@@ -896,6 +899,9 @@ class Mail(models.Model):
             # browser_params[i]['disable_flash'] = False
             # browser_params['js_instrument'] = True
             browser_params[i]['headless'] = True
+            browser_params[i]['prefs'] = {
+                'browser.chrome.site_icons': False
+            }
 
         # Update TaskManager configuration (use this for crawl-wide settings)
         manager_params['data_directory'] = settings.OPENWPM_DATA_DIR
