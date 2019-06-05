@@ -118,14 +118,20 @@ class Mail(models.Model):
         # mail.get_non_unsubscribe_link()
         return mail
 
-    def reset_for_recrawl(self):
+    def reset_for_recrawl(self, link_only=False):
         """Reset the state of this message to be ready for recrawling."""
-        self.processing_state = self.PROCESSING_STATES.UNPROCESSED
         self.processing_fails = 0
         self.contains_javascript = False
         self.possible_AB_testing = False
         # Delete associated dynamic Eresources (leave static in)
-        Eresource.objects.filter(mail=self, type__contains='con').delete()
+        if link_only:
+            # Delete only link click information, leave mail view unchanged
+            Eresource.objects.filter(mail=self, type='con_click').delete()
+            self.processing_state = self.PROCESSING_STATES.VIEWED
+        else:
+            # Also delete mail view
+            Eresource.objects.filter(mail=self, type__contains='con').delete()
+            self.processing_state = self.PROCESSING_STATES.UNPROCESSED
         self.save()
 
     # # Raw is an array of lines

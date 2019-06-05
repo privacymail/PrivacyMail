@@ -42,6 +42,7 @@ class Command(BaseCommand):
         parser.add_argument('--all', action="store_true", dest="recrawl_all", help="Mark all messages for recrawling. Cannot be used in combination with --service or --newer-than")
         parser.add_argument('--service', type=int, dest="sid", help="Only mark messages belonging to the specified service ID for recrawling. Can be combined with --newer-than.")
         parser.add_argument('--newer-than', dest="newer_than", help="Only mark messages more recent than the provided date for recrawling. Date format: YYYY-MM-DD. Can be combined with --service.")
+        parser.add_argument('--only-link-click', action="store_true", dest="only_click", help="Only redo the 'link click' step, not the view step. If this flag is not given, the 'view' step is also redone.")
 
     def handle(self, *args, **options):
         if options['newer_than']:
@@ -86,7 +87,7 @@ class Command(BaseCommand):
         # TODO Do we also need to deal with any third party references etc.? Double-check
         print("Resetting state of selected mails to prepare for recrawl")
         for mail in mails:
-            mail.reset_for_recrawl()
+            mail.reset_for_recrawl(link_only=options['only_click'])
 
         print("Deleting saved third party embed relations")
         if options['sid']:
