@@ -152,7 +152,7 @@ class Mail(models.Model):
 
     def calc_bodies(self):
         message = self.get_message()
-        print("Mail to: " + message['To'])
+        # print("Mail to: " + message['To'])
         body_plain = None
         body_html = None
         if message.is_multipart():
