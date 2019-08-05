@@ -446,7 +446,11 @@ class Mail(models.Model):
         return similar_mails
 
     def parse_h_date_create_datetime(self):
-        dateObj = parsedate_to_datetime(self.h_date)
+        try:
+            dateObj = parsedate_to_datetime(self.h_date)
+        except TypeError:
+            # Email did not provide a date
+            dateObj = datetime.datetime.now()
         self.date_time = dateObj
         self.save()
 
