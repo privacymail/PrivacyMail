@@ -211,8 +211,8 @@ class Mail(models.Model):
                 self.body_html = ""
             if self.body_plain is None:
                 self.body_plain = ""
-            self.body_html = body_html.replace('\x00', '')
-            self.body_plain = body_plain.replace('\x00', '')
+            self.body_html = self.body_html.replace('\x00', '')
+            self.body_plain = self.body_plain.replace('\x00', '')
             self.save()
 
     def calc_header(self):
