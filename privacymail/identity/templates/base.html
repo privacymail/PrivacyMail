@@ -44,6 +44,17 @@
         <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
         <script src="{% static 'matkit/js/material-kit.min.js' %}?v=2.0.5" type="text/javascript"></script>
 
+        <script>
+            function dissmissBanner() {
+                window.localStorage.setItem("surveyBannerDismissed", true);
+            }
+
+            if (window.localStorage.getItem("surveyBannerDismissed")) {
+                document
+                    .getElementById("surveybanner")
+                    .classList.add("invisible");
+            }
+        </script>
         {% block final_js %}
         {% endblock %}
     </body>
