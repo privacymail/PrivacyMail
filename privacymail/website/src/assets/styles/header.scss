@@ -1,0 +1,26 @@
+$header-height: 48px;
+$header-font-size: 20px;
+
+.header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: $header-height;
+    background-color: $header-color;
+    color: $font-color-secondary;
+    padding-left: 5%;
+    div {
+        display: inline;
+        img {
+            float: left;
+            height: $header-height * 2/3;
+            width: $header-height * 2/3;
+            margin: $header-height * 1/6 8px $header-height * 1/6 0px;
+        }
+        h1 {
+            float: left;
+            font-weight: 400;
+            font-size: $header-font-size;
+        }
+    }
+}

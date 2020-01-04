@@ -1,7 +1,7 @@
 import React from "react";
-import { Trans } from "react-i18next";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Home from "./components/home/Home";
+import Header from "./components/header/Header";
 
 function getRoutes() {
     const routes = [];
@@ -16,9 +16,14 @@ function getRoutes() {
 }
 function App() {
     return (
-        <BrowserRouter>
-            <Switch>{getRoutes()}</Switch>
-        </BrowserRouter>
+        <div>
+            <Header />
+            <div className="content">
+                <BrowserRouter>
+                    <Switch>{getRoutes()}</Switch>
+                </BrowserRouter>
+            </div>
+        </div>
     );
 }
 

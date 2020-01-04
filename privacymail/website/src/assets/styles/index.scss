@@ -1,7 +1,12 @@
 @import "./fonts.scss";
+@import "./colors.scss";
+@import "./header.scss";
 body {
     margin: 0;
     font-family: Roboto;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+.content {
+    margin-top: $header-height;
 }
