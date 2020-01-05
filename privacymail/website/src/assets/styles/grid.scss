@@ -1,0 +1,45 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+.grid-item-1 {
+    grid-column: span 1;
+}
+.grid-item-2 {
+    grid-column: span 2;
+}
+.grid-item-3 {
+    grid-column: span 3;
+}
+.grid-item-4 {
+    grid-column: span 4;
+}
+.grid-item-5 {
+    grid-column: span 5;
+}
+.grid-item-6 {
+    grid-column: span 6;
+}
+.grid-item-7 {
+    grid-column: span 7;
+}
+.grid-item-8 {
+    grid-column: span 8;
+}
+.grid-item-9 {
+    grid-column: span 9;
+}
+.grid-item-10 {
+    grid-column: span 10;
+}
+.grid-item-11 {
+    grid-column: span 11;
+}
+.grid-item-12,
+.grid-item {
+    grid-column: span 12;
+}
+.grid-divider {
+    @extend .grid-item;
+    height: 2rem;
+}

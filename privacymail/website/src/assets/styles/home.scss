@@ -1,0 +1,30 @@
+.home {
+    background-image: url("../images/letter.jpg");
+    color: $font-color-secondary;
+    padding: 32px;
+    grid-gap: 16px;
+    /*filter: blur(8px);*/
+    h1 {
+        font-size: 2.25rem;
+        margin: 0px;
+    }
+    h2 {
+        font-size: 1.75rem;
+        margin: 0px;
+    }
+    h3 {
+        font-size: 0.875rem;
+        margin: 0px;
+    }
+    button {
+        margin-top: -0.5rem;
+    }
+    p {
+        margin: 0px;
+        width: 100%;
+        text-align: center;
+    }
+    .highlighted {
+        font-size: 1.125rem;
+    }
+}
