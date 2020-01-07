@@ -37,3 +37,26 @@ body {
 .content {
     margin-top: $header-height;
 }
+.parallax {
+    perspective: 1000px;
+    height: calc(100vh - #{$header-height});
+    overflow-x: hidden;
+    overflow-y: auto;
+    transform-style: preserve-3d;
+
+    .parallax-layer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+    }
+    .parallax-base {
+        transform: translateZ(0);
+        z-index: 2;
+    }
+    .parallax-background {
+        z-index: 1;
+        transform: translateZ(-1000px) scale(2);
+    }
+}

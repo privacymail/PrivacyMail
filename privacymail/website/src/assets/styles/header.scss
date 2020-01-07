@@ -9,6 +9,7 @@ $header-font-size: 20px;
     background-color: $header-color;
     color: $font-color-secondary;
     padding-left: 5%;
+    z-index: 1000;
     div {
         display: inline;
         img {
