@@ -1,7 +1,7 @@
 const fs = require("fs");
 const readline = require("readline");
 const prettier = require("prettier");
-
+const prettierConfig = require("../../package.json").prettier;
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
@@ -39,11 +39,19 @@ rl.question("Enter new Translation key: ", key => {
 
                         fs.writeFileSync(
                             "./de.json",
-                            prettier.format(JSON.stringify(orderKeys(de)), { semi: false, parser: "json" })
+                            prettier.format(JSON.stringify(orderKeys(de)), {
+                                semi: false,
+                                parser: "json",
+                                ...prettierConfig
+                            })
                         );
                         fs.writeFileSync(
                             "./en.json",
-                            prettier.format(JSON.stringify(orderKeys(en)), { semi: false, parser: "json" })
+                            prettier.format(JSON.stringify(orderKeys(en)), {
+                                semi: false,
+                                parser: "json",
+                                ...prettierConfig
+                            })
                         );
                     }
                     rl.close();
