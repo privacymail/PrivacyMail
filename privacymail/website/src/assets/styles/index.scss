@@ -38,7 +38,7 @@ body {
     margin-top: $header-height;
 }
 .parallax {
-    perspective: 1000px;
+    perspective: 500px;
     height: calc(100vh - #{$header-height});
     overflow-x: hidden;
     overflow-y: auto;
@@ -57,6 +57,23 @@ body {
     }
     .parallax-background {
         z-index: 1;
-        transform: translateZ(-1000px) scale(2);
+        transform: translateZ(-8000px) scale(17);
+    }
+    .backgroundImage {
+        div {
+            position: relative;
+            float: right;
+            right: 50%;
+
+            img {
+                $backgroundImageBlur: 6px;
+
+                height: 115vh;
+                position: relative;
+                right: -50%;
+                filter: blur($backgroundImageBlur);
+                margin: -$backgroundImageBlur * 2;
+            }
+        }
     }
 }

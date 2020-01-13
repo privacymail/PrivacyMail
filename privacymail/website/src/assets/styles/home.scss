@@ -14,7 +14,7 @@
             margin: 0px;
         }
         h3 {
-            font-size: 1rem;
+            @extend .normal;
             margin: 0px;
         }
         button {
@@ -23,26 +23,42 @@
         p {
             margin: 0px;
             width: 100%;
+            line-height: 1.3rem;
+        }
+        .statistic {
             text-align: center;
         }
         .highlighted {
             font-size: 1.125rem;
         }
-    }
-    .backgroundImage {
-        div {
-            position: relative;
-            float: right;
-            right: 50%;
 
-            img {
-                $backgroundImageBlur: 6px;
+        .image-list {
+            .icon {
+                width: 48px;
+                vertical-align: middle;
+            }
+            ul {
+                margin: 0px;
+                vertical-align: middle;
+                list-style-type: none;
+                padding: 0px;
+            }
+            li {
+                @extend .normal;
+                @extend .light;
+                margin: 1.3rem 0px;
+                * {
+                    display: inline-block;
+                    vertical-align: middle;
+                }
+                span {
+                    width: calc(100% - 64px);
+                    padding: 0px 0px 0px 16px;
 
-                height: 120vh;
-                position: relative;
-                right: -50%;
-                filter: blur($backgroundImageBlur);
-                margin: -$backgroundImageBlur * 2;
+                    p {
+                        margin-bottom: 1rem;
+                    }
+                }
             }
         }
     }
