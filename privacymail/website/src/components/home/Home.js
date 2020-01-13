@@ -2,7 +2,6 @@ import React from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Parallax, ParallaxBase, ParallaxBackground } from "../../utils/Parallax";
 import letterImg from "../../assets/images/letter.jpg";
-import { Icon } from "../../utils/Icon";
 import { IconList, IconListItem } from "../../utils/IconList";
 
 function Home() {

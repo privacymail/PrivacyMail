@@ -5,7 +5,6 @@ const Icon = props => {
     if (!iconName) {
         console.error("No icon name provided");
     }
-    console.log(iconName);
 
     let image = null;
     try {
@@ -21,7 +20,11 @@ const Icon = props => {
             }
         }
     }
-    return <object className={"icon " + (props.className || "")} type="image/svg+xml" data={image} alt="iconName" />;
+    return (
+        <object className={"icon " + (props.className || "")} type="image/svg+xml" data={image}>
+            {iconName}
+        </object>
+    );
 };
 
 export { Icon };

@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Home from "./components/home/Home";
 import Header from "./components/header/Header";
+import Footer from "./components/footer/Footer";
 
 function getRoutes() {
     const routes = [];
@@ -34,6 +35,7 @@ class App extends React.Component {
                         <Switch>{getRoutes()}</Switch>
                     </BrowserRouter>
                 </div>
+                <Footer />
             </div>
         );
     }
