@@ -88,7 +88,7 @@ class Mail(models.Model):
         message_id = message['Message-ID']
         if message_id is None:
             message_id = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(32))
-        print("Message ID:", message_id, " Subject:", str(make_header(decode_header(message['subject']))))
+        # print("Message ID:", message_id, " Subject:", str(make_header(decode_header(message['subject']))))
         try:
             mail = Mail.objects.get(raw=message_raw)
             if mail.date_time is not None:
