@@ -88,7 +88,7 @@ class Mail(models.Model):
         message_id = message['Message-ID']
         if message_id is None:
             message_id = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(32))
-        # print("Message ID:", message_id, " Subject:", str(make_header(decode_header(message['subject']))))
+        print("Message ID:", message_id, " Subject:", str(make_header(decode_header(cls._clear_none_values(message['subject'])))))
         try:
             mail = Mail.objects.get(raw=message_raw)
             if mail.date_time is not None:
@@ -222,7 +222,7 @@ class Mail(models.Model):
         self.h_to = message['To']
         self.h_cc = message['Cc']
         self.h_bcc = message['BCC']
-        self.h_subject = make_header(decode_header(message['Subject']))
+        self.h_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
         self.h_date = message['Date']
         self.h_user_agent = message['User-Agent']
         # date_obj = parsedate_to_datetime(self.h_date)
@@ -282,6 +282,12 @@ class Mail(models.Model):
             return [address_from_field(a) for a in field.split(',')]
         else:
             return []
+
+    @staticmethod
+    def _clear_none_values(value):
+        if value is None:
+            return ""
+        return value
 
     # Try to get a link for openWPM to click, which isn't an unsubscribe link.
     # In most cases it should be enough to only click one link, because if tracking occurs, every link should track.
