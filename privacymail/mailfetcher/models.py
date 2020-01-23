@@ -35,7 +35,6 @@ import logging
 from django.db import connection
 from django_countries.fields import CountryField
 
-mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
 
 
@@ -295,8 +294,6 @@ class Mail(models.Model):
         type_a_urls = Eresource.objects.filter(type='a', mail_id=self.id, possible_unsub_link=False)
         if type_a_urls.count() < 1:
             print('############################### Did not find possible unsubscribe link!')
-            message = self.get_message()
-            mails_without_unsubscribe_link.append(make_header(decode_header(message['Subject'])))
             return ''
 
         while type_a_urls.count() > 1:
@@ -343,7 +340,6 @@ class Mail(models.Model):
         if num_detected_unsub_links < 1:
             message = self.get_message()
             mail_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
-            mails_without_unsubscribe_link.append(mail_subject)
             logger.debug('No unsubscribe link was found.', extra={
                 'mail_subject': str(mail_subject),
             })
