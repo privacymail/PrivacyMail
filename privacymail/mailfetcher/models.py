@@ -342,7 +342,7 @@ class Mail(models.Model):
                     print('Found possible unsubscribe link: %s' % link)
         if num_detected_unsub_links < 1:
             message = self.get_message()
-            mail_subject = make_header(decode_header(message['Subject']))
+            mail_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
             mails_without_unsubscribe_link.append(mail_subject)
             logger.debug('No unsubscribe link was found.', extra={
                 'mail_subject': str(mail_subject),
