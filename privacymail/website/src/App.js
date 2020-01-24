@@ -35,7 +35,7 @@ class App extends React.Component {
                         <Switch>{getRoutes()}</Switch>
                     </BrowserRouter>
                 </div>
-                <Footer />
+                {/*<Footer />*/}
             </div>
         );
     }
