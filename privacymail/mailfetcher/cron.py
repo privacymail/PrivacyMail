@@ -277,12 +277,12 @@ class ImapFetcher(CronJobBase):
         # Clean up zombie processes
         kill_openwpm()
 
-        if len(mailfetcher.models.mails_without_unsubscribe_link) != 0:
-            print('Messages for which no unsubscribe links have been found:')
-            for subject in mailfetcher.models.mails_without_unsubscribe_link:
-                print(subject)
-        else:
-            print('No messages without possible unsubscribe links found.')
+        # if len(mailfetcher.models.mails_without_unsubscribe_link) != 0:
+        #     print('Messages for which no unsubscribe links have been found:')
+        #     for subject in mailfetcher.models.mails_without_unsubscribe_link:
+        #         print(subject)
+        # else:
+        #     print('No messages without possible unsubscribe links found.')
         server.shutdown()
         server.socket.close()
         thread.join(5)
