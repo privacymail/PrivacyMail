@@ -1,4 +1,4 @@
-import React  from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { Trans, withTranslation } from "react-i18next";
 import { Parallax, ParallaxBase, ParallaxBackground } from "../../utils/Parallax";
@@ -14,9 +14,7 @@ class Home extends React.Component {
         this.gridRef = React.createRef();
     }
     handle() {
-        window.requestAnimationFrame(() => this.setState({ height: this.gridRef.current.clientHeight }))
-       
-       
+        window.requestAnimationFrame(() => this.setState({ height: this.gridRef.current.clientHeight }));
     }
     componentDidMount() {
         this.handle();
@@ -149,7 +147,7 @@ class Home extends React.Component {
                             <div>
                                 <div
                                     id="image-container"
-                                    style={{ height: this.state.height , width: "calc( 100vw + 24px )" }}
+                                    style={{ height: this.state.height, width: "calc( 100vw + 24px )" }}
                                 />
                             </div>
                         </div>
