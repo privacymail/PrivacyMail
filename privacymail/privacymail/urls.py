@@ -20,20 +20,12 @@ from mailfetcher.views import *
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
     path('service/<int:service>/', ServiceView.as_view(), name='Service'),
-    path('service/<int:service>/set_meta/', ServiceMetaView.as_view(), name='ServiceMeta'),
-    re_path('service/.+', ServiceView.as_view(), name='Service'),
-    path('mail/<int:mail>/', mailview, name='Mail'),
     path('service/', ServiceView.as_view(), name='ServiceLookup'),
     path('services/', ServiceListView.as_view(), name="ServiceList"),
     path('embed/<int:embed>/', EmbedView.as_view(), name='Embed'),
-    path('embed/<int:embed>/set_meta/', EmbedMetaView.as_view(), name='EmbedMeta'),
     path('identity/', IdentityView.as_view(), name='IdentityCreation'),
-    path('', HomeView.as_view(), name='Home'),
-    path('faq/', FaqView.as_view(), name="FAQ"),
-    path('imprint/', ImprintView.as_view(), name="Imprint"),
-    path('privacy/', PrivacyPolicyView.as_view(), name="PrivacyPolicy"),
+    path('statistics', HomeView.as_view(), name='Home'),
+
     path('api/', include('api.urls')),
-    path('i18n/', include('django.conf.urls.i18n')),
 ]

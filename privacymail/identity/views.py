@@ -22,20 +22,13 @@ from identity import checks
 import logging
 import time
 from random import shuffle
+from django.http import JsonResponse
 
 # Get named logger
 logger = logging.getLogger(__name__)
 
 
 class HomeView(View):
-    def get_last_services(self):
-        idents = Identity.objects.filter(approved=True)
-        return Service.objects.filter(identity__in=idents).distinct().order_by('-id')[:10]
-
-    def get_common_trackhosts(self):
-        return Thirdparty.objects.filter(eresource__type='con').annotate(
-            num_service=Count('eresource__mail__identity__service', distinct=True)).order_by('-num_service')[:10]
-
     def get_global_stats(self):
         return {
             "email_count": Mail.objects.count(),
@@ -43,47 +36,10 @@ class HomeView(View):
             "tracker_count": Thirdparty.objects.count()  # TODO Model will be renamed on merge
         }
 
-    def post(self, request, *args, **kwargs):
-        def abort_with_error(title, error, domain):
-            """Abort processing and show error in frontend"""
-            return render(request, "home.html", {'notification': {"message": error,
-                                                                  "title": title,
-                                                                  "domain": domain},
-                                                 'global_stats': self.get_global_stats()})
-
-        def offer_identity_creation(domain):
-            """Offer the user the option to create a new identity for the provided domain"""
-            return render(request, "home.html", {'offer_identity_creation': domain,
-                                                 'global_stats': self.get_global_stats()})
-        # Get the requested domain from the POST request
-        try:
-            domain = request.POST['domain']
-            # Format domain. Will also ensure that the domain is valid, and return None on invalid domains
-            domain = validate_domain(domain)
-        except KeyError:
-            # Someone is messing with us. Log this.
-            logger.warning('HomeView.post: Malformed POST request received', extra={'request': request})
-            # Send them back to the homepage with a slap on the wrist
-            return abort_with_error(_("Internal error"), _("You sent a request the server did not understand. Please try again, or contact us if the problem persists."), domain)
-        except AssertionError:
-            # Someone may be messing with us. Save it, just in case.
-            logger.info("HomeView.post: Invalid URL passed", extra={'request': request, 'domain': domain})
-            # Send them back to the homepage with a slap on the wrist
-            return abort_with_error(_("Invalid Address"), _("This does not look like a website - please try again"), domain)
-
-        # See if we already have it in the database
-        try:
-            service = Service.objects.get(url=domain)
-        except ObjectDoesNotExist:
-            return offer_identity_creation(domain)
-
-        # Return results by forwarding to service URL with identifer
-        return redirect('Service', service=service.id)
-
     def get(self, request, *args, **kwargs):
         # Get the last approved services
 
-        return render(request, "home.html", {'global_stats': self.get_global_stats()})
+        return JsonResponse({'global_stats': self.get_global_stats()})
 
 
 class IdentityView(View):
@@ -152,7 +108,9 @@ class ServiceView(View):
             logger.info("ServiceView.get: Invalid service requested", extra={'request': request, 'service_id': sid})
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
-        return self.render_service(request, service)
+            
+        service._state = service._state.__dict__
+        return JsonResponse(service.__dict__)
 
     @staticmethod
     def render_service(request, service, form=None):
@@ -175,7 +133,8 @@ class ServiceView(View):
         # Run checks
         for check in checks.SERVICE_CHECKS:
             site_params['checks'].append(check(site_params))
-        return render(request, 'identity/service.html', site_params)
+
+        return JsonResponse(site_params.__dict__)
 
     @staticmethod
     def get_service_site_params(service, force_makecache=False):
@@ -205,39 +164,6 @@ class ServiceView(View):
         end_time = time.time()
         print('Get service_site_params took: {}s'.format(end_time - start_time))
         return site_params
-
-
-class ServiceMetaView(View):
-    def post(self, request, *args, **kwargs):
-        try:
-            sid = request.POST['serviceID']
-            if str(sid) != str(kwargs['service']):
-                # Someone is messing with us
-                logger.warn('ServiceMetaView.post: Provided service did not match POSTed service', extra={'request': request, "providedID": kwargs["service"], "postID": sid})
-                return redirect('Home')
-            # Get service from database
-            service = Service.objects.get(id=sid)
-        except KeyError:
-            # No service kwarg is set, warn
-            logger.warn('ServiceMetaView.post: Malformed POST request received', extra={'request': request})
-            # TODO: Add code to display a warning on homepage
-            return redirect('Home')
-        except ObjectDoesNotExist:
-            logger.warn('ServiceMetaView.post: POST request for non-existing service', extra={'request': request})
-            return redirect('Home')
-
-        form = forms.ServiceMetadataForm(request.POST)
-        if not form.is_valid():
-            logger.info('ServiceMetaView.post: Invalid data submitted on metadata form', extra={'request': request, 'form': form})
-            return ServiceView.render(request, service, form)
-
-        # Form is valid
-        sector = form.cleaned_data['sector']
-        country = form.cleaned_data['country_of_origin']
-        service.country_of_origin = country
-        service.sector = sector
-        service.save()
-        return redirect('Service', service=service.id)
 
 
 class ServiceListView(SingleTableMixin, FilterView):
@@ -302,40 +228,6 @@ class EmbedView(View):
         site_params['country'] = embed.get_country()
         site_params['sector'] = embed.get_sector()
         return site_params
-
-
-class EmbedMetaView(View):
-    def post(self, request, *args, **kwargs):
-        try:
-            sid = request.POST['embedID']
-            if str(sid) != str(kwargs['embed']):
-                # Someone is messing with us
-                logger.warn('EmbedMetaView.post: Provided embed did not match POSTed embed', extra={'request': request, "providedID": kwargs["embed"], "postID": sid})
-                return redirect('Home')
-            # Get service from database
-            embed = Thirdparty.objects.get(id=sid)
-        except KeyError:
-            # No embed kwarg is set, warn
-            logger.warn('EmbedMetaView.post: Malformed POST request received', extra={'request': request})
-            # TODO: Add code to display a warning on homepage
-            return redirect('Home')
-        except ObjectDoesNotExist:
-            logger.warn('EmbedMetaView.post: POST request for non-existing Thirdparty', extra={'request': request})
-            return redirect('Home')
-
-        form = forms.EmbedMetadataForm(request.POST)
-        if not form.is_valid():
-            logger.info('EmbedMetaView.post: Invalid data submitted on metadata form', extra={'request': request, 'form': form})
-            return EmbedView.render(request, embed, form)
-
-        # Form is valid
-        sector = form.cleaned_data['sector']
-        country = form.cleaned_data['country_of_origin']
-        embed.country_of_origin = country
-        embed.sector = sector
-        embed.save()
-        return redirect('Embed', embed=embed.id)
-
 
 class FaqView(View):
     def get(self, request, *args, **kwargs):
