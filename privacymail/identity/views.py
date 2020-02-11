@@ -28,17 +28,47 @@ from django.http import JsonResponse
 logger = logging.getLogger(__name__)
 
 
-class HomeView(View):
+def convertForJsonResponse(obj):
+
+    try:
+        if isinstance(obj, dict):
+            keys = obj
+        else:
+            keys = obj.__dict__
+
+        newObj = {}
+        for key in keys:
+            if isinstance(obj, dict):
+                attr = obj[key]
+            else:
+                attr = getattr(obj, key)
+
+            if isinstance(attr, list):
+                for i in range(len(attr)):
+                    attr[i] = convertForJsonResponse(attr[i])
+            else:
+                attr = convertForJsonResponse(attr)
+
+            newObj[key] = attr
+
+        return newObj
+    except:
+        print("catched exepotion", obj)
+        return obj
+
+
+class StatisticView(View):
     def get_global_stats(self):
         return {
             "email_count": Mail.objects.count(),
-            "service_count": Service.objects.count(),  # TODO Ensure that service has at least 1 confirmed ident
-            "tracker_count": Thirdparty.objects.count()  # TODO Model will be renamed on merge
+            # TODO Ensure that service has at least 1 confirmed ident
+            "service_count": Service.objects.count(),
+            # TODO Model will be renamed on merge
+            "tracker_count": Thirdparty.objects.count()
         }
 
     def get(self, request, *args, **kwargs):
         # Get the last approved services
-
         return JsonResponse({'global_stats': self.get_global_stats()})
 
 
@@ -50,14 +80,16 @@ class IdentityView(View):
             domain = validate_domain(domain)
         except KeyError:
             # Someone is messing with us. Log this.
-            logger.warning('IdentityView.post: Malformed POST request received', extra={'request': request})
+            logger.warning('IdentityView.post: Malformed POST request received', extra={
+                           'request': request})
             # Send them back to the homepage with a slap on the wrist
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
         # Check if people are messing with us
         except AssertionError:
             # Someone may be messing with us. Save it, just in case.
-            logger.info("IdentityView.post: Invalid URL passed", extra={'request': request, 'domain': domain})
+            logger.info("IdentityView.post: Invalid URL passed",
+                        extra={'request': request, 'domain': domain})
             # Send them back to the homepage with a slap on the wrist
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
@@ -98,26 +130,27 @@ class ServiceView(View):
             sid = kwargs['service']
         except KeyError:
             # No service kwarg is set, warn
-            logger.info('ServiceView.get: Malformed GET request received', extra={'request': request})
+            logger.info('ServiceView.get: Malformed GET request received', extra={
+                        'request': request})
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
 
         try:
             service = Service.objects.get(id=sid)
         except ObjectDoesNotExist:
-            logger.info("ServiceView.get: Invalid service requested", extra={'request': request, 'service_id': sid})
+            logger.info("ServiceView.get: Invalid service requested",
+                        extra={'request': request, 'service_id': sid})
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
-            
-        service._state = service._state.__dict__
-        return JsonResponse(service.__dict__)
+        return JsonResponse(convertForJsonResponse(self.render_service(request, service)), safe=False)
 
     @staticmethod
     def render_service(request, service, form=None):
 
         site_params = ServiceView.get_service_site_params(service)
         if site_params is None:
-            logger.warn("ServiceView.render_service: Cache miss", extra={'request': request, 'service_id': service.id})
+            logger.warn("ServiceView.render_service: Cache miss", extra={
+                        'request': request, 'service_id': service.id})
             # Display a warning that the cache isn't up to date
             # TODO We probably also want to mark the service as dirty to ensure its generated, just in case stuff went wrong somewhere
             return render(request, 'identity/service.html', {"error": "cache miss", "service": service})
@@ -134,7 +167,7 @@ class ServiceView(View):
         for check in checks.SERVICE_CHECKS:
             site_params['checks'].append(check(site_params))
 
-        return JsonResponse(site_params.__dict__)
+        return site_params
 
     @staticmethod
     def get_service_site_params(service, force_makecache=False):
@@ -148,9 +181,12 @@ class ServiceView(View):
 
         # All identities of the service
         identities = Identity.objects.filter(service=service)
-        emails = Mail.objects.filter(identity__in=identities, identity__approved=True).distinct()
-        service_3p_conns = ServiceThirdPartyEmbeds.objects.filter(service=service)
-        third_party_conns_setting_cookies = service_3p_conns.filter(sets_cookie=True)
+        emails = Mail.objects.filter(
+            identity__in=identities, identity__approved=True).distinct()
+        service_3p_conns = ServiceThirdPartyEmbeds.objects.filter(
+            service=service)
+        third_party_conns_setting_cookies = service_3p_conns.filter(
+            sets_cookie=True)
         third_parties = service.thirdparties.distinct()
 
         site_params['service'] = service
@@ -159,7 +195,8 @@ class ServiceView(View):
         site_params['unconfirmed_idents'] = identities.filter(approved=False)
         site_params['sets_cookies'] = third_party_conns_setting_cookies.exists()
         site_params['num_different_thirdparties'] = third_parties.count()
-        site_params['leaks_address'] = service_3p_conns.filter(leaks_address=True).exists()
+        site_params['leaks_address'] = service_3p_conns.filter(
+            leaks_address=True).exists()
 
         end_time = time.time()
         print('Get service_site_params took: {}s'.format(end_time - start_time))
@@ -181,14 +218,16 @@ class EmbedView(View):
             sid = kwargs['embed']
         except KeyError:
             # No service kwarg is set, warn
-            logger.info('EmbedView.get: Malformed GET request received', extra={'request': request})
+            logger.info('EmbedView.get: Malformed GET request received', extra={
+                        'request': request})
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
 
         try:
             embed = Thirdparty.objects.get(id=sid)
         except ObjectDoesNotExist:
-            logger.info("EmbedView.get: Invalid service requested", extra={'request': request, 'service_id': sid})
+            logger.info("EmbedView.get: Invalid service requested",
+                        extra={'request': request, 'service_id': sid})
             # TODO: Add code to display a warning on homepage
             return redirect('Home')
         return self.render_embed(request, embed)
@@ -198,7 +237,8 @@ class EmbedView(View):
 
         site_params = EmbedView.get_embed_site_params(embed)
         if site_params is None:
-            logger.warn("EmbedView.render_embed: Cache miss", extra={'request': request, 'embed_id': embed.id})
+            logger.warn("EmbedView.render_embed: Cache miss", extra={
+                        'request': request, 'embed_id': embed.id})
             # Display a warning that the cache isn't up to date
             # TODO We probably also want to mark the embed as dirty to ensure its generated, just in case stuff went wrong somewhere
             return render(request, 'identity/embed.html', {"error": "cache miss", "embed": embed})
@@ -228,6 +268,7 @@ class EmbedView(View):
         site_params['country'] = embed.get_country()
         site_params['sector'] = embed.get_sector()
         return site_params
+
 
 class FaqView(View):
     def get(self, request, *args, **kwargs):

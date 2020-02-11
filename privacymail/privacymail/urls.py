@@ -25,7 +25,7 @@ urlpatterns = [
     path('services/', ServiceListView.as_view(), name="ServiceList"),
     path('embed/<int:embed>/', EmbedView.as_view(), name='Embed'),
     path('identity/', IdentityView.as_view(), name='IdentityCreation'),
-    path('statistics', HomeView.as_view(), name='Home'),
+    path('statistics', StatisticView.as_view(), name='Statistic'),
 
     path('api/', include('api.urls')),
 ]
