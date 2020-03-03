@@ -4,6 +4,7 @@ from django.shortcuts import render
 from django.views.generic import View
 from identity.util import validate_domain, convertForJsonResponse
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
+from django.http import HttpResponseNotFound
 from identity.filters import ServiceFilter
 from identity.tables import ServiceTable
 from mailfetcher.models import Mail, Eresource, Thirdparty
@@ -101,11 +102,10 @@ class ServiceView(View):
         try:
             sid = kwargs['service']
         except KeyError:
-            # No service kwarg is set, warn
-            logger.info('ServiceView.get: Malformed GET request received', extra={
-                        'request': request})
-            # TODO: Add code to display a warning on homepage
-            return redirect('Home')
+            try:
+                sid = self.parseUrlToId(request.GET.get("url"))
+            except:
+                return HttpResponseNotFound("newsletter not found")
 
         try:
             service = Service.objects.get(id=sid)
@@ -115,6 +115,16 @@ class ServiceView(View):
             # TODO: Add code to display a warning on homepage
             return redirect('Home') 
         return JsonResponse(convertForJsonResponse(self.render_service(request, service)))
+    
+    @staticmethod
+    def parseUrlToId(url):   
+        print(url)     
+        domain = validate_domain(url)   
+        print(domain)   
+        service = Service.objects.get(url=domain)
+        print(service.id)  
+        return service.id
+
 
     @staticmethod
     def render_service(request, service, form=None):
