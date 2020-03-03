@@ -2,7 +2,7 @@ import site
 
 from django.shortcuts import render
 from django.views.generic import View
-from identity.util import validate_domain
+from identity.util import validate_domain, convertForJsonResponse
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from identity.filters import ServiceFilter
 from identity.tables import ServiceTable
@@ -27,34 +27,6 @@ from django.http import JsonResponse
 # Get named logger
 logger = logging.getLogger(__name__)
 
-
-def convertForJsonResponse(obj):
-
-    try:
-        if isinstance(obj, dict):
-            keys = obj
-        else:
-            keys = obj.__dict__
-
-        newObj = {}
-        for key in keys:
-            if isinstance(obj, dict):
-                attr = obj[key]
-            else:
-                attr = getattr(obj, key)
-
-            if isinstance(attr, list):
-                for i in range(len(attr)):
-                    attr[i] = convertForJsonResponse(attr[i])
-            else:
-                attr = convertForJsonResponse(attr)
-
-            newObj[key] = attr
-
-        return newObj
-    except:
-        print("catched exepotion", obj)
-        return obj
 
 
 class StatisticView(View):
@@ -141,8 +113,8 @@ class ServiceView(View):
             logger.info("ServiceView.get: Invalid service requested",
                         extra={'request': request, 'service_id': sid})
             # TODO: Add code to display a warning on homepage
-            return redirect('Home')
-        return JsonResponse(convertForJsonResponse(self.render_service(request, service)), safe=False)
+            return redirect('Home') 
+        return JsonResponse(convertForJsonResponse(self.render_service(request, service)))
 
     @staticmethod
     def render_service(request, service, form=None):
@@ -157,15 +129,18 @@ class ServiceView(View):
 
         # Render the site
         if form is None:
-            site_params['form'] = forms.ServiceMetadataForm(instance=service)
+            #site_params['form'] = forms.ServiceMetadataForm(instance=service)
+            pass
+            #TODO uncomment
         else:
             site_params['form'] = form
         site_params['service'] = service
         site_params['checks'] = []
 
         # Run checks
-        for check in checks.SERVICE_CHECKS:
-            site_params['checks'].append(check(site_params))
+        #for check in checks.SERVICE_CHECKS:
+        #    site_params['checks'].append(check(site_params))
+        #TODO uncomment
 
         return site_params
 
@@ -175,7 +150,6 @@ class ServiceView(View):
         if force_makecache:
             analyser_cron.create_service_cache(service, force=True)
         site_params = cache.get(service.derive_service_cache_path())
-
         if site_params is None:
             return None
 
@@ -190,13 +164,12 @@ class ServiceView(View):
         third_parties = service.thirdparties.distinct()
 
         site_params['service'] = service
-        site_params['idents'] = identities
+        #site_params['idents'] = identities
         site_params['count_mails'] = emails.count()
-        site_params['unconfirmed_idents'] = identities.filter(approved=False)
+        #site_params['unconfirmed_idents'] = identities.filter(approved=False)
         site_params['sets_cookies'] = third_party_conns_setting_cookies.exists()
         site_params['num_different_thirdparties'] = third_parties.count()
-        site_params['leaks_address'] = service_3p_conns.filter(
-            leaks_address=True).exists()
+        site_params['leaks_address'] = service_3p_conns.filter(leaks_address=True).exists()
 
         end_time = time.time()
         print('Get service_site_params took: {}s'.format(end_time - start_time))
@@ -268,7 +241,6 @@ class EmbedView(View):
         site_params['country'] = embed.get_country()
         site_params['sector'] = embed.get_sector()
         return site_params
-
 
 class FaqView(View):
     def get(self, request, *args, **kwargs):

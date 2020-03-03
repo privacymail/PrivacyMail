@@ -35,6 +35,8 @@ import logging
 from django.db import connection
 from django_countries.fields import CountryField
 
+from identity.util import convertForJsonResponse
+
 mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
 
@@ -1261,7 +1263,16 @@ class Thirdparty(models.Model):
             return self.service.get_sector_display()
         else:
             return self.get_sector_display()
-
+            
+    def toJSON(self):
+        return {
+            "name" :convertForJsonResponse(self.name),
+            "host" :convertForJsonResponse(self.host),
+            "resultsdirty" : convertForJsonResponse(self.resultsdirty),
+            #"country_of_origin" : convertForJsonResponse(self.country_of_origin),
+            "sector" : convertForJsonResponse(self.sector),
+            "service" : convertForJsonResponse(self.service)
+        }
 # class RequestChain(models.Model):
 #     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
 #     host = models.ForeignKey('Trackhosts', null=True, on_delete=models.SET_NULL)

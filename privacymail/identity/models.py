@@ -6,7 +6,7 @@ from django.apps import apps
 from model_utils import Choices
 from django_countries.fields import CountryField
 from django.contrib.postgres.fields import ArrayField
-
+from identity.util import convertForJsonResponse
 
 # Create your models here.
 class Identity(models.Model):
@@ -45,6 +45,18 @@ class Identity(models.Model):
 
         i.save()
         return i
+
+    def toJSON(self):
+        return {
+            "first_name":convertForJsonResponse(self.first_name),
+            "surname" : convertForJsonResponse(self.surname),
+            "mail" :convertForJsonResponse(self.mail),
+            "gender" :convertForJsonResponse( self.gender),
+            "service" : convertForJsonResponse(self.service),
+            "approved" : convertForJsonResponse(self.approved),
+            "lastapprovalremindersend" : convertForJsonResponse(self.lastapprovalremindersend),
+            "receives_third_party_spam" : convertForJsonResponse(self.receives_third_party_spam)
+        }
 
     def __str__(self):
         return self.mail
@@ -174,6 +186,18 @@ class Service(models.Model):
     def derive_service_cache_path(self):
         return 'frontend.ServiceView.result.' + str(self.id) + ".site_params"
 
+    def toJSON(self):
+        return {
+            "url" : convertForJsonResponse(self.url),
+            "name" :convertForJsonResponse(self.name),
+            "permitted_senders" :convertForJsonResponse( self.permitted_senders),
+            #"thirdparties" : convertForJsonResponse(list(self.thirdparties.all())),
+            "resultsdirty" : convertForJsonResponse(self.resultsdirty),
+            "hasApprovedIdentity" : convertForJsonResponse(self.hasApprovedIdentity),
+            #"country_of_origin" : convertForJsonResponse(self.country_of_origin),
+            "sector" : convertForJsonResponse(self.sector)
+        }
+
 
 class ServiceThirdPartyEmbeds(models.Model):
     STATIC = 'STATIC'
@@ -196,3 +220,14 @@ class ServiceThirdPartyEmbeds(models.Model):
     mail = models.ForeignKey('mailfetcher.Mail', on_delete=models.CASCADE, null=True)
     sets_cookie = models.BooleanField(default=False)
     receives_identifier = models.BooleanField(default=False)
+
+    def toJSON(self):
+        return {
+            "service" : convertForJsonResponse(self.service),
+            "thirdparty" :convertForJsonResponse(self.thirdparty),
+            "leaks_address" :convertForJsonResponse( self.leaks_address),
+            "embed_type" : convertForJsonResponse(self.embed_type),
+            "mail" : convertForJsonResponse(self.mail),
+            "sets_cookie" : convertForJsonResponse(self.sets_cookie),
+            "receives_identifier" : convertForJsonResponse(self.receives_identifier),
+        }

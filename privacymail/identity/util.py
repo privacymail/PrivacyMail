@@ -30,3 +30,35 @@ def is_valid_domain(domain):
     :return: True if the provided string is a valid domain or URL, otherwise false.
     """
     return validators.domain(domain) or validators.url(domain)
+
+def convertForJsonResponse(obj):
+    json = {}
+    if isinstance(obj, dict):
+        i = 0
+        for key in obj:
+            if isinstance(key, str):
+                json[key] = executeToJSON(obj[key])
+            else:
+                json[i] = {**executeToJSON(obj[key]) , **executeToJSON(key)}
+                #json[i] = executeToJSON(key)
+            i=i+1
+
+    elif isinstance(obj, list):
+        for i in range(len(obj)):
+            json[i] = executeToJSON(obj[i])
+    else:
+        json = executeToJSON(obj, True)
+    
+    return json
+
+def executeToJSON(obj, stopFunction=False):
+    json = {}
+    try:
+        json = obj.toJSON()
+
+    except AttributeError:
+        json = obj
+        if not stopFunction:
+            json = convertForJsonResponse(obj)
+  
+    return json
