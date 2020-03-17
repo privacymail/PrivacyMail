@@ -129,7 +129,6 @@ class Home extends React.Component {
                         </IconListItem>
                     </IconList>
                 </div>
-
             </div>
         );
     }
