@@ -1,9 +1,9 @@
-import React, { useState, } from "react";
+import React, { useState } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { IconList, IconListItem } from "../../utils/IconList";
 
-const Home = (props) => {
-    const [statistics, setStatistics] = useState({})
+const Home = props => {
+    const [statistics, setStatistics] = useState({});
     return (
         <div className="home">
             <div className="grid">
@@ -121,7 +121,6 @@ const Home = (props) => {
             </div>
         </div>
     );
-
-}
+};
 
 export default withTranslation()(Home);
