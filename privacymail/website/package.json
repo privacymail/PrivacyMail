@@ -4,17 +4,17 @@
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.4.0",
+    "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
-    "i18next": "^19.0.2",
-    "i18next-browser-languagedetector": "^4.0.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "react-i18next": "^11.2.7",
+    "i18next": "^19.3.2",
+    "i18next-browser-languagedetector": "^4.0.2",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
+    "react-i18next": "^11.3.3",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.3.0",
-    "react-scroll-parallax": "^2.3.1",
-    "sass": "^1.24.2"
+    "react-scroll-parallax": "^2.3.2",
+    "sass": "^1.26.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -31,13 +31,13 @@
     "printWidth": 120
   },
   "devDependencies": {
-    "eslint-plugin-import": "^2.18.0",
+    "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^5.0.1",
-    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react": "^7.19.0",
     "husky": "^3.0.0",
     "prettier": "1.18.2",
-    "react-codemod": "^5.0.1",
-    "selenium-webdriver": "^4.0.0-alpha.4"
+    "react-codemod": "^5.2.0",
+    "selenium-webdriver": "^4.0.0-alpha.7"
   },
   "husky": {
     "hooks": {

@@ -118,11 +118,8 @@ class ServiceView(View):
     
     @staticmethod
     def parseUrlToId(url):   
-        print(url)     
         domain = validate_domain(url)   
-        print(domain)   
         service = Service.objects.get(url=domain)
-        print(service.id)  
         return service.id
 
 
