@@ -1,9 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { IconList, IconListItem } from "../../utils/IconList";
+import { TFunction } from "i18next";
+import { Statistics, getStatistics } from "../../repository"
+interface HomeProps {
+    t: TFunction
+}
 
-const Home = props => {
-    const [statistics, setStatistics] = useState({});
+const Home = (props: HomeProps) => {
+    const [statistics, setStatistics] = useState<Statistics>();
+    useEffect(() => getStatistics(setStatistics), []);
     return (
         <div className="home">
             <div className="grid">
@@ -22,19 +28,19 @@ const Home = props => {
                 </div>
                 <div className="grid-divider" />
                 <div className="grid-item-4 statistic">
-                    <p className="medium big">69.933</p>
+                    <p className="medium big">{statistics?.email_count}</p>
                     <p className="regular normal">
                         <Trans>home_emailsAnalysied</Trans>
                     </p>
                 </div>
                 <div className="grid-item-4 statistic">
-                    <p className="medium big">2.928</p>
+                    <p className="medium big">{statistics?.service_count}</p>
                     <p className="regular normal">
                         <Trans>home_found3rdPraties</Trans>
                     </p>
                 </div>
                 <div className="grid-item-4 statistic">
-                    <p className="medium big">1.363</p>
+                    <p className="medium big">{statistics?.tracker_count}</p>
                     <p className="regular normal">
                         <Trans>home_registeredNewsletters</Trans>
                     </p>
