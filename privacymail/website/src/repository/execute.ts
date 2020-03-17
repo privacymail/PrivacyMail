@@ -18,7 +18,6 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
         path = path.substring(1);
     }
     url += path;
-    console.log(url);
 
     return new Promise<any>((resolve, reject) => {
         fetch(url, options).then(async response => {
