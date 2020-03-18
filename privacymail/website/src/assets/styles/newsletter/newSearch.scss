@@ -1,0 +1,20 @@
+$faq-button-width: 120px;
+
+.newSearch {
+    background-color: #dddddd;
+    position: relative;
+    padding: 0.8rem;
+    //font-size: 0.9rem; //maybe add a media query so mobile devices dont have 4 lines of text
+    input {
+        width: calc(100% - #{$faq-button-width} - 1rem);
+        margin: auto 0px;
+        display: inline-block;
+    }
+    button {
+        width: $faq-button-width;
+        cursor: pointer;
+        position: absolute;
+        top: calc(50% - 16px);
+        right: 1rem;
+    }
+}

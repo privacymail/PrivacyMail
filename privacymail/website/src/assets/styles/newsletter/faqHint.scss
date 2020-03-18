@@ -4,12 +4,13 @@ $close-button-width: 50px;
 .faqHint{
     background-color: #DDDDDD;
     position: relative;
-    padding: 0.8rem;
+    padding: 0.8rem ;
+    font-size: 0.9rem; //maybe add a media query so mobile devices dont have 4 lines of text
     
     div {
         font-weight: 200;
-        width: calc(100% - #{$faq-button-width} - #{$close-button-width} - 40px);
-        margin: auto 20px;
+        width: calc(100% - #{$faq-button-width} - #{$close-button-width} );
+        margin: auto 0px;
         text-align: center;
         display: inline-block;
     }

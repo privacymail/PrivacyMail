@@ -35,12 +35,23 @@ def convertForJsonResponse(obj):
     json = {}
     if isinstance(obj, dict):
         i = 0
+        hasStringKey = False
+
+        for key in obj:
+            if isinstance(key, str):
+                hasStringKey = True
+
+        if not hasStringKey:
+            json = []
+
         for key in obj:
             if isinstance(key, str):
                 json[key] = executeToJSON(obj[key])
             else:
-                json[i] = {**executeToJSON(obj[key]) , **executeToJSON(key)}
-                #json[i] = executeToJSON(key)
+                if hasStringKey:
+                    json[i] = {**executeToJSON(obj[key]) , **executeToJSON(key)}
+                else: 
+                    json.append({**executeToJSON(obj[key]) , **executeToJSON(key)})
             i=i+1
 
     elif isinstance(obj, list):
