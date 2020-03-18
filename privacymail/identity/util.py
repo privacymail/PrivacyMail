@@ -44,8 +44,9 @@ def convertForJsonResponse(obj):
             i=i+1
 
     elif isinstance(obj, list):
+        json=[]
         for i in range(len(obj)):
-            json[i] = executeToJSON(obj[i])
+            json.append(executeToJSON(obj[i]))
     else:
         json = executeToJSON(obj, True)
     

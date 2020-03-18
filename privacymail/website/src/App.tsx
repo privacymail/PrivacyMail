@@ -3,12 +3,14 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import Home from "./components/home/Home";
+import Newsletter from "./components/newsletter/Newsletter";
 
 function getRoutes() {
     const routes = [];
 
+    routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />)
     routes.push(
-        <Route key="/">
+        <Route key="/" path="/">
             <Home />
         </Route>
     );

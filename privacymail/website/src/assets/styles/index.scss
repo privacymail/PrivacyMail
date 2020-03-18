@@ -1,8 +1,8 @@
 @import "./fonts.scss";
 @import "./colors.scss";
-@import "./header.scss";
-@import "./home.scss";
-@import "./footer.scss";
+@import "./home/";
+@import "./layout/";
+@import "./faq/";
 @import "./grid.scss";
 body {
     margin: 0;

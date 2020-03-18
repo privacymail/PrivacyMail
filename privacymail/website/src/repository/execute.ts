@@ -14,10 +14,11 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
          url += process.env.REACT_APP_BACKEND_API_PATH + "/"
      }*/
 
-    if (path.startsWith("/")) {
-        path = path.substring(1);
+    if (!path.startsWith("/")) {
+        path = "/" + path;
     }
     url += path;
+    console.log(url);
 
     return new Promise<any>((resolve, reject) => {
         fetch(url, options).then(async response => {
