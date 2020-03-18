@@ -5,21 +5,19 @@ $close-button-width: 50px;
     background-color: #DDDDDD;
     position: relative;
     padding: 0.8rem;
+    
     div {
         font-weight: 200;
         width: calc(100% - #{$faq-button-width} - #{$close-button-width} - 40px);
         margin: auto 20px;
         text-align: center;
         display: inline-block;
-
     }
     button {
-        margin: auto;
         width: $faq-button-width;
         cursor: pointer;
         position: absolute;
         top: calc(50% - 16px);
-
         right: $close-button-width;
         
     }
