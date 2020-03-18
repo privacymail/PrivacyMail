@@ -1,7 +1,32 @@
+$faq-button-width: 80px;
+$close-button-width: 50px;
 
 .faqHint{
-    width: 100%;
     background-color: #DDDDDD;
-    padding: 1rem;
-    font-weight: 200;
+    position: relative;
+    padding: 0.8rem;
+    div {
+        font-weight: 200;
+        width: calc(100% - #{$faq-button-width} - #{$close-button-width} - 40px);
+        margin: auto 20px;
+        text-align: center;
+        display: inline-block;
+
+    }
+    button {
+        margin: auto;
+        width: $faq-button-width;
+        cursor: pointer;
+        position: absolute;
+        top: calc(50% - 16px);
+
+        right: $close-button-width;
+        
+    }
+    .closeButton{
+        right: 0px;
+        background: none;
+        color: $font-color-primary;
+        width: $close-button-width;
+    }
 }

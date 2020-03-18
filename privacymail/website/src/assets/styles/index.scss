@@ -25,7 +25,6 @@ body {
     button {
         @extend .regular;
         height: 2rem;
-        width: 100%;
         background: $button-color;
         border-radius: 2px;
         text-align: center;
@@ -33,6 +32,7 @@ body {
         font-size: 1rem;
         color: $font-color-secondary;
         border: none;
+        padding: 0px 1rem;
     }
 }
 .content {
@@ -50,47 +50,5 @@ body {
         margin: $header-height auto 0px auto;
         width: 1000px
         
-    }
-}
-.parallax {
-    perspective: 1px;
-    height: calc(100vh - #{$header-height});
-    overflow-x: hidden;
-    overflow-y: auto;
-    transform-style: preserve-3d;
-
-    .parallax-layer {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
-    }
-    .parallax-base {
-        transform: translateZ(0);
-        z-index: 2;
-    }
-    .parallax-background {
-        z-index: 1;
-        transform: translateZ(-5px) scale(5);
-        
-    }
-    .backgroundImage {
-        div {
-            //position: relative;
-            //float: right;
-            //right: 50%;
-
-            #image-container {
-                $backgroundImageBlur: 6px;
-                background-image: url("../images/letter.jpg");
-                background-size: cover;
-                background-position: center;
-                //height: 115vh;
-                //position: relative;
-                filter: blur($backgroundImageBlur);
-                margin: -$backgroundImageBlur * 2;
-            }
-        }
     }
 }

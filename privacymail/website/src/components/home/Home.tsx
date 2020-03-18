@@ -13,9 +13,6 @@ const Home = (props: HomeProps) => {
     const [newsletter, setNewsletter] = useState<string>("");
     useEffect(() => getStatistics(setStatistics), []);
 
-    const openNewsletterPage = () => {
-
-    }
 
     return (
         <div className="home">
@@ -30,7 +27,7 @@ const Home = (props: HomeProps) => {
                 <div className="grid-item input">
                     <input type="text" value={newsletter} placeholder={props.t("home_inputPlaceholder")} onChange={(e) => setNewsletter(e.target.value)} />
                     <Link to={"service/" + newsletter}>
-                        <button onClick={() => openNewsletterPage()}>
+                        <button>
                             <Trans>home_analyise</Trans>
                         </button>
                     </Link>
