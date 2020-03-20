@@ -1,0 +1,41 @@
+$privacyRatingHeadlineHeight: 2rem;
+
+.privacyRating {
+    padding: 0px $paddingLevel;
+    position: relative;
+
+    h1 {
+        font-size: $privacyRatingHeadlineHeight;
+        font-weight: 200;
+        margin: 1.25rem 0px;
+    }
+    .newsletterName {
+        width: 100%;
+        text-align: center;
+        .big {
+            font-size: 2rem;
+            font-weight: 200;
+        }
+        .small {
+            font-size: 1.5rem;
+            font-weight: 100;
+        }
+    }
+    .rating {
+        font-size: 12.5rem;
+        margin: -1rem 0px;
+        font-weight: 600;
+        color: #fbc02d;
+        width: 100%;
+        text-align: center;
+    }
+
+    .shareButton {
+        $sharebuttonHeight: 24px;
+
+        height: $sharebuttonHeight;
+        position: absolute;
+        right: $paddingLevel;
+        top: calc((#{$privacyRatingHeadlineHeight} * 1.2 - #{$sharebuttonHeight}) / 2);
+    }
+}

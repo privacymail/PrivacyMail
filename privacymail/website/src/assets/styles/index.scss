@@ -5,37 +5,40 @@
 @import "./faq/";
 @import "./newsletter/";
 @import "./grid.scss";
-body {
-    margin: 0;
+html {
     font-family: Roboto;
     font-size: 16px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    body {
+        margin: 0;
 
-    input {
-        @extend .light;
-        width: 100%;
-        height: 2rem;
-        border-radius: 2px;
-        border: none;
-        padding-left: 1rem;
-        font-size: 1rem;
-        font-family: Roboto;
-        box-sizing: border-box;
-    }
-    button {
-        @extend .regular;
-        height: 2rem;
-        background: $button-color;
-        border-radius: 2px;
-        text-align: center;
-        text-transform: uppercase;
-        font-size: 1rem;
-        color: $font-color-secondary;
-        border: none;
-        padding: 0px 1rem;
+        input {
+            @extend .light;
+            width: 100%;
+            height: 2rem;
+            border-radius: 2px;
+            border: none;
+            padding-left: 1rem;
+            font-size: 1rem;
+            font-family: Roboto;
+            box-sizing: border-box;
+        }
+        button {
+            @extend .regular;
+            height: 2rem;
+            background: $button-color;
+            border-radius: 2px;
+            text-align: center;
+            text-transform: uppercase;
+            font-size: 1rem;
+            color: $font-color-secondary;
+            border: none;
+            padding: 0px 1rem;
+        }
     }
 }
+
 .content {
     margin-top: $header-height;
     width: 100%;
