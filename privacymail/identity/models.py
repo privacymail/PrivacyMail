@@ -194,7 +194,7 @@ class Service(models.Model):
             #"thirdparties" : convertForJsonResponse(list(self.thirdparties.all())),
             "resultsdirty" : convertForJsonResponse(self.resultsdirty),
             "hasApprovedIdentity" : convertForJsonResponse(self.hasApprovedIdentity),
-            #"country_of_origin" : convertForJsonResponse(self.country_of_origin),
+            "country_of_origin" : convertForJsonResponse(self.country_of_origin.name),
             "sector" : convertForJsonResponse(self.sector)
         }
 

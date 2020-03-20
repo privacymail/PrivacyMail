@@ -1,4 +1,7 @@
 {
+    "analyzedMails": "Analyzed mails",
+    "confirmedIdentitys": "Confirmed Identitys",
+    "countryOrigin": "Country of origin",
     "faq": "FAQ",
     "faqHint": "Are you new around here and do you like to know how our PrivacyScore is calculated? Visit our FAQ!",
     "footer_dataProtection": "Data Protection",
@@ -6,6 +9,7 @@
     "footer_github": "Github",
     "footer_imprint": "Imprint",
     "footer_language": "Language",
+    "gerneralInfo": "Gerneral",
     "home_analyise": "analyse",
     "home_emailsAnalysied": "eMails Processed",
     "home_found3rdPraties": "3rd Party Domains Found",
@@ -32,5 +36,6 @@
     "home_whyUsePM2detail": "Don't want to be tracked and profiled? Share the results with others to warn them and demand companies change their behavior.",
     "home_whyUsePM3": "Support Research",
     "home_whyUsePM3detail": "By using PrivacyMail, you support our research on the state of online privacy by helping us collect a large dataset of newsletters.",
-    "privacyRating": "Privacy Rating"
+    "privacyRating": "Privacy Rating",
+    "sector": "Sektor"
 }

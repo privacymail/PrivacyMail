@@ -1,4 +1,7 @@
 {
+    "analyzedMails": "Analysierte Mails",
+    "confirmedIdentitys": "Bestätigte Identitäten",
+    "countryOrigin": "Herkunftsland",
     "faq": "FAQ",
     "faqHint": "Sind sie neu hier und möchten wissen, wie unser PrivacyScore berechnet wird? Besuchen sie unser FAQ!",
     "footer_dataProtection": "Datenschutz",
@@ -6,6 +9,7 @@
     "footer_github": "Github",
     "footer_imprint": "Impressum",
     "footer_language": "Sprache",
+    "gerneralInfo": "Allgemein",
     "home_analyise": "Analysieren",
     "home_emailsAnalysied": "eMails analysiert",
     "home_found3rdPraties": "gefundene Drittanbieter",
@@ -33,5 +37,6 @@
     "home_whyUsePM3": "Support Research",
     "home_whyUsePM3detail": "By using PrivacyMail, you support our research on the state of online privacy by helping us collect a large dataset of newsletters.",
     "privacyRating": "Privacy Bewertung",
+    "sector": "Branche",
     "test": "test"
 }

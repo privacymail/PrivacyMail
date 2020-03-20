@@ -5,6 +5,7 @@ import FaqHint from "./FaqHint";
 import NewSearch from "./NewSearch";
 import PrivacyRating from "./PrivacyRating";
 import ShareButton from "./ShareButton";
+import GerneralInfo from "./GeneralInfo";
 
 const Newsletter = () => {
     let { id } = useParams();
@@ -15,10 +16,11 @@ const Newsletter = () => {
 
     return (
         <div className="newsletter">
-            <NewSearch currentSearch={id || ""} />
+            <NewSearch currentSearch={newsletter?.service.name || ""} />
             <FaqHint />
-            <PrivacyRating privacyRating="C" newsletter={id || ""} />
+            <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
             <div className="divider" />
+            <GerneralInfo newsletter={newsletter} />
         </div>
     );
 };
