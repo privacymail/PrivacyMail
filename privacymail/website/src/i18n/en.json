@@ -1,4 +1,5 @@
 {
+    "analysis": "Analysis",
     "analyzedMails": "Analyzed mails",
     "confirmedIdentitys": "Confirmed Identitys",
     "countryOrigin": "Country of origin",
@@ -36,6 +37,7 @@
     "home_whyUsePM2detail": "Don't want to be tracked and profiled? Share the results with others to warn them and demand companies change their behavior.",
     "home_whyUsePM3": "Support Research",
     "home_whyUsePM3detail": "By using PrivacyMail, you support our research on the state of online privacy by helping us collect a large dataset of newsletters.",
+    "onclickThirdPartyShort": "contacted Companys when opening a link",
     "privacyRating": "Privacy Rating",
     "sector": "Sektor"
 }

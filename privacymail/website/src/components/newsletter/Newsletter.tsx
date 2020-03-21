@@ -4,8 +4,8 @@ import { getNewsletter, INewsletter } from "../../repository";
 import FaqHint from "./FaqHint";
 import NewSearch from "./NewSearch";
 import PrivacyRating from "./PrivacyRating";
-import ShareButton from "./ShareButton";
 import GerneralInfo from "./GeneralInfo";
+import Analysis from "./analysis/Analysis";
 
 const Newsletter = () => {
     let { id } = useParams();
@@ -21,6 +21,8 @@ const Newsletter = () => {
             <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
             <div className="divider" />
             <GerneralInfo newsletter={newsletter} />
+            <div className="divider" />
+            <Analysis newsletter={newsletter}/>
         </div>
     );
 };
