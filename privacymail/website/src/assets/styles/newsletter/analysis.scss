@@ -47,6 +47,10 @@
             margin: 1rem 0rem 1rem 1rem;
             border-top: $divider-border;
 
+            > * {
+                padding-right: $paddingLevel;
+            }
+
             > div {
                 margin: 1rem 0 2rem 0;
             }
@@ -82,7 +86,7 @@
                     }
 
                     .icons {
-                        margin: 0 1rem 0 auto;
+                        margin: 0 0 0 auto;
 
                         display: flex;
                         align-items: center;

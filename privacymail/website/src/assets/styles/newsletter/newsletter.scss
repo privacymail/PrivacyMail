@@ -2,6 +2,8 @@ $paddingLevel: 1.2rem;
 $privacyRatingHeadlineHeight: 2rem;
 
 .newsletter {
+    position: relative;
+    margin-top: $header-height + 4.1rem;
     > div {
         margin-bottom: 0.5rem;
     }

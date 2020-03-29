@@ -11,17 +11,19 @@ const NewSearch = (props: NewSearchProps) => {
 
     return (
         <div className="newSearch">
-            <input
-                type="text"
-                value={newsletter}
-                placeholder={props.currentSearch}
-                onChange={e => setNewsletter(e.target.value)}
-            />
-            <Link to={"/service/" + newsletter}>
-                <button>
-                    <Trans>home_analyise</Trans>
-                </button>
-            </Link>
+            <div>
+                <input
+                    type="text"
+                    value={newsletter}
+                    placeholder={props.currentSearch}
+                    onChange={e => setNewsletter(e.target.value)}
+                />
+                <Link to={"/service/" + newsletter}>
+                    <button>
+                        <Trans>home_analyise</Trans>
+                    </button>
+                </Link>
+            </div>
         </div>
     );
 };
