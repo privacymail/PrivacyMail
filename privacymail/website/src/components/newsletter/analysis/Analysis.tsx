@@ -18,9 +18,9 @@ const Analysis = (props: AnalysisProps) => {
     return (
         <div className="analysis">
             <h1>
-                <Trans>analysis</Trans>
+                <Trans>analysis_analysis</Trans>
             </h1>
-            <OnOpenThirdparties thirdparties={onOpenThirdparties} />
+            <OnOpenThirdparties thirdparties={onOpenThirdparties} homeUrl={props.newsletter?.service.name} />
             <OnClickThirdparties thirdparties={onClickThirdparties} />
             {/* <ABTesting />
             <Spam /> */}

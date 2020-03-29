@@ -6,7 +6,7 @@
     .info {
         .row {
             height: 100%;
-            border-bottom: 1px solid #d6d6d6;
+            border-bottom: $divider-border;
             padding-left: $paddingLevel;
             div {
                 display: inline-block;

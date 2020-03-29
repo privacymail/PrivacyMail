@@ -34,7 +34,7 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesSmallProps) => {
         <div className="analysisSmall">
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
-                <Trans>onclickThirdPartyShort</Trans>
+                <Trans>analysis_onclickThirdPartyShort</Trans>
             </div>
             <div className="expandable">
                 <Icon className={props.expanded ? " expanded" : " closed"}>expand</Icon>

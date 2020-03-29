@@ -13,6 +13,15 @@ html {
     body {
         margin: 0;
 
+        a,
+        a:visited,
+        a:hover,
+        a:active,
+        a:link {
+            text-decoration: none;
+            color: inherit;
+        }
+
         input {
             @extend .light;
             width: 100%;
@@ -39,18 +48,38 @@ html {
     }
 }
 
+.icon {
+    img {
+        vertical-align: middle;
+    }
+    position: relative;
+
+    .tooltip {
+        position: absolute;
+        min-width: 200px;
+        top: 2rem;
+        right: 0px;
+        background-color: #3d3a3a;
+        color: $font-color-secondary;
+        border-radius: 2px;
+        padding: 0.3rem 1rem;
+        z-index: 9999;
+    }
+}
+
 .content {
     margin-top: $header-height;
     width: 100%;
-    @media only screen and (min-width: 740px) {
+    /*@media only screen and (min-width: 740px) {
         //medium sized screens
         margin-left: calc((100% - 720px) * 0.3);
         margin-right: calc((100% - 720px) * 0.3);
         width: calc((100% - 720px) * 0.4 + 720px);
     }
-    @media only screen and (min-width: 1420px) {
+    @media only screen and (min-width: 1420px) { */
+    @media only screen and (min-width: 700px) {
         //everythin greater than
         margin: $header-height auto 0px auto;
-        width: 1000px;
+        width: 700px;
     }
 }

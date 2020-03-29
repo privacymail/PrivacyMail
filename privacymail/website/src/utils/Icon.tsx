@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 
 interface IconPros {
     children: string;
     className?: string;
     onClick?: Function;
+    title?: string | JSX.Element;
 }
 
 const Icon = (props: IconPros) => {
+    const [isTooltipOpen, setTooltipOpen] = useState(false);
+
     const iconName = props.children;
     if (!iconName) {
         console.error("No icon name provided");
@@ -26,13 +29,32 @@ const Icon = (props: IconPros) => {
             }
         }
     }
+
+    const onClick = (e: React.MouseEvent) => {
+        props.onClick?.(e);
+        if (props.title) {
+            if (!isTooltipOpen) {
+                const disable = () => {
+                    setTooltipOpen(false);
+                    document.removeEventListener("click", disable);
+                };
+                document.addEventListener("click", disable);
+                setTooltipOpen(true);
+            }
+        }
+    };
+
     return (
-        <img
-            className={"icon " + (props.className || "")}
-            alt={iconName}
-            src={image}
-            onClick={e => props.onClick?.(e)}
-        />
+        <div className={"icon " + (props.className || "")}>
+            <img
+                alt={iconName}
+                src={image}
+                onClick={e => onClick(e)}
+                onMouseOver={() => setTooltipOpen(true)}
+                onMouseOut={() => setTooltipOpen(false)}
+            />
+            {props.title && isTooltipOpen && <div className="tooltip">{props.title}</div>}
+        </div>
     );
 };
 

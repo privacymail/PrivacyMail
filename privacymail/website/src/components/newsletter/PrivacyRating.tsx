@@ -14,7 +14,7 @@ const PrivacyRating = (props: PrivacyRatingProps) => {
     return (
         <div className="privacyRating">
             <h1>
-                <Trans>privacyRating</Trans>
+                <Trans>analysis_privacyRating</Trans>
             </h1>
             <div className="rating">{props.privacyRating}</div>
             <div className="newsletterName">

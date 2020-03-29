@@ -37,8 +37,10 @@
 
         .image-list {
             .icon {
-                width: 48px;
-                vertical-align: middle;
+                img {
+                    width: 48px;
+                    vertical-align: middle;
+                }
             }
             ul {
                 margin: 0px;

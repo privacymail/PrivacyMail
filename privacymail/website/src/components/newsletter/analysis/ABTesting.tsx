@@ -10,7 +10,7 @@ const ABTesting = (props: ABTestingProps) => {
     return (
         <div className="generalInfo">
             <h1>
-                <Trans>analysis</Trans>
+                <Trans>analysis_analysis</Trans>
             </h1>
         </div>
     );

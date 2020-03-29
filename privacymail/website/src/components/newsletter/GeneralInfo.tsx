@@ -12,31 +12,31 @@ const GerneralInfo = (props: GerneralInfoProps) => {
     return (
         <div className="generalInfo">
             <h1>
-                <Trans>gerneralInfo</Trans>
+                <Trans>analysis_gerneralInfo</Trans>
             </h1>
             <div className="divider" />
             <div className="info">
                 <div className="row">
                     <div className="category">
-                        <Trans>sector</Trans>
+                        <Trans>analysis_sector</Trans>
                     </div>
                     <div className="value">{props.newsletter?.service.sector}</div>
                 </div>
                 <div className="row">
                     <div className="category">
-                        <Trans>countryOrigin</Trans>
+                        <Trans>analysis_countryOrigin</Trans>
                     </div>
                     <div className="value">{props.newsletter?.service.country_of_origin}</div>
                 </div>
                 <div className="row">
                     <div className="category">
-                        <Trans>analyzedMails</Trans>
+                        <Trans>analysis_analyzedMails</Trans>
                     </div>
                     <div className="value">{props.newsletter?.count_mails}</div>
                 </div>
                 <div className="row">
                     <div className="category">
-                        <Trans>confirmedIdentitys</Trans>
+                        <Trans>analysis_confirmedIdentitys</Trans>
                     </div>
                     <div className="value">{props.newsletter?.num_different_idents}</div>
                 </div>

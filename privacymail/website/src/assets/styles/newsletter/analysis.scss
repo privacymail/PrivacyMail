@@ -2,31 +2,32 @@
     padding-left: $paddingLevel;
 
     .analysisItem {
-        border-top: 1px solid #d6d6d6;
+        border-top: $divider-border;
         padding: 1rem 0px;
 
         .analysisSmall {
-            $summarizeFontSize: 2rem;
+            $summarizeFontSize: 3rem;
             width: 100%;
             display: flex;
             align-items: center;
 
             .summarizedInfo {
                 width: 20%;
+                min-width: 100px;
                 text-align: center;
                 font-size: $summarizeFontSize;
                 color: #ff9800;
             }
             .describeText {
-                width: 70%;
+                //width: 70%;
                 font-weight: 200;
+                font-size: 1.2rem;
             }
 
             .expandable {
                 width: 24px;
                 margin-left: auto;
                 margin-right: 1rem;
-                float: right;
 
                 img {
                     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 50ms;
@@ -38,6 +39,57 @@
 
                 object {
                     padding: auto;
+                }
+            }
+        }
+
+        .analysisBig {
+            margin: 1rem 0rem 1rem 1rem;
+            border-top: $divider-border;
+
+            > div {
+                margin: 1rem 0 2rem 0;
+            }
+            .divider {
+                margin: 0px;
+            }
+            p {
+                font-weight: 200;
+            }
+            .methodeChip {
+                background: $methode-noProblem;
+                border-radius: 5px;
+                font-weight: 200;
+                color: $font-color-secondary;
+                display: inline-block;
+                padding: 0.3rem 1rem;
+                margin: 0 0.2rem;
+            }
+            ul {
+                padding: 0;
+                li {
+                    list-style-type: none;
+                    font-size: 1rem;
+                    margin: 0.6rem 0;
+                    height: 24px;
+
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+
+                    a {
+                        text-decoration: underline;
+                    }
+
+                    .icons {
+                        margin: 0 1rem 0 auto;
+
+                        display: flex;
+                        align-items: center;
+                        * {
+                            margin-left: 0.5rem;
+                        }
+                    }
                 }
             }
         }
