@@ -11,12 +11,14 @@ interface OnClickThirdpartiesProps {
 const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
     const [isExpanded , setIsExpanded] = useState(false)
 
-    return (<div className="analysisItem" ><Collapsible 
-    onOpening={()=>setIsExpanded(true)}
-    onClosing={()=>setIsExpanded(false)}
-    trigger={<OnClickThirdpartiesSmall thirdparties={props.thirdparties}  expanded={isExpanded} />} >
-    {props.thirdparties?.map(elem => <div key={elem.host}>{elem.host}</div>)}
-</Collapsible></div>);
+    return (<div className="analysisItem" >
+        <Collapsible 
+            onOpening={()=>setIsExpanded(true)}
+            onClosing={()=>setIsExpanded(false)}
+            trigger={<OnClickThirdpartiesSmall thirdparties={props.thirdparties}  expanded={isExpanded} />} >
+                {props.thirdparties?.map(elem => <div key={elem.host}>{elem.host}</div>)}
+        </Collapsible>
+    </div>);
 };
 
 

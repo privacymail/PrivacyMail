@@ -1,24 +1,38 @@
-import React from "react";
+import React, { useState } from "react";
 import { Trans } from "react-i18next";
 import { IThirdParty } from "../../../repository";
 import Collapsible from "react-collapsible";
+import { Icon } from "../../../utils/Icon";
 
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
 }
 
 const OnOpenThirdparties = (props: OnClickThirdpartiesProps) => {
-    return (<div className="analysisItem" ><Collapsible trigger={<OnOpenThirdpartiesSmall thirdparties={props.thirdparties} />} >
+    const [isExpanded , setIsExpanded] = useState(false)
+
+
+    return (<div className="analysisItem" ><Collapsible  
+    onOpening={()=>setIsExpanded(true)}
+    onClosing={()=>setIsExpanded(false)}
+    trigger={<OnOpenThirdpartiesSmall thirdparties={props.thirdparties} expanded={isExpanded} />} >
     {props.thirdparties?.map(elem => <div key={elem.host}>{elem.host}</div>)}
 </Collapsible></div>);
 };
 
-const OnOpenThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
+
+interface OnClickThirdpartiesSmallProps extends OnClickThirdpartiesProps{
+    expanded: boolean
+}
+const OnOpenThirdpartiesSmall = (props: OnClickThirdpartiesSmallProps) => {
+
     return <div className="analysisSmall">
         <div className="summarizedInfo">{props.thirdparties?.length}</div>
         <div className="describeText"><Trans>onclickThirdPartyShort</Trans></div>
+        <div className="expandable"><Icon className={(props.expanded?" expanded": " closed")} >expand</Icon></div>
     </div>;
 };
+
 
 export default OnOpenThirdparties;
 
