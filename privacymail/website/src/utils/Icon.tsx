@@ -1,6 +1,12 @@
 import React from "react";
 
-const Icon = props => {
+interface IconPros {
+    children: string;
+    className?: string;
+    onClick?: Function;
+}
+
+const Icon = (props: IconPros) => {
     const iconName = props.children;
     if (!iconName) {
         console.error("No icon name provided");
@@ -21,9 +27,7 @@ const Icon = props => {
         }
     }
     return (
-        <object className={"icon " + (props.className || "")} type="image/svg+xml" data={image}>
-            {iconName}
-        </object>
+        <img className={"icon " + (props.className || "")} alt={iconName}  src={image} onClick={(e)=>props.onClick?.(e)} />
     );
 };
 

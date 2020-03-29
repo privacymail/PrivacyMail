@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { INewsletter } from "../../repository";
 import { Trans } from "react-i18next";
 
@@ -7,8 +7,8 @@ interface GerneralInfoProps {
 }
 const GerneralInfo = (props: GerneralInfoProps) => {
 
-    const [country, setCountry] = useState<string>(props.newsletter?.service.country_of_origin || "");
-    const [sector, setSector] = useState<string>( props.newsletter?.service.sector||"");
+    //const [country, setCountry] = useState<string>(props.newsletter?.service.country_of_origin || "");
+    //const [sector, setSector] = useState<string>( props.newsletter?.service.sector||"");
 
     return (
         <div className="generalInfo">
@@ -31,7 +31,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                 </div>
                 <div className="row">
                     <div className="category"><Trans>confirmedIdentitys</Trans></div>
-                    <div className="value">{}</div>
+                    <div className="value">{props.newsletter?.num_different_idents}</div>
                 </div>
             </div>
         </div>

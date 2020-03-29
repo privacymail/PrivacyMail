@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Header from "./components/header/Header";
-import Footer from "./components/footer/Footer";
 import Home from "./components/home/Home";
 import Newsletter from "./components/newsletter/Newsletter";
 
@@ -31,14 +30,16 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <Header />
-                <div className="content">
-                    <BrowserRouter>
+                <BrowserRouter>
+                    <Header />
+                    <div className="content">
                         <Switch>{getRoutes()}</Switch>
-                    </BrowserRouter>
-                </div>
-                {/*<Footer />*/}
+                    </div>
+                </BrowserRouter>
+                    
+            {/*<Footer />*/}
             </div>
+            
         );
     }
 }

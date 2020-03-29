@@ -17,6 +17,7 @@ export interface INewsletter {
     service: IService;
     sets_cookies: boolean;
     num_different_thirdparties: number;
+    num_different_idents: number;
     leaks_address: number;
     checks: any[];
 }

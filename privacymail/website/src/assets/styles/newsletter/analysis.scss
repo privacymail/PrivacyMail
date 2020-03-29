@@ -2,21 +2,43 @@
     padding-left: $paddingLevel;
 
     .analysisItem {
+        border-top: 1px solid #d6d6d6;
+        padding: 1rem 0px;
+
         .analysisSmall {
+            $summarizeFontSize: 2rem;
             width: 100%;
+            display: flex;
+            align-items: center;
 
             .summarizedInfo {
-                display: inline-block;
                 width: 20%;
                 text-align: center;
-                font-size: 2rem;
+                font-size: $summarizeFontSize;
                 color: #ff9800;
             }
             .describeText {
-                display: inline-block;
-                width: 60%;
-                text-align: center;
+                width: 70%;
                 font-weight: 200;
+            }
+
+            .expandable {
+                width: 24px;
+                margin-left: auto;
+                margin-right: 1rem;
+                float: right;
+
+                img {
+                    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 50ms;
+                }
+                .expanded {
+                    transform: rotate(180deg);
+                }
+                cursor: pointer;
+
+                object {
+                    padding: auto;
+                }
             }
         }
     }

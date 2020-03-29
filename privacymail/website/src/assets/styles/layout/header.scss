@@ -10,6 +10,16 @@ $header-font-size: 1.25rem;
     color: $font-color-secondary;
     padding-left: 5%;
     z-index: 1000;
+
+    a,
+    a:visited,
+    a:hover,
+    a:active,
+    a:link {
+        text-decoration: none;
+        color: inherit;
+    }
+
     div {
         display: inline;
         img {

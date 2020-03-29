@@ -171,7 +171,7 @@ class ServiceView(View):
         third_parties = service.thirdparties.distinct()
 
         site_params['service'] = service
-        #site_params['idents'] = identities
+        site_params['num_different_idents'] = identities.count()
         site_params['count_mails'] = emails.count()
         #site_params['unconfirmed_idents'] = identities.filter(approved=False)
         site_params['sets_cookies'] = third_party_conns_setting_cookies.exists()

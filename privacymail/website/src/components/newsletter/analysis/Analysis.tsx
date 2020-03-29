@@ -3,8 +3,6 @@ import { Trans } from "react-i18next";
 import { INewsletter } from "../../../repository";
 import OnOpenThirdparties from "./OnOpenThirdparties";
 import OnClickThirdparties from "./OnClickThirdparties";
-import ABTesting from "./ABTesting";
-import Spam from "./Spam";
 
 interface AnalysisProps {
     newsletter?: INewsletter;
@@ -20,8 +18,8 @@ const Analysis = (props: AnalysisProps) => {
             </h1>
             <OnOpenThirdparties thirdparties={onOpenThirdparties} />
             <OnClickThirdparties thirdparties={onClickThirdparties} />
-            <ABTesting />
-            <Spam />
+            {/* <ABTesting />
+            <Spam /> */}
         </div>
     );
 };
