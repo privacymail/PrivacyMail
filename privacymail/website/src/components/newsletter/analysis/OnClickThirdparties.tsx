@@ -3,9 +3,11 @@ import { Trans } from "react-i18next";
 import { IThirdParty } from "../../../repository";
 import Collapsible from "react-collapsible";
 import { Icon } from "../../../utils/Icon";
+import ThirdpartyConnections from "./ThirdpartyConnections";
 
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
+    homeUrl?: string;
 }
 
 const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
@@ -18,9 +20,36 @@ const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
                 onClosing={() => setIsExpanded(false)}
                 trigger={<OnClickThirdpartiesSmall thirdparties={props.thirdparties} expanded={isExpanded} />}
             >
-                {props.thirdparties?.map(elem => (
-                    <div key={elem.host}>{elem.host}</div>
-                ))}
+                <div className="analysisBig">
+                    <div>
+                        <h2>
+                            <Trans>analysis_problemHeadline</Trans>
+                        </h2>
+                        <p>
+                            <Trans>analysis_problemOnClick</Trans>
+                        </p>
+                    </div>
+
+                    <div className="divider" />
+
+                    <div>
+                        <h2>
+                            <Trans>analysis_methode</Trans>
+                        </h2>
+                        <div className="methodeChip">
+                            <Trans>analysis_reliable</Trans>
+                        </div>
+                        <div className="methodeChip">
+                            <Trans>analysis_noPotentialMistakes</Trans>
+                        </div>
+                    </div>
+
+                    <div className="divider" />
+                    <h2>
+                        <Trans>analysis_connections</Trans>
+                        <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
+                    </h2>
+                </div>
             </Collapsible>
         </div>
     );

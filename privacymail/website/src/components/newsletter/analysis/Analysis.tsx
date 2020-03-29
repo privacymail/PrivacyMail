@@ -21,7 +21,7 @@ const Analysis = (props: AnalysisProps) => {
                 <Trans>analysis_analysis</Trans>
             </h1>
             <OnOpenThirdparties thirdparties={onOpenThirdparties} homeUrl={props.newsletter?.service.name} />
-            <OnClickThirdparties thirdparties={onClickThirdparties} />
+            <OnClickThirdparties thirdparties={onClickThirdparties} homeUrl={props.newsletter?.service.name} />
             {/* <ABTesting />
             <Spam /> */}
         </div>
