@@ -2,17 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Trans, withTranslation } from "react-i18next";
 import { IconList, IconListItem } from "../../utils/IconList";
 import { TFunction } from "i18next";
-import { IStatistics, getStatistics } from "../../repository"
+import { IStatistics, getStatistics } from "../../repository";
 import { Link } from "react-router-dom";
 interface HomeProps {
-    t: TFunction
+    t: TFunction;
 }
 
 const Home = (props: HomeProps) => {
     const [statistics, setStatistics] = useState<IStatistics>();
     const [newsletter, setNewsletter] = useState<string>("");
     useEffect(() => getStatistics(setStatistics), []);
-
 
     return (
         <div className="home">
@@ -25,13 +24,17 @@ const Home = (props: HomeProps) => {
                 </h3>
                 <div className="grid-divider" />
                 <div className="grid-item input">
-                    <input type="text" value={newsletter} placeholder={props.t("home_inputPlaceholder")} onChange={(e) => setNewsletter(e.target.value)} />
+                    <input
+                        type="text"
+                        value={newsletter}
+                        placeholder={props.t("home_inputPlaceholder")}
+                        onChange={e => setNewsletter(e.target.value)}
+                    />
                     <Link to={"service/" + newsletter}>
                         <button>
                             <Trans>home_analyise</Trans>
                         </button>
                     </Link>
-
                 </div>
                 <div className="grid-divider" />
                 <div className="grid-item-4 statistic">

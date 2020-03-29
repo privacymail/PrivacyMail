@@ -27,7 +27,12 @@ const Icon = (props: IconPros) => {
         }
     }
     return (
-        <img className={"icon " + (props.className || "")} alt={iconName}  src={image} onClick={(e)=>props.onClick?.(e)} />
+        <img
+            className={"icon " + (props.className || "")}
+            alt={iconName}
+            src={image}
+            onClick={e => props.onClick?.(e)}
+        />
     );
 };
 

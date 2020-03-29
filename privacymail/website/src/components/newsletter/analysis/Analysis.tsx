@@ -9,8 +9,12 @@ interface AnalysisProps {
 }
 
 const Analysis = (props: AnalysisProps) => {
-    const onOpenThirdparties = props.newsletter?.third_parties.filter(thirdpartie => thirdpartie.embed_as.includes("ONVIEW"))
-    const onClickThirdparties = props.newsletter?.third_parties.filter(thirdpartie => thirdpartie.embed_as.includes("ONCLICK"))
+    const onOpenThirdparties = props.newsletter?.third_parties.filter(thirdpartie =>
+        thirdpartie.embed_as.includes("ONVIEW")
+    );
+    const onClickThirdparties = props.newsletter?.third_parties.filter(thirdpartie =>
+        thirdpartie.embed_as.includes("ONCLICK")
+    );
     return (
         <div className="analysis">
             <h1>

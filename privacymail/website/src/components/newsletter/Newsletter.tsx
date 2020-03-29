@@ -22,7 +22,7 @@ const Newsletter = () => {
             <div className="divider" />
             <GerneralInfo newsletter={newsletter} />
             <div className="divider" />
-            <Analysis newsletter={newsletter}/>
+            <Analysis newsletter={newsletter} />
         </div>
     );
 };

@@ -1,2 +1,2 @@
-export * from "./statistics"
-export * from "./newsletter"
+export * from "./statistics";
+export * from "./newsletter";

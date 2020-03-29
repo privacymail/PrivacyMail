@@ -9,29 +9,38 @@ interface OnClickThirdpartiesProps {
 }
 
 const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
-    const [isExpanded , setIsExpanded] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(false);
 
-    return (<div className="analysisItem" >
-        <Collapsible 
-            onOpening={()=>setIsExpanded(true)}
-            onClosing={()=>setIsExpanded(false)}
-            trigger={<OnClickThirdpartiesSmall thirdparties={props.thirdparties}  expanded={isExpanded} />} >
-                {props.thirdparties?.map(elem => <div key={elem.host}>{elem.host}</div>)}
-        </Collapsible>
-    </div>);
+    return (
+        <div className="analysisItem">
+            <Collapsible
+                onOpening={() => setIsExpanded(true)}
+                onClosing={() => setIsExpanded(false)}
+                trigger={<OnClickThirdpartiesSmall thirdparties={props.thirdparties} expanded={isExpanded} />}
+            >
+                {props.thirdparties?.map(elem => (
+                    <div key={elem.host}>{elem.host}</div>
+                ))}
+            </Collapsible>
+        </div>
+    );
 };
 
-
-interface OnClickThirdpartiesSmallProps extends OnClickThirdpartiesProps{
-    expanded: boolean
+interface OnClickThirdpartiesSmallProps extends OnClickThirdpartiesProps {
+    expanded: boolean;
 }
 const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesSmallProps) => {
-
-    return <div className="analysisSmall">
-        <div className="summarizedInfo">{props.thirdparties?.length}</div>
-        <div className="describeText"><Trans>onclickThirdPartyShort</Trans></div>
-        <div className="expandable"><Icon className={(props.expanded?" expanded": " closed")} >expand</Icon></div>
-    </div>;
+    return (
+        <div className="analysisSmall">
+            <div className="summarizedInfo">{props.thirdparties?.length}</div>
+            <div className="describeText">
+                <Trans>onclickThirdPartyShort</Trans>
+            </div>
+            <div className="expandable">
+                <Icon className={props.expanded ? " expanded" : " closed"}>expand</Icon>
+            </div>
+        </div>
+    );
 };
 
 export default OnClickThirdparties;

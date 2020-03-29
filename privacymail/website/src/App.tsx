@@ -7,7 +7,7 @@ import Newsletter from "./components/newsletter/Newsletter";
 function getRoutes() {
     const routes = [];
 
-    routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />)
+    routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />);
     routes.push(
         <Route key="/" path="/">
             <Home />
@@ -36,10 +36,9 @@ class App extends React.Component {
                         <Switch>{getRoutes()}</Switch>
                     </div>
                 </BrowserRouter>
-                    
-            {/*<Footer />*/}
+
+                {/*<Footer />*/}
             </div>
-            
         );
     }
 }
