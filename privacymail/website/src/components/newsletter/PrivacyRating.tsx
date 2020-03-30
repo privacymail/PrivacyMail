@@ -21,7 +21,7 @@ const PrivacyRating = (props: PrivacyRatingProps) => {
                 <span className="big">{rest}</span>
                 <span className="small">{ending}</span>
             </div>
-            <ShareButton />
+            <ShareButton newsletterName={props.newsletter} />
         </div>
     );
 };

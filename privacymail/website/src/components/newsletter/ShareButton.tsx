@@ -1,7 +1,24 @@
 import React from "react";
-import shareIcon from "../../assets/images/icons/share-24px.svg";
+import { Icon } from "../../utils/Icon";
+import { withTranslation, WithTranslation } from "react-i18next";
+interface ShareButtonProps extends WithTranslation {
+    newsletterName: string;
+}
+const ShareButton = (props: ShareButtonProps) => {
+    const navigatorAny: any = navigator;
+    const triggerNativeShare = () => {
+        const shareData = {
+            title: window.location.hostname,
+            url: window.location.href,
+            text: props.t("share_text").replace("#company", props.newsletterName) + "\n \n"
+        };
+        navigatorAny.share(shareData);
+    };
 
-const ShareButton = () => {
-    return <img className="shareButton" src={shareIcon} alt="shareButton" />;
+    return navigatorAny.share ? (
+        <Icon onClick={triggerNativeShare} className="shareButton">
+            share
+        </Icon>
+    ) : null;
 };
-export default ShareButton;
+export default withTranslation()(ShareButton);
