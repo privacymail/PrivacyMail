@@ -36,10 +36,10 @@ const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
                         <h2>
                             <Trans>analysis_methode</Trans>
                         </h2>
-                        <div className="methodeChip">
+                        <div className="methodeChip unreliable">
                             <Trans>analysis_reliable</Trans>
                         </div>
-                        <div className="methodeChip">
+                        <div className="methodeChip reliable">
                             <Trans>analysis_noPotentialMistakes</Trans>
                         </div>
                     </div>

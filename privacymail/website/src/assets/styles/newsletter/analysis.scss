@@ -23,7 +23,9 @@
                 font-weight: 200;
                 font-size: 1.2rem;
             }
-
+            .passOrNot img {
+                height: $summarizeFontSize * 1.2;
+            }
             .expandable {
                 width: 24px;
                 margin-left: auto;
@@ -61,13 +63,18 @@
                 font-weight: 200;
             }
             .methodeChip {
-                background: $methode-noProblem;
                 border-radius: 5px;
                 font-weight: 200;
                 color: $font-color-secondary;
                 display: inline-block;
                 padding: 0.3rem 1rem;
                 margin: 0 0.2rem;
+            }
+            .reliable {
+                background: $methode-noProblem;
+            }
+            .unreliable {
+                background: $methode-problem;
             }
             ul {
                 padding: 0;
