@@ -4,7 +4,6 @@ import { INewsletter } from "../../../repository";
 import OnOpenThirdparties from "./OnOpenThirdparties";
 import OnClickThirdparties from "./OnClickThirdparties";
 import ABTesting from "./ABTesting";
-import Spam from "./Spam";
 
 interface AnalysisProps {
     newsletter?: INewsletter;
@@ -25,7 +24,6 @@ const Analysis = (props: AnalysisProps) => {
             <OnOpenThirdparties thirdparties={onOpenThirdparties} homeUrl={props.newsletter?.service.name} />
             <OnClickThirdparties thirdparties={onClickThirdparties} homeUrl={props.newsletter?.service.name} />
             <ABTesting />
-            <Spam />
         </div>
     );
 };

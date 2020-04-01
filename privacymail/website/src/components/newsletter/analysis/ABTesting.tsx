@@ -42,11 +42,6 @@ const ABTesting = (props: ABTestingProps) => {
                             <Trans>analysis_noPotentialMistakes</Trans>
                         </div>
                     </div>
-
-                    <div className="divider" />
-                    <h2>
-                        <Trans>analysis_connections</Trans>
-                    </h2>
                 </div>
             </Collapsible>
         </div>
@@ -61,7 +56,7 @@ const ABTestingSmall = (props: ABTestingSmallProps) => {
         <div className="analysisSmall">
             <PassOrNotIcon passed={true} className="passOrNot summarizedInfo" />
             <div className="describeText">
-                <Trans>analysis_onopenThirdPartyShort</Trans>
+                <Trans>analysis_abtesting</Trans>
             </div>
             <div className="expandable">
                 <Icon className={props.expanded ? " expanded" : " closed"}>expand</Icon>
