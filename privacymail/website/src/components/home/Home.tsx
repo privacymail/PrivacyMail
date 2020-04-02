@@ -4,6 +4,7 @@ import { IconList, IconListItem } from "../../utils/IconList";
 import { TFunction } from "i18next";
 import { IStatistics, getStatistics } from "../../repository";
 import { Link } from "react-router-dom";
+import { clickButtonOnEnterKeyById } from "../../utils/onEnterKey";
 interface HomeProps {
     t: TFunction;
 }
@@ -29,28 +30,29 @@ const Home = (props: HomeProps) => {
                         value={newsletter}
                         placeholder={props.t("home_inputPlaceholder")}
                         onChange={e => setNewsletter(e.target.value)}
+                        onKeyUp={e => clickButtonOnEnterKeyById(e, "analizeButton")}
                     />
                     <Link to={"service/" + newsletter}>
-                        <button>
+                        <button id="analizeButton">
                             <Trans>home_analyise</Trans>
                         </button>
                     </Link>
                 </div>
                 <div className="grid-divider" />
                 <div className="grid-item-4 statistic">
-                    <p className="medium big">{statistics?.email_count}</p>
+                    <p className="medium biggest">{statistics?.email_count}</p>
                     <p className="regular normal">
                         <Trans>home_emailsAnalysied</Trans>
                     </p>
                 </div>
                 <div className="grid-item-4 statistic">
-                    <p className="medium big">{statistics?.service_count}</p>
+                    <p className="medium biggest">{statistics?.service_count}</p>
                     <p className="regular normal">
                         <Trans>home_found3rdPraties</Trans>
                     </p>
                 </div>
                 <div className="grid-item-4 statistic">
-                    <p className="medium big">{statistics?.tracker_count}</p>
+                    <p className="medium biggest">{statistics?.tracker_count}</p>
                     <p className="regular normal">
                         <Trans>home_registeredNewsletters</Trans>
                     </p>

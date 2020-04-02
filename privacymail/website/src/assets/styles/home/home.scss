@@ -30,6 +30,9 @@
         }
         .statistic {
             text-align: center;
+            p {
+                margin-bottom: 0.7rem;
+            }
         }
         .highlighted {
             font-size: 1.125rem;
@@ -51,7 +54,7 @@
             li {
                 @extend .normal;
                 @extend .light;
-                margin: 1.3rem 0px;
+                margin-bottom: 1.3rem;
                 * {
                     display: inline-block;
                     vertical-align: middle;
