@@ -23,7 +23,7 @@ const Analysis = (props: AnalysisProps) => {
             </h1>
             <OnOpenThirdparties thirdparties={onOpenThirdparties} homeUrl={props.newsletter?.service.name} />
             <OnClickThirdparties thirdparties={onClickThirdparties} homeUrl={props.newsletter?.service.name} />
-            <ABTesting />
+            <ABTesting newsletter={props.newsletter} />
         </div>
     );
 };

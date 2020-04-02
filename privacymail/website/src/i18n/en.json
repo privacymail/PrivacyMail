@@ -1,5 +1,6 @@
 {
-    "\"analysis_abtesting\"": "AB Testing",
+    "analysis_abtesting": "AB Testing",
+    "analysis_abtesting_problem": "Service providers may perform so-called A/B testing by sending different versions of Emails to different recipients to test which wording generates more clicks. While this is not a privacy problem in itself, it indicates that marketing analysis is taking place.",
     "analysis_analysis": "Analysis",
     "analysis_analyzedMails": "Analyzed mails",
     "analysis_confirmedIdentitys": "Confirmed Identitys",

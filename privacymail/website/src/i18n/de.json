@@ -1,5 +1,6 @@
 {
-    "\"analysis_abtesting\"": "AB Testing",
+    "analysis_abtesting": "AB Testing",
+    "analysis_abtesting_problem": "Newsletter-Anbieter führen manchmal sogenanntes A/B-Testing durch. Dabei werden unterschiedliche Versionen einer Email an verschiedene Empfänger gesendet, um zu testen, welche Version erfolgreicher ist. Auch wenn dies keinen direkten Einfluss auf die Privatheit hat, ist es ein Indikator, dass Statistiken über die Newsletter gesammelt werden. ",
     "analysis_analysis": "Analyse",
     "analysis_analyzedMails": "Analysierte Mails",
     "analysis_confirmedIdentitys": "Bestätigte Identitäten",
