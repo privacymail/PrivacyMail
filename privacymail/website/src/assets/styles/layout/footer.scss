@@ -1,9 +1,14 @@
+$footer-height: 3rem;
+
 .footer {
-    height: 64px;
+    height: $footer-height;
+    max-height: $footer-height;
+    margin-top: -$footer-height;
+
     background-color: #dddddd;
     color: $font-color-primary;
-    position: fixed;
-    bottom: 0px;
+
+    overflow: hidden;
     .grid {
         grid-row-gap: 1rem !important;
         padding: 0px 32px;

@@ -48,6 +48,13 @@ html {
     }
 }
 
+html,
+body,
+.app,
+#root {
+    height: 100%;
+}
+
 .icon {
     img {
         vertical-align: middle;
@@ -68,8 +75,15 @@ html {
 }
 
 .content {
-    margin-top: $header-height;
+    padding-top: $header-height;
     width: 100%;
+    min-height: 100%;
+
+    margin: -$footer-height auto 0 auto;
+
+    > div {
+        padding-bottom: $footer-height;
+    }
     /*@media only screen and (min-width: 740px) {
         //medium sized screens
         margin-left: calc((100% - 720px) * 0.3);
@@ -79,7 +93,6 @@ html {
     @media only screen and (min-width: 1420px) { */
     @media only screen and (min-width: 700px) {
         //everythin greater than
-        margin: $header-height auto 0px auto;
         width: 700px;
     }
 }

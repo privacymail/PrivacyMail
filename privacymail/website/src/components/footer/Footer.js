@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 function Footer() {
     return (
-        <div className="footer">
+        <footer className="footer">
             <div className="grid">
                 <div className="grid-item-4">
                     <Trans>footer_language</Trans>
@@ -20,7 +20,7 @@ function Footer() {
                     <Trans>footer_dataProtection</Trans>
                 </div>
             </div>
-        </div>
+        </footer>
     );
 }
 export default Footer;

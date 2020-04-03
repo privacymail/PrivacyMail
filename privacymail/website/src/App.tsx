@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import Newsletter from "./components/newsletter/Newsletter";
+import Footer from "./components/footer/Footer";
 
 function getRoutes() {
     const routes = [];
@@ -29,15 +30,14 @@ class App extends React.Component {
     }
     render() {
         return (
-            <div>
+            <div className="app">
                 <BrowserRouter>
                     <Header />
                     <div className="content">
                         <Switch>{getRoutes()}</Switch>
                     </div>
+                    <Footer />
                 </BrowserRouter>
-
-                {/*<Footer />*/}
             </div>
         );
     }
