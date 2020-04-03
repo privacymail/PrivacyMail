@@ -1,5 +1,5 @@
 import { execute } from "./execute";
-
+import { History } from "history";
 export interface INewsletter {
     count_mails: number;
     count_mult_ident_mails: number;
@@ -42,21 +42,28 @@ export interface IService {
     sector: string;
     country_of_origin: string;
 }
-export const getNewsletter = (service: string = "", callback: (result: INewsletter) => void): void => {
+export const getNewsletter = (
+    service: string = "",
+    history: History,
+    callback: (result: INewsletter) => void
+): void => {
+    let url = "";
     if (service) {
         if (parseInt(service)) {
-            service = "service/" + service;
+            url = "service/" + service;
         } else {
-            service = "service/?url=" + service;
+            url = "service/?url=" + service;
         }
-        execute(service).then((result: any) => {
-            //The stuff below is there because thirdparty is in a strange format. When it should return an array then this can be removed
-            const oldThirdParties = result.third_parties;
-            result.third_parties = [];
-            for (const thirdparty in oldThirdParties) {
-                result.third_parties.push(oldThirdParties[thirdparty]);
-            }
-            callback(result as INewsletter);
-        });
+        execute(url)
+            .then((result: any) => {
+                //The stuff below is there because thirdparty is in a strange format. When it should return an array then this can be removed
+                const oldThirdParties = result.third_parties;
+                result.third_parties = [];
+                for (const thirdparty in oldThirdParties) {
+                    result.third_parties.push(oldThirdParties[thirdparty]);
+                }
+                callback(result as INewsletter);
+            })
+            .catch(e => history.push("/404/" + service));
     }
 };

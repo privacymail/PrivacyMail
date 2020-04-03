@@ -32,7 +32,7 @@ const Home = (props: HomeProps) => {
                         onChange={e => setNewsletter(e.target.value)}
                         onKeyUp={e => clickButtonOnEnterKeyById(e, "analizeButton")}
                     />
-                    <Link to={"service/" + newsletter}>
+                    <Link to={"/service/" + newsletter}>
                         <button id="analizeButton">
                             <Trans>home_analyise</Trans>
                         </button>

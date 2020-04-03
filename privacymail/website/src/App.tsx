@@ -4,11 +4,17 @@ import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import Newsletter from "./components/newsletter/Newsletter";
 import Footer from "./components/footer/Footer";
+import NotFound from "./components/notfound/NotFound";
 
 function getRoutes() {
     const routes = [];
 
     routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />);
+    routes.push(
+        <Route key="/404" path="/404/:id">
+            <NotFound />
+        </Route>
+    );
     routes.push(
         <Route key="/" path="/">
             <Home />

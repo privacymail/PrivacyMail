@@ -1,4 +1,9 @@
 {
+    "404_button": "Add Newsletter",
+    "404_heading": "Sorry!",
+    "404_improvment": "Help us to improve privacymail and register a new newsletter.",
+    "404_message1": "Either you did a spelling mistake or we don't have ",
+    "404_message2": " in our database.",
     "analysis_abtesting": "AB Testing",
     "analysis_abtesting_problem": "Service providers may perform so-called A/B testing by sending different versions of Emails to different recipients to test which wording generates more clicks. While this is not a privacy problem in itself, it indicates that marketing analysis is taking place.",
     "analysis_analysis": "Analysis",
