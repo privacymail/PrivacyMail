@@ -5,6 +5,7 @@ interface IconPros {
     className?: string;
     onClick?: Function;
     title?: string | JSX.Element;
+    height?: number;
 }
 
 const Icon = (props: IconPros) => {
@@ -25,7 +26,11 @@ const Icon = (props: IconPros) => {
             try {
                 image = require("../assets/images/icons/" + iconName);
             } catch (error) {
-                console.error("Can't find image. Please check your spelling");
+                try {
+                    image = require("../assets/images/icons/" + iconName + ".png");
+                } catch (error) {
+                    console.error("Can't find image. Please check your spelling");
+                }
             }
         }
     }
@@ -48,6 +53,7 @@ const Icon = (props: IconPros) => {
         <div className={"icon " + (props.className || "")}>
             <img
                 alt={iconName}
+                height={props.height}
                 src={image}
                 onClick={e => onClick(e)}
                 onMouseOver={() => setTooltipOpen(true)}

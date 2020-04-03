@@ -14,7 +14,7 @@ $faq-button-width: 120px;
 
     div {
         margin: 0 auto;
-        max-width: 700px;
+        max-width: $screen-break;
         display: flex;
         align-items: center;
         padding: 0.8rem;

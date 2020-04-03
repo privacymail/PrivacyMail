@@ -1,3 +1,5 @@
+$screen-break: 700px;
+
 @import "./fonts.scss";
 @import "./colors.scss";
 @import "./home/";
@@ -93,8 +95,8 @@ body,
         width: calc((100% - 720px) * 0.4 + 720px);
     }
     @media only screen and (min-width: 1420px) { */
-    @media only screen and (min-width: 700px) {
+    @media only screen and (min-width: $screen-break) {
         //everythin greater than
-        width: 700px;
+        width: $screen-break;
     }
 }
