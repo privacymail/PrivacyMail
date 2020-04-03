@@ -30,6 +30,6 @@
         height: $sharebuttonHeight;
         position: absolute;
         right: $paddingLevel;
-        top: calc((#{$privacyRatingHeadlineHeight} * 1.2 - #{$sharebuttonHeight}) / 2);
+        top: calc((#{$privacyRatingHeadlineHeight} * 1.2 - #{$sharebuttonHeight}) / 2 + 1.25rem);
     }
 }
