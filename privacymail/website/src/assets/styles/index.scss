@@ -79,13 +79,13 @@ body,
 }
 
 .content {
-    padding-top: $header-height;
     width: 100%;
     min-height: 100%;
 
-    margin: -$footer-height auto 0 auto;
+    margin: 0 auto 0 auto;
 
     > div {
+        padding-top: $header-height;
         padding-bottom: $footer-height;
     }
     /*@media only screen and (min-width: 740px) {

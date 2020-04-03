@@ -40,7 +40,9 @@ class App extends React.Component {
                 <BrowserRouter>
                     <Header />
                     <div className="content">
-                        <Switch>{getRoutes()}</Switch>
+                        <div className="content-inside">
+                            <Switch>{getRoutes()}</Switch>
+                        </div>
                     </div>
                     <Footer />
                 </BrowserRouter>

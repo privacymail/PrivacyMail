@@ -1,6 +1,7 @@
 .privacyRating {
     padding: 0px $paddingLevel;
     position: relative;
+    padding-top: 1px; //this is here to activate the h1 padding
 
     .newsletterName {
         width: 100%;
