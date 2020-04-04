@@ -1,14 +1,11 @@
-$footer-height: 9rem;
-
 .footer {
-    height: $footer-height;
-    max-height: $footer-height;
-    margin-top: -$footer-height;
-
     background-color: #dddddd;
     color: $font-color-primary;
 
+    padding: 0.5rem 0;
+
     overflow: hidden;
+    flex-shrink: 0;
 
     @extend .light;
 
@@ -23,23 +20,24 @@ $footer-height: 9rem;
         flex-wrap: wrap;
 
         .item {
-            display: block;
             flex: 1 0 50%;
             text-align: center;
+            margin: 1rem 0;
 
             @media only screen and (min-width: $screen-break) {
                 flex: 1 0 33%;
             }
 
-            > div {
-                display: inline-block;
-            }
-            p {
-                display: inline-block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            .text {
                 padding-left: 0.5rem;
             }
             .copyright {
                 color: $font-color-disabled;
+                padding-left: 0;
             }
         }
     }

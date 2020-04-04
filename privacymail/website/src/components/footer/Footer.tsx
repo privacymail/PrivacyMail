@@ -7,36 +7,36 @@ function Footer() {
             <div className="">
                 <div className="item">
                     <Icon height={24}>us</Icon>
-                    <p>
+                    <div className="text">
                         <Trans>footer_language</Trans>
-                    </p>
+                    </div>
                 </div>
                 <div className="item">
                     <Icon height={24}>question_answer</Icon>
-                    <p>
+                    <div className="text">
                         <Trans>footer_faq</Trans>
-                    </p>
+                    </div>
                 </div>
                 <div className="item">
                     <Icon height={24}>GitHub-Mark</Icon>
-                    <p>
+                    <div className="text">
                         <Trans>footer_github</Trans>
-                    </p>
+                    </div>
                 </div>
                 <div className="item">
                     <Icon height={24}>alternate_email</Icon>
-                    <p>
+                    <div className="text">
                         <Trans height={24}>footer_imprint</Trans>
-                    </p>
+                    </div>
                 </div>
                 <div className="item">
                     <Icon height={24}>policy</Icon>
-                    <p>
+                    <div className="text">
                         <Trans>footer_dataProtection</Trans>
-                    </p>
+                    </div>
                 </div>
                 <div className="item">
-                    <p className="copyright">© {new Date().getFullYear()}, PrivacyMail Team</p>
+                    <div className="text copyright">© {new Date().getFullYear()}, PrivacyMail Team</div>
                 </div>
             </div>
         </footer>

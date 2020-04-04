@@ -77,16 +77,18 @@ body,
         z-index: 9999;
     }
 }
-
+.app {
+    display: flex;
+    flex-direction: column;
+}
 .content {
     width: 100%;
-    min-height: 100%;
 
     margin: 0 auto 0 auto;
+    flex: 1 0 auto;
 
     > div {
         padding-top: $header-height;
-        padding-bottom: $footer-height;
     }
     /*@media only screen and (min-width: 740px) {
         //medium sized screens
