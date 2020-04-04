@@ -1,7 +1,6 @@
 .footer {
     background-color: #dddddd;
     color: $font-color-primary;
-
     padding: 0.5rem 0;
 
     overflow: hidden;
@@ -9,7 +8,7 @@
 
     @extend .light;
 
-    > div {
+    .footerFlex {
         max-width: $screen-break;
         margin: auto;
         height: 100%;
@@ -19,7 +18,7 @@
         align-content: center;
         flex-wrap: wrap;
 
-        .item {
+        > * {
             flex: 1 0 50%;
             text-align: center;
             margin: 1rem 0;
@@ -27,7 +26,8 @@
             @media only screen and (min-width: $screen-break) {
                 flex: 1 0 33%;
             }
-
+        }
+        .item {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -41,4 +41,14 @@
             }
         }
     }
+}
+
+#languageSelection {
+    position: relative;
+}
+.languageSelection {
+    position: absolute;
+    background-color: black;
+    top: -100px;
+    z-index: 900000;
 }

@@ -6,6 +6,7 @@ interface IconPros {
     onClick?: Function;
     title?: string | JSX.Element;
     height?: number;
+    id?: string;
 }
 
 const Icon = (props: IconPros) => {
@@ -58,6 +59,7 @@ const Icon = (props: IconPros) => {
                 onClick={e => onClick(e)}
                 onMouseOver={() => setTooltipOpen(true)}
                 onMouseOut={() => setTooltipOpen(false)}
+                id={props.id}
             />
             {props.title && isTooltipOpen && <div className="tooltip">{props.title}</div>}
         </div>
