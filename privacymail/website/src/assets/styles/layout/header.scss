@@ -11,6 +11,9 @@ $header-font-size: 1.25rem;
     padding-left: 5%;
     z-index: 1000;
 
+    a:focus {
+        outline: 0;
+    }
     div {
         display: inline;
         img {
