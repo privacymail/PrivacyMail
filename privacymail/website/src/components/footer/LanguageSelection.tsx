@@ -1,6 +1,5 @@
 import React from "react";
 import { Icon } from "../../utils/Icon";
-import i18n from "../../i18n/i18n";
 
 interface LanguageSelectionProps {
     isOpen: boolean;

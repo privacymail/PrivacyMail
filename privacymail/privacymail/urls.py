@@ -15,17 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
-from identity.views import *
-from mailfetcher.views import *
 
 
 urlpatterns = [
-    path('service/<int:service>/', ServiceView.as_view(), name='Service'),
-    path('service/', ServiceView.as_view(), name='ServiceLookup'),
-    path('services/', ServiceListView.as_view(), name="ServiceList"),
-    path('embed/<int:embed>/', EmbedView.as_view(), name='Embed'),
-    path('identity/', IdentityView.as_view(), name='IdentityCreation'),
-    path('statistics', StatisticView.as_view(), name='Statistic'),
-
     path('api/', include('api.urls')),
 ]

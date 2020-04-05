@@ -8,16 +8,16 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
     }
     let url = "";
     /* let url = "http://" + process.env.REACT_APP_BACKEND_URL + ":" + process.env.REACT_APP_BACKEND_PORT + "/";
- 
-     if (process.env.REACT_APP_BACKEND_API_PATH) {
-         url += process.env.REACT_APP_BACKEND_API_PATH + "/"
-     }*/
+     */
+
+    if (process.env.REACT_APP_BACKEND_API_PATH) {
+        url += "/" + process.env.REACT_APP_BACKEND_API_PATH;
+    }
 
     if (!path.startsWith("/")) {
         path = "/" + path;
     }
     url += path;
-    console.log(url);
 
     return new Promise<any>((resolve, reject) => {
         fetch(url, options)
