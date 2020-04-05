@@ -20,6 +20,17 @@ const GerneralInfo = (props: GerneralInfoProps) => {
         return trans?.[currentLanguage];
     };
 
+    const generateOptions = (arr: any[]) => {
+        const currentLanguage = i18n.language.split("-")[0];
+        return arr
+            .sort((a: any, b: any) => {
+                return a[currentLanguage] < b[currentLanguage] ? -1 : 1;
+            })
+            .map(elem => <option key={elem.key}>{elem[currentLanguage]}</option>);
+    };
+
+    const editalble =
+        props.newsletter?.service.sector === "unknown" && props.newsletter?.service.country_of_origin === "";
     return (
         <div className="generalInfo">
             <h1>
@@ -31,14 +42,24 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                     <div className="category">
                         <Trans>analysis_sector</Trans>
                     </div>
-                    <div className="value">{getCurrentItemTranslation(sectors, props.newsletter?.service.sector)}</div>
+                    <div className="value">
+                        {editalble ? (
+                            <select>{generateOptions(sectors)}</select>
+                        ) : (
+                            getCurrentItemTranslation(sectors, props.newsletter?.service.sector)
+                        )}
+                    </div>
                 </div>
                 <div className="row">
                     <div className="category">
                         <Trans>analysis_countryOrigin</Trans>
                     </div>
                     <div className="value">
-                        {getCurrentItemTranslation(countries, props.newsletter?.service.country_of_origin)}
+                        {editalble ? (
+                            <select>{generateOptions(countries)}</select>
+                        ) : (
+                            getCurrentItemTranslation(sectors, props.newsletter?.service.country_of_origin)
+                        )}
                     </div>
                 </div>
                 <div className="row">
