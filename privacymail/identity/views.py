@@ -248,17 +248,3 @@ class EmbedView(View):
         site_params['country'] = embed.get_country()
         site_params['sector'] = embed.get_sector()
         return site_params
-
-class FaqView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'faq.html')
-
-
-class ImprintView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'imprint.html')
-
-
-class PrivacyPolicyView(View):
-    def get(self, request, *args, **kwargs):
-        return render(request, 'privacy.html')
