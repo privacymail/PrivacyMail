@@ -12,6 +12,7 @@ const LanguageSelection = (props: LanguageSelectionProps) => {
         i18n.changeLanguage(lang);
         window.location.reload();
     };
+
     return props.isOpen ? (
         <div className="languageSelection">
             <div className="language" onClick={() => changeLanguage("de-DE")}>

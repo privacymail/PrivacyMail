@@ -8,14 +8,25 @@ import i18n from "i18next";
 function Footer() {
     const [isLanguageSelectionOpen, setLanguageSelectionOpen] = useState(false);
 
+    const onOutsideClick = () => {
+        setLanguageSelectionOpen(false);
+        window.removeEventListener("click", onOutsideClick);
+    };
+    const openLanguageSelection = (e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        if (!isLanguageSelectionOpen) {
+            setLanguageSelectionOpen(true);
+            window.addEventListener("click", onOutsideClick);
+        } else {
+            onOutsideClick();
+        }
+    };
+
     return (
         <footer className="footer">
             <div className="footerFlex">
-                <div
-                    className="item"
-                    onClick={() => setLanguageSelectionOpen(!isLanguageSelectionOpen)}
-                    id="languageSelection"
-                >
+                <div className="item" onClick={e => openLanguageSelection(e)} id="languageSelection">
                     <Icon height={24}>{i18n.language}</Icon>
                     <div className="text">
                         <Trans>footer_language</Trans>
