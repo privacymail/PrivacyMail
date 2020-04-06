@@ -46,9 +46,11 @@ const GerneralInfo = (props: GerneralInfoProps) => {
             <h1>
                 <Trans>analysis_gerneralInfo</Trans>
             </h1>
-            <div className="alert">
-                <Trans>analysis_editDisclaimer</Trans>
-            </div>
+            {editalble && (
+                <div className="alert">
+                    <Trans>analysis_editDisclaimer</Trans>
+                </div>
+            )}
 
             <div className="divider" />
             <div className="info">
@@ -76,7 +78,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                                 {generateOptions(countries)}
                             </select>
                         ) : (
-                            getCurrentItemTranslation(sectors, props.newsletter?.service.country_of_origin)
+                            getCurrentItemTranslation(countries, props.newsletter?.service.country_of_origin)
                         )}
                     </div>
                 </div>
