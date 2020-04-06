@@ -6,7 +6,6 @@ const FaqHint = () => {
     const [showBanner, setShowBanner] = useState<boolean>(
         !JSON.parse(window.localStorage.getItem("faqBannerDismissed") || "false")
     );
-    console.log(showBanner);
 
     const dismissBanner = () => {
         window.localStorage.setItem("faqBannerDismissed", "true");

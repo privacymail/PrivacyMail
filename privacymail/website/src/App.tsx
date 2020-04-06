@@ -1,12 +1,14 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { Switch, Route, Router } from "react-router-dom";
 import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import Newsletter from "./components/newsletter/Newsletter";
 import Footer from "./components/footer/Footer";
 import NotFound from "./components/notfound/NotFound";
 
-function getRoutes() {
+import { createBrowserHistory } from "history";
+
+const getRoutes = () => {
     const routes = [];
 
     routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />);
@@ -22,33 +24,27 @@ function getRoutes() {
     );
 
     return routes;
-}
-class App extends React.Component {
-    componentDidMount() {
-        /**
-         * This is here in order to address changing viewports on android phones when a keyboard is opened.
-         * On the flipside on said phones the url bar now doesnt dissapers.
-         */
-        let viewheight = window.innerHeight;
-        let viewwidth = window.innerWidth;
-        let viewport = document.querySelector("meta[name=viewport]");
-        viewport?.setAttribute("content", "height=" + viewheight + "px, width=" + viewwidth + "px, initial-scale=1.0");
-    }
-    render() {
-        return (
-            <div className="app">
-                <BrowserRouter>
-                    <Header />
-                    <div className="content">
-                        <div className="content-inside">
-                            <Switch>{getRoutes()}</Switch>
-                        </div>
+};
+
+const App = () => {
+    const history = createBrowserHistory();
+    history.listen(() => {
+        window.scrollTo(0, 0);
+    });
+
+    return (
+        <div className="app">
+            <Router history={history}>
+                <Header />
+                <div className="content">
+                    <div className="content-inside">
+                        <Switch>{getRoutes()}</Switch>
                     </div>
-                    <Footer />
-                </BrowserRouter>
-            </div>
-        );
-    }
-}
+                </div>
+                <Footer />
+            </Router>
+        </div>
+    );
+};
 
 export default App;
