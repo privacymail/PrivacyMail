@@ -11,6 +11,7 @@
     "analysis_confirmedIdentitys": "Confirmed Identitys",
     "analysis_connections": "Found connections",
     "analysis_countryOrigin": "Country of origin",
+    "analysis_editDisclaimer": "Do you know this Website? Help us collect more information.",
     "analysis_gerneralInfo": "Gerneral",
     "analysis_methode": "Methode",
     "analysis_noPotentialMistakes": "No potential mistakes",
@@ -55,6 +56,8 @@
     "home_whyUsePM2detail": "Don't want to be tracked and profiled? Share the results with others to warn them and demand companies change their behavior.",
     "home_whyUsePM3": "Support Research",
     "home_whyUsePM3detail": "By using PrivacyMail, you support our research on the state of online privacy by helping us collect a large dataset of newsletters.",
+    "pleaseSelect": "Please Select",
     "share_text": "Discover how the newsletter of #company tracks you.",
+    "submit": "Submit",
     "thirdparty_receivesLeak": "Receives unique information about your identity."
 }

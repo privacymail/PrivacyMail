@@ -97,6 +97,38 @@ class IdentityView(View):
 
 
 class ServiceView(View):
+    def post(self, request, *args, **kwargs):
+        try:
+            sid = self.parseUrlToId(request.POST['serviceID'])
+            if str(sid) != str(kwargs['service']):
+                # Someone is messing with us
+                logger.warn('ServiceMetaView.post: Provided service did not match POSTed service', extra={'request': request, "providedID": kwargs["service"], "postID": sid})
+                return redirect('Home')
+            # Get service from database
+            service = Service.objects.get(id=sid)
+        except KeyError:
+            # No service kwarg is set, warn
+            logger.warn('ServiceMetaView.post: Malformed POST request received', extra={'request': request})
+            # TODO: Add code to display a warning on homepage
+            return redirect('Home')
+        except ObjectDoesNotExist:
+            logger.warn('ServiceMetaView.post: POST request for non-existing service', extra={'request': request})
+            return redirect('Home')
+
+        form = forms.ServiceMetadataForm(request.POST)
+        if not form.is_valid():
+            logger.info('ServiceMetaView.post: Invalid data submitted on metadata form', extra={'request': request, 'form': form})
+            return ServiceView.render(request, service, form)
+
+        # Form is valid
+        sector = form.cleaned_data['sector']
+        country = form.cleaned_data['country_of_origin']
+        service.country_of_origin = country
+        service.sector = sector
+        service.save()
+        return redirect('Service', service=service.id)
+
+
     def get(self, request, *args, **kwargs):
         # Check if the kwarg is even set
         try:

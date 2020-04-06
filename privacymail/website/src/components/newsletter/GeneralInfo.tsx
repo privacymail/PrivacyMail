@@ -1,17 +1,17 @@
-import React from "react";
-import { INewsletter } from "../../repository";
-import { Trans } from "react-i18next";
+import React, { useState } from "react";
+import { INewsletter, postInformation } from "../../repository";
+import { Trans, withTranslation, WithTranslation } from "react-i18next";
 
 import countries from "../../i18n/countires.json";
 import sectors from "../../i18n/sectors.json";
 import i18n from "../../i18n/i18n";
 
-interface GerneralInfoProps {
+interface GerneralInfoProps extends WithTranslation {
     newsletter?: INewsletter;
 }
 const GerneralInfo = (props: GerneralInfoProps) => {
-    //const [country, setCountry] = useState<string>(props.newsletter?.service.country_of_origin || "");
-    //const [sector, setSector] = useState<string>( props.newsletter?.service.sector||"");
+    const [country, setCountry] = useState<string>(props.newsletter?.service.country_of_origin || "");
+    const [sector, setSector] = useState<string>(props.newsletter?.service.sector || "");
 
     const getCurrentItemTranslation = (arr: any[], key?: string) => {
         const currentLanguage = i18n.language.split("-")[0];
@@ -22,11 +22,21 @@ const GerneralInfo = (props: GerneralInfoProps) => {
 
     const generateOptions = (arr: any[]) => {
         const currentLanguage = i18n.language.split("-")[0];
-        return arr
+        const newArray = arr
             .sort((a: any, b: any) => {
                 return a[currentLanguage] < b[currentLanguage] ? -1 : 1;
             })
-            .map(elem => <option key={elem.key}>{elem[currentLanguage]}</option>);
+            .map(elem => (
+                <option key={elem.key} value={elem.key}>
+                    {elem[currentLanguage]}
+                </option>
+            ));
+        newArray.push(
+            <option key="empty" value="" disabled hidden>
+                {props.t("pleaseSelect")}
+            </option>
+        );
+        return newArray;
     };
 
     const editalble =
@@ -36,6 +46,10 @@ const GerneralInfo = (props: GerneralInfoProps) => {
             <h1>
                 <Trans>analysis_gerneralInfo</Trans>
             </h1>
+            <div className="alert">
+                <Trans>analysis_editDisclaimer</Trans>
+            </div>
+
             <div className="divider" />
             <div className="info">
                 <div className="row">
@@ -44,7 +58,9 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                     </div>
                     <div className="value">
                         {editalble ? (
-                            <select>{generateOptions(sectors)}</select>
+                            <select value={sector} onChange={e => setSector(e.target.value)}>
+                                {generateOptions(sectors)}
+                            </select>
                         ) : (
                             getCurrentItemTranslation(sectors, props.newsletter?.service.sector)
                         )}
@@ -56,7 +72,9 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                     </div>
                     <div className="value">
                         {editalble ? (
-                            <select>{generateOptions(countries)}</select>
+                            <select value={country} onChange={e => setCountry(e.target.value)}>
+                                {generateOptions(countries)}
+                            </select>
                         ) : (
                             getCurrentItemTranslation(sectors, props.newsletter?.service.country_of_origin)
                         )}
@@ -75,7 +93,14 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                     <div className="value">{props.newsletter?.num_different_idents}</div>
                 </div>
             </div>
+            {editalble && (
+                <div className="submit">
+                    <button onClick={() => postInformation(props.newsletter?.service.name, sector, country)}>
+                        <Trans>submit</Trans>
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
-export default GerneralInfo;
+export default withTranslation()(GerneralInfo);

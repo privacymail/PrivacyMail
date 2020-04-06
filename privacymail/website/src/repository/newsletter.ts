@@ -67,3 +67,17 @@ export const getNewsletter = (
             .catch(e => history.push("/404/" + service));
     }
 };
+
+export const postInformation = (service: string = "", sector: string, country_of_origin: string): void => {
+    let url = "service/";
+    if (service) {
+        const payload = {
+            serviceID: service,
+            country_of_origin,
+            sector
+        };
+        execute(url, "POST", payload).then((result: any) => {
+            window.location.reload();
+        });
+    }
+};

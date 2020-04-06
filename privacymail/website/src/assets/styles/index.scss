@@ -102,3 +102,11 @@ body,
         width: $screen-break;
     }
 }
+
+.alert {
+    background: $header-secondary-color;
+    margin-bottom: 1rem;
+    padding: 0.7rem 1rem;
+    border-radius: 2px;
+    font-weight: 200;
+}
