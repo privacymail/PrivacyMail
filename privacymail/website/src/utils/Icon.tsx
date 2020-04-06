@@ -30,7 +30,7 @@ const Icon = (props: IconPros) => {
                 try {
                     image = require("../assets/images/icons/" + iconName + ".png");
                 } catch (error) {
-                    console.error("Can't find image. Please check your spelling");
+                    console.error("Can't find image: '" + iconName + "' . Please check your spelling");
                 }
             }
         }

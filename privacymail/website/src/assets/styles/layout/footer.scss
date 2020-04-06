@@ -3,7 +3,6 @@
     color: $font-color-primary;
     padding: 0.5rem 0;
 
-    overflow: hidden;
     flex-shrink: 0;
 
     @extend .light;
@@ -45,10 +44,19 @@
 
 #languageSelection {
     position: relative;
+    cursor: pointer;
 }
 .languageSelection {
     position: absolute;
-    background-color: black;
+    background-color: #d1d1d1;
     top: -100px;
     z-index: 900000;
+    border-radius: 2px;
+    border: solid 1px #9c9c9c;
+
+    .language {
+        display: flex;
+        padding: 0.5rem 1rem;
+        align-items: center;
+    }
 }
