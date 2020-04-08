@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Trans } from "react-i18next";
-import { INewsletter } from "../../../repository";
+import { INewsletter, Reliability } from "../../../repository";
 import Collapsible from "react-collapsible";
 import { Icon } from "../../../utils/Icon";
 import PassOrNotIcon, { PassOrNotState } from "./PassOrNotIcon";
+import Methode from "./Methode";
 
 interface ABTestingProps {
     newsletter?: INewsletter;
+    reliability?: Reliability;
 }
 
 const ABTesting = (props: ABTestingProps) => {
@@ -19,7 +21,7 @@ const ABTesting = (props: ABTestingProps) => {
                 onClosing={() => setIsExpanded(false)}
                 trigger={<ABTestingSmall newsletter={props.newsletter} expanded={isExpanded} />}
             >
-                <ABTestingBig />
+                <ABTestingBig reliability={props.reliability} />
             </Collapsible>
         </div>
     );
@@ -54,7 +56,10 @@ const ABTestingSmall = (props: ABTestingSmallProps) => {
     );
 };
 
-const ABTestingBig = () => {
+interface ABTestingBigProps {
+    reliability?: Reliability;
+}
+const ABTestingBig = (props: ABTestingBigProps) => {
     return (
         <div className="analysisBig">
             <div>
@@ -68,17 +73,7 @@ const ABTestingBig = () => {
 
             <div className="divider" />
 
-            <div>
-                <h2>
-                    <Trans>analysis_methode</Trans>
-                </h2>
-                <div className="methodeChip reliable">
-                    <Trans>analysis_reliable</Trans>
-                </div>
-                <div className="methodeChip reliable">
-                    <Trans>analysis_noPotentialMistakes</Trans>
-                </div>
-            </div>
+            <Methode reliability={props.reliability} />
         </div>
     );
 };

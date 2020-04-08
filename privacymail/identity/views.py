@@ -175,6 +175,12 @@ class ServiceView(View):
             site_params['form'] = form
         site_params['service'] = service
         site_params['checks'] = []
+        site_params['reliability'] = {
+            'mailOpen': 'reliable',
+            'linkClicked': 'unreliable',
+            'abTesting': 'unreliable',
+            'spam': 'reliable'
+        }
 
         # Run checks
         #for check in checks.SERVICE_CHECKS:

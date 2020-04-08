@@ -23,6 +23,7 @@
     "analysis_problemOnOpen": "Newsletter können Ressourcen enthalten, die dynamisch vom Dienstleister oder von anderen Websites geladen werden, so dass sie beim Öffnen der E-Mail verfolgt werden können. Dieser Check erkennt die Nutzung dieser externen Ressourcen. ",
     "analysis_reliable": "Verlässlich",
     "analysis_sector": "Branche",
+    "analysis_unreliable": "Unverlässlich",
     "faq": "FAQ",
     "faqHint": "Sind sie neu hier und möchten wissen, wie unser PrivacyScore berechnet wird? Besuchen sie unser FAQ!",
     "footer_dataProtection": "Datenschutz",

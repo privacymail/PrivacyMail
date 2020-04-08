@@ -1,5 +1,10 @@
 import { execute } from "./execute";
 import { History } from "history";
+
+export enum Reliability {
+    Reliabile = "reliabile",
+    Unreliabile = "unreliabile"
+}
 export interface INewsletter {
     count_mails: number;
     count_mult_ident_mails: number;
@@ -20,6 +25,12 @@ export interface INewsletter {
     num_different_idents: number;
     leaks_address: number;
     checks: any[];
+    reliability: {
+        mailOpen: Reliability;
+        linkClicked: Reliability;
+        abTesting: Reliability;
+        spam: Reliability;
+    };
 }
 export interface IThirdParty {
     embed_as: string[];

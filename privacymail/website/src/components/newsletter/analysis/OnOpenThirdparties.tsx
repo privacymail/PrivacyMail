@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Trans } from "react-i18next";
-import { IThirdParty } from "../../../repository";
+import { IThirdParty, Reliability } from "../../../repository";
 import Collapsible from "react-collapsible";
 import { Icon } from "../../../utils/Icon";
 import ThirdpartyConnections from "./ThirdpartyConnections";
+import Methode from "./Methode";
 
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
     homeUrl?: string;
+    reliability?: Reliability;
 }
 
 const OnOpenThirdparties = (props: OnClickThirdpartiesProps) => {
@@ -32,17 +34,7 @@ const OnOpenThirdparties = (props: OnClickThirdpartiesProps) => {
 
                     <div className="divider" />
 
-                    <div>
-                        <h2>
-                            <Trans>analysis_methode</Trans>
-                        </h2>
-                        <div className="methodeChip reliable">
-                            <Trans>analysis_reliable</Trans>
-                        </div>
-                        <div className="methodeChip reliable">
-                            <Trans>analysis_noPotentialMistakes</Trans>
-                        </div>
-                    </div>
+                    <Methode reliability={props.reliability} />
 
                     <div className="divider" />
                     <h2>
