@@ -5,6 +5,7 @@ import OnOpenThirdparties from "./OnOpenThirdparties";
 import OnClickThirdparties from "./OnClickThirdparties";
 import ABTesting from "./ABTesting";
 import Spam from "./Spam";
+import PersonalisedLinks from "./PersonalisedLinks";
 
 interface AnalysisProps {
     newsletter?: INewsletter;
@@ -31,6 +32,10 @@ const Analysis = (props: AnalysisProps) => {
                 thirdparties={onClickThirdparties}
                 homeUrl={props.newsletter?.service.name}
                 reliability={props.newsletter?.reliability.linkClicked}
+            />
+            <PersonalisedLinks
+                newsletter={props.newsletter}
+                reliability={props.newsletter?.reliability.personalisedLinks}
             />
             <ABTesting newsletter={props.newsletter} reliability={props.newsletter?.reliability.abTesting} />
             <Spam newsletter={props.newsletter} reliability={props.newsletter?.reliability.spam} />

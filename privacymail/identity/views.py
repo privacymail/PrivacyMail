@@ -179,7 +179,8 @@ class ServiceView(View):
             'mailOpen': 'reliable',
             'linkClicked': 'unreliable',
             'abTesting': 'unreliable',
-            'spam': 'reliable'
+            'spam': 'reliable',
+            'personalisedLinks': 'reliable'
         }
 
         # Run checks

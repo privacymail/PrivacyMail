@@ -30,6 +30,7 @@ export interface INewsletter {
         linkClicked: Reliability;
         abTesting: Reliability;
         spam: Reliability;
+        personalisedLinks: Reliability;
     };
 }
 export interface IThirdParty {
