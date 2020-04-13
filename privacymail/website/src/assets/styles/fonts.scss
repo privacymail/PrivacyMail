@@ -113,7 +113,12 @@ h3 {
     @extend .bold;
     font-size: 1rem;
 }
-p {
+p,
+li {
     @extend .light;
     font-size: 1rem;
+}
+
+b {
+    @extend .medium;
 }

@@ -1,0 +1,270 @@
+import React from "react";
+
+const Privacy = () => {
+    return (
+        <div className="privacy">
+            <h1>Privacy Policy</h1>
+            <p>
+                Wow, you must be really interested in privacy if you are using our service, and especially so if you are
+                even reading our privacy policy. You will find that we don't collect a lot of interesting data about
+                you, but the little things that we do collect are described below. We tried to make it as interesting to
+                read as we could, but can't guarantee that you won't fall asleep while reading this, so it's probably
+                best if you grab a cup of coffee first. The privacy policy will still be here when you come back.
+            </p>
+
+            <h2> Who We Are and What This Policy Covers</h2>
+            <p>
+                Hi there! We're the{" "}
+                <a href="https://www.informatik.tu-darmstadt.de/seemoo/" target="blank">
+                    Secure Mobile Networking Lab (SEEMOO)
+                </a>{" "}
+                at TU Darmstadt, Germany. We're a research group, led by Prof. Matthias Hollick, and operate
+                PrivacyMail.info and related services.{" "}
+                <a
+                    href="https://www.informatik.tu-darmstadt.de/seemoo/team_seemoo/max_maass/index.en.jsp"
+                    target="blank"
+                >
+                    Max Maass
+                </a>{" "}
+                leads our work on the PrivacyMail project and is the person to talk to for any questions related to this
+                platform.
+            </p>
+
+            <p>
+                This privacy policy covers PrivacyMail.info and any subdomains, and will explain how we collect and use
+                information about you. The short version is: We try to collect as little data as possible, and will not
+                share it with anyone. However, we understand if you'd like to know a few more details, so read on for
+                the full details.
+            </p>
+
+            <h2> Creative Commons Sharealike License</h2>
+            <p>
+                This privacy policy was adapted from the privacy policy of{" "}
+                <a href="https://automattic.com/" target="blank">
+                    Automattic
+                </a>
+                , and is licensed under the{" "}
+                <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="blank">
+                    Creative Commons Sharealike
+                </a>{" "}
+                license. You can find the original version by Automattic{" "}
+                <a href="https://github.com/Automattic/legalmattic" target="blank">
+                    on on Github
+                </a>
+                . Please note that we are in no way affiliated with Automattic, we just use their text as a template
+                (with thanks to the folks over at Automattic!).
+            </p>
+
+            <h2> Information We Collect</h2>
+            <p>
+                If at all possible, we try to avoid collecting information about you at all. As you may have already
+                noticed, there is no need to provide your name, eMail address, or other identifying information anywhere
+                on the website. However, in this day and age, it is literally impossible to <em>not</em> collect any
+                data, so read on for details on what we <em>do</em> collect.
+            </p>
+
+            <h3> Information You Provide to Us</h3>
+            <p>
+                It goes without saying that data that you provide to us is collected and used by us. For this website,
+                this mostly refers to the newsletters that you sign up with us, and any additional information (what we
+                call <em>metadata</em>) that you provide about these services (e.g., telling us which country a service
+                is from, or which sector the company belongs to). (You may have noticed that this data is actually not
+                related to you as a person, but is data about other companies, so this shouldn't be a problem, right?).
+            </p>
+
+            <p>
+                If you send us an eMail (hi there!), it should be obvious that we will receive and read it, and that it
+                will probably be retained in our inboxes, because who deletes eMails these days?!
+            </p>
+
+            <h3> Information We Collect Automatically</h3>
+            <p>
+                Like any good programmer, we make use of logging to check if our service is operating normally. Part of
+                this logging is the use of{" "}
+                <a href="https://github.com/getsentry/sentry" target="blank">
+                    Sentry
+                </a>
+                , an excellent service that makes it easier to find and fix problems with our service.{" "}
+                <b>
+                    Note that we run our own instance of Sentry, and do not use the commercial, "hosted" version of
+                    sentry.
+                </b>{" "}
+                No data is sent to the people behind Sentry, it all stays right here with us.
+            </p>
+
+            <p>
+                Anyway, if errors occur, Sentry will automatically collect some information about them. This includes
+                the IP address, type of browser, and some other details about the user that encountered the error. We
+                will only use this information to help us in debugging what is going on.
+            </p>
+
+            <p>
+                We also use some additional logging to detect if people try to break into our service. This includes
+                logging abnormal requests, and actions that look nefarious to us. In these cases, the IP address of the
+                offending user is logged as well to allow us to prevent them from attacking our service in the future.
+                If you do not want your information to be logged in this way, simply don't attack our service :).
+            </p>
+
+            <p>
+                Finally, our web server will automatically create logs of who is accessing the service, and when they
+                are doing it. These logs are retained for two weeks and then automatically deleted. We usually only look
+                at this logs if we think that bad things are happening to our service. We may occasionally analyze them
+                to find out how many people are using our service, as providing big, impressive numbers in reports will
+                make the people happy that pay our bills, and we'd like to be able to keep doing what we are doing.
+                However, we will not share any details with others.
+            </p>
+
+            <h3> Information We Collect from Other Sources</h3>
+            <p>This part is easy: We do not collect data about you from any other sources.</p>
+
+            <h2> How and Why We Use Information</h2>
+
+            <h3> Purposes for Using Information</h3>
+            <p>We already mentioned a couple of reasons further up, but just to re-iterate:</p>
+            <ul>
+                <li>
+                    To provide our service - it is technically impossible to run a website without using your IP
+                    address, because we need it to send you data!
+                </li>
+                <li>
+                    To defend ourselves against attacks - not from you (hopefully!), but from the big bad internet out
+                    there.
+                </li>
+                <li>
+                    To improve our service - this sounds fancy, but basically just means that we collect information
+                    about errors you encounter so we can fix them.
+                </li>
+                <li>To communicate with you - for example, if you send us an eMail.</li>
+                <li>
+                    To fulfil our legal obligations - we may be required by law to retain specific information for a
+                    certain time.
+                </li>
+            </ul>
+
+            <p>
+                Just to make sure we're on the same page, we will{" "}
+                <b>never use your information for the purpose of profiling or advertising</b> - that is literally the
+                opposite of what we are trying to do here.
+            </p>
+
+            <h3> Legal Bases for Collecting and Using Information</h3>
+            <p>
+                A note here for those in the European Union about our legal grounds for processing information about you
+                under EU data protection laws, which is that our use of your information is based on the grounds that:
+                (1) The use is necessary in order to enable access to our website on your device; or (2) The use is
+                necessary for compliance with a legal obligation; or (3) The use is necessary in order to protect your
+                vital interests or those of another person; or (4) We have a legitimate interest in using your
+                information--for example, to provide and update our Services, to improve our Services, to safeguard our
+                Services, to communicate with you, or to monitor and prevent any problems with our Services.
+            </p>
+
+            <p>Phew. That was some serious legalese, but you asked.</p>
+
+            <h2> Sharing Information</h2>
+
+            <h3> How We Share Information</h3>
+            <p>
+                As you know by now, we do not collect a lot of information about you. The little that we do collect, we
+                will never sell to others, and only share it under the limited circumstances spelled out below:
+            </p>
+
+            <ul>
+                <li>
+                    <b>Members of the team:</b> Members of the PrivacyMail team may access your information while they
+                    are trying to fix a problem with the service or prevent abuse.
+                </li>
+                <li>
+                    <b>Legal and Regulatory Requirements:</b> We may disclose information about you in response to a
+                    subpoena, court order, or other governmental request. We have no idea why they would ever want to do
+                    this, but it is a possibility we can't totally rule out.
+                </li>
+                <li>
+                    <b>Aggregated or De-Identified Information:</b> We may publish aggregate statistics about the use of
+                    our Services, e.g. by boasting about the thousands of people using our service to impress the people
+                    that pay our bills.
+                </li>
+            </ul>
+
+            <h3> Information Shared Publicly</h3>
+            <p>
+                For the sake of avoiding misunderstandings: All of the above applies to information related to you, the
+                user. Information about the companies whose newsletters we analyze on this platform may be shared much
+                more widely (starting with the fact that we publish it on our website for everyone to see). However, we
+                figure that this should be fine with you, as it does not impact you personally.
+            </p>
+
+            <h2> How Long We Keep Information</h2>
+            <p>
+                We generally discard information about you when we no longer need the information for the purposes for
+                which we collect and use it--which are described in the section above on How and Why We Use
+                Information--and we are not legally required to continue to keep it. For example, we keep the web server
+                logs that record information about a visitor to our website, such as the visitor’s IP address, browser
+                type, and operating system, for approximately 14 days. We retain the logs for this period of time in
+                order to, among other things, investigate issues if something goes wrong on one of our websites, or
+                occasionaly analyze traffic to find out how many people are using our service.
+            </p>
+
+            <h2> Security</h2>
+            <p>
+                We take reasonable steps to protect the information in our custody. However, in the end, it's the
+                internet we're talking about - the only 100% secure way to own a server is to never connect it to a
+                power outlet, let alone the internet, and that would help no one.
+            </p>
+
+            <h2> Choices</h2>
+            <p>
+                To be honest, your choices here are pretty limited - you can choose not to use our service, but since we
+                don't collect a lot of information, and what we do collect is collected automatically, we cannot change
+                these things for individual users, sorry.
+            </p>
+
+            <h2> Your Rights</h2>
+            <p>
+                If you are located in certain countries, including those that fall under the scope of the European
+                General Data Protection Regulation (AKA the “GDPR”), data protection laws give you rights with respect
+                to your personal data, subject to any exemptions provided by the law, including the rights to:
+            </p>
+
+            <ul>
+                <li>Request access to your personal data;</li>
+                <li>Request correction or deletion of your personal data;</li>
+                <li>Object to our use and processing of your personal data;</li>
+                <li>Request that we limit our use and processing of your personal data; and</li>
+                <li>Request portability of your personal data.</li>
+            </ul>
+
+            <p>
+                The only personal identifier we will ever have about you is your IP address. If you want to know what we
+                have saved about you, please contact us, stating your public IP address and the time you used the
+                website, and we'll check what we have on file.
+            </p>
+
+            <h2> Controllers and Responsible Parties</h2>
+            <p>
+                This website is operated by the{" "}
+                <a href="https://www.informatik.tu-darmstadt.de/seemoo/" target="blank">
+                    Secure Mobile Networking Lab
+                </a>
+                , Technische Universität Darmstadt, Mornewegstr. 32, 64293 Darmstadt, Germany.
+            </p>
+
+            <h2> How to Reach Us</h2>
+            <p>
+                If you have any questions or want to say hi, feel free to reach out. For the moment, it's probably best
+                if you contact Max Maass directly at mmaass [at] seemoo.tu-darmstadt.de.
+            </p>
+
+            <h2> Privacy Policy Changes</h2>
+            <p>
+                We may change this privacy policy in the future. Considering that we're doing research on online
+                privacy, it is fairly unlikely that we will add anything you may disagree with, but we still encourage
+                you to check back from time to time to ensure that we haven't secretly turned evil. As we do not have
+                your eMail address, we will not send you eMail notifications about these updates, sorry (but if we did,
+                they would not include any trackers!).
+            </p>
+
+            <p>You've made it to the end of the privacy policy. Congratulations, and thank you for reading!</p>
+        </div>
+    );
+};
+export default Privacy;

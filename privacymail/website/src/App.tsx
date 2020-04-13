@@ -9,6 +9,7 @@ import NotFound from "./components/notfound/NotFound";
 import { createBrowserHistory } from "history";
 import Imprint from "./components/imprint/Imprint";
 import NewSearch from "./components/newsletter/NewSearch";
+import Privacy from "./components/privacy/Privacy";
 
 const getRoutes = () => {
     const routes = [];
@@ -23,6 +24,11 @@ const getRoutes = () => {
     routes.push(
         <Route key="/imprint" path="/imprint">
             <Imprint />
+        </Route>
+    );
+    routes.push(
+        <Route key="/privacy" path="/privacy">
+            <Privacy />
         </Route>
     );
 

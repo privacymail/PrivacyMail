@@ -1,13 +1,26 @@
-p {
-    margin: 1rem;
-    line-height: 1.5rem;
-}
-.text {
-    line-height: normal;
-}
-h3 {
-    margin: 1rem;
-}
-h2 {
-    margin-top: 3rem;
+.imprint,
+.privacy {
+    p {
+        margin: 1rem;
+        line-height: 1.5rem;
+    }
+    li {
+        margin: 0.5rem 0rem;
+    }
+    .text {
+        line-height: normal;
+    }
+    h3 {
+        margin: 1rem;
+    }
+    h2 {
+        margin-top: 3rem;
+    }
+    a {
+        text-decoration: underline !important;
+        color: #9c27b0 !important;
+    }
+    em {
+        @extend .regular;
+    }
 }

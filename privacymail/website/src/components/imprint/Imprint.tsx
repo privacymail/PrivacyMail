@@ -3,7 +3,7 @@ import { Trans } from "react-i18next";
 
 const Imprint = () => {
     return (
-        <div>
+        <div className="imprint">
             <h1>
                 <Trans>imprint</Trans>
             </h1>
