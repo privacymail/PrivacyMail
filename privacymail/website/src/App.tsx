@@ -8,14 +8,16 @@ import NotFound from "./components/notfound/NotFound";
 
 import { createBrowserHistory } from "history";
 import Imprint from "./components/imprint/Imprint";
+import NewSearch from "./components/newsletter/NewSearch";
 
 const getRoutes = () => {
     const routes = [];
 
     routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />);
+
     routes.push(
-        <Route key="/404" path="/404/:id">
-            <NotFound />
+        <Route key="/" path="/" exact>
+            <Home />
         </Route>
     );
     routes.push(
@@ -23,12 +25,12 @@ const getRoutes = () => {
             <Imprint />
         </Route>
     );
+
     routes.push(
-        <Route key="/" path="/">
-            <Home />
+        <Route key="/404" path="*/:id">
+            <NotFound />
         </Route>
     );
-
     return routes;
 };
 
@@ -42,10 +44,14 @@ const App = () => {
         <div className="app">
             <Router history={history}>
                 <Header />
+                <Switch>
+                    <Route key="/" path="/" exact />
+                    <Route key="/newSearch" path="*/:id">
+                        <NewSearch />
+                    </Route>
+                </Switch>
                 <div className="content">
-                    <div className="content-inside">
-                        <Switch>{getRoutes()}</Switch>
-                    </div>
+                    <Switch>{getRoutes()}</Switch>
                 </div>
                 <Footer />
             </Router>

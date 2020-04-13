@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Trans } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { clickButtonOnEnterKeyById } from "../../utils/onEnterKey";
 
 interface NewSearchProps {
-    currentSearch: string;
+    currentSearch?: string;
 }
 
 const NewSearch = (props: NewSearchProps) => {
-    const [newsletter, setNewsletter] = useState<string>(props.currentSearch);
-    useEffect(() => setNewsletter(props.currentSearch), [props.currentSearch]);
+    let { id } = useParams();
+
+    const [newsletter, setNewsletter] = useState<string>(id || "");
+    useEffect(() => setNewsletter(id || ""), [id]);
 
     return (
         <div className="newSearch">

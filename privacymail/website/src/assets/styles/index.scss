@@ -4,10 +4,9 @@ $screen-break: 700px;
 @import "./colors.scss";
 @import "./home/";
 @import "./layout/";
-@import "./faq/";
 @import "./newsletter/";
 @import "./grid.scss";
-@import "./notFound/";
+@import "./staticPages/";
 
 html {
     font-family: Roboto;
@@ -84,6 +83,7 @@ body,
 .content {
     width: 100%;
 
+    padding-bottom: 1rem;
     margin: 0 auto 0 auto;
     flex: 1 0 auto;
 

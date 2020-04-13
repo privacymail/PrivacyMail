@@ -1,6 +1,5 @@
 import React from "react";
 import { useParams, Link } from "react-router-dom";
-import NewSearch from "../newsletter/NewSearch";
 import { Trans } from "react-i18next";
 
 const NotFound = () => {
@@ -8,7 +7,6 @@ const NotFound = () => {
 
     return (
         <div className="notFound">
-            <NewSearch currentSearch={id || ""} />
             <div className="heading thin">
                 <Trans>404_heading</Trans>
             </div>

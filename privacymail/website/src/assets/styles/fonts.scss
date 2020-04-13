@@ -100,3 +100,20 @@
 .biggest {
     font-size: 1.5rem;
 }
+
+h1 {
+    @extend .light;
+    font-size: 2.25rem;
+}
+h2 {
+    font-size: 1.6rem;
+    @extend .light;
+}
+h3 {
+    @extend .bold;
+    font-size: 1rem;
+}
+p {
+    @extend .light;
+    font-size: 1rem;
+}
