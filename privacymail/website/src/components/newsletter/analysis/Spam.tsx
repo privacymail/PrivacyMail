@@ -40,12 +40,12 @@ const SpamSmall = (props: SpamSmallProps) => {
             return undefined;
         }
     };
-
+    const status = getStatus(props.newsletter);
     return (
         <div className="analysisSmall">
-            <PassOrNotIcon status={getStatus(props.newsletter)} className="passOrNot summarizedInfo" />
+            <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
             <div className="describeText">
-                <Trans>analysis_Spam</Trans>
+                {status === PassOrNotState.Passed ? <Trans>analysis_Spam_no</Trans> : <Trans>analysis_Spam</Trans>}
             </div>
             <div className="expandable">
                 <Icon className={props.expanded ? " expanded" : " closed"}>expand</Icon>

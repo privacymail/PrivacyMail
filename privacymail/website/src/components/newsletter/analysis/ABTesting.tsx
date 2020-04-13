@@ -42,12 +42,16 @@ const ABTestingSmall = (props: ABTestingSmallProps) => {
             return undefined;
         }
     };
-
+    const status = getStatus(props.newsletter);
     return (
         <div className="analysisSmall">
-            <PassOrNotIcon status={getStatus(props.newsletter)} className="passOrNot summarizedInfo" />
+            <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
             <div className="describeText">
-                <Trans>analysis_abtesting</Trans>
+                {status === PassOrNotState.Passed ? (
+                    <Trans>analysis_abtesting_no</Trans>
+                ) : (
+                    <Trans>analysis_abtesting</Trans>
+                )}
             </div>
             <div className="expandable">
                 <Icon className={props.expanded ? " expanded" : " closed"}>expand</Icon>

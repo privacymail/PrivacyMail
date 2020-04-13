@@ -10,6 +10,7 @@ import { createBrowserHistory } from "history";
 import Imprint from "./components/imprint/Imprint";
 import NewSearch from "./components/newsletter/NewSearch";
 import Privacy from "./components/privacy/Privacy";
+import FAQ from "./components/faq/FAQ";
 
 const getRoutes = () => {
     const routes = [];
@@ -29,6 +30,11 @@ const getRoutes = () => {
     routes.push(
         <Route key="/privacy" path="/privacy">
             <Privacy />
+        </Route>
+    );
+    routes.push(
+        <Route key="/faq" path="/faq">
+            <FAQ />
         </Route>
     );
 
