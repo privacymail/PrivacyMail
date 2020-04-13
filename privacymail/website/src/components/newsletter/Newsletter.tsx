@@ -6,6 +6,7 @@ import PrivacyRating from "./PrivacyRating";
 import GerneralInfo from "./GeneralInfo";
 import Analysis from "./analysis/Analysis";
 import { History } from "history";
+import IdentityAlert from "./IdentityAlert";
 interface NewsletterProps {
     history: History;
 }
@@ -21,6 +22,7 @@ const Newsletter = (props: NewsletterProps) => {
         <div className="newsletter">
             <FaqHint />
             <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
+            {newsletter && newsletter?.num_different_idents < 3 && <IdentityAlert />}
             <div className="divider" />
             <GerneralInfo newsletter={newsletter} />
             <div className="divider" />
