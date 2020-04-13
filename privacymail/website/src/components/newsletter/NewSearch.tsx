@@ -1,25 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Trans } from "react-i18next";
-import { Link, useParams } from "react-router-dom";
+import { Trans, withTranslation, WithTranslation } from "react-i18next";
+import { Link, useParams, withRouter, RouteComponentProps } from "react-router-dom";
 import { clickButtonOnEnterKeyById } from "../../utils/onEnterKey";
 
-interface NewSearchProps {
+interface NewSearchProps extends WithTranslation, RouteComponentProps {
     currentSearch?: string;
 }
-
 const NewSearch = (props: NewSearchProps) => {
     let { id } = useParams();
+    const hasId = props.history.location.pathname.split("/").length > 2;
 
-    const [newsletter, setNewsletter] = useState<string>(id || "");
-    useEffect(() => setNewsletter(id || ""), [id]);
+    const [newsletter, setNewsletter] = useState<string>((hasId && id) || "");
+    useEffect(() => setNewsletter((hasId && id) || ""), [id, hasId]);
 
+    const placeholder = props.currentSearch || props.t("home_inputPlaceholder");
     return (
         <div className="newSearch">
             <div>
                 <input
                     type="text"
                     value={newsletter}
-                    placeholder={props.currentSearch}
+                    placeholder={placeholder}
                     onChange={e => setNewsletter(e.target.value)}
                     onKeyUp={e => clickButtonOnEnterKeyById(e, "analizeButton")}
                 />
@@ -32,4 +33,4 @@ const NewSearch = (props: NewSearchProps) => {
         </div>
     );
 };
-export default NewSearch;
+export default withRouter(withTranslation()(NewSearch));

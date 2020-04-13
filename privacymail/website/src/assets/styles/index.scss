@@ -88,7 +88,7 @@ body,
     flex: 1 0 auto;
 
     > div {
-        padding-top: $header-height;
+        padding-top: $header-height + 0.8rem * 2 + 2rem;
     }
     /*@media only screen and (min-width: 740px) {
         //medium sized screens

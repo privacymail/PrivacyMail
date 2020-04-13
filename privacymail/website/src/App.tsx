@@ -45,14 +45,17 @@ const App = () => {
             <Router history={history}>
                 <Header />
                 <Switch>
-                    <Route key="/" path="/" exact />
+                    <Route key="/" path="/" exact>
+                        <Home />
+                    </Route>
                     <Route key="/newSearch" path="*/:id">
                         <NewSearch />
+                        <div className="content">
+                            <Switch>{getRoutes()}</Switch>
+                        </div>
                     </Route>
                 </Switch>
-                <div className="content">
-                    <Switch>{getRoutes()}</Switch>
-                </div>
+
                 <Footer />
             </Router>
         </div>
