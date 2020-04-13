@@ -7,6 +7,7 @@ import Footer from "./components/footer/Footer";
 import NotFound from "./components/notfound/NotFound";
 
 import { createBrowserHistory } from "history";
+import Imprint from "./components/imprint/Imprint";
 
 const getRoutes = () => {
     const routes = [];
@@ -15,6 +16,11 @@ const getRoutes = () => {
     routes.push(
         <Route key="/404" path="/404/:id">
             <NotFound />
+        </Route>
+    );
+    routes.push(
+        <Route key="/imprint" path="/imprint">
+            <Imprint />
         </Route>
     );
     routes.push(
