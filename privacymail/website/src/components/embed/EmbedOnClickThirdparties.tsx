@@ -11,7 +11,7 @@ interface OnClickThirdpartiesProps {
     reliability?: Reliability;
 }
 
-const OnOpenThirdparties = (props: OnClickThirdpartiesProps) => {
+const EmbedOnClickThirdparties = (props: OnClickThirdpartiesProps) => {
     return (
         <CollapsibleItem>
             <OnClickThirdpartiesSmall {...props} />
@@ -25,7 +25,7 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
         <div className="analysisSmall">
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
-                <Trans>analysis_onopenThirdPartyShort</Trans>
+                <Trans>embed_onclickThirdPartyShort</Trans>
             </div>
         </div>
     );
@@ -35,10 +35,10 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
         <div className="analysisBig">
             <div>
                 <h2>
-                    <Trans>analysis_problemHeadline</Trans>
+                    <Trans>embed_problemHeadline</Trans>
                 </h2>
                 <p>
-                    <Trans>analysis_problemOnClick</Trans>
+                    <Trans>embed_problemOnClick</Trans>
                 </p>
             </div>
 
@@ -48,11 +48,11 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
 
             <div className="divider" />
             <h2>
-                <Trans>analysis_connections</Trans>
-                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
+                <Trans>embed_connections</Trans>
+                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} linkTo="/service" />
             </h2>
         </div>
     );
 };
 
-export default OnOpenThirdparties;
+export default EmbedOnClickThirdparties;

@@ -5,40 +5,40 @@ import CollapsibleItem from "../../utils/CollapsibleItem";
 import Methode from "../newsletter/analysis/Methode";
 import ThirdpartyConnections from "../newsletter/analysis/ThirdpartyConnections";
 
-interface OnClickThirdpartiesProps {
+interface OnOpenThirdpartiesProps {
     thirdparties?: IThirdParty[];
     homeUrl?: string;
     reliability?: Reliability;
 }
 
-const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
+const EmbedOnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
     return (
         <CollapsibleItem>
-            <OnClickThirdpartiesSmall {...props} />
-            <OnClickThirdpartiesBig {...props} />
+            <OnOpenThirdpartiesSmall {...props} />
+            <OnOpenThirdpartiesBig {...props} />
         </CollapsibleItem>
     );
 };
 
-const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
+const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
-                <Trans>analysis_onclickThirdPartyShort</Trans>
+                <Trans>embed_onopenThirdPartyShort</Trans>
             </div>
         </div>
     );
 };
-const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
+const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisBig">
             <div>
                 <h2>
-                    <Trans>analysis_problemHeadline</Trans>
+                    <Trans>embed_problemHeadline</Trans>
                 </h2>
                 <p>
-                    <Trans>analysis_problemOnClick</Trans>
+                    <Trans>embed_problemOnOpen</Trans>
                 </p>
             </div>
 
@@ -48,11 +48,11 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
 
             <div className="divider" />
             <h2>
-                <Trans>analysis_connections</Trans>
-                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
+                <Trans>embed_connections</Trans>
+                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} linkTo="/service" />
             </h2>
         </div>
     );
 };
 
-export default OnClickThirdparties;
+export default EmbedOnOpenThirdparties;

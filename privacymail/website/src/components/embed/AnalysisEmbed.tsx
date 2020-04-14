@@ -1,9 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { IEmbed } from "../../repository";
-import OnOpenThirdparties from "../newsletter/analysis/OnOpenThirdparties";
-import OnClickThirdparties from "../newsletter/analysis/OnClickThirdparties";
-import PersonalisedLinks from "../newsletter/analysis/PersonalisedLinks";
+import OnOpenThirdparties from "./EmbedOnOpenThirdparties";
+import OnClickThirdparties from "./EmbedOnClickThirdparties";
+import PersonalisedLinks from "./EmbedPersonalisedLinks";
 
 interface AnalysisProps {
     embed?: IEmbed;

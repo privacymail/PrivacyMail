@@ -7,6 +7,7 @@ import { Trans } from "react-i18next";
 interface ThirdpartyConnectionsProps {
     thirdparties?: IThirdParty[];
     homeUrl?: string;
+    linkTo?: string;
 }
 const ThirdpartyConnections = (props: ThirdpartyConnectionsProps) => {
     return (
@@ -24,7 +25,12 @@ const ThirdpartyConnections = (props: ThirdpartyConnectionsProps) => {
                     return a.name < b.name ? -1 : 1;
                 })
                 .map((thirdparty, index) => (
-                    <Thirdparty key={index} thirdparty={thirdparty} isHomeUrl={thirdparty.name === props.homeUrl} />
+                    <Thirdparty
+                        key={index}
+                        thirdparty={thirdparty}
+                        isHomeUrl={thirdparty.name === props.homeUrl}
+                        linkTo={props.linkTo}
+                    />
                 ))}
         </ul>
     );
@@ -33,11 +39,12 @@ const ThirdpartyConnections = (props: ThirdpartyConnectionsProps) => {
 interface ThirdpartyProps {
     thirdparty: IThirdParty;
     isHomeUrl: boolean;
+    linkTo?: string;
 }
 const Thirdparty = (props: ThirdpartyProps) => {
     return (
         <li className="thirdparty">
-            <Link to={"/embed/" + props.thirdparty.name}>{props.thirdparty.name}</Link>
+            <Link to={(props.linkTo || "/embed") + "/" + props.thirdparty.name}>{props.thirdparty.name}</Link>
             <div className="icons">
                 {props.isHomeUrl && <Icon>home</Icon>}
                 {props.thirdparty.receives_identifier && (

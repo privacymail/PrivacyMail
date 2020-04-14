@@ -10,7 +10,7 @@ interface PersonalisedLinksProps {
     reliability?: Reliability;
 }
 
-const PersonalisedLinks = (props: PersonalisedLinksProps) => {
+const EmbedPersonalisedLinks = (props: PersonalisedLinksProps) => {
     return (
         <CollapsibleItem>
             <PersonalisedLinksSmall newsletter={props.newsletter} />
@@ -38,9 +38,9 @@ const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
             <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
             <div className="describeText">
                 {status === PassOrNotState.Passed ? (
-                    <Trans>analysis_PersonalisedLinks_no</Trans>
+                    <Trans>embed_PersonalisedLinks_no</Trans>
                 ) : (
-                    <Trans>analysis_PersonalisedLinks</Trans>
+                    <Trans>embed_PersonalisedLinks</Trans>
                 )}
             </div>
         </div>
@@ -55,10 +55,10 @@ const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
         <div className="analysisBig">
             <div>
                 <h2>
-                    <Trans>analysis_problemHeadline</Trans>
+                    <Trans>embed_problemHeadline</Trans>
                 </h2>
                 <p>
-                    <Trans>analysis_PersonalisedLinks_problem</Trans>
+                    <Trans>embed_PersonalisedLinks_problem</Trans>
                 </p>
             </div>
 
@@ -69,4 +69,4 @@ const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
     );
 };
 
-export default PersonalisedLinks;
+export default EmbedPersonalisedLinks;

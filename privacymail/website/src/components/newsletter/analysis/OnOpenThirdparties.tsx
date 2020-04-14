@@ -5,22 +5,22 @@ import ThirdpartyConnections from "./ThirdpartyConnections";
 import Methode from "./Methode";
 import CollapsibleItem from "../../../utils/CollapsibleItem";
 
-interface OnClickThirdpartiesProps {
+interface OnOpenThirdpartiesProps {
     thirdparties?: IThirdParty[];
     homeUrl?: string;
     reliability?: Reliability;
 }
 
-const OnOpenThirdparties = (props: OnClickThirdpartiesProps) => {
+const OnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
     return (
         <CollapsibleItem>
-            <OnClickThirdpartiesSmall {...props} />
-            <OnClickThirdpartiesBig {...props} />
+            <OnOpenThirdpartiesSmall {...props} />
+            <OnOpenThirdpartiesBig {...props} />
         </CollapsibleItem>
     );
 };
 
-const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
+const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
@@ -30,7 +30,7 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
         </div>
     );
 };
-const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
+const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisBig">
             <div>
@@ -38,7 +38,7 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
                     <Trans>analysis_problemHeadline</Trans>
                 </h2>
                 <p>
-                    <Trans>analysis_problemOnClick</Trans>
+                    <Trans>analysis_problemOnOpen</Trans>
                 </p>
             </div>
 
