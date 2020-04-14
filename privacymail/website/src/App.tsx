@@ -11,11 +11,13 @@ import Imprint from "./components/imprint/Imprint";
 import NewSearch from "./components/newsletter/NewSearch";
 import Privacy from "./components/privacy/Privacy";
 import FAQ from "./components/faq/FAQ";
+import Embed from "./components/embed/Embed";
 
 const getRoutes = () => {
     const routes = [];
 
     routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />);
+    routes.push(<Route key="/embed/:id" path="/embed/:id" children={<Embed />} />);
 
     routes.push(
         <Route key="/" path="/" exact>

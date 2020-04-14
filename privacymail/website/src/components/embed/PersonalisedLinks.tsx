@@ -1,9 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { INewsletter, Reliability, IThirdParty, IEmbed } from "../../../repository";
-import PassOrNotIcon, { PassOrNotState } from "./PassOrNotIcon";
-import Methode from "./Methode";
-import CollapsibleItem from "../../../utils/CollapsibleItem";
+import { IThirdParty, Reliability, INewsletter, IEmbed } from "../../repository";
+import CollapsibleItem from "../../utils/CollapsibleItem";
+import Methode from "../newsletter/analysis/Methode";
+import PassOrNotIcon, { PassOrNotState } from "../newsletter/analysis/PassOrNotIcon";
 
 interface PersonalisedLinksProps {
     newsletter?: INewsletter | IEmbed;

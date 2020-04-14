@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { INewsletter, postInformation } from "../../repository";
+import { postInformation, IEmbedData, IService } from "../../repository";
 import { Trans, withTranslation, WithTranslation } from "react-i18next";
 
 import countries from "../../i18n/countires.json";
@@ -7,11 +7,11 @@ import sectors from "../../i18n/sectors.json";
 import i18n from "../../i18n/i18n";
 
 interface GerneralInfoProps extends WithTranslation {
-    newsletter?: INewsletter;
+    entity?: IService | IEmbedData;
 }
 const GerneralInfo = (props: GerneralInfoProps) => {
-    const [country, setCountry] = useState<string>(props.newsletter?.service.country_of_origin || "");
-    const [sector, setSector] = useState<string>(props.newsletter?.service.sector || "");
+    const [country, setCountry] = useState<string>(props.entity?.country_of_origin || "");
+    const [sector, setSector] = useState<string>(props.entity?.sector || "");
 
     const getCurrentItemTranslation = (arr: any[], key?: string) => {
         const currentLanguage = i18n.language.split("-")[0];
@@ -39,8 +39,8 @@ const GerneralInfo = (props: GerneralInfoProps) => {
         return newArray;
     };
 
-    const editalble =
-        props.newsletter?.service.sector === "unknown" && props.newsletter?.service.country_of_origin === "";
+    const editalble = props.entity?.sector === "unknown" && props.entity?.country_of_origin === "";
+
     return (
         <div className="generalInfo">
             <h1>
@@ -64,7 +64,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                                 {generateOptions(sectors)}
                             </select>
                         ) : (
-                            getCurrentItemTranslation(sectors, props.newsletter?.service.sector)
+                            getCurrentItemTranslation(sectors, props.entity?.sector)
                         )}
                     </div>
                 </div>
@@ -78,26 +78,30 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                                 {generateOptions(countries)}
                             </select>
                         ) : (
-                            getCurrentItemTranslation(countries, props.newsletter?.service.country_of_origin)
+                            getCurrentItemTranslation(countries, props.entity?.country_of_origin)
                         )}
                     </div>
                 </div>
-                <div className="row">
-                    <div className="category">
-                        <Trans>analysis_analyzedMails</Trans>
+                {(props.entity as any)?.count_mails && (
+                    <div className="row">
+                        <div className="category">
+                            <Trans>analysis_analyzedMails</Trans>
+                        </div>
+                        <div className="value">{(props.entity as any).count_mails}</div>
                     </div>
-                    <div className="value">{props.newsletter?.count_mails}</div>
-                </div>
-                <div className="row">
-                    <div className="category">
-                        <Trans>analysis_confirmedIdentitys</Trans>
+                )}
+                {(props.entity as any)?.num_different_idents && (
+                    <div className="row">
+                        <div className="category">
+                            <Trans>analysis_confirmedIdentitys</Trans>
+                        </div>
+                        <div className="value">{(props.entity as any).num_different_idents}</div>
                     </div>
-                    <div className="value">{props.newsletter?.num_different_idents}</div>
-                </div>
+                )}
             </div>
             {editalble && (
                 <div className="submit">
-                    <button onClick={() => postInformation(props.newsletter?.service.name, sector, country)}>
+                    <button onClick={() => postInformation(props.entity?.name, sector, country)}>
                         <Trans>submit</Trans>
                     </button>
                 </div>

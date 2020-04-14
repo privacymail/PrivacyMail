@@ -29,7 +29,6 @@ from django.http import JsonResponse
 logger = logging.getLogger(__name__)
 
 
-
 class StatisticView(View):
     def get_global_stats(self):
         return {
@@ -37,35 +36,39 @@ class StatisticView(View):
             # TODO Ensure that service has at least 1 confirmed ident
             "service_count": Service.objects.count(),
             # TODO Model will be renamed on merge
-            "tracker_count": Thirdparty.objects.count()
+            "tracker_count": Thirdparty.objects.count(),
         }
 
     def get(self, request, *args, **kwargs):
         # Get the last approved services
-        return JsonResponse({'global_stats': self.get_global_stats()})
+        return JsonResponse({"global_stats": self.get_global_stats()})
 
 
 class IdentityView(View):
     def post(self, request, *args, **kwargs):
         try:
-            domain = request.POST['domain']
+            domain = request.POST["domain"]
             # Format domain. Will also ensure that the domain is valid, and return None on invalid domains
             domain = validate_domain(domain)
         except KeyError:
             # Someone is messing with us. Log this.
-            logger.warning('IdentityView.post: Malformed POST request received', extra={
-                           'request': request})
+            logger.warning(
+                "IdentityView.post: Malformed POST request received",
+                extra={"request": request},
+            )
             # Send them back to the homepage with a slap on the wrist
             # TODO: Add code to display a warning on homepage
-            return redirect('Home')
+            return redirect("Home")
         # Check if people are messing with us
         except AssertionError:
             # Someone may be messing with us. Save it, just in case.
-            logger.info("IdentityView.post: Invalid URL passed",
-                        extra={'request': request, 'domain': domain})
+            logger.info(
+                "IdentityView.post: Invalid URL passed",
+                extra={"request": request, "domain": domain},
+            )
             # Send them back to the homepage with a slap on the wrist
             # TODO: Add code to display a warning on homepage
-            return redirect('Home')
+            return redirect("Home")
 
         # Get or create service
         service, created = Service.get_or_create(url=domain, name=domain)
@@ -79,7 +82,12 @@ class IdentityView(View):
         # Iterate through it
         for identityDomain in domains:
             # If the domain has not yet been used, stop the loop, otherwise try the next
-            if Identity.objects.filter(service_id=service.pk).filter(mail__contains=identityDomain).count() == 0:
+            if (
+                Identity.objects.filter(service_id=service.pk)
+                .filter(mail__contains=identityDomain)
+                .count()
+                == 0
+            ):
                 break
         # At this point, we have either selected a domain that has not yet been used for the
         # provided service, or the service already has at least one identity for each domain,
@@ -93,46 +101,61 @@ class IdentityView(View):
             create_service_cache(service, force=True)
 
         # Display the result to the user
-        return render(request, 'identity/identity.html', {'ident': ident})
+        return render(request, "identity/identity.html", {"ident": ident})
 
 
 class ServiceView(View):
     def post(self, request, *args, **kwargs):
         try:
-            sid = self.parseUrlToId(request.POST['serviceID'])
-            if str(sid) != str(kwargs['service']):
+            sid = self.parseUrlToId(request.POST["serviceID"])
+            if str(sid) != str(kwargs["service"]):
                 # Someone is messing with us
-                logger.warn('ServiceMetaView.post: Provided service did not match POSTed service', extra={'request': request, "providedID": kwargs["service"], "postID": sid})
-                return redirect('Home')
+                logger.warn(
+                    "ServiceMetaView.post: Provided service did not match POSTed service",
+                    extra={
+                        "request": request,
+                        "providedID": kwargs["service"],
+                        "postID": sid,
+                    },
+                )
+                return redirect("Home")
             # Get service from database
             service = Service.objects.get(id=sid)
         except KeyError:
             # No service kwarg is set, warn
-            logger.warn('ServiceMetaView.post: Malformed POST request received', extra={'request': request})
+            logger.warn(
+                "ServiceMetaView.post: Malformed POST request received",
+                extra={"request": request},
+            )
             # TODO: Add code to display a warning on homepage
-            return redirect('Home')
+            return redirect("Home")
         except ObjectDoesNotExist:
-            logger.warn('ServiceMetaView.post: POST request for non-existing service', extra={'request': request})
-            return redirect('Home')
+            logger.warn(
+                "ServiceMetaView.post: POST request for non-existing service",
+                extra={"request": request},
+            )
+            return redirect("Home")
 
         form = forms.ServiceMetadataForm(request.POST)
         if not form.is_valid():
-            logger.info('ServiceMetaView.post: Invalid data submitted on metadata form', extra={'request': request, 'form': form})
+            logger.info(
+                "ServiceMetaView.post: Invalid data submitted on metadata form",
+                extra={"request": request, "form": form},
+            )
             return ServiceView.render(request, service, form)
 
         # Form is valid
-        sector = form.cleaned_data['sector']
-        country = form.cleaned_data['country_of_origin']
+        sector = form.cleaned_data["sector"]
+        country = form.cleaned_data["country_of_origin"]
         service.country_of_origin = country
         service.sector = sector
         service.save()
-        return redirect('Service', service=service.id)
-
+        return redirect("Service", service=service.id)
 
     def get(self, request, *args, **kwargs):
         # Check if the kwarg is even set
         try:
-            sid = kwargs['service']
+            sid = kwargs["service"]
         except KeyError:
             try:
                 sid = self.parseUrlToId(request.GET.get("url"))
@@ -142,51 +165,60 @@ class ServiceView(View):
         try:
             service = Service.objects.get(id=sid)
         except ObjectDoesNotExist:
-            logger.info("ServiceView.get: Invalid service requested",
-                        extra={'request': request, 'service_id': sid})
+            logger.info(
+                "ServiceView.get: Invalid service requested",
+                extra={"request": request, "service_id": sid},
+            )
             # TODO: Add code to display a warning on homepage
-            return redirect('Home') 
-        return JsonResponse(convertForJsonResponse(self.render_service(request, service)))
-    
+            return redirect("Home")
+        return JsonResponse(
+            convertForJsonResponse(self.render_service(request, service))
+        )
+
     @staticmethod
-    def parseUrlToId(url):   
-        domain = validate_domain(url)   
+    def parseUrlToId(url):
+        domain = validate_domain(url)
         service = Service.objects.get(url=domain)
         return service.id
-
 
     @staticmethod
     def render_service(request, service, form=None):
 
         site_params = ServiceView.get_service_site_params(service)
         if site_params is None:
-            logger.warn("ServiceView.render_service: Cache miss", extra={
-                        'request': request, 'service_id': service.id})
+            logger.warn(
+                "ServiceView.render_service: Cache miss",
+                extra={"request": request, "service_id": service.id},
+            )
             # Display a warning that the cache isn't up to date
             # TODO We probably also want to mark the service as dirty to ensure its generated, just in case stuff went wrong somewhere
-            return render(request, 'identity/service.html', {"error": "cache miss", "service": service})
+            return render(
+                request,
+                "identity/service.html",
+                {"error": "cache miss", "service": service},
+            )
 
         # Render the site
         if form is None:
-            #site_params['form'] = forms.ServiceMetadataForm(instance=service)
+            # site_params['form'] = forms.ServiceMetadataForm(instance=service)
             pass
-            #TODO uncomment
+            # TODO uncomment
         else:
-            site_params['form'] = form
-        site_params['service'] = service
-        site_params['checks'] = []
-        site_params['reliability'] = {
-            'mailOpen': 'reliable',
-            'linkClicked': 'unreliable',
-            'abTesting': 'unreliable',
-            'spam': 'reliable',
-            'personalisedLinks': 'reliable'
+            site_params["form"] = form
+        site_params["service"] = service
+        site_params["checks"] = []
+        site_params["reliability"] = {
+            "mailOpen": "reliable",
+            "linkClicked": "unreliable",
+            "abTesting": "unreliable",
+            "spam": "reliable",
+            "personalisedLinks": "reliable",
         }
 
         # Run checks
-        #for check in checks.SERVICE_CHECKS:
+        # for check in checks.SERVICE_CHECKS:
         #    site_params['checks'].append(check(site_params))
-        #TODO uncomment
+        # TODO uncomment
 
         return site_params
 
@@ -202,23 +234,24 @@ class ServiceView(View):
         # All identities of the service
         identities = Identity.objects.filter(service=service)
         emails = Mail.objects.filter(
-            identity__in=identities, identity__approved=True).distinct()
-        service_3p_conns = ServiceThirdPartyEmbeds.objects.filter(
-            service=service)
-        third_party_conns_setting_cookies = service_3p_conns.filter(
-            sets_cookie=True)
+            identity__in=identities, identity__approved=True
+        ).distinct()
+        service_3p_conns = ServiceThirdPartyEmbeds.objects.filter(service=service)
+        third_party_conns_setting_cookies = service_3p_conns.filter(sets_cookie=True)
         third_parties = service.thirdparties.distinct()
 
-        site_params['service'] = service
-        site_params['num_different_idents'] = identities.count()
-        site_params['count_mails'] = emails.count()
-        #site_params['unconfirmed_idents'] = identities.filter(approved=False)
-        site_params['sets_cookies'] = third_party_conns_setting_cookies.exists()
-        site_params['num_different_thirdparties'] = third_parties.count()
-        site_params['leaks_address'] = service_3p_conns.filter(leaks_address=True).exists()
+        site_params["service"] = service
+        site_params["num_different_idents"] = identities.count()
+        site_params["count_mails"] = emails.count()
+        # site_params['unconfirmed_idents'] = identities.filter(approved=False)
+        site_params["sets_cookies"] = third_party_conns_setting_cookies.exists()
+        site_params["num_different_thirdparties"] = third_parties.count()
+        site_params["leaks_address"] = service_3p_conns.filter(
+            leaks_address=True
+        ).exists()
 
         end_time = time.time()
-        print('Get service_site_params took: {}s'.format(end_time - start_time))
+        print("Get service_site_params took: {}s".format(end_time - start_time))
         return site_params
 
 
@@ -234,47 +267,37 @@ class EmbedView(View):
     def get(self, request, *args, **kwargs):
         # Check if the kwarg is even set
         try:
-            sid = kwargs['embed']
+            sid = kwargs["embed"]
         except KeyError:
-            # No service kwarg is set, warn
-            logger.info('EmbedView.get: Malformed GET request received', extra={
-                        'request': request})
-            # TODO: Add code to display a warning on homepage
-            return redirect('Home')
-
+            try:
+                sid = self.parseUrlToId(request.GET.get("url"))
+            except:
+                return HttpResponseNotFound("embed not found")
+        print("SID: " + str(sid))
         try:
             embed = Thirdparty.objects.get(id=sid)
         except ObjectDoesNotExist:
-            logger.info("EmbedView.get: Invalid service requested",
-                        extra={'request': request, 'service_id': sid})
+            logger.info(
+                "EmbedView.get: Invalid service requested",
+                extra={"request": request, "service_id": sid},
+            )
             # TODO: Add code to display a warning on homepage
-            return redirect('Home')
-        return self.render_embed(request, embed)
+            return redirect("Home")
+
+        return JsonResponse(convertForJsonResponse(self.render_embed(request, embed)))
 
     @staticmethod
     def render_embed(request, embed, form=None):
 
         site_params = EmbedView.get_embed_site_params(embed)
-        if site_params is None:
-            logger.warn("EmbedView.render_embed: Cache miss", extra={
-                        'request': request, 'embed_id': embed.id})
-            # Display a warning that the cache isn't up to date
-            # TODO We probably also want to mark the embed as dirty to ensure its generated, just in case stuff went wrong somewhere
-            return render(request, 'identity/embed.html', {"error": "cache miss", "embed": embed})
 
-        # Render the site
-        if form is None:
-            site_params['form'] = forms.EmbedMetadataForm(instance=embed)
-        else:
-            site_params['form'] = form
-
-        site_params['checks'] = []
+        # site_params["checks"] = []
         # Add any checks that should be run on embeds
-        for check in checks.EMBED_CHECKS:
-            site_params['checks'].append(check(site_params))
+        # for check in checks.EMBED_CHECKS:
+        #     site_params["checks"].append(check(site_params))
 
         # Add the object itself
-        return render(request, 'identity/embed.html', site_params)
+        return site_params
 
     @staticmethod
     def get_embed_site_params(embed):
@@ -284,6 +307,20 @@ class EmbedView(View):
             return None
 
         # TODO Add additional uncached metadata here
-        site_params['country'] = embed.get_country()
-        site_params['sector'] = embed.get_sector()
+        site_params["country"] = embed.get_country().code
+        site_params["sector"] = embed.get_sector()
+
+        site_params["reliability"] = {
+            "mailOpen": "reliable",
+            "linkClicked": "unreliable",
+            "personalisedLinks": "reliable",
+        }
+
         return site_params
+
+    @staticmethod
+    def parseUrlToId(url):
+        domain = validate_domain(url)
+        print("domain" + domain)
+        service = Thirdparty.objects.get(name=domain)
+        return service.id

@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams, withRouter } from "react-router-dom";
+import { useParams, withRouter, RouteComponentProps } from "react-router-dom";
 import { getNewsletter, INewsletter } from "../../repository";
 import FaqHint from "./FaqHint";
 import PrivacyRating from "./PrivacyRating";
 import GerneralInfo from "./GeneralInfo";
 import Analysis from "./analysis/Analysis";
-import { History } from "history";
 import IdentityAlert from "./IdentityAlert";
-interface NewsletterProps {
-    history: History;
-}
+interface NewsletterProps extends RouteComponentProps {}
 
 const Newsletter = (props: NewsletterProps) => {
     let { id } = useParams();
@@ -24,7 +21,7 @@ const Newsletter = (props: NewsletterProps) => {
             <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
             {newsletter && newsletter?.num_different_idents < 3 && <IdentityAlert />}
             <div className="divider" />
-            <GerneralInfo newsletter={newsletter} />
+            <GerneralInfo entity={newsletter?.service} />
             <div className="divider" />
             <Analysis newsletter={newsletter} />
         </div>

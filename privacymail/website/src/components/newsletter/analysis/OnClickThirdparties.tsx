@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import { IThirdParty, Reliability } from "../../../repository";
-import Collapsible from "react-collapsible";
-import { Icon } from "../../../utils/Icon";
 import ThirdpartyConnections from "./ThirdpartyConnections";
 import Methode from "./Methode";
+import CollapsibleItem from "../../../utils/CollapsibleItem";
 
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
@@ -13,53 +12,45 @@ interface OnClickThirdpartiesProps {
 }
 
 const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
-    const [isExpanded, setIsExpanded] = useState(false);
-
     return (
-        <div className="analysisItem">
-            <Collapsible
-                onOpening={() => setIsExpanded(true)}
-                onClosing={() => setIsExpanded(false)}
-                trigger={<OnClickThirdpartiesSmall thirdparties={props.thirdparties} expanded={isExpanded} />}
-            >
-                <div className="analysisBig">
-                    <div>
-                        <h2>
-                            <Trans>analysis_problemHeadline</Trans>
-                        </h2>
-                        <p>
-                            <Trans>analysis_problemOnClick</Trans>
-                        </p>
-                    </div>
-
-                    <div className="divider" />
-
-                    <Methode reliability={props.reliability} />
-
-                    <div className="divider" />
-                    <h2>
-                        <Trans>analysis_connections</Trans>
-                        <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
-                    </h2>
-                </div>
-            </Collapsible>
-        </div>
+        <CollapsibleItem>
+            <OnClickThirdpartiesSmall {...props} />
+            <OnClickThirdpartiesBig {...props} />
+        </CollapsibleItem>
     );
 };
 
-interface OnClickThirdpartiesSmallProps extends OnClickThirdpartiesProps {
-    expanded: boolean;
-}
-const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesSmallProps) => {
+const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
                 <Trans>analysis_onclickThirdPartyShort</Trans>
             </div>
-            <div className="expandable">
-                <Icon className={props.expanded ? " expanded" : " closed"}>expand</Icon>
+        </div>
+    );
+};
+const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
+    return (
+        <div className="analysisBig">
+            <div>
+                <h2>
+                    <Trans>analysis_problemHeadline</Trans>
+                </h2>
+                <p>
+                    <Trans>analysis_problemOnClick</Trans>
+                </p>
             </div>
+
+            <div className="divider" />
+
+            <Methode reliability={props.reliability} />
+
+            <div className="divider" />
+            <h2>
+                <Trans>analysis_connections</Trans>
+                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
+            </h2>
         </div>
     );
 };

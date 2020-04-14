@@ -1,9 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
-import { IThirdParty, Reliability } from "../../../repository";
-import ThirdpartyConnections from "./ThirdpartyConnections";
-import Methode from "./Methode";
-import CollapsibleItem from "../../../utils/CollapsibleItem";
+import { IThirdParty, Reliability } from "../../repository";
+import CollapsibleItem from "../../utils/CollapsibleItem";
+import Methode from "../newsletter/analysis/Methode";
+import ThirdpartyConnections from "../newsletter/analysis/ThirdpartyConnections";
 
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
@@ -11,7 +11,7 @@ interface OnClickThirdpartiesProps {
     reliability?: Reliability;
 }
 
-const OnOpenThirdparties = (props: OnClickThirdpartiesProps) => {
+const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
     return (
         <CollapsibleItem>
             <OnClickThirdpartiesSmall {...props} />
@@ -25,7 +25,7 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
         <div className="analysisSmall">
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
-                <Trans>analysis_onopenThirdPartyShort</Trans>
+                <Trans>analysis_onclickThirdPartyShort</Trans>
             </div>
         </div>
     );
@@ -55,4 +55,4 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
     );
 };
 
-export default OnOpenThirdparties;
+export default OnClickThirdparties;

@@ -40,7 +40,10 @@ export interface IThirdParty {
     sets_cookie: boolean;
     receives_identifier: boolean;
     name: string;
-    host: string;
+    host?: string;
+    url?: string;
+    permitted_senders?: string[];
+    hasApprovedIdentity?: boolean;
     resultsdirty: boolean;
     sector: string;
     service: any;
