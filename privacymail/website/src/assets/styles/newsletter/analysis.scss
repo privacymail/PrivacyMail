@@ -99,7 +99,7 @@ $summarizeFontSize: 3rem;
             }
 
             ul {
-                padding: 0;
+                padding-left: 1.2rem;
                 li {
                     list-style-type: none;
                     font-size: 1rem;
@@ -115,8 +115,6 @@ $summarizeFontSize: 3rem;
                     }
 
                     .icons {
-                        margin: 0 0 0 auto;
-
                         display: flex;
                         align-items: center;
                         * {

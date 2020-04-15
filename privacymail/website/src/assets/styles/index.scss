@@ -68,7 +68,11 @@ body,
         position: absolute;
         min-width: 200px;
         top: 2rem;
-        right: 0px;
+
+        left: 50%;
+
+        transform: translate(-50%, 0%);
+
         background-color: #3d3a3a;
         color: $font-color-secondary;
         border-radius: 2px;

@@ -46,10 +46,10 @@ const Thirdparty = (props: ThirdpartyProps) => {
         <li className="thirdparty">
             <Link to={(props.linkTo || "/embed") + "/" + props.thirdparty.name}>{props.thirdparty.name}</Link>
             <div className="icons">
-                {props.isHomeUrl && <Icon>home</Icon>}
                 {props.thirdparty.receives_identifier && (
                     <Icon title={<Trans>thirdparty_receivesLeak</Trans>}>danger</Icon>
                 )}
+                {props.isHomeUrl && <Icon>home</Icon>}
             </div>
         </li>
     );
