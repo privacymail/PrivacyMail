@@ -8,6 +8,8 @@ import i18n from "../../i18n/i18n";
 
 interface GerneralInfoProps extends WithTranslation {
     entity?: IService | IEmbedData;
+    count_mails?: number;
+    num_different_idents?: number;
 }
 const GerneralInfo = (props: GerneralInfoProps) => {
     const [country, setCountry] = useState<string>(props.entity?.country_of_origin || "");
@@ -82,20 +84,20 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                         )}
                     </div>
                 </div>
-                {(props.entity as any)?.count_mails && (
+                {props?.count_mails && (
                     <div className="row">
                         <div className="category">
                             <Trans>analysis_analyzedMails</Trans>
                         </div>
-                        <div className="value">{(props.entity as any).count_mails}</div>
+                        <div className="value">{props.count_mails}</div>
                     </div>
                 )}
-                {(props.entity as any)?.num_different_idents && (
+                {props?.num_different_idents && (
                     <div className="row">
                         <div className="category">
                             <Trans>analysis_confirmedIdentitys</Trans>
                         </div>
-                        <div className="value">{(props.entity as any).num_different_idents}</div>
+                        <div className="value">{props.num_different_idents}</div>
                     </div>
                 )}
             </div>

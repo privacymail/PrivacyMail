@@ -21,7 +21,11 @@ const Newsletter = (props: NewsletterProps) => {
             <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
             {newsletter && newsletter?.num_different_idents < 3 && <IdentityAlert />}
             <div className="divider" />
-            <GerneralInfo entity={newsletter?.service} />
+            <GerneralInfo
+                entity={newsletter?.service}
+                count_mails={newsletter?.count_mails}
+                num_different_idents={newsletter?.num_different_idents}
+            />
             <div className="divider" />
             <Analysis newsletter={newsletter} />
         </div>
