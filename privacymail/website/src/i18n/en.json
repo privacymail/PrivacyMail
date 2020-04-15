@@ -30,6 +30,7 @@
     "analysis_Spam": "Third party spam detected",
     "analysis_Spam_no": "No third party spam detected",
     "analysis_Spam_problem": "Service providers may perform so-called A/B testing by sending different versions of Emails to different recipients to test which wording generates more clicks. While this is not a privacy problem in itself, it indicates that marketing analysis is taking place.",
+    "analysis_thridpartysByCategory": "Split by category",
     "analysis_unreliable": "Known scan errors",
     "check_circle": "Third party spam",
     "embed_connections": "Gets contacted by",
@@ -90,6 +91,10 @@
     "imprint_headline6": "Zuständige Aufsichtsbehörde",
     "imprint_headline7": "Webmaster/in: ",
     "pleaseSelect": "Please Select",
+    "sector_altdomain": "Alternative Domain",
+    "sector_cdn": "Hosting / Content Distribution",
+    "sector_tracker": "Tracker",
+    "sector_unknown": "Unknown",
     "share_text": "Discover how the newsletter of #company tracks you.",
     "submit": "Submit",
     "thirdparty_receivesLeak": "Receives unique information about your identity."

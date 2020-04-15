@@ -3,17 +3,19 @@ import Collapsible from "react-collapsible";
 import { Icon } from "./Icon";
 
 interface CollapsibleItemProps {
+    defaultOpen?: boolean;
     small?: JSX.Element;
     big?: JSX.Element | JSX.Element[];
     children?: JSX.Element[];
 }
 const CollapsibleItem = (props: CollapsibleItemProps) => {
-    const [isExpanded, setIsExpanded] = useState(false);
+    const [isExpanded, setIsExpanded] = useState(props.defaultOpen || false);
     return (
         <div className="analysisItem">
             <Collapsible
                 onOpening={() => setIsExpanded(true)}
                 onClosing={() => setIsExpanded(false)}
+                open={props.defaultOpen}
                 trigger={
                     <div className="analysisSmall">
                         {props.children?.[0] || props.small}

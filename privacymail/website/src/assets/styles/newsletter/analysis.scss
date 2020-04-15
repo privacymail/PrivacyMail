@@ -1,3 +1,5 @@
+$summarizeFontSize: 3rem;
+
 .analysis {
     padding-left: $paddingLevel;
 
@@ -6,7 +8,6 @@
         padding: 1rem 0px;
 
         .analysisSmall {
-            $summarizeFontSize: 3rem;
             width: 100%;
             display: flex;
             align-items: center;
@@ -76,6 +77,27 @@
             .unreliable {
                 background: $methode-problem;
             }
+
+            .connections {
+                padding-right: 0px;
+
+                .category {
+                    display: flex;
+                    align-items: center;
+
+                    .coloredNumber {
+                        width: 10%;
+                        text-align: center;
+                        font-size: $summarizeFontSize - 1rem;
+                        min-width: 80px;
+                    }
+                    .name {
+                        @extend .light;
+                        font-size: 1.2rem;
+                    }
+                }
+            }
+
             ul {
                 padding: 0;
                 li {

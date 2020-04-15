@@ -4,6 +4,7 @@ import { IThirdParty, Reliability } from "../../../repository";
 import ThirdpartyConnections from "./ThirdpartyConnections";
 import Methode from "./Methode";
 import CollapsibleItem from "../../../utils/CollapsibleItem";
+import ColoredNumbers from "./ColoredNumbers";
 
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
@@ -23,7 +24,9 @@ const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
 const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
-            <div className="summarizedInfo">{props.thirdparties?.length}</div>
+            <div className="summarizedInfo">
+                <ColoredNumbers number={props.thirdparties?.length} />
+            </div>
             <div className="describeText">
                 <Trans>analysis_onclickThirdPartyShort</Trans>
             </div>
