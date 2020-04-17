@@ -2,8 +2,8 @@ $screen-break: 700px;
 
 @import "./fonts.scss";
 @import "./colors.scss";
-@import "./home/";
 @import "./layout/";
+@import "./home/";
 @import "./newsletter/";
 @import "./grid.scss";
 @import "./staticPages/";
@@ -47,6 +47,7 @@ html {
             color: $font-color-secondary;
             border: none;
             padding: 0px 1rem;
+            cursor: pointer;
         }
     }
 }

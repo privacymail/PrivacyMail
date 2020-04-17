@@ -84,7 +84,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                         )}
                     </div>
                 </div>
-                {props?.count_mails && (
+                {!(props?.count_mails === null || props?.count_mails === undefined) && (
                     <div className="row">
                         <div className="category">
                             <Trans>analysis_analyzedMails</Trans>
@@ -92,7 +92,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                         <div className="value">{props.count_mails}</div>
                     </div>
                 )}
-                {props?.num_different_idents && (
+                {!(props?.num_different_idents === null || props?.num_different_idents === undefined) && (
                     <div className="row">
                         <div className="category">
                             <Trans>analysis_confirmedIdentitys</Trans>

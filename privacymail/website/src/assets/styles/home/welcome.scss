@@ -1,0 +1,53 @@
+.welcome {
+    position: relative;
+    height: 70vh;
+    min-height: 500px;
+    max-height: 600px;
+    overflow: hidden;
+
+    color: $font-color-secondary;
+
+    > * {
+        padding: 0 1rem;
+        display: flex;
+        height: 100%;
+        flex-flow: column;
+
+        margin: 0px auto 0px auto;
+
+        @media only screen and (min-width: calc(500px + 2rem)) {
+            width: calc((100% - (500px + 2rem)) * 0.4 + 500px);
+        }
+        @media only screen and (min-width: calc((#{$screen-break} - (500px ))  *2.5 + (500px))) {
+            width: $screen-break;
+        }
+
+        > * {
+            margin: 2rem 0 0 0;
+        }
+        .input {
+            margin-top: 0;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            > * {
+                width: 100%;
+            }
+        }
+    }
+}
+.welcome::before {
+    $blurmargin: 4px;
+    position: absolute;
+    width: calc(100% + #{$blurmargin} * 2);
+    height: calc(100% + #{$blurmargin} * 2);
+    content: "";
+    margin: -$blurmargin;
+    z-index: -1;
+
+    background-image: url("../../images/letter.jpg");
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    background-size: cover;
+    filter: blur($blurmargin);
+}

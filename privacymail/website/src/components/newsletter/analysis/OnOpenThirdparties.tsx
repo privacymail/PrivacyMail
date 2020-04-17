@@ -1,7 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
 import { IThirdParty, Reliability } from "../../../repository";
-import ThirdpartyConnections from "./ThirdpartyConnections";
 import Methode from "./Methode";
 import CollapsibleItem from "../../../utils/CollapsibleItem";
 import ThridpartysByCategory from "./ThridpartysByCategory";
