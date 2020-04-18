@@ -9,19 +9,19 @@ const Statistics = () => {
     return (
         <div className="grid statistic">
             <div className="grid-item-4 ">
-                <p className="medium biggest">{statistics?.email_count}</p>
+                <h5>{statistics?.email_count}</h5>
                 <p className="regular normal">
                     <Trans>home_emailsAnalysied</Trans>
                 </p>
             </div>
             <div className="grid-item-4 ">
-                <p className="medium biggest">{statistics?.service_count}</p>
+                <h5>{statistics?.service_count}</h5>
                 <p className="regular normal">
                     <Trans>home_found3rdPraties</Trans>
                 </p>
             </div>
             <div className="grid-item-4 ">
-                <p className="medium biggest">{statistics?.tracker_count}</p>
+                <h5>{statistics?.tracker_count}</h5>
                 <p className="regular normal">
                     <Trans>home_registeredNewsletters</Trans>
                 </p>

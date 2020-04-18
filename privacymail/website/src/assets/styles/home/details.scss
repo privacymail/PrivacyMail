@@ -1,9 +1,6 @@
 .tracking {
     grid-area: tracking;
 }
-.statistic {
-    grid-area: statistic;
-}
 .whatWeDo {
     grid-area: whatWeDo;
 }
@@ -14,7 +11,7 @@
     grid-area: detection;
 }
 .details {
-    margin: 2rem auto 0 auto;
+    margin: 0 auto 0 auto;
     display: grid;
     grid-row-gap: 4rem;
     grid-column-gap: 4rem;
@@ -23,20 +20,18 @@
     @media only screen and (min-width: calc(500px + 2rem)) {
         width: calc((100% - (500px + 2rem)) * 0.4 + 500px);
     }
-    @media only screen and (min-width: calc((#{$screen-break} - (500px ))  *2.5 + (500px))) {
-        width: $screen-break;
+    @media only screen and (min-width: calc((#{$screen-break} + 50px - (500px ))  *2.5 + (500px))) {
+        width: $screen-break + 50px;
     }
 
     @media only screen and (min-width: 800px) {
         //medium sized screens
         grid-template-areas:
-            "statistic statistic"
             "whatWeDo whatWeDo"
             "whyPrivacymail whyPrivacymail"
             "detection tracking";
     }
     grid-template-areas:
-        "statistic"
         "whatWeDo"
         "whyPrivacymail"
         "detection"

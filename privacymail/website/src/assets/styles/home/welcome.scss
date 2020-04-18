@@ -1,16 +1,17 @@
 .welcome {
     position: relative;
     height: 70vh;
-    min-height: 500px;
-    max-height: 600px;
+    min-height: 600px;
+    max-height: 800px;
     overflow: hidden;
 
     color: $font-color-secondary;
 
     > * {
         padding: 0 1rem;
-        display: flex;
         height: 100%;
+
+        display: flex;
         flex-flow: column;
 
         margin: 0px auto 0px auto;
@@ -18,21 +19,28 @@
         @media only screen and (min-width: calc(500px + 2rem)) {
             width: calc((100% - (500px + 2rem)) * 0.4 + 500px);
         }
-        @media only screen and (min-width: calc((#{$screen-break} - (500px ))  *2.5 + (500px))) {
-            width: $screen-break;
+        @media only screen and (min-width: calc((#{$screen-break} + 50px - (500px ))  *2.5 + (500px))) {
+            width: $screen-break + 50px;
         }
 
         > * {
             margin: 2rem 0 0 0;
         }
-        .input {
+        .dynamics {
             margin-top: 0;
-            flex-grow: 1;
             display: flex;
-            align-items: center;
+            flex-grow: 1;
+            flex-flow: column;
+            justify-content: space-around;
+        }
+        .input {
             > * {
                 width: 100%;
             }
+        }
+
+        .statistic {
+            margin: 0;
         }
     }
 }

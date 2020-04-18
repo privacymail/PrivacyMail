@@ -15,7 +15,15 @@ html {
     -moz-osx-font-smoothing: grayscale;
     body {
         margin: 0;
-
+        color: $font-color-primary;
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: $font-color-headline;
+        }
         a,
         a:visited,
         a:hover,
@@ -24,7 +32,6 @@ html {
             text-decoration: none;
             color: inherit;
         }
-
         input {
             @extend .light;
             width: 100%;

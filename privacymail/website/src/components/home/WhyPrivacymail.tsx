@@ -10,25 +10,25 @@ const WhyPrivacymail = () => {
             </h2>
             <IconList className="image-list grid-item">
                 <IconListItem icon={"email"}>
-                    <p className="medium big">
+                    <h3>
                         <Trans>home_whyUsePM1</Trans>
-                    </p>
+                    </h3>
                     <p className="normal light">
                         <Trans>home_whyUsePM1detail</Trans>
                     </p>
                 </IconListItem>
                 <IconListItem icon={"record_voice_over"}>
-                    <p className="medium big">
+                    <h3>
                         <Trans>home_whyUsePM2</Trans>
-                    </p>
+                    </h3>
                     <p className="normal light">
                         <Trans>home_whyUsePM2detail</Trans>
                     </p>
                 </IconListItem>
                 <IconListItem icon={"school"}>
-                    <p className="medium big">
+                    <h3>
                         <Trans>home_whyUsePM3</Trans>
-                    </p>
+                    </h3>
                     <p className="normal light">
                         <Trans>home_whyUsePM3detail</Trans>
                     </p>

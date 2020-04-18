@@ -1,20 +1,34 @@
 .home {
     margin-top: $header-height;
-
     h1 {
         padding: 2rem 0 0 0;
         font-size: 2.5rem;
         margin: 0px;
+        color: $font-color-secondary;
     }
     h2 {
-        padding: 1rem 0 1.2rem 0;
+        padding: 1rem 0 1.5rem 0;
         font-size: 1.75rem;
         margin: 0px;
     }
     h3 {
-        @extend .normal;
+        @extend .medium;
+        font-size: 1.2rem;
+        padding-bottom: 0.5rem;
+        margin: 0;
+    }
+    h4 {
+        @extend .light;
         padding: 2rem 0 0 0;
         margin: 0px;
+        color: $font-color-secondary;
+    }
+    h5 {
+        @extend .medium;
+        color: $font-color-secondary;
+        padding-bottom: 0.2rem;
+        margin: 0;
+        font-size: 2rem;
     }
     button {
         margin-top: 0.5rem;
@@ -52,7 +66,7 @@
         li {
             @extend .normal;
             @extend .light;
-            margin-bottom: 1.3rem;
+            margin-bottom: 2rem;
             * {
                 display: inline-block;
                 vertical-align: middle;
@@ -60,10 +74,6 @@
             span {
                 width: calc(100% - 64px);
                 padding: 0px 0px 0px 16px;
-
-                p {
-                    margin-bottom: 1rem;
-                }
             }
         }
     }

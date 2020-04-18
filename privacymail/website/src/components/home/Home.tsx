@@ -1,6 +1,5 @@
 import React from "react";
 import Welcome from "./Welcome";
-import Statistics from "./Statistics";
 import WhatWeDo from "./WhatWeDo";
 import Tracking from "./Tracking";
 import WhyPrivacymail from "./WhyPrivacymail";
@@ -11,8 +10,6 @@ const Home = () => {
         <div className="home">
             <Welcome />
             <div className="details">
-                <Statistics />
-
                 <WhatWeDo />
 
                 <WhyPrivacymail />
