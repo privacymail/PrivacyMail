@@ -9,6 +9,11 @@
 
     .footerFlex {
         max-width: $screen-break;
+
+        @media only screen and (min-width: $screen-break*1.6) {
+            max-width: $screen-break * 1.6;
+        }
+
         margin: auto;
         height: 100%;
 
@@ -24,6 +29,9 @@
 
             @media only screen and (min-width: $screen-break) {
                 flex: 1 0 33%;
+            }
+            @media only screen and (min-width: $screen-break*1.6) {
+                flex: 1 0 16%;
             }
         }
         .item {
