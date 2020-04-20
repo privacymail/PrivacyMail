@@ -23,7 +23,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
         return trans?.[currentLanguage];
     };
 
-    const generateOptions = (arr: any[]) => {
+    const generateOptions = (arr: any[], defaultValue: string = "") => {
         const currentLanguage = i18n.language.split("-")[0];
         const newArray = arr
             .sort((a: any, b: any) => {
@@ -35,7 +35,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                 </option>
             ));
         newArray.push(
-            <option key="empty" value="" disabled hidden>
+            <option key="empty" value={defaultValue} disabled hidden>
                 {props.t("pleaseSelect")}
             </option>
         );
@@ -64,7 +64,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                     <div className="value">
                         {editalble ? (
                             <select value={sector} onChange={e => setSector(e.target.value)}>
-                                {generateOptions(sectors)}
+                                {generateOptions(sectors, "unknown")}
                             </select>
                         ) : (
                             getCurrentItemTranslation(sectors, props.entity?.sector)
