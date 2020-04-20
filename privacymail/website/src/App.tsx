@@ -4,7 +4,7 @@ import Header from "./components/header/Header";
 import Home from "./components/home/Home";
 import Newsletter from "./components/newsletter/Newsletter";
 import Footer from "./components/footer/Footer";
-import NotFound from "./components/notfound/NotFound";
+import ServiceNotFound from "./components/notfound/ServiceNotFound";
 
 import { createBrowserHistory } from "history";
 import Imprint from "./components/imprint/Imprint";
@@ -41,8 +41,13 @@ const getRoutes = () => {
     );
 
     routes.push(
-        <Route key="/404" path="*/:id">
-            <NotFound />
+        <Route key="/serviceNotFound" path="/serviceNotFound/:id">
+            <ServiceNotFound />
+        </Route>
+    );
+    routes.push(
+        <Route key="/embedNotFound" path="/embedNotFound">
+            <ServiceNotFound />
         </Route>
     );
     return routes;

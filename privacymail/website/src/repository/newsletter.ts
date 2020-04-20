@@ -79,7 +79,7 @@ export const getNewsletter = (
                 }
                 callback(result as INewsletter);
             })
-            .catch(e => history.push("/404/" + service));
+            .catch(e => history.push("/serviceNotFound/" + service));
     }
 };
 
