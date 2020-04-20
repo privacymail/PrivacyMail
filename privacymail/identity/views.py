@@ -22,8 +22,11 @@ from mailfetcher.analyser_cron import create_service_cache
 from identity import checks
 import logging
 import time
+import json
 from random import shuffle
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 
 # Get named logger
 logger = logging.getLogger(__name__)
@@ -105,22 +108,18 @@ class IdentityView(View):
 
 
 class ServiceView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(ServiceView, self).dispatch(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
+
+        body_unicode = request.body.decode("utf-8")
+        body = json.loads(body_unicode)
+
         try:
-            sid = self.parseUrlToId(request.POST["serviceID"])
-            if str(sid) != str(kwargs["service"]):
-                # Someone is messing with us
-                logger.warn(
-                    "ServiceMetaView.post: Provided service did not match POSTed service",
-                    extra={
-                        "request": request,
-                        "providedID": kwargs["service"],
-                        "postID": sid,
-                    },
-                )
-                return redirect("Home")
             # Get service from database
-            service = Service.objects.get(id=sid)
+            service = Service.objects.get(name=body["serviceID"])
         except KeyError:
             # No service kwarg is set, warn
             logger.warn(
@@ -128,29 +127,26 @@ class ServiceView(View):
                 extra={"request": request},
             )
             # TODO: Add code to display a warning on homepage
-            return redirect("Home")
+            return JsonResponse(convertForJsonResponse({"success": False}))
         except ObjectDoesNotExist:
             logger.warn(
                 "ServiceMetaView.post: POST request for non-existing service",
                 extra={"request": request},
             )
-            return redirect("Home")
-
-        form = forms.ServiceMetadataForm(request.POST)
-        if not form.is_valid():
-            logger.info(
-                "ServiceMetaView.post: Invalid data submitted on metadata form",
-                extra={"request": request, "form": form},
-            )
-            return ServiceView.render(request, service, form)
+            return JsonResponse(convertForJsonResponse({"success": False}))
 
         # Form is valid
-        sector = form.cleaned_data["sector"]
-        country = form.cleaned_data["country_of_origin"]
-        service.country_of_origin = country
-        service.sector = sector
-        service.save()
-        return redirect("Service", service=service.id)
+        sector = body["sector"]
+        country = body["country_of_origin"]
+
+        if sector != "" and country != "":
+            service.country_of_origin = country
+            service.sector = sector
+            service.save()
+            return JsonResponse(convertForJsonResponse({"success": True}))
+
+        else:
+            return JsonResponse(convertForJsonResponse({"success": False}))
 
     def get(self, request, *args, **kwargs):
         # Check if the kwarg is even set
@@ -264,6 +260,46 @@ class ServiceListView(SingleTableMixin, FilterView):
 
 
 class EmbedView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(EmbedView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+
+        body_unicode = request.body.decode("utf-8")
+        body = json.loads(body_unicode)
+
+        try:
+            # Get service from database
+            embed = Thirdparty.objects.get(name=body["embedID"])
+        except KeyError:
+            # No embed kwarg is set, warn
+            logger.warn(
+                "EmbedMetaView.post: Malformed POST request received",
+                extra={"request": request},
+            )
+            # TODO: Add code to display a warning on homepage
+            return JsonResponse(convertForJsonResponse({"success": False}))
+        except ObjectDoesNotExist:
+            logger.warn(
+                "EmbedMetaView.post: POST request for non-existing Thirdparty",
+                extra={"request": request},
+            )
+            return JsonResponse(convertForJsonResponse({"success": False}))
+
+        # Form is valid
+        sector = body["sector"]
+        country = body["country_of_origin"]
+
+        if sector != "" and country != "":
+            embed.country_of_origin = country
+            embed.sector = sector
+            embed.save()
+            return JsonResponse(convertForJsonResponse({"success": True}))
+
+        else:
+            return JsonResponse(convertForJsonResponse({"success": False}))
+
     def get(self, request, *args, **kwargs):
         # Check if the kwarg is even set
         try:
@@ -273,7 +309,6 @@ class EmbedView(View):
                 sid = self.parseUrlToId(request.GET.get("url"))
             except:
                 return HttpResponseNotFound("embed not found")
-        print("SID: " + str(sid))
         try:
             embed = Thirdparty.objects.get(id=sid)
         except ObjectDoesNotExist:

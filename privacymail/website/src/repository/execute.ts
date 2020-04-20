@@ -4,7 +4,7 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
         headers: { "Content-Type": "application/json;charset=utf-8" }
     };
     if (method !== "GET") {
-        options.body = payload;
+        options.body = JSON.stringify(payload);
     }
     let url = "";
     /* let url = "http://" + process.env.REACT_APP_BACKEND_URL + ":" + process.env.REACT_APP_BACKEND_PORT + "/";

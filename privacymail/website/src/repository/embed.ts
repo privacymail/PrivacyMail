@@ -47,11 +47,11 @@ export const getEmbed = (service: string = "", history: History, callback: (resu
     }
 };
 
-export const postInformationEmbed = (service: string = "", sector: string, country_of_origin: string): void => {
+export const postInformationEmbed = (embed: string = "", sector: string, country_of_origin: string): void => {
     let url = "embed/";
-    if (service) {
+    if (embed) {
         const payload = {
-            serviceID: service,
+            embedID: embed,
             country_of_origin,
             sector
         };

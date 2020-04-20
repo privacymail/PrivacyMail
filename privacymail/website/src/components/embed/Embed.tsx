@@ -17,7 +17,7 @@ const Embed = (props: EmbedProps) => {
     return (
         <div className="newsletter">
             <FaqHint />
-            <GerneralInfo entity={embed?.embed} />
+            <GerneralInfo entity={embed?.embed} type="embed" />
             <div className="divider" />
             <AnalysisEmbed embed={embed} />
         </div>

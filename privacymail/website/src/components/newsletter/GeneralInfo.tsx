@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { postInformation, IEmbedData, IService } from "../../repository";
+import { postInformation, IEmbedData, IService, postInformationEmbed } from "../../repository";
 import { Trans, withTranslation, WithTranslation } from "react-i18next";
 
 import countries from "../../i18n/countires.json";
@@ -10,6 +10,7 @@ interface GerneralInfoProps extends WithTranslation {
     entity?: IService | IEmbedData;
     count_mails?: number;
     num_different_idents?: number;
+    type: "service" | "embed";
 }
 const GerneralInfo = (props: GerneralInfoProps) => {
     const [country, setCountry] = useState<string>(props.entity?.country_of_origin || "");
@@ -103,7 +104,15 @@ const GerneralInfo = (props: GerneralInfoProps) => {
             </div>
             {editalble && (
                 <div className="submit">
-                    <button onClick={() => postInformation(props.entity?.name, sector, country)}>
+                    <button
+                        onClick={() =>
+                            (props.type === "service" ? postInformation : postInformationEmbed)(
+                                props.entity?.name,
+                                sector,
+                                country
+                            )
+                        }
+                    >
                         <Trans>submit</Trans>
                     </button>
                 </div>

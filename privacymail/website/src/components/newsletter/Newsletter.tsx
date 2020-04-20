@@ -25,6 +25,7 @@ const Newsletter = (props: NewsletterProps) => {
                 entity={newsletter?.service}
                 count_mails={newsletter?.count_mails}
                 num_different_idents={newsletter?.num_different_idents}
+                type="service"
             />
             <div className="divider" />
             <Analysis newsletter={newsletter} />

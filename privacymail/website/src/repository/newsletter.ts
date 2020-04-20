@@ -91,6 +91,8 @@ export const postInformation = (service: string = "", sector: string, country_of
             country_of_origin,
             sector
         };
+        console.log(payload);
+
         execute(url, "POST", payload).then((result: any) => {
             window.location.reload();
         });
