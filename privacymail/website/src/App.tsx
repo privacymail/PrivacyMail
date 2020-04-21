@@ -12,6 +12,7 @@ import NewSearch from "./components/newsletter/NewSearch";
 import Privacy from "./components/privacy/Privacy";
 import FAQ from "./components/faq/FAQ";
 import Embed from "./components/embed/Embed";
+import Identity from "./components/identity/Identity";
 
 const getRoutes = () => {
     const routes = [];
@@ -39,7 +40,11 @@ const getRoutes = () => {
             <FAQ />
         </Route>
     );
-
+    routes.push(
+        <Route key="/identity" path="/identity/:id">
+            <Identity />
+        </Route>
+    );
     routes.push(
         <Route key="/serviceNotFound" path="/serviceNotFound/:id">
             <ServiceNotFound />
