@@ -78,6 +78,8 @@
     "identity_headline": "Neuen Service hinzufügen",
     "identity_lowIdentityCount": "Dieser Newsletter hat zu wenige registrierte Emails um verlässliche Aussagen zu treffen. Hilf uns die Ergebnisse zu verbessern, indem du eine weitere Email bei dem Newsletter anmeldest.",
     "identity_register_headline": "Newsletter anmelden",
+    "identity_start_explination": "Um den Newsletter von <0>{{company}}</0> für dich analysieren zu können, musst du zuerst eine unserer Emailadressen an dem Newsletter anmelden. Klicke dazu auf Identität generieren und folge den Anweisungen.",
+    "identity_start_generateButton": "Identität erstellen",
     "identity_start_headline": "Start",
     "identity_whatToDo": "Was jetzt?",
     "imprint": "Impressum",

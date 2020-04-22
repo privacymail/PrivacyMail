@@ -1,0 +1,11 @@
+.identity {
+    .start {
+        display: flex;
+        flex-flow: column;
+
+        align-items: center;
+        button {
+            flex: 1 1 auto;
+        }
+    }
+}

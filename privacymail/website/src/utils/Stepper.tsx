@@ -17,10 +17,12 @@ const Stepper = (props: Stepper) => {
     return (
         <div className="stepper">
             <StepperHeading headings={props.content.map(elem => elem.heading)} current={current} />
-            {React.cloneElement(currentChild, {
-                next: current < props.content.length ? () => setCurrent(current + 1) : undefined,
-                prev: current > 0 ? () => setCurrent(current - 1) : undefined
-            })}
+            <div className="stepperContent">
+                {React.cloneElement(currentChild, {
+                    next: current < props.content.length ? () => setCurrent(current + 1) : undefined,
+                    prev: current > 0 ? () => setCurrent(current - 1) : undefined
+                })}
+            </div>
         </div>
     );
 };
@@ -45,7 +47,7 @@ const StepperHeading = (props: StepperHeading) => {
                             ) : (
                                 <Icon>check_circle_fill</Icon>
                             )}
-                            <span>{heading}</span>
+                            {heading}
                         </span>
                     </div>
                 );

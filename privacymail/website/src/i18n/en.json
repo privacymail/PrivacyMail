@@ -78,6 +78,8 @@
     "identity_headline": "Adding a new Service",
     "identity_lowIdentityCount": "This newsletter has to few registered emails. Therefore we can't make relibale statements. Help us to improve our results by registering another email to this newsletter.",
     "identity_register_headline": "Sign up Newsletter",
+    "identity_start_explination": "In order to analyse the newsletter of <0>{{company}}</0>, you need to sign up one of our emailadresses to the newsletter. Please click on the Generate Identity button and follow our instructions.",
+    "identity_start_generateButton": "Generate Identity",
     "identity_start_headline": "Start",
     "identity_whatToDo": "What's next?",
     "imprint": "Impressum",
