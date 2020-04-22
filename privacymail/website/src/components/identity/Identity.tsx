@@ -16,6 +16,7 @@ const Identity = () => {
                 content={[
                     { heading: <Trans>identity_start_headline</Trans>, child: <Page1 /> },
                     { heading: <Trans>identity_generate_headline</Trans>, child: <Page1 /> },
+                    { child: <Page1 /> },
                     { heading: <Trans>identity_register_headline</Trans>, child: <Page2 /> }
                 ]}
             />

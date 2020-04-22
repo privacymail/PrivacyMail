@@ -8,7 +8,7 @@ export interface StepperItem {
 interface Stepper {
     content: {
         child: React.ReactElement<StepperItem>;
-        heading: string | JSX.Element;
+        heading?: string | JSX.Element;
     }[];
 }
 const Stepper = (props: Stepper) => {
@@ -25,32 +25,36 @@ const Stepper = (props: Stepper) => {
     );
 };
 interface StepperHeading {
-    headings: (string | JSX.Element)[];
+    headings: (string | JSX.Element | undefined)[];
     current: number;
 }
 const StepperHeading = (props: StepperHeading) => {
-    const getHeadings = (headings: (string | JSX.Element)[]): JSX.Element[] => {
+    const getHeadings = (headings: (string | JSX.Element | undefined)[]): JSX.Element[] => {
         const arr: JSX.Element[] = [];
+        let lastIndex = 0;
         headings.forEach((heading, index) => {
-            arr.push(
-                <div key={index + "step"} className="step">
-                    <span>
-                        {props.current <= index ? (
-                            <span className={"numberIcon" + (props.current === index ? " active" : " inactive")}>
-                                {index + 1}
-                            </span>
-                        ) : (
-                            <Icon>check_circle_fill</Icon>
-                        )}
-                        <span>{heading}</span>
-                    </span>
-                </div>
-            );
-            arr.push(
-                <div key={index + "line"} className="line">
-                    <span></span>
-                </div>
-            );
+            if (heading) {
+                lastIndex++;
+                arr.push(
+                    <div key={index + "step"} className="step">
+                        <span>
+                            {props.current <= index ? (
+                                <span className={"numberIcon" + (props.current === index ? " active" : " inactive")}>
+                                    {lastIndex}
+                                </span>
+                            ) : (
+                                <Icon>check_circle_fill</Icon>
+                            )}
+                            <span>{heading}</span>
+                        </span>
+                    </div>
+                );
+                arr.push(
+                    <div key={index + "line"} className="line">
+                        <span></span>
+                    </div>
+                );
+            }
         });
         arr.pop();
         return arr;
