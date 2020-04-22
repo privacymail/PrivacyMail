@@ -57,14 +57,10 @@ export interface IService {
     sector: string;
     country_of_origin: string;
 }
-export const getNewsletter = (
-    service: string = "",
-    history: History,
-    callback: (result: INewsletter) => void
-): void => {
+export const getNewsletter = (service: any = "", history: History, callback: (result: INewsletter) => void): void => {
     let url = "";
     if (service) {
-        if (parseInt(service)) {
+        if (!isNaN(service)) {
             url = "service/" + service;
         } else {
             url = "service/?url=" + service;
