@@ -6,7 +6,7 @@ import Spinner from "../../utils/Spinner";
 import Person from "./Person";
 
 const Identity = () => {
-    const [identity, setIdentity] = useState<IIdentity>()
+    const [identity, setIdentity] = useState<IIdentity>();
     return (
         <div className="identity">
             <h1>
@@ -26,13 +26,13 @@ const Identity = () => {
 export default Identity;
 
 interface Page1 extends StepperItem {
-    setIdentity: (identity: IIdentity) => void
+    setIdentity: (identity: IIdentity) => void;
 }
 const Page1 = (props: Page1) => {
     const createIdentity = () => {
         generateIdentity("3m.com", props.setIdentity);
-        props.next?.()
-    }
+        props.next?.();
+    };
 
     return (
         <div className="start">
@@ -51,7 +51,7 @@ const Page1 = (props: Page1) => {
     );
 };
 interface Page2 extends StepperItem {
-    identity?: IIdentity
+    identity?: IIdentity;
 }
 const Page2 = (props: Page2) => {
     return (
@@ -60,12 +60,8 @@ const Page2 = (props: Page2) => {
             <button onClick={() => props.prev?.()}>Prev</button>
             <button onClick={() => props.next?.()}>next</button>
         </Spinner>
-
     );
 };
-
-
-
 
 const Page3 = (props: StepperItem) => {
     return (

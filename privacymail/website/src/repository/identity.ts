@@ -14,12 +14,11 @@ export const generateIdentity = (newsletter: string = "", callback: (result: IId
     let url = "identity/";
     if (newsletter) {
         const payload = {
-            domain: newsletter,
+            domain: newsletter
         };
 
         execute(url, "POST", payload).then((result: IIdentity) => {
             callback(result);
-
         });
     }
 };
