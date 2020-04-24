@@ -56,12 +56,6 @@ class Identity(models.Model):
             "gender": convertForJsonResponse(self.gender),
             "service": convertForJsonResponse(self.service),
             "approved": convertForJsonResponse(self.approved),
-            "lastapprovalremindersend": convertForJsonResponse(
-                self.lastapprovalremindersend
-            ),
-            "receives_third_party_spam": convertForJsonResponse(
-                self.receives_third_party_spam
-            ),
         }
 
     def __str__(self):

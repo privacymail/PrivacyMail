@@ -1,0 +1,23 @@
+.person {
+    margin: 1rem auto ;
+    border-radius: 4px;
+    overflow: hidden;
+    width: 16rem;
+    background-color: #dfdfdf;
+    .email {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        p {
+            @extend .regular;
+            margin-right: 1rem;
+        }
+        img {
+            height: 1.5rem;
+            cursor: pointer;
+        }
+    }
+    img.picture{
+        height: 16rem;
+    }
+}

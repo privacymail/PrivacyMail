@@ -48,9 +48,25 @@ class StatisticView(View):
 
 
 class IdentityView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(IdentityView, self).dispatch(request, *args, **kwargs)
+
     def post(self, request, *args, **kwargs):
         try:
-            domain = request.POST["domain"]
+            # Get service from database
+            body_unicode = request.body.decode("utf-8")
+            body = json.loads(body_unicode)
+            domain=body["domain"]
+        except KeyError:
+            # No service kwarg is set, warn
+            logger.warn(
+                "ServiceMetaView.post: Malformed POST request received",
+                extra={"request": request},
+            )
+            # TODO: Add code to display a warning on homepage
+            return JsonResponse(convertForJsonResponse({"success": False}))
+        try:
             # Format domain. Will also ensure that the domain is valid, and return None on invalid domains
             domain = validate_domain(domain)
         except KeyError:
@@ -61,7 +77,7 @@ class IdentityView(View):
             )
             # Send them back to the homepage with a slap on the wrist
             # TODO: Add code to display a warning on homepage
-            return redirect("Home")
+            return JsonResponse(convertForJsonResponse({"success": False}))
         # Check if people are messing with us
         except AssertionError:
             # Someone may be messing with us. Save it, just in case.
@@ -71,7 +87,7 @@ class IdentityView(View):
             )
             # Send them back to the homepage with a slap on the wrist
             # TODO: Add code to display a warning on homepage
-            return redirect("Home")
+            return JsonResponse(convertForJsonResponse({"success": False}))
 
         # Get or create service
         service, created = Service.get_or_create(url=domain, name=domain)
@@ -104,7 +120,7 @@ class IdentityView(View):
             create_service_cache(service, force=True)
 
         # Display the result to the user
-        return render(request, "identity/identity.html", {"ident": ident})
+        return JsonResponse(convertForJsonResponse(ident))
 
 
 class ServiceView(View):
