@@ -1,11 +1,26 @@
 .identity {
-    .start {
-        display: flex;
-        flex-flow: column;
+    a {
+        text-decoration: underline !important;
+    }
+    .stepperContent {
+        min-height: 400px;
+        position: relative;
+        .start {
+            display: flex;
+            flex-flow: column;
 
-        align-items: center;
-        button {
-            flex: 1 1 auto;
+            max-width: 400px;
+            min-height: 400px;
+
+            margin: 0 auto;
+            padding: 0 1rem;
+
+            div {
+                flex: 1 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
         }
     }
 }

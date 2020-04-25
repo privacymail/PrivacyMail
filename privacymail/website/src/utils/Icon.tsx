@@ -5,6 +5,7 @@ interface IconPros {
     className?: string;
     onClick?: Function;
     title?: string | JSX.Element;
+    titleDuration?: number;
     height?: number;
     id?: string;
 }
@@ -42,9 +43,13 @@ const Icon = (props: IconPros) => {
             if (!isTooltipOpen) {
                 const disable = () => {
                     setTooltipOpen(false);
-                    document.removeEventListener("click", disable);
+                    if (!props.titleDuration) document.removeEventListener("click", disable);
                 };
-                document.addEventListener("click", disable);
+                if (props.titleDuration) {
+                    window.setTimeout(() => setTooltipOpen(false), props.titleDuration);
+                } else {
+                    document.addEventListener("click", disable);
+                }
                 setTooltipOpen(true);
             }
         }
@@ -56,9 +61,9 @@ const Icon = (props: IconPros) => {
                 alt={iconName}
                 height={props.height}
                 src={image}
-                onClick={e => onClick(e)}
-                onMouseOver={() => setTooltipOpen(true)}
-                onMouseOut={() => setTooltipOpen(false)}
+                onClick={onClick}
+                onMouseOver={() => !props.titleDuration && setTooltipOpen(true)}
+                onMouseOut={() => !props.titleDuration && setTooltipOpen(false)}
                 id={props.id}
             />
             {props.title && isTooltipOpen && <div className="tooltip">{props.title}</div>}

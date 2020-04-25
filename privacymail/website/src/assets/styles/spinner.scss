@@ -1,7 +1,7 @@
 .spinner {
     $spinner-height: 5rem;
 
-    position: fixed;
+    position: absolute;
     top: calc(50% - #{$spinner-height}/ 2);
     left: calc(50% - #{$spinner-height}/ 2);
 

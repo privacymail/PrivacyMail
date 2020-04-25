@@ -19,6 +19,9 @@ const Identity = () => {
                     { child: <Page2 /> },
                     { heading: <Trans>identity_register_headline</Trans>, child: <Page3 /> }
                 ]}
+                onTabChange={tab => {
+                    if (tab === 0) setIdentity(undefined);
+                }}
             />
         </div>
     );
@@ -36,10 +39,16 @@ const Page1 = (props: Page1) => {
 
     return (
         <div className="start">
+            <h2>
+                <Trans>identity_start_headline</Trans>
+            </h2>
             <p>
-                <Trans i18nKey="identity_start_explination">
+                <Trans i18nKey="identity_start_explination1">
                     <span className="medium">{{ company: "3m.com" }}</span>
                 </Trans>
+            </p>
+            <p className="regular">
+                <Trans>identity_start_explination2</Trans>
             </p>
 
             <div>
@@ -56,6 +65,12 @@ interface Page2 extends StepperItem {
 const Page2 = (props: Page2) => {
     return (
         <Spinner isSpinning={!props.identity}>
+            <h2>
+                Your Identity for{" "}
+                <a href="http://nytimes.com" target="_blank" rel="noopener noreferrer">
+                    nytimes.com
+                </a>
+            </h2>
             <Person identity={props.identity} />
             <button onClick={() => props.prev?.()}>Prev</button>
             <button onClick={() => props.next?.()}>next</button>

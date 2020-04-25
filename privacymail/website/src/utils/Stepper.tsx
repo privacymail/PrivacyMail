@@ -10,17 +10,23 @@ interface Stepper {
         child: React.ReactElement<StepperItem>;
         heading?: string | JSX.Element;
     }[];
+    onTabChange?: (step?: number) => void;
 }
 const Stepper = (props: Stepper) => {
     const [current, setCurrent] = useState<number>(0);
     const currentChild = props.content[current].child;
+
+    const setTab = (tab: number) => {
+        setCurrent(tab);
+        props.onTabChange?.(tab);
+    };
     return (
         <div className="stepper">
             <StepperHeading headings={props.content.map(elem => elem.heading)} current={current} />
             <div className="stepperContent">
                 {React.cloneElement(currentChild, {
-                    next: current < props.content.length ? () => setCurrent(current + 1) : undefined,
-                    prev: current > 0 ? () => setCurrent(current - 1) : undefined
+                    next: current < props.content.length ? () => setTab(current + 1) : undefined,
+                    prev: current > 0 ? () => setTab(current - 1) : undefined
                 })}
             </div>
         </div>

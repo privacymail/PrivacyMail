@@ -76,7 +76,8 @@ body,
 
     .tooltip {
         position: absolute;
-        min-width: 200px;
+        max-width: 200px;
+        width: 100%;
         top: 2rem;
 
         left: 50%;

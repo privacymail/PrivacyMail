@@ -19,7 +19,9 @@ const Person = (props: PersonProps) => {
             <div className={"profilePic " + (props.identity?.gender ? "male" : "female")}>
                 <div className="email">
                     <p>{props.identity?.mail}</p>
-                    <Icon onClick={copyToClipboard}>file_copy</Icon>
+                    <Icon onClick={copyToClipboard} title={<Trans>copied</Trans>} titleDuration={1000}>
+                        file_copy
+                    </Icon>
                 </div>
             </div>
 
