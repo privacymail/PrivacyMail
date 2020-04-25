@@ -27,6 +27,7 @@
         "react-router-dom": "^5.1.2",
         "react-scripts": "^3.4.0",
         "react-scroll-parallax": "^2.3.2",
+        "react-svg": "^11.0.20",
         "sass": "^1.26.3"
     },
     "scripts": {
