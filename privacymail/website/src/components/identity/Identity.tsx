@@ -16,8 +16,7 @@ const Identity = () => {
                 content={[
                     { heading: <Trans>identity_start_headline</Trans>, child: <Page1 setIdentity={setIdentity} /> },
                     { heading: <Trans>identity_generate_headline</Trans>, child: <Page2 identity={identity} /> },
-                    { child: <Page2 /> },
-                    { heading: <Trans>identity_register_headline</Trans>, child: <Page3 /> }
+                    { heading: <Trans>identity_register_headline</Trans>, child: <Page3 identity={identity} /> }
                 ]}
                 onTabChange={tab => {
                     if (tab === 0) setIdentity(undefined);
@@ -77,11 +76,16 @@ const Page2 = (props: Page2) => {
         </Spinner>
     );
 };
-
-const Page3 = (props: StepperItem) => {
+interface Page3 extends StepperItem {
+    identity?: IIdentity;
+}
+const Page3 = (props: Page3) => {
     return (
-        <div>
-            Hallo2<button onClick={() => props.prev?.()}>Prev</button>
-        </div>
+        <Spinner isSpinning={!props.identity}>
+            <h2>Register your Identity </h2>
+            <Person identity={props.identity} />
+            <button onClick={() => props.prev?.()}>Prev</button>
+            <button onClick={() => props.next?.()}>next</button>
+        </Spinner>
     );
 };
