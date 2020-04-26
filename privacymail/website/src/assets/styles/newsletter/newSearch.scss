@@ -3,8 +3,6 @@ $faq-button-width: 120px;
 .newSearch {
     // Note that I know this css is not optimal but it does its job
     background-color: $header-secondary-color;
-    position: fixed;
-    top: $header-height;
     left: 0;
     right: 0;
     width: 100%;

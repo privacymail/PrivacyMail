@@ -9,6 +9,7 @@ $screen-break: 700px;
 @import "./staticPages/";
 @import "./spinner.scss";
 @import "./stepper.scss";
+@import "./iconList.scss";
 @import "./identity/";
 html {
     font-family: Roboto;
@@ -95,15 +96,23 @@ body,
     display: flex;
     flex-direction: column;
 }
-.content {
+.page {
     width: 100%;
 
-    padding-bottom: 1rem;
-    margin: 0 auto 0 auto;
-    flex: 1 0 auto;
+    flex: 1 1 auto;
 
-    > div {
-        padding-top: $header-height + 0.8rem * 2 + 2rem;
+    overflow: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    .content {
+        flex: 1 0 auto;
+        @media only screen and (min-width: $screen-break) {
+            //everythin greater than
+            width: $screen-break;
+            margin: 0 auto 0 auto;
+        }
     }
     /*@media only screen and (min-width: 740px) {
         //medium sized screens
@@ -112,10 +121,6 @@ body,
         width: calc((100% - 720px) * 0.4 + 720px);
     }
     @media only screen and (min-width: 1420px) { */
-    @media only screen and (min-width: $screen-break) {
-        //everythin greater than
-        width: $screen-break;
-    }
 }
 
 .alert {

@@ -74,13 +74,15 @@ const App = () => {
                     </Route>
                     <Route key="/newSearch" path="*/:id">
                         <NewSearch />
-                        <div className="content">
-                            <Switch>{getRoutes()}</Switch>
+                        <div className="page">
+                            <div className="content">
+                                <Switch>{getRoutes()}</Switch>
+                            </div>
+
+                            <Footer />
                         </div>
                     </Route>
                 </Switch>
-
-                <Footer />
             </Router>
         </div>
     );

@@ -50,34 +50,6 @@
         font-size: 1.125rem;
     }
 
-    .image-list {
-        .icon {
-            object {
-                width: 48px;
-                vertical-align: middle;
-            }
-        }
-        ul {
-            margin: 0px;
-            vertical-align: middle;
-            list-style-type: none;
-            padding: 0px;
-        }
-        li {
-            @extend .normal;
-            @extend .light;
-            margin-bottom: 2rem;
-            * {
-                display: inline-block;
-                vertical-align: middle;
-            }
-            span {
-                width: calc(100% - 64px);
-                padding: 0px 0px 0px 16px;
-            }
-        }
-    }
-
     .grid {
         grid-column-gap: 1rem;
     }
