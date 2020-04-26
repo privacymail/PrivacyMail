@@ -1,5 +1,20 @@
+.person.smallView {
+    @media only screen and (max-width: 550px) {
+        //everythin greater than
+        .profilePic {
+            background-image: none !important;
+        }
+        .profilePic:after {
+            all: initial;
+        }
+        .email {
+            position: initial !important;
+        }
+    }
+}
+
 .person {
-    margin: 1rem auto;
+    margin: 0 auto;
     border-radius: 4px;
     overflow: hidden;
     min-width: 16rem;

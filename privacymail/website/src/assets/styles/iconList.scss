@@ -1,0 +1,35 @@
+.image-list {
+    .icon {
+        img {
+            width: 48px;
+            vertical-align: middle;
+        }
+    }
+    ul {
+        margin: 0px;
+        vertical-align: middle;
+        list-style-type: none;
+        padding: 0px;
+    }
+    li {
+        @extend .normal;
+        @extend .light;
+        margin: 1rem 0;
+
+        display: flex;
+        align-items: center;
+
+        h3 {
+            font-size: 1.2rem;
+            padding-bottom: 0.5rem;
+            margin: 0;
+        }
+        .iconListContent {
+            flex: 1 1 auto;
+            padding: 0px 0px 0px 16px;
+        }
+        p {
+            margin: 0;
+        }
+    }
+}

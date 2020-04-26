@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "./Icon";
 
 export interface StepperItem {
@@ -11,21 +11,32 @@ interface Stepper {
         heading?: string | JSX.Element;
     }[];
     onTabChange?: (step?: number) => void;
+    minHeight?: number;
 }
 const Stepper = (props: Stepper) => {
     const [current, setCurrent] = useState<number>(0);
     const currentChild = props.content[current].child;
 
+    const stepperRef = useRef<any>(null);
+
     const setTab = (tab: number) => {
         setCurrent(tab);
         props.onTabChange?.(tab);
     };
+    useEffect(() => {
+        if (current !== 0) {
+            stepperRef?.current?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        }
+    }, [current]);
     return (
         <div className="stepper">
             <StepperHeading headings={props.content.map(elem => elem.heading)} current={current} />
-            <div className="stepperContent">
+            <div className="stepperContent" style={{ minHeight: props.minHeight }} ref={stepperRef}>
                 {React.cloneElement(currentChild, {
-                    next: current < props.content.length ? () => setTab(current + 1) : undefined,
+                    next: current + 1 < props.content.length ? () => setTab(current + 1) : undefined,
                     prev: current > 0 ? () => setTab(current - 1) : undefined
                 })}
             </div>

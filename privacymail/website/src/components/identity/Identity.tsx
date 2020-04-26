@@ -4,6 +4,7 @@ import Stepper, { StepperItem } from "../../utils/Stepper";
 import { generateIdentity, IIdentity } from "../../repository/identity";
 import Spinner from "../../utils/Spinner";
 import Person from "./Person";
+import { IconList, IconListItem } from "../../utils/IconList";
 
 const Identity = () => {
     const [identity, setIdentity] = useState<IIdentity>();
@@ -21,6 +22,7 @@ const Identity = () => {
                 onTabChange={tab => {
                     if (tab === 0) setIdentity(undefined);
                 }}
+                minHeight={400}
             />
         </div>
     );
@@ -66,13 +68,20 @@ const Page2 = (props: Page2) => {
         <Spinner isSpinning={!props.identity}>
             <h2>
                 Your Identity for{" "}
-                <a href="http://nytimes.com" target="_blank" rel="noopener noreferrer">
-                    nytimes.com
+                <a href={"http://" + props.identity?.service.url} target="_blank" rel="noopener noreferrer">
+                    {props.identity?.service.url}
                 </a>
             </h2>
             <Person identity={props.identity} />
-            <button onClick={() => props.prev?.()}>Prev</button>
-            <button onClick={() => props.next?.()}>next</button>
+
+            <div className="identityButtons">
+                <button onClick={() => props.prev?.()} className="secondary">
+                    <Trans>cancel</Trans>
+                </button>
+                <button onClick={() => props.next?.()}>
+                    <Trans>next</Trans>
+                </button>
+            </div>
         </Spinner>
     );
 };
@@ -83,9 +92,58 @@ const Page3 = (props: Page3) => {
     return (
         <Spinner isSpinning={!props.identity}>
             <h2>Register your Identity </h2>
-            <Person identity={props.identity} />
-            <button onClick={() => props.prev?.()}>Prev</button>
-            <button onClick={() => props.next?.()}>next</button>
+            <div className="instructions">
+                <Person identity={props.identity} className="smallView" />
+                <div className="steps">
+                    <IconList>
+                        <IconListItem icon={"file_copy"}>
+                            <p className="normal light">
+                                <Trans>identity_instruction_step1</Trans>
+                            </p>
+                        </IconListItem>
+                        <IconListItem icon={"how_to_reg"}>
+                            <p className="normal light">
+                                <Trans i18nKey="identity_instruction_step2">
+                                    <a
+                                        href={"http://" + props.identity?.service.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        {{ company: props.identity?.service.url }}
+                                    </a>
+                                </Trans>
+                            </p>
+                        </IconListItem>
+                    </IconList>
+                    <IconList>
+                        <IconListItem icon={"warning"}>
+                            <p className="normal light">
+                                <Trans i18nKey="identity_instruction_warning">
+                                    <span className="regular"></span>
+                                    <span className="regular">
+                                        <a
+                                            href={"http://" + props.identity?.service.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            {{ company: props.identity?.service.url }}
+                                        </a>
+                                    </span>
+                                    }}
+                                </Trans>
+                            </p>
+                        </IconListItem>
+                    </IconList>
+                </div>
+            </div>
+            <div className="identityButtons">
+                <button onClick={() => props.prev?.()} className="secondary">
+                    <Trans>cancel</Trans>
+                </button>
+                <button onClick={() => props.next?.()}>
+                    <Trans>next</Trans>
+                </button>
+            </div>
         </Spinner>
     );
 };

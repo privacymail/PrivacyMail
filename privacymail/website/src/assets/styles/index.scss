@@ -59,6 +59,9 @@ html {
             padding: 0px 1rem;
             cursor: pointer;
         }
+        button.secondary {
+            background: $button-color-secondary;
+        }
     }
 }
 

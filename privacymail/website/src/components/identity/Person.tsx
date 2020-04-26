@@ -6,6 +6,7 @@ import { Trans } from "react-i18next";
 
 interface PersonProps {
     identity?: IIdentity;
+    className?: string;
 }
 const Person = (props: PersonProps) => {
     const copyToClipboard = () => {
@@ -15,7 +16,7 @@ const Person = (props: PersonProps) => {
     };
 
     return (
-        <div className="person">
+        <div className={"person" + (props.className ? " " + props.className : "")}>
             <div className={"profilePic " + (props.identity?.gender ? "male" : "female")}>
                 <div className="email">
                     <p>{props.identity?.mail}</p>
