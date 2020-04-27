@@ -27,9 +27,9 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
                     return;
                 }
                 const json = await response.json();
-                if (json.error || json.exeption) {
-                    console.error(json.error || json.exeption);
-                    reject(json.error || json.exeption);
+                if (json.error || json.exeption || json.success === false) {
+                    console.error(json.error || json.exeption || json);
+                    reject(json.error || json.exeption || json);
                 } else {
                     resolve(json);
                 }

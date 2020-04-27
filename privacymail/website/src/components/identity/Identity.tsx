@@ -9,8 +9,18 @@ import { useParams, Link } from "react-router-dom";
 
 const Identity = () => {
     const [identity, setIdentity] = useState<IIdentity>();
+    const [current, setCurrent] = useState<number>(0);
+
     const { id } = useParams();
     useEffect(() => window.scrollTo(0, 0), [id]);
+
+    const setIdentityCheck = (ident?: IIdentity) => {
+        if (ident) {
+            setIdentity(ident);
+        } else {
+            setCurrent(0);
+        }
+    };
     return (
         <div className="identity">
             <h1>
@@ -20,7 +30,7 @@ const Identity = () => {
                 content={[
                     {
                         heading: <Trans>identity_start_headline</Trans>,
-                        child: <Page1 setIdentity={setIdentity} url={id} />
+                        child: <Page1 setIdentity={setIdentityCheck} url={id} />
                     },
                     { heading: <Trans>identity_generate_headline</Trans>, child: <Page2 identity={identity} /> },
                     { heading: <Trans>identity_register_headline</Trans>, child: <Page3 identity={identity} /> },
@@ -28,7 +38,9 @@ const Identity = () => {
                 ]}
                 onTabChange={tab => {
                     if (tab === 0) setIdentity(undefined);
+                    if (tab) setCurrent(tab);
                 }}
+                tab={current}
                 minHeight={200}
             />
         </div>
@@ -37,7 +49,7 @@ const Identity = () => {
 export default Identity;
 
 interface Page1 extends StepperItem {
-    setIdentity: (identity: IIdentity) => void;
+    setIdentity: (identity?: IIdentity) => void;
     url?: string;
 }
 const Page1 = (props: Page1) => {

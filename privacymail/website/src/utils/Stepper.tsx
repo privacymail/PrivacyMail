@@ -13,6 +13,7 @@ interface Stepper {
     }[];
     onTabChange?: (step?: number) => void;
     minHeight?: number;
+    tab?: number;
 }
 const Stepper = (props: Stepper) => {
     const [current, setCurrent] = useState<number>(0);
@@ -32,6 +33,12 @@ const Stepper = (props: Stepper) => {
             });
         }
     }, [current]);
+    useEffect(() => {
+        if (props.tab !== current) {
+            setCurrent(props.tab ?? current);
+        }
+        // eslint-disable-next-line
+    }, [props.tab]);
     return (
         <div className="stepper">
             <StepperHeading headings={props.content.map(elem => elem.heading)} current={current} />

@@ -10,15 +10,17 @@ export interface IIdentity {
     service: IService;
 }
 
-export const generateIdentity = (newsletter: string = "", callback: (result: IIdentity) => void): void => {
+export const generateIdentity = (newsletter: string = "", callback: (result?: IIdentity) => void): void => {
     let url = "identity/";
     if (newsletter) {
         const payload = {
             domain: newsletter
         };
 
-        execute(url, "POST", payload).then((result: IIdentity) => {
-            callback(result);
-        });
+        execute(url, "POST", payload)
+            .then((result: IIdentity) => {
+                callback(result);
+            })
+            .catch(() => callback(undefined));
     }
 };
