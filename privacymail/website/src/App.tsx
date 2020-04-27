@@ -68,21 +68,21 @@ const App = () => {
         <div className="app">
             <Router history={history}>
                 <Header />
-                <Switch>
-                    <Route key="/" path="/" exact>
-                        <Home />
-                    </Route>
-                    <Route key="/newSearch" path="*/:id">
-                        <NewSearch />
-                        <div className="page">
+
+                <div className="page">
+                    <Switch>
+                        <Route key="/" path="/" exact>
+                            <Home />
+                        </Route>
+                        <Route key="/newSearch" path="*/:id">
+                            <NewSearch />
                             <div className="content">
                                 <Switch>{getRoutes()}</Switch>
                             </div>
-
-                            <Footer />
-                        </div>
-                    </Route>
-                </Switch>
+                        </Route>
+                    </Switch>
+                    <Footer />
+                </div>
             </Router>
         </div>
     );

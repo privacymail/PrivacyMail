@@ -53,7 +53,7 @@
     margin: -$blurmargin;
     z-index: -1;
 
-    background-image: url("../../images/letter.jpg");
+    background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("../../images/letter.jpg");
     background-position: center; /* Center the image */
     background-repeat: no-repeat; /* Do not repeat the image */
     background-size: cover;
