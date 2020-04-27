@@ -4,6 +4,7 @@ import { Icon } from "./Icon";
 export interface StepperItem {
     next?: () => void;
     prev?: () => void;
+    jump?: (tab: number) => void;
 }
 interface Stepper {
     content: {
@@ -37,7 +38,10 @@ const Stepper = (props: Stepper) => {
             <div className="stepperContent" style={{ minHeight: props.minHeight }} ref={stepperRef}>
                 {React.cloneElement(currentChild, {
                     next: current + 1 < props.content.length ? () => setTab(current + 1) : undefined,
-                    prev: current > 0 ? () => setTab(current - 1) : undefined
+                    prev: current > 0 ? () => setTab(current - 1) : undefined,
+                    jump: (index: number) => {
+                        if (index + 1 < props.content.length && index >= 0) setTab(index);
+                    }
                 })}
             </div>
         </div>

@@ -1,13 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Trans } from "react-i18next";
 import Stepper, { StepperItem } from "../../utils/Stepper";
 import { generateIdentity, IIdentity } from "../../repository/identity";
 import Spinner from "../../utils/Spinner";
 import Person from "./Person";
 import { IconList, IconListItem } from "../../utils/IconList";
+import { useParams, Link } from "react-router-dom";
 
 const Identity = () => {
     const [identity, setIdentity] = useState<IIdentity>();
+    const { id } = useParams();
+    useEffect(() => window.scrollTo(0, 0), [id]);
     return (
         <div className="identity">
             <h1>
@@ -15,14 +18,18 @@ const Identity = () => {
             </h1>
             <Stepper
                 content={[
-                    { heading: <Trans>identity_start_headline</Trans>, child: <Page1 setIdentity={setIdentity} /> },
+                    {
+                        heading: <Trans>identity_start_headline</Trans>,
+                        child: <Page1 setIdentity={setIdentity} url={id} />
+                    },
                     { heading: <Trans>identity_generate_headline</Trans>, child: <Page2 identity={identity} /> },
-                    { heading: <Trans>identity_register_headline</Trans>, child: <Page3 identity={identity} /> }
+                    { heading: <Trans>identity_register_headline</Trans>, child: <Page3 identity={identity} /> },
+                    { child: <Page4 /> }
                 ]}
                 onTabChange={tab => {
                     if (tab === 0) setIdentity(undefined);
                 }}
-                minHeight={400}
+                minHeight={200}
             />
         </div>
     );
@@ -31,31 +38,64 @@ export default Identity;
 
 interface Page1 extends StepperItem {
     setIdentity: (identity: IIdentity) => void;
+    url?: string;
 }
 const Page1 = (props: Page1) => {
+    const [url, setUrl] = useState<string>(props.url || "");
+
+    useEffect(() => {
+        if (props.url) setUrl(props.url);
+    }, [props.url]);
     const createIdentity = () => {
-        generateIdentity("3m.com", props.setIdentity);
+        generateIdentity(props.url, props.setIdentity);
         props.next?.();
     };
 
-    return (
+    //according to https://stackoverflow.com/a/26987741/9851505 this is a regex for valid domains
+    const validDomainRegex = new RegExp(
+        "^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}.)*(xn--)?([a-z0-9][a-z0-9-]{0,60}|[a-z0-9-]{1,30}.[a-z]{2,})$"
+    );
+    return validDomainRegex.test(props.url || "") ? (
         <div className="start">
             <h2>
                 <Trans>identity_start_headline</Trans>
             </h2>
-            <p>
-                <Trans i18nKey="identity_start_explination1">
-                    <span className="medium">{{ company: "3m.com" }}</span>
-                </Trans>
-            </p>
-            <p className="regular">
-                <Trans>identity_start_explination2</Trans>
-            </p>
-
             <div>
-                <button onClick={createIdentity}>
-                    <Trans>identity_start_generateButton</Trans>
-                </button>
+                <p>
+                    <Trans i18nKey="identity_start_explination1">
+                        <span className="medium">{{ company: props.url }}</span>
+                    </Trans>
+                </p>
+                <p className="regular">
+                    <Trans>identity_start_explination2</Trans>
+                </p>
+
+                <div>
+                    <button onClick={createIdentity}>
+                        <Trans>identity_start_generateButton</Trans>
+                    </button>
+                </div>
+            </div>
+        </div>
+    ) : (
+        <div className="invalid">
+            <h2>
+                <Trans>identity_invalid_domain</Trans>
+            </h2>
+            <div>
+                <p>
+                    <Trans i18nKey="identity_invalid_text">
+                        <span className="medium">{{ domain: props.url }}</span>
+                    </Trans>
+                </p>
+                <div>
+                    <input value={url} onChange={e => setUrl(e.target.value)} />
+                    <Link to={"/identity/" + url}>
+                        <button id="analizeButton">
+                            <Trans>404_button</Trans>
+                        </button>
+                    </Link>
+                </div>
             </div>
         </div>
     );
@@ -72,15 +112,17 @@ const Page2 = (props: Page2) => {
                     {props.identity?.service.url}
                 </a>
             </h2>
-            <Person identity={props.identity} />
+            <div>
+                <Person identity={props.identity} />
 
-            <div className="identityButtons">
-                <button onClick={() => props.prev?.()} className="secondary">
-                    <Trans>cancel</Trans>
-                </button>
-                <button onClick={() => props.next?.()}>
-                    <Trans>next</Trans>
-                </button>
+                <div className="identityButtons">
+                    <button onClick={() => props.jump?.(0)} className="secondary">
+                        <Trans>identity_cancel</Trans>
+                    </button>
+                    <button onClick={() => props.next?.()}>
+                        <Trans>identity_next</Trans>
+                    </button>
+                </div>
             </div>
         </Spinner>
     );
@@ -137,7 +179,7 @@ const Page3 = (props: Page3) => {
                 </div>
             </div>
             <div className="identityButtons">
-                <button onClick={() => props.prev?.()} className="secondary">
+                <button onClick={() => props.jump?.(0)} className="secondary">
                     <Trans>cancel</Trans>
                 </button>
                 <button onClick={() => props.next?.()}>
@@ -145,5 +187,42 @@ const Page3 = (props: Page3) => {
                 </button>
             </div>
         </Spinner>
+    );
+};
+
+const Page4 = (props: StepperItem) => {
+    return (
+        <div className="done">
+            <h2>
+                <Trans>identity_done_headline</Trans>
+            </h2>
+            <IconList>
+                <IconListItem icon={"check_circle_outline"}>
+                    <p className="normal light">
+                        <Trans>identity_done_1</Trans>
+                    </p>
+                </IconListItem>
+                <IconListItem icon={"search"}>
+                    <p className="normal light">
+                        <Trans>identity_done_2</Trans>
+                    </p>
+                </IconListItem>
+                <IconListItem icon={"repeat"}>
+                    <p className="normal light">
+                        <Trans>identity_done_3</Trans>
+                    </p>
+                </IconListItem>
+                <IconListItem icon={"public"}>
+                    <p className="normal light">
+                        <Trans>identity_done_4</Trans>
+                    </p>
+                </IconListItem>
+            </IconList>
+            <div className="identityButtons">
+                <button onClick={() => props.jump?.(0)}>
+                    <Trans>identity_new</Trans>
+                </button>
+            </div>
+        </div>
     );
 };
