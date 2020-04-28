@@ -34,7 +34,7 @@ const Identity = () => {
                     },
                     { heading: <Trans>identity_generate_headline</Trans>, child: <Page2 identity={identity} /> },
                     { heading: <Trans>identity_register_headline</Trans>, child: <Page3 identity={identity} /> },
-                    { child: <Page4 /> }
+                    { child: <Page4 identity={identity} /> }
                 ]}
                 onTabChange={tab => {
                     if (tab === 0) setIdentity(undefined);
@@ -202,7 +202,7 @@ const Page3 = (props: Page3) => {
     );
 };
 
-const Page4 = (props: StepperItem) => {
+const Page4 = (props: Page2) => {
     return (
         <div className="done">
             <h2>
@@ -226,7 +226,9 @@ const Page4 = (props: StepperItem) => {
                 </IconListItem>
                 <IconListItem icon={"public"}>
                     <p className="normal light">
-                        <Trans>identity_done_4</Trans>
+                        <Trans i18nKey="identity_done_4">
+                            <Link to={"/service/" + props.identity?.service.url}></Link>
+                        </Trans>
                     </p>
                 </IconListItem>
             </IconList>
