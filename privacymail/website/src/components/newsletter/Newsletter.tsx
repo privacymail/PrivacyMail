@@ -23,8 +23,8 @@ const Newsletter = (props: NewsletterProps) => {
     }, [id, props.history]);
 
     return (
-        <div className="newsletter">
-            <Spinner isSpinning={isLoading}>
+        <Spinner isSpinning={isLoading}>
+            <div className="newsletter">
                 <FaqHint />
                 <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
                 {newsletter && newsletter?.num_different_idents < 3 && <IdentityAlert />}
@@ -37,8 +37,8 @@ const Newsletter = (props: NewsletterProps) => {
                 />
                 <div className="divider" />
                 <Analysis newsletter={newsletter} />
-            </Spinner>
-        </div>
+            </div>
+        </Spinner>
     );
 };
 export default withRouter(Newsletter);

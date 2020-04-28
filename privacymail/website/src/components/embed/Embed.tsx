@@ -22,14 +22,14 @@ const Embed = (props: EmbedProps) => {
     }, [id, props.history]);
 
     return (
-        <div className="newsletter">
-            <Spinner isSpinning={isLoading}>
+        <Spinner isSpinning={isLoading}>
+            <div className="newsletter">
                 <FaqHint />
                 <GerneralInfo entity={embed?.embed} type="embed" />
                 <div className="divider" />
                 <AnalysisEmbed embed={embed} />
-            </Spinner>
-        </div>
+            </div>
+        </Spinner>
     );
 };
 export default withRouter(Embed);
