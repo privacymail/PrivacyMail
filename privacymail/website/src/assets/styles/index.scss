@@ -76,24 +76,21 @@ body,
         vertical-align: middle;
     }
     position: relative;
-
-    .tooltip {
-        position: absolute;
-        max-width: 200px;
-        width: 100%;
-        top: 2rem;
-
-        left: 50%;
-
-        transform: translate(-50%, 0%);
-
-        background-color: #3d3a3a;
-        color: $font-color-secondary;
-        border-radius: 2px;
-        padding: 0.3rem 1rem;
-        z-index: 9999;
-    }
 }
+.tooltip {
+    position: fixed;
+    max-width: 200px;
+    width: 100%;
+
+    transform: translate(-50%, 0%);
+
+    background-color: #3d3a3a;
+    color: $font-color-secondary;
+    border-radius: 2px;
+    padding: 0.3rem 1rem;
+    z-index: 9999;
+}
+
 .app {
     display: flex;
     flex-direction: column;

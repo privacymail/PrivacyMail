@@ -13,6 +13,7 @@ import Privacy from "./components/privacy/Privacy";
 import FAQ from "./components/faq/FAQ";
 import Embed from "./components/embed/Embed";
 import Identity from "./components/identity/Identity";
+import Tooltip from "./utils/Tooltip";
 
 const getRoutes = () => {
     const routes = [];
@@ -86,6 +87,7 @@ const App = () => {
                 </Switch>
                 <Footer />
             </Router>
+            <Tooltip />
         </div>
     );
 };
