@@ -16,9 +16,6 @@ interface IconState {
 class Icon extends React.Component<IconPros, IconState> {
     tooltip = -1;
 
-    constructor(props: IconPros) {
-        super(props);
-    }
     onClick(e: React.MouseEvent) {
         this.props.onClick?.(e);
         if (this.props.title) {

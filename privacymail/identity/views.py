@@ -2,6 +2,7 @@ import site
 
 from django.shortcuts import render
 from django.views.generic import View
+from identity.rating import calculateRating
 from identity.util import validate_domain, convertForJsonResponse
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from django.http import HttpResponseNotFound
@@ -226,6 +227,7 @@ class ServiceView(View):
             "spam": "reliable",
             "personalisedLinks": "reliable",
         }
+        site_params["rating"] = calculateRating(site_params)
 
         # Run checks
         # for check in checks.SERVICE_CHECKS:
