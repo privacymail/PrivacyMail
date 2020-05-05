@@ -2,7 +2,7 @@ import site
 
 from django.shortcuts import render
 from django.views.generic import View
-from identity.rating import calculateRating
+from identity.rating.rating import getRating
 from identity.util import validate_domain, convertForJsonResponse
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from django.http import HttpResponseNotFound
@@ -58,7 +58,7 @@ class IdentityView(View):
             # Get service from database
             body_unicode = request.body.decode("utf-8")
             body = json.loads(body_unicode)
-            domain=body["domain"]
+            domain = body["domain"]
         except KeyError:
             # No service kwarg is set, warn
             logger.warn(
@@ -227,7 +227,7 @@ class ServiceView(View):
             "spam": "reliable",
             "personalisedLinks": "reliable",
         }
-        site_params["rating"] = calculateRating(site_params)
+        site_params["rating"] = getRating(site_params)
 
         # Run checks
         # for check in checks.SERVICE_CHECKS:

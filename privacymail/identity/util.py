@@ -31,6 +31,7 @@ def is_valid_domain(domain):
     """
     return validators.domain(domain) or validators.url(domain)
 
+
 def convertForJsonResponse(obj):
     json = {}
     if isinstance(obj, dict):
@@ -49,19 +50,20 @@ def convertForJsonResponse(obj):
                 json[key] = executeToJSON(obj[key])
             else:
                 if hasStringKey:
-                    json[i] = {**executeToJSON(obj[key]) , **executeToJSON(key)}
-                else: 
-                    json.append({**executeToJSON(obj[key]) , **executeToJSON(key)})
-            i=i+1
+                    json[i] = {**executeToJSON(obj[key]), **executeToJSON(key)}
+                else:
+                    json.append({**executeToJSON(obj[key]), **executeToJSON(key)})
+            i = i + 1
 
     elif isinstance(obj, list):
-        json=[]
+        json = []
         for i in range(len(obj)):
             json.append(executeToJSON(obj[i]))
     else:
         json = executeToJSON(obj, True)
-    
+
     return json
+
 
 def executeToJSON(obj, stopFunction=False):
     json = {}
@@ -72,5 +74,15 @@ def executeToJSON(obj, stopFunction=False):
         json = obj
         if not stopFunction:
             json = convertForJsonResponse(obj)
-  
+
     return json
+
+
+def filterDict(dictObj, callback):
+    newDict = dict()
+    # Iterate over all the items in dictionary
+    for (key, value) in dictObj.items():
+        # Check if item satisfies the given condition then add to new dict
+        if callback(key, value):
+            newDict[key] = value
+    return newDict
