@@ -2,7 +2,11 @@ import React from "react";
 import { Trans } from "react-i18next";
 import ShareButton from "./ShareButton";
 import { IRating } from "../../repository";
-
+interface Color {
+    red: number;
+    green: number;
+    blue: number;
+}
 interface PrivacyRatingProps {
     newsletter: string;
     privacyRating?: IRating;
@@ -31,12 +35,41 @@ const PrivacyRating = (props: PrivacyRatingProps) => {
         return;
     };
 
+    const getRatingColor = (fadeFraction: number) => {
+        var color1 = { red: 76, green: 175, blue: 80 };
+        var color2 = { red: 251, green: 192, blue: 45 };
+        var fade = fadeFraction;
+
+        // Do we have 3 colors for the gradient? Need to adjust the params.
+
+        fade = fade * 2;
+
+        // Find which interval to use and adjust the fade percentage
+        if (fade >= 1) {
+            fade -= 1;
+            color1 = color2;
+            color2 = { red: 227, green: 65, blue: 52 };
+        }
+
+        var diffRed = color2.red - color1.red;
+        var diffGreen = color2.green - color1.green;
+        var diffBlue = color2.blue - color1.blue;
+
+        var gradient = {
+            red: Math.floor(color1.red + diffRed * fade),
+            green: Math.floor(color1.green + diffGreen * fade),
+            blue: Math.floor(color1.blue + diffBlue * fade)
+        };
+
+        return "rgb(" + gradient.red + "," + gradient.green + "," + gradient.blue + ")";
+    };
+
     return (
         <div className="privacyRating">
             <h1>
                 <Trans>analysis_privacyRating</Trans>
             </h1>
-            <div className="rating">
+            <div className="rating" style={{ color: getRatingColor(((props.privacyRating?.rating || 1) - 1) / 5) }}>
                 {props.privacyRating?.rating && convertRatingToMark(props.privacyRating?.rating)}
             </div>
             <div className="newsletterName">
