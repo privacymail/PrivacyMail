@@ -26,7 +26,7 @@ const Newsletter = (props: NewsletterProps) => {
         <Spinner isSpinning={isLoading}>
             <div className="newsletter">
                 <FaqHint />
-                <PrivacyRating privacyRating="C" newsletter={newsletter?.service.name || ""} />
+                <PrivacyRating privacyRating={newsletter?.rating} newsletter={newsletter?.service.name || ""} />
                 {newsletter && newsletter?.num_different_idents < 3 && <IdentityAlert />}
                 <div className="divider" />
                 <GerneralInfo

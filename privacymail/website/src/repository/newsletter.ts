@@ -32,6 +32,18 @@ export interface INewsletter {
         spam: Reliability;
         personalisedLinks: Reliability;
     };
+    rating: IRating
+}
+export interface IRating{
+    rating: number;
+    categories: {
+        [category: string]: IRatingCategory
+    };
+}
+export interface IRatingCategory{
+    categories?: IRating;
+    rating: number;
+    weight?: number;
 }
 export interface IThirdParty {
     embed_as: string[];
