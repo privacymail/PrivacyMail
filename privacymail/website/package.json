@@ -57,7 +57,8 @@
         "selenium-webdriver": "^4.0.0-alpha.7",
         "source-map-loader": "^0.2.4",
         "ts-loader": "^6.2.2",
-        "typescript": "^3.8.3"
+        "typescript": "^3.8.3",
+        "node-fetch": "^2.6.0"
     },
     "husky": {
         "hooks": {
