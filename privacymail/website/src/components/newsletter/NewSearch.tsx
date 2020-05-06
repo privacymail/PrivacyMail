@@ -8,7 +8,7 @@ interface NewSearchProps extends WithTranslation, RouteComponentProps {
 }
 const NewSearch = (props: NewSearchProps) => {
     let { id } = useParams();
-    const hasId = props.history.location.pathname.split("/").length > 2;
+    const hasId = ["service", "serviceNotFound"].includes(props.history.location.pathname.split("/")[1]);
 
     const [newsletter, setNewsletter] = useState<string>((hasId && id) || "");
     useEffect(() => setNewsletter((hasId && id) || ""), [id, hasId]);
