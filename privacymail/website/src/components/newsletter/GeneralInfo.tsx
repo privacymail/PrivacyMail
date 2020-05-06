@@ -64,10 +64,10 @@ const GerneralInfo = (props: GerneralInfoProps) => {
                     <div className="value">
                         {editalble ? (
                             <select value={sector} onChange={e => setSector(e.target.value)}>
-                                {generateOptions(sectors, "unknown")}
+                                {generateOptions(sectors[props.type], "unknown")}
                             </select>
                         ) : (
-                            getCurrentItemTranslation(sectors, props.entity?.sector)
+                            getCurrentItemTranslation(sectors[props.type], props.entity?.sector)
                         )}
                     </div>
                 </div>

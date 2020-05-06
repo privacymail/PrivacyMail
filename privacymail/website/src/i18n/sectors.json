@@ -1,18 +1,26 @@
-[
-    { "key": "activist", "de": "Activist", "en": "Activist" },
-    { "key": "adult", "de": "Adult", "en": "Adult" },
-    { "key": "ads", "de": "Advertising", "en": "Advertising" },
-    { "key": "art", "de": "Art", "en": "Art" },
-    { "key": "b2b", "de": "Business-to-Business", "en": "Business-to-Business" },
-    { "key": "entertainment", "de": "Entertainment", "en": "Entertainment" },
-    { "key": "finance", "de": "Financial", "en": "Financial" },
-    { "key": "games", "de": "Games", "en": "Games" },
-    { "key": "health", "de": "Health", "en": "Health" },
-    { "key": "news", "de": "News", "en": "News" },
-    { "key": "politics", "de": "Political Party / Politician", "en": "Political Party / Politician" },
-    { "key": "reference", "de": "Reference", "en": "Reference" },
-    { "key": "science", "de": "Science", "en": "Science" },
-    { "key": "shopping", "de": "Shopping", "en": "Shopping" },
-    { "key": "sports", "de": "Sports", "en": "Sports" },
-    { "key": "travel", "de": "Travel", "en": "Travel" }
-]
+{
+    "service": [
+        { "key": "activist", "de": "Activist", "en": "Activist" },
+        { "key": "adult", "de": "Adult", "en": "Adult" },
+        { "key": "ads", "de": "Advertising", "en": "Advertising" },
+        { "key": "art", "de": "Art", "en": "Art" },
+        { "key": "b2b", "de": "Business-to-Business", "en": "Business-to-Business" },
+        { "key": "entertainment", "de": "Entertainment", "en": "Entertainment" },
+        { "key": "finance", "de": "Financial", "en": "Financial" },
+        { "key": "games", "de": "Games", "en": "Games" },
+        { "key": "health", "de": "Health", "en": "Health" },
+        { "key": "news", "de": "News", "en": "News" },
+        { "key": "politics", "de": "Political Party / Politician", "en": "Political Party / Politician" },
+        { "key": "reference", "de": "Reference", "en": "Reference" },
+        { "key": "science", "de": "Science", "en": "Science" },
+        { "key": "shopping", "de": "Shopping", "en": "Shopping" },
+        { "key": "sports", "de": "Sports", "en": "Sports" },
+        { "key": "travel", "de": "Travel", "en": "Travel" }
+    ],
+    "embed": [
+        { "key": "tracker", "de": "Tracking / Werbung", "en": "Tracking / Advertising" },
+        { "key": "cdn", "de": "Hosting / Content Distribution", "en": "Hosting / Content Distribution" },
+        { "key": "altdomain", "de": "Alternative Domain eines Newsletters", "en": "Alternative Domain of first party" },
+        { "key": "unknown", "de": "Unbekannt", "en": "Unknown" }
+    ]
+}
