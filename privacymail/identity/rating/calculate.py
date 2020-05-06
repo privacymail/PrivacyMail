@@ -65,7 +65,4 @@ def calculateRating(categories):
 
     penalty = ((weightedRating / accumulatedWeights) - 1) / 5
 
-    if penalty < 0:
-        print("penalty: " + str(accumulatedWeights) + " " + str(weightedRating))
-
-    return max + penalty
+    return {"rating": max + penalty, "penalty": penalty, "categories": categories}

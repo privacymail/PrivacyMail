@@ -66,7 +66,4 @@ def calculateUnpersonalizedLinks(service, weights, maxRatings):
         },
     }
 
-    return {
-        "categories": categories,
-        "rating": calculateRating(categories),
-    }
+    return calculateRating(categories)

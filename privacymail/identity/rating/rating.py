@@ -79,8 +79,5 @@ def getRating(service):
     }
 
 
-    return {
-        'categories': category_rating,
-        'rating': calculateRating(category_rating)
-        }
+    return  calculateRating(category_rating)
 

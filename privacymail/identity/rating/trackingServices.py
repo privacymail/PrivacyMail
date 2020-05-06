@@ -12,7 +12,8 @@ def highNumber(service):
             filterDict(
                 service["third_parties"],
                 lambda key, value: "ONVIEW" in value["embed_as"]
-                and (key.sector == "tracker" or key.sector == "unknown"),
+                and (key.sector == "tracker" or key.sector == "unknown")
+                and key.name != service["service"].name,
             )
         )
     )
@@ -24,6 +25,7 @@ def highNumbersOnLinks(service):
             filterDict(
                 service["third_parties"],
                 lambda key, value: "ONCLICK" in value["embed_as"]
+                and key.name != service["service"].name
                 and (
                     key.sector == "tracker" or key.sector == "unknown"
                 ),  # This unknown might be over sensitv because a lot of thirdparties are not classified yet
@@ -39,6 +41,7 @@ def bigTrackers(service):
                 service["third_parties"],
                 lambda key, value: (
                     (key.sector == "tracker" or key.sector == "unknown")
+                    and key.name != service["service"].name
                     and len(key.services.all()) > 10  # what defines a big tracker
                     and not print(key)
                     and print(len(key.services.all()))
@@ -49,12 +52,23 @@ def bigTrackers(service):
 
 
 def smallTrackers(service):
+    print(
+        filterDict(
+            service["third_parties"],
+            lambda key, value: (
+                (key.sector == "tracker" or key.sector == "unknown")
+                and key.name != service["service"].name
+                and len(key.services.all()) <= 10  # what defines a big tracker
+            ),
+        )
+    )
     return countToRating(
         len(
             filterDict(
                 service["third_parties"],
                 lambda key, value: (
                     (key.sector == "tracker" or key.sector == "unknown")
+                    and key.name != service["service"].name
                     and len(key.services.all()) <= 10  # what defines a big tracker
                 ),
             )
@@ -86,7 +100,4 @@ def calculateTrackingServices(service, weights, maxRatings):
         },
     }
 
-    return {
-        "categories": categories,
-        "rating": calculateRating(categories),
-    }
+    return calculateRating(categories)

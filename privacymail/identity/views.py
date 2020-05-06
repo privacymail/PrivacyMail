@@ -228,7 +228,6 @@ class ServiceView(View):
             "personalisedLinks": "reliable",
         }
         site_params["rating"] = getRating(site_params)
-
         # Run checks
         # for check in checks.SERVICE_CHECKS:
         #    site_params['checks'].append(check(site_params))
