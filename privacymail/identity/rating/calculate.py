@@ -65,4 +65,8 @@ def calculateRating(categories):
 
     penalty = ((weightedRating / accumulatedWeights) - 1) / 5
 
-    return {"rating": max + penalty, "penalty": penalty, "categories": categories}
+    rating = max + penalty
+    if rating > 6:
+        rating = 6
+
+    return {"rating": rating, "penalty": penalty, "categories": categories}
