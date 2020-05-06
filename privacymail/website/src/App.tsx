@@ -74,6 +74,8 @@ const App = () => {
                     <Route key="/" path="/" exact>
                         <div className="page">
                             <Home />
+
+                            <Footer />
                         </div>
                     </Route>
                     <Route key="/newSearch" path="*/:id">
@@ -82,10 +84,11 @@ const App = () => {
                             <div className="content">
                                 <Switch>{getRoutes()}</Switch>
                             </div>
+
+                            <Footer />
                         </div>
                     </Route>
                 </Switch>
-                <Footer />
             </Router>
             <Tooltip />
         </div>
