@@ -32,15 +32,15 @@ export interface INewsletter {
         spam: Reliability;
         personalisedLinks: Reliability;
     };
-    rating: IRating
+    rating: IRating;
 }
-export interface IRating{
+export interface IRating {
     rating: number;
     categories: {
-        [category: string]: IRatingCategory
+        [category: string]: IRatingCategory;
     };
 }
-export interface IRatingCategory{
+export interface IRatingCategory {
     categories?: IRating;
     rating: number;
     weight?: number;
