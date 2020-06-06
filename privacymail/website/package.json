@@ -33,6 +33,7 @@
     "scripts": {
         "start": "HTTPS=true react-scripts start --host 0.0.0.0",
         "build": "react-scripts build",
+        "buildAndServe": "react-scripts build && serve -s build ",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
         "format": "prettier --write 'src/**/*.js' 'src/**/*.json' 'src/**/*.ts' 'src/**/*.tsx'",
