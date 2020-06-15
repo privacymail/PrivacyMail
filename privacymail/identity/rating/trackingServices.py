@@ -59,16 +59,6 @@ def bigTrackers(service, rMin, rMax):
                         )["services"]
                     )
                     > 10  # what defines a big tracker
-                    and not print(key)
-                    and print(
-                        len(
-                            cache.get(
-                                Thirdparty.objects.get(
-                                    host=key.name
-                                ).derive_thirdparty_cache_path()
-                            )["services"]
-                        )
-                    )
                 ),
             )
         ),
