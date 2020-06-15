@@ -3,8 +3,8 @@ def scaleToRating(value, rMax):
 
 
 def countToRating(count, minRating, maxRating):
-    minRating = (minRating-1)/(maxRating-1)
-    return -pow(minRating, count) + 1
+    a = (minRating - 1) / (maxRating - 1)
+    return -pow(1 - a, count) + 1
 
 
 def getAccumulateWeights(categories):

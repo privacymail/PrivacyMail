@@ -10,13 +10,17 @@ from mailfetcher.models import Thirdparty
 
 
 def highNumber(service, rMin, rMax):
-
     return countToRating(
         len(
             filterDict(
                 service["third_parties"],
-                lambda key, value: "ONVIEW" in value["embed_as"]
-                and (key.sector == "tracker" or key.sector == "unknown")
+                lambda key, value: (
+                    (
+                        "ONVIEW" in value["embed_as"]
+                        and (key.sector == "tracker" or key.sector == "unknown")
+                    )
+                    or ("ONCLICK" in value["embed_as"] and (key.sector == "tracker"))
+                )
                 and key.name != service["service"].name,
             )
         ),
@@ -32,7 +36,15 @@ def bigTrackers(service, rMin, rMax):
             filterDict(
                 service["third_parties"],
                 lambda key, value: (
-                    (key.sector == "tracker" or key.sector == "unknown")
+                    (
+                        (
+                            "ONVIEW" in value["embed_as"]
+                            and (key.sector == "tracker" or key.sector == "unknown")
+                        )
+                        or (
+                            "ONCLICK" in value["embed_as"] and (key.sector == "tracker")
+                        )
+                    )
                     and key.name != service["service"].name
                     and len(
                         cache.get(
@@ -56,7 +68,15 @@ def smallTrackers(service, rMin, rMax):
             filterDict(
                 service["third_parties"],
                 lambda key, value: (
-                    (key.sector == "tracker" or key.sector == "unknown")
+                    (
+                        (
+                            "ONVIEW" in value["embed_as"]
+                            and (key.sector == "tracker" or key.sector == "unknown")
+                        )
+                        or (
+                            "ONCLICK" in value["embed_as"] and (key.sector == "tracker")
+                        )
+                    )
                     and key.name != service["service"].name
                     and len(
                         cache.get(
