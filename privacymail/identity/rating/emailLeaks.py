@@ -17,15 +17,15 @@ def calculateEmailLeaksThirdparties(
         return 0
 
 
-def calculateEmailLeaks(service, weights, maxRatings):
+def calculateEmailLeaks(service, weights, rMin, rMax):
     categories = {
         "spam": {
-            "rating": scaleToRating(calculateSpam(service), maxRatings["spam"]),
+            "rating": scaleToRating(calculateSpam(service), rMax["spam"]),
             "weight": weights["spam"],
         },
         "emailLeaks": {
             "rating": scaleToRating(
-                calculateEmailLeaksThirdparties(service), maxRatings["thirdparties"]
+                calculateEmailLeaksThirdparties(service), rMax["thirdparties"]
             ),
             "weight": weights["thirdparties"],
         },

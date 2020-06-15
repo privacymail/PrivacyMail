@@ -1,9 +1,10 @@
-def scaleToRating(value, scale):
-    return (value * (scale - 1)) + 1
+def scaleToRating(value, rMax):
+    return (value * (rMax - 1)) + 1
 
 
-def countToRating(count, slope=0.5):
-    return -pow(slope, count) + 1
+def countToRating(count, minRating, maxRating):
+    minRating = (minRating-1)/(maxRating-1)
+    return -pow(minRating, count) + 1
 
 
 def getAccumulateWeights(categories):

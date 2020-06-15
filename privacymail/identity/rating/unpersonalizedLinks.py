@@ -6,7 +6,7 @@ from identity.rating.calculate import (
 from identity.util import filterDict
 
 
-def toOwnWebsite(service):
+def toOwnWebsite(service, rMin, rMax):
     return len(
         filterDict(
             service["third_parties"],
@@ -18,7 +18,7 @@ def toOwnWebsite(service):
 
 
 def toThirdParties(
-    service,
+    service, rMin, rMax
 ):  # TODO should I filter the links to the newsletters own site?
     return countToRating(
         len(
@@ -28,41 +28,51 @@ def toThirdParties(
                 and key.name != service["service"].name
                 and not value["receives_identifier"],
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def toForeignCountries(service):
+def toTrackers(service, rMin, rMax):
     return countToRating(
         len(
             filterDict(
                 service["third_parties"],
                 lambda key, value: "ONCLICK" in value["embed_as"]
-                and key.country_of_origin != ""
-                and service["service"].country_of_origin != ""
-                and key.country_of_origin == service["service"].country_of_origin,
+                and key.name != service["service"].name
+                and (
+                    key.sector == "tracker"
+                ),  # This unknown might be over sensitv because a lot of thirdparties are not classified yet
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def calculateUnpersonalizedLinks(service, weights, maxRatings):
+def calculateUnpersonalizedLinks(service, weights, rMin, rMax):
     categories = {
         "toOwnWebsite": {
-            "rating": scaleToRating(toOwnWebsite(service), maxRatings["toOwnWebsite"]),
+            "rating": scaleToRating(
+                toOwnWebsite(service, rMin["toOwnWebsite"], rMax["toOwnWebsite"]),
+                rMax["toOwnWebsite"],
+            ),
             "weight": weights["toOwnWebsite"],
         },
         "toThirdParties": {
             "rating": scaleToRating(
-                toThirdParties(service), maxRatings["toThirdParties"]
+                toThirdParties(service, rMin["toThirdParties"], rMax["toThirdParties"]),
+                rMax["toThirdParties"],
             ),
             "weight": weights["toThirdParties"],
         },
-        "toForeignCountries": {
+        "toTrackers": {
             "rating": scaleToRating(
-                toForeignCountries(service), maxRatings["toForeignCountries"]
+                toTrackers(service, rMin["toTrackers"], rMax["toTrackers"]),
+                rMax["toTrackers"],
             ),
-            "weight": weights["toForeignCountries"],
+            "weight": weights["toTrackers"],
         },
     }
 

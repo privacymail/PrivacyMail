@@ -1,7 +1,7 @@
 from identity.rating.calculate import scaleToRating
 
 
-def calculateABTesting(service, weight, maxRating):
+def calculateABTesting(service, weight,rMin, rMax):
     if service["suspected_AB_testing"]:
         rating = 1
     else:
@@ -9,5 +9,5 @@ def calculateABTesting(service, weight, maxRating):
 
     return {
         "weight": weight,
-        "rating": scaleToRating(rating, maxRating),
+        "rating": scaleToRating(rating, rMax),
     }

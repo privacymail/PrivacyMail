@@ -4,9 +4,13 @@ from identity.rating.calculate import (
     countToRating,
 )
 from identity.util import filterDict
+from django.core.cache import cache
+
+from mailfetcher.models import Thirdparty
 
 
-def highNumber(service):
+def highNumber(service, rMin, rMax):
+
     return countToRating(
         len(
             filterDict(
@@ -15,11 +19,13 @@ def highNumber(service):
                 and (key.sector == "tracker" or key.sector == "unknown")
                 and key.name != service["service"].name,
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def highNumbersOnLinks(service):
+def highNumbersOnLinks(service, rMin, rMax):
     return countToRating(
         len(
             filterDict(
@@ -30,11 +36,14 @@ def highNumbersOnLinks(service):
                     key.sector == "tracker" or key.sector == "unknown"
                 ),  # This unknown might be over sensitv because a lot of thirdparties are not classified yet
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def bigTrackers(service):
+def bigTrackers(service, rMin, rMax):
+
     return countToRating(
         len(
             filterDict(
@@ -42,26 +51,33 @@ def bigTrackers(service):
                 lambda key, value: (
                     (key.sector == "tracker" or key.sector == "unknown")
                     and key.name != service["service"].name
-                    and len(key.services.all()) > 10  # what defines a big tracker
+                    and len(
+                        cache.get(
+                            Thirdparty.objects.get(
+                                host=key.name
+                            ).derive_thirdparty_cache_path()
+                        )["services"]
+                    )
+                    > 10  # what defines a big tracker
                     and not print(key)
-                    and print(len(key.services.all()))
+                    and print(
+                        len(
+                            cache.get(
+                                Thirdparty.objects.get(
+                                    host=key.name
+                                ).derive_thirdparty_cache_path()
+                            )["services"]
+                        )
+                    )
                 ),
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def smallTrackers(service):
-    print(
-        filterDict(
-            service["third_parties"],
-            lambda key, value: (
-                (key.sector == "tracker" or key.sector == "unknown")
-                and key.name != service["service"].name
-                and len(key.services.all()) <= 10  # what defines a big tracker
-            ),
-        )
-    )
+def smallTrackers(service, rMin, rMax):
     return countToRating(
         len(
             filterDict(
@@ -69,32 +85,42 @@ def smallTrackers(service):
                 lambda key, value: (
                     (key.sector == "tracker" or key.sector == "unknown")
                     and key.name != service["service"].name
-                    and len(key.services.all()) <= 10  # what defines a big tracker
+                    and len(
+                        cache.get(
+                            Thirdparty.objects.get(
+                                host=key.name
+                            ).derive_thirdparty_cache_path()
+                        )["services"]
+                    )
+                    <= 10  # what defines a big tracker
                 ),
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def calculateTrackingServices(service, weights, maxRatings):
+def calculateTrackingServices(service, weights, rMin, rMax):
     categories = {
         "highNumber": {
-            "rating": scaleToRating(highNumber(service), maxRatings["highNumber"]),
+            "rating": scaleToRating(
+                highNumber(service, rMin["highNumber"], rMax["highNumber"]),
+                rMax["highNumber"],
+            ),
             "weight": weights["highNumber"],
         },
-        "highNumbersOnLinks": {
-            "rating": scaleToRating(
-                highNumbersOnLinks(service), maxRatings["highNumbersOnLinks"]
-            ),
-            "weight": weights["highNumbersOnLinks"],
-        },
         "bigTrackers": {
-            "rating": scaleToRating(bigTrackers(service), maxRatings["bigTrackers"]),
+            "rating": scaleToRating(
+                bigTrackers(service, rMin["bigTrackers"], rMax["bigTrackers"]),
+                rMax["bigTrackers"],
+            ),
             "weight": weights["bigTrackers"],
         },
         "smallTrackers": {
             "rating": scaleToRating(
-                smallTrackers(service), maxRatings["smallTrackers"]
+                smallTrackers(service, rMin["smallTrackers"], rMax["smallTrackers"]),
+                rMax["smallTrackers"],
             ),
             "weight": weights["smallTrackers"],
         },

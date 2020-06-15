@@ -6,7 +6,7 @@ from identity.rating.calculate import (
 from identity.util import filterDict
 
 
-def calculatePersonalizedLinksToOwnWebsite(service):  # TODO
+def calculatePersonalizedLinksToOwnWebsite(service, rMin, rMax):  # TODO
     if (
         len(
             filterDict(
@@ -24,7 +24,7 @@ def calculatePersonalizedLinksToOwnWebsite(service):  # TODO
 
 
 def calculatePersonalizedLinksThirdParties(
-    service,
+    service, rMin, rMax
 ):  # TODO should I filter the links to the newsletters own site?
     return countToRating(
         len(
@@ -34,23 +34,29 @@ def calculatePersonalizedLinksThirdParties(
                 and key.name != service["service"].name
                 and value["receives_identifier"],
             )
-        )
+        ),
+        rMin,
+        rMax,
     )
 
 
-def calculatePersonalizedLinks(service, weights, maxRatings):
+def calculatePersonalizedLinks(service, weights, rMin, rMax):
     categories = {
         "toOwnWebsite": {
             "rating": scaleToRating(
-                calculatePersonalizedLinksToOwnWebsite(service),
-                maxRatings["toOwnWebsite"],
+                calculatePersonalizedLinksToOwnWebsite(
+                    service, rMin["toOwnWebsite"], rMax["toOwnWebsite"],
+                ),
+                rMax["toOwnWebsite"],
             ),
             "weight": weights["toOwnWebsite"],
         },
         "toThirdParties": {
             "rating": scaleToRating(
-                calculatePersonalizedLinksThirdParties(service),
-                maxRatings["toThirdParties"],
+                calculatePersonalizedLinksThirdParties(
+                    service, rMin["toOwnWebsite"], rMax["toOwnWebsite"]
+                ),
+                rMax["toOwnWebsite"],
             ),
             "weight": weights["toThirdParties"],
         },

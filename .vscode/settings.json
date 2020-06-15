@@ -1,5 +1,4 @@
 {
-  "python.pythonPath": "venv/bin/python3.6",
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": true
