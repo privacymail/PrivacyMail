@@ -1,6 +1,6 @@
 const fs = require("fs");
 const prettier = require("prettier");
-const prettierConfig = require("../package.json").prettier;
+const prettierConfig = require("../../package.json").prettier;
 const fetch = require("node-fetch");
 
 const execute = (path, method = "GET", payload = {}) => {
@@ -13,7 +13,6 @@ const execute = (path, method = "GET", payload = {}) => {
     }
     /* let url = "http://" + process.env.REACT_APP_BACKEND_URL + ":" + process.env.REACT_APP_BACKEND_PORT + "/";
      */
-    console.log(path);
 
     return new Promise((resolve, reject) => {
         fetch(path, options)
@@ -27,6 +26,7 @@ const execute = (path, method = "GET", payload = {}) => {
                     console.error(json.error || json.exeption || json);
                     reject(json.error || json.exeption || json);
                 } else {
+                    console.log(path, json.rating.rating, json.rating.penalty);
                     resolve(json);
                 }
             })
@@ -40,9 +40,9 @@ const execute = (path, method = "GET", payload = {}) => {
 const executeFetches = async () => {
     const results = [];
 
-    for (let i = 1; i < 1000; i++) {
+    for (let i = 1; i < 1837; i++) {
         try {
-            const url = "http://localhost:8000/api/service/" + i;
+            const url = "http://jschad.de/api/service/" + i;
             results.push(await execute(url));
         } catch (error) {
             console.log("Failed for ", i);

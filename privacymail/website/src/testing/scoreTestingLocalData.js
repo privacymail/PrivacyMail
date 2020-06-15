@@ -1,10 +1,10 @@
 const fs = require("fs");
 const prettier = require("prettier");
-const prettierConfig = require("../package.json").prettier;
+const prettierConfig = require("../../package.json").prettier;
 const fetch = require("node-fetch");
 
 const executeFetches = async () => {
-    const results = JSON.parse(fs.readFileSync("./resultsWithPenalty.json"));
+    let results = JSON.parse(fs.readFileSync("./resultsWithPenalty.json"));
 
     const stats = {
         A: 0,
@@ -18,6 +18,8 @@ const executeFetches = async () => {
     const penalty = {
         avg: 0
     };
+
+    //results = results.filter(result => result.count_mails >= 1);
 
     results.forEach(result => {
         const oldResult = result;
@@ -49,14 +51,29 @@ const executeFetches = async () => {
         penalty[roundedPenalty] = penalty[roundedPenalty] ? penalty[roundedPenalty] + 1 : 1;
         penalty.avg += result.penalty;
 
-        if (Math.round(result.rating) === 3) {
+        let hasOnView = 0;
+        let hasOnClick = 0;
+
+        /*oldResult.third_parties.forEach(trd => {
+            if (trd.embed_as.includes("ONVIEW")) {
+                hasOnView++;
+            }
+            if (trd.embed_as.includes("ONCLICK")) {
+                hasOnClick++;
+            }
+        });
+
+        if (hasOnView === 0 && hasOnClick >= 2) {
+            console.log(oldResult.service.name);
+        }*/
+        if (oldResult.count_mails === 0 && oldResult.rating.rating > 1) {
             console.log(oldResult.service.name);
         }
     });
     stats.avg = stats.avg / results.length;
     penalty.avg = penalty.avg / results.length;
 
-    //console.log("Stats: ", stats);
+    console.log("Stats: ", stats);
     //console.log("Penalty: ", penalty);
 };
 
