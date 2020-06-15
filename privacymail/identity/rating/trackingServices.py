@@ -9,21 +9,6 @@ from django.core.cache import cache
 from mailfetcher.models import Thirdparty
 
 
-def highNumber(service, rMin, rMax):
-
-    return countToRating(
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: "ONVIEW" in value["embed_as"]
-                and (key.sector == "tracker" or key.sector == "unknown")
-                and key.name != service["service"].name,
-            )
-        ),
-        rMin,
-        rMax,
-    )
-
 
 def highNumbersOnLinks(service, rMin, rMax):
     return countToRating(

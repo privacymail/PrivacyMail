@@ -20,18 +20,26 @@ def toOwnWebsite(service, rMin, rMax):
 def toThirdParties(
     service, rMin, rMax
 ):  # TODO should I filter the links to the newsletters own site?
-    return countToRating(
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: "ONCLICK" in value["embed_as"]
-                and key.name != service["service"].name
-                and not value["receives_identifier"],
-            )
-        ),
-        rMin,
-        rMax,
+
+    diffrentCountries = len(
+        filterDict(
+            service["third_parties"],
+            lambda key, value: "ONCLICK" in value["embed_as"]
+            and key.name != service["service"].name
+            and not value["receives_identifier"],
+            and key.country_of_origin != service["service"].country_of_origin,
+        )
     )
+    sameCountry = len(
+        filterDict(
+            service["third_parties"],
+            lambda key, value: "ONCLICK" in value["embed_as"]
+            and key.name != service["service"].name
+            and not value["receives_identifier"],
+            and key.country_of_origin == service["service"].country_of_origin,
+        )
+    )
+    return countToRating(diffrentCountries * 1.5 + sameCountry, rMin, rMax,)
 
 
 def toTrackers(service, rMin, rMax):
