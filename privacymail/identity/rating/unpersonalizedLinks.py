@@ -26,7 +26,7 @@ def toThirdParties(
             service["third_parties"],
             lambda key, value: "ONCLICK" in value["embed_as"]
             and key.name != service["service"].name
-            and not value["receives_identifier"],
+            and not value["receives_identifier"]
             and key.country_of_origin != service["service"].country_of_origin,
         )
     )
@@ -35,7 +35,7 @@ def toThirdParties(
             service["third_parties"],
             lambda key, value: "ONCLICK" in value["embed_as"]
             and key.name != service["service"].name
-            and not value["receives_identifier"],
+            and not value["receives_identifier"]
             and key.country_of_origin == service["service"].country_of_origin,
         )
     )
