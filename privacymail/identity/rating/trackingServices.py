@@ -96,13 +96,6 @@ def smallTrackers(service, rMin, rMax):
 
 def calculateTrackingServices(service, weights, rMin, rMax):
     categories = {
-        "highNumber": {
-            "rating": scaleToRating(
-                highNumber(service, rMin["highNumber"], rMax["highNumber"]),
-                rMax["highNumber"],
-            ),
-            "weight": weights["highNumber"],
-        },
         "bigTrackers": {
             "rating": scaleToRating(
                 bigTrackers(service, rMin["bigTrackers"], rMax["bigTrackers"]),

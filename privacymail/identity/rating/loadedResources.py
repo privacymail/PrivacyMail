@@ -9,7 +9,10 @@ def CDNs(service, rMin, rMax):
             filterDict(
                 service["third_parties"],
                 lambda key, value: "ONVIEW" in value["embed_as"]
-                and key.sector != "tracker",
+                and (
+                    (key.sector != "tracker" and key.sector != "unknown")
+                    or key.name == service["service"].name
+                ),
             )
         ),
         rMin,

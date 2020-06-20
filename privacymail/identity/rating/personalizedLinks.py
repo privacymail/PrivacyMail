@@ -54,9 +54,9 @@ def calculatePersonalizedLinks(service, weights, rMin, rMax):
         "toThirdParties": {
             "rating": scaleToRating(
                 calculatePersonalizedLinksThirdParties(
-                    service, rMin["toOwnWebsite"], rMax["toOwnWebsite"]
+                    service, rMin["toThirdParties"], rMax["toThirdParties"]
                 ),
-                rMax["toOwnWebsite"],
+                rMax["toThirdParties"],
             ),
             "weight": weights["toThirdParties"],
         },

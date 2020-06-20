@@ -26,12 +26,12 @@ const execute = (path, method = "GET", payload = {}) => {
                     console.error(json.error || json.exeption || json);
                     reject(json.error || json.exeption || json);
                 } else {
-                    console.log(path, json.rating.rating, json.rating.penalty);
+                    console.log(json.service.name, json.rating.rating, json.rating.penalty);
                     resolve(json);
                 }
             })
             .catch(error => {
-                console.error(error);
+                throw new Error(error);
                 reject(error);
             });
     });
@@ -42,7 +42,7 @@ const executeFetches = async () => {
 
     for (let i = 1; i < 1837; i++) {
         try {
-            const url = "http://jschad.de/api/service/" + i;
+            const url = "http://localhost:8000/api/service/" + i;
             results.push(await execute(url));
         } catch (error) {
             console.log("Failed for ", i);
@@ -58,9 +58,7 @@ const executeFetches = async () => {
         F: 0,
         avg: 0
     };
-    const penalty = {
-        avg: 0
-    };
+    const penalty = [];
 
     results.forEach(result => {
         switch (Math.round(result.rating.rating)) {

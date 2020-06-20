@@ -15,11 +15,24 @@ const executeFetches = async () => {
         F: 0,
         avg: 0
     };
-    const penalty = {
-        avg: 0
-    };
+    const penalty = [];
+    for (let index = 0; index < 100; index++) {
+        penalty[index] = 0;
+    }
+    console.log("before", results.length);
 
-    //results = results.filter(result => result.count_mails >= 1);
+    results = results.filter(result => !(result.count_mails === 0 && result.third_parties.length === 0));
+
+    console.log("after", results.length);
+
+    /*results = results.filter(result => {
+        const roundedPenalty = Math.round(result.rating.penalty * 100) / 100;
+
+        if (roundedPenalty === 0) {
+            return true;
+        }
+        return false;
+    }); */
 
     results.forEach(result => {
         const oldResult = result;
@@ -48,11 +61,17 @@ const executeFetches = async () => {
         stats.avg += result.rating;
 
         const roundedPenalty = Math.round(result.penalty * 100) / 100;
-        penalty[roundedPenalty] = penalty[roundedPenalty] ? penalty[roundedPenalty] + 1 : 1;
-        penalty.avg += result.penalty;
+
+        const index = Math.floor(roundedPenalty * 100);
+        penalty[index] = penalty[index] ? penalty[index] + 1 : 1;
+        //penalty.avg += result.penalty;
 
         let hasOnView = 0;
         let hasOnClick = 0;
+
+        if (Math.round(result.rating) != Math.round(result.rating - result.penalty)) {
+            console.log(oldResult.service.name);
+        }
 
         /*oldResult.third_parties.forEach(trd => {
             if (trd.embed_as.includes("ONVIEW")) {
@@ -65,16 +84,17 @@ const executeFetches = async () => {
 
         if (hasOnView === 0 && hasOnClick >= 2) {
             console.log(oldResult.service.name);
-        }*/
+        }
         if (oldResult.count_mails === 0 && oldResult.rating.rating > 1) {
             console.log(oldResult.service.name);
-        }
+        }*/
     });
     stats.avg = stats.avg / results.length;
-    penalty.avg = penalty.avg / results.length;
+    // penalty.avg = penalty.avg / results.length;
 
     console.log("Stats: ", stats);
-    //console.log("Penalty: ", penalty);
+
+    //penalty.forEach((elem, index) => console.log(elem));
 };
 
 executeFetches();
