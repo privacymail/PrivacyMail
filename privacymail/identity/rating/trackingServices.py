@@ -29,87 +29,68 @@ def highNumber(service, rMin, rMax):
     )
 
 
-def bigTrackers(service, rMin, rMax):
+def bigTrackers(service):
 
-    return countToRating(
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: (
+    return len(
+        filterDict(
+            service["third_parties"],
+            lambda key, value: (
+                (
                     (
-                        (
-                            "ONVIEW" in value["embed_as"]
-                            and (key.sector == "tracker" or key.sector == "unknown")
-                        )
-                        or (
-                            "ONCLICK" in value["embed_as"] and (key.sector == "tracker")
-                        )
+                        "ONVIEW" in value["embed_as"]
+                        and (key.sector == "tracker" or key.sector == "unknown")
                     )
-                    and key.name != service["service"].name
-                    and len(
-                        cache.get(
-                            Thirdparty.objects.get(
-                                host=key.name
-                            ).derive_thirdparty_cache_path()
-                        )["services"]
-                    )
-                    > 10  # what defines a big tracker
-                ),
-            )
-        ),
-        rMin,
-        rMax,
+                    or ("ONCLICK" in value["embed_as"] and (key.sector == "tracker"))
+                )
+                and key.name != service["service"].name
+                and len(
+                    cache.get(
+                        Thirdparty.objects.get(
+                            host=key.name
+                        ).derive_thirdparty_cache_path()
+                    )["services"]
+                )
+                > 10  # what defines a big tracker
+            ),
+        )
     )
 
 
-def smallTrackers(service, rMin, rMax):
-    return countToRating(
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: (
+def smallTrackers(service):
+    return len(
+        filterDict(
+            service["third_parties"],
+            lambda key, value: (
+                (
                     (
-                        (
-                            "ONVIEW" in value["embed_as"]
-                            and (key.sector == "tracker" or key.sector == "unknown")
-                        )
-                        or (
-                            "ONCLICK" in value["embed_as"] and (key.sector == "tracker")
-                        )
+                        "ONVIEW" in value["embed_as"]
+                        and (key.sector == "tracker" or key.sector == "unknown")
                     )
-                    and key.name != service["service"].name
-                    and len(
-                        cache.get(
-                            Thirdparty.objects.get(
-                                host=key.name
-                            ).derive_thirdparty_cache_path()
-                        )["services"]
-                    )
-                    <= 10  # what defines a big tracker
-                ),
-            )
-        ),
-        rMin,
-        rMax,
+                    or ("ONCLICK" in value["embed_as"] and (key.sector == "tracker"))
+                )
+                and key.name != service["service"].name
+                and len(
+                    cache.get(
+                        Thirdparty.objects.get(
+                            host=key.name
+                        ).derive_thirdparty_cache_path()
+                    )["services"]
+                )
+                <= 10  # what defines a big tracker
+            ),
+        )
     )
+
+
+def trackers(service, rMin, rMax):
+    return countToRating(bigTrackers(service) * 2 + smallTrackers(service), rMin, rMax,)
 
 
 def calculateTrackingServices(service, weights, rMin, rMax):
-    categories = {
-        "bigTrackers": {
-            "rating": scaleToRating(
-                bigTrackers(service, rMin["bigTrackers"], rMax["bigTrackers"]),
-                rMax["bigTrackers"],
-            ),
-            "weight": weights["bigTrackers"],
-        },
-        "smallTrackers": {
-            "rating": scaleToRating(
-                smallTrackers(service, rMin["smallTrackers"], rMax["smallTrackers"]),
-                rMax["smallTrackers"],
-            ),
-            "weight": weights["smallTrackers"],
-        },
+    return {
+        "weight": weights["bigTrackers"],
+        "rating": scaleToRating(
+            trackers(service, rMin["smallTrackers"], rMax["bigTrackers"]),
+            rMax["bigTrackers"],
+        ),
     }
-
-    return calculateRating(categories)
