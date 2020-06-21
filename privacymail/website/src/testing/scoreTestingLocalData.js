@@ -69,10 +69,6 @@ const executeFetches = async () => {
         let hasOnView = 0;
         let hasOnClick = 0;
 
-        if (Math.round(result.rating) != Math.round(result.rating - result.penalty)) {
-            console.log(oldResult.service.name);
-        }
-
         /*oldResult.third_parties.forEach(trd => {
             if (trd.embed_as.includes("ONVIEW")) {
                 hasOnView++;
@@ -84,10 +80,10 @@ const executeFetches = async () => {
 
         if (hasOnView === 0 && hasOnClick >= 2) {
             console.log(oldResult.service.name);
-        }
-        if (oldResult.count_mails === 0 && oldResult.rating.rating > 1) {
-            console.log(oldResult.service.name);
         }*/
+        if (oldResult.rating.penalty > 0.5) {
+            console.log(oldResult.service.name);
+        }
     });
     stats.avg = stats.avg / results.length;
     // penalty.avg = penalty.avg / results.length;
