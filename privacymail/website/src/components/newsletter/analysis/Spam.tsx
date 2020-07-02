@@ -31,12 +31,12 @@ const SpamSmall = (props: SpamProps) => {
     };
     const status = getStatus(props.newsletter);
     return (
-        <div className="analysisSmall">
+        <>
             <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
             <div className="describeText">
                 {status === PassOrNotState.Passed ? <Trans>analysis_Spam_no</Trans> : <Trans>analysis_Spam</Trans>}
             </div>
-        </div>
+        </>
     );
 };
 
@@ -45,7 +45,7 @@ interface SpamBigProps {
 }
 const SpamBig = (props: SpamBigProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <div>
                 <h2>
                     <Trans>analysis_problemHeadline</Trans>
@@ -58,7 +58,7 @@ const SpamBig = (props: SpamBigProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 

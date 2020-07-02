@@ -33,7 +33,7 @@ const ABTestingSmall = (props: ABTestingProps) => {
     };
     const status = getStatus(props.newsletter);
     return (
-        <div className="analysisSmall">
+        <>
             <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
             <div className="describeText">
                 {status === PassOrNotState.Passed ? (
@@ -42,7 +42,7 @@ const ABTestingSmall = (props: ABTestingProps) => {
                     <Trans>analysis_abtesting</Trans>
                 )}
             </div>
-        </div>
+        </>
     );
 };
 
@@ -51,7 +51,7 @@ interface ABTestingBigProps {
 }
 const ABTestingBig = (props: ABTestingBigProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <div>
                 <h2>
                     <Trans>analysis_problemHeadline</Trans>
@@ -64,7 +64,7 @@ const ABTestingBig = (props: ABTestingBigProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 

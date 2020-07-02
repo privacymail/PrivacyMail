@@ -1,0 +1,33 @@
+.collapsibleItem {
+    border-top: $divider-border;
+    padding: 1rem 0px;
+    .expandable {
+        width: 24px;
+        margin-left: auto;
+        margin-right: 1rem;
+
+        > div {
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 50ms;
+            span {
+                font-size: 1.5rem;
+            }
+        }
+        .expanded {
+            transform: rotate(180deg);
+        }
+        cursor: pointer;
+
+        object {
+            padding: auto;
+        }
+    }
+    .collapsibleSmall {
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+    .collapsibleBig {
+        margin: 1rem 0rem 1rem 1rem;
+        border-top: $divider-border;
+    }
+}

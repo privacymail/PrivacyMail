@@ -11,13 +11,13 @@ interface CollapsibleItemProps {
 const CollapsibleItem = (props: CollapsibleItemProps) => {
     const [isExpanded, setIsExpanded] = useState(props.defaultOpen || false);
     return (
-        <div className="analysisItem">
+        <div className="collapsibleItem">
             <Collapsible
                 onOpening={() => setIsExpanded(true)}
                 onClosing={() => setIsExpanded(false)}
                 open={props.defaultOpen}
                 trigger={
-                    <div className="analysisSmall">
+                    <div className="collapsibleSmall">
                         {props.children?.[0] || props.small}
                         <div className="expandable">
                             <Icon className={isExpanded ? " expanded" : " closed"}>expand</Icon>
@@ -25,7 +25,7 @@ const CollapsibleItem = (props: CollapsibleItemProps) => {
                     </div>
                 }
             >
-                {props.children?.filter((e, index) => index !== 0) || props.big}
+                <div className="collapsibleBig">{props.children?.filter((e, index) => index !== 0) || props.big}</div>
             </Collapsible>
         </div>
     );

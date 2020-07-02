@@ -21,17 +21,17 @@ const EmbedOnClickThirdparties = (props: OnClickThirdpartiesProps) => {
 
 const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
     return (
-        <div className="analysisSmall">
+        <>
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
                 <Trans>embed_onclickThirdPartyShort</Trans>
             </div>
-        </div>
+        </>
     );
 };
 const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <h2>
                 <Trans>embed_connections</Trans>
             </h2>
@@ -50,7 +50,7 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 

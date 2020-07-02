@@ -22,17 +22,17 @@ const EmbedOnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
 
 const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
-        <div className="analysisSmall">
+        <>
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
                 <Trans>embed_onopenThirdPartyShort</Trans>
             </div>
-        </div>
+        </>
     );
 };
 const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <h2>
                 <Trans>embed_connections</Trans>
             </h2>
@@ -51,7 +51,7 @@ const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 

@@ -34,7 +34,7 @@ const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
     const newsletter = props.newsletter as any;
     const status = getStatus(newsletter?.third_parties || newsletter?.services);
     return (
-        <div className="analysisSmall">
+        <>
             <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
             <div className="describeText">
                 {status === PassOrNotState.Passed ? (
@@ -43,7 +43,7 @@ const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
                     <Trans>embed_PersonalisedLinks</Trans>
                 )}
             </div>
-        </div>
+        </>
     );
 };
 
@@ -52,7 +52,7 @@ interface PersonalisedLinksBigProps {
 }
 const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <div>
                 <h2>
                     <Trans>embed_problemHeadline</Trans>
@@ -65,7 +65,7 @@ const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 

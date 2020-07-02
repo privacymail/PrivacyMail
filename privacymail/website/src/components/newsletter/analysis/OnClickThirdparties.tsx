@@ -24,7 +24,7 @@ const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
 
 const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
     return (
-        <div className="analysisSmall">
+        <>
             <div className="summarizedInfo">
                 <ColoredNumbers
                     number={props.thirdparties?.length}
@@ -34,12 +34,12 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
             <div className="describeText">
                 <Trans>analysis_onclickThirdPartyShort</Trans>
             </div>
-        </div>
+        </>
     );
 };
 const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <h2>
                 <Trans>analysis_connections</Trans>
             </h2>
@@ -57,7 +57,7 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 

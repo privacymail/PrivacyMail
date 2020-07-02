@@ -3,15 +3,8 @@ $summarizeFontSize: 3rem;
 .analysis {
     padding-left: $paddingLevel;
 
-    .analysisItem {
-        border-top: $divider-border;
-        padding: 1rem 0px;
-
-        .analysisSmall {
-            width: 100%;
-            display: flex;
-            align-items: center;
-
+    .collapsibleItem {
+        .collapsibleSmall {
             .summarizedInfo {
                 width: 20%;
                 min-width: 100px;
@@ -32,29 +25,9 @@ $summarizeFontSize: 3rem;
                     }
                 }
             }
-            .expandable {
-                width: 24px;
-                margin-left: auto;
-                margin-right: 1rem;
-
-                > div {
-                    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 50ms;
-                    span {
-                        font-size: 1.5rem;
-                    }
-                }
-                .expanded {
-                    transform: rotate(180deg);
-                }
-                cursor: pointer;
-
-                object {
-                    padding: auto;
-                }
-            }
         }
 
-        .analysisBig {
+        .collapsibleBig {
             margin: 1rem 0rem 1rem 1rem;
             border-top: $divider-border;
 

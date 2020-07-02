@@ -24,7 +24,7 @@ const OnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
 
 const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
-        <div className="analysisSmall">
+        <>
             <div className="summarizedInfo">
                 <ColoredNumbers
                     number={props.thirdparties?.length}
@@ -34,12 +34,12 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
             <div className="describeText">
                 <Trans>analysis_onopenThirdPartyShort</Trans>
             </div>
-        </div>
+        </>
     );
 };
 const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
-        <div className="analysisBig">
+        <>
             <h2>
                 <Trans>analysis_connections</Trans>
             </h2>
@@ -58,7 +58,7 @@ const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-        </div>
+        </>
     );
 };
 
