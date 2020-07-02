@@ -21,7 +21,7 @@ const ABTesting = (props: ABTestingProps) => {
 
 const ABTestingSmall = (props: ABTestingProps) => {
     const getStatus = (newsletter: INewsletter | undefined) => {
-        if (newsletter?.num_different_idents && newsletter?.num_different_idents <= 2) {
+        if (newsletter?.num_different_idents && newsletter?.num_different_idents < 2) {
             return PassOrNotState.Disabled;
         } else if (newsletter?.suspected_AB_testing === false) {
             return PassOrNotState.Passed;

@@ -27,7 +27,7 @@ const Newsletter = (props: NewsletterProps) => {
             <div className="newsletter">
                 <FaqHint />
                 <PrivacyRating privacyRating={newsletter?.rating} newsletter={newsletter?.service.name || ""} />
-                {newsletter && newsletter?.num_different_idents < 3 && (
+                {newsletter && newsletter?.num_different_idents < 2 && (
                     <IdentityAlert newsletterName={newsletter?.service.name} />
                 )}
                 <div className="divider" />
