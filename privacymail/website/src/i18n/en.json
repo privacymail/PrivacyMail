@@ -35,6 +35,7 @@
     "analysis_thridpartysByCategory": "Split by category",
     "analysis_unreliable": "Known scan errors",
     "check_circle": "Third party spam",
+    "copied": "Copied!",
     "embed_connections": "Gets contacted by",
     "embed_onclickThirdPartyShort": "Newsletters contact this domain on clicking a link",
     "embed_onopenThirdPartyShort": "Newsletters contact this domain on open",
