@@ -3,6 +3,7 @@ import { Trans } from "react-i18next";
 import ShareButton from "./ShareButton";
 import { IRating } from "../../repository";
 import { getRatingColor } from "../../utils/functions/getRatingColor";
+import SplitDomainName from "../../utils/SplitDomainName";
 interface Color {
     red: number;
     green: number;
@@ -14,10 +15,6 @@ interface PrivacyRatingProps {
 }
 
 const PrivacyRating = (props: PrivacyRatingProps) => {
-    const dotIndex = props.newsletter.lastIndexOf(".");
-    const ending = props.newsletter.slice(dotIndex, props.newsletter.length);
-    const rest = props.newsletter.slice(0, dotIndex);
-
     const convertRatingToMark = (rating: number) => {
         switch (Math.round(rating)) {
             case 1:
@@ -44,10 +41,7 @@ const PrivacyRating = (props: PrivacyRatingProps) => {
             <div className="rating" style={{ color: getRatingColor(((props.privacyRating?.rating || 1) - 1) / 5) }}>
                 {props.privacyRating?.rating && convertRatingToMark(props.privacyRating?.rating)}
             </div>
-            <div className="newsletterName">
-                <span className="big">{rest}</span>
-                <span className="small">{ending}</span>
-            </div>
+            <SplitDomainName domainName={props.newsletter} />
             <ShareButton newsletterName={props.newsletter} />
         </div>
     );
