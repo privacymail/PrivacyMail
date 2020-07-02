@@ -19,15 +19,9 @@ class Icon extends React.Component<IconPros, IconState> {
     onClick(e: React.MouseEvent) {
         this.props.onClick?.(e);
         if (this.props.title) {
-            if (this.state.tooltip < 0) {
-                const disable = () => {
-                    this.closeTooltip();
-                    if (!this.props.titleDuration) document.removeEventListener("click", disable);
-                };
+            if (this.tooltip < 0) {
                 if (this.props.titleDuration) {
                     window.setTimeout(() => this.closeTooltip(), this.props.titleDuration);
-                } else {
-                    document.addEventListener("click", disable);
                 }
 
                 this.openTooltip(e.target as HTMLElement);
@@ -36,7 +30,8 @@ class Icon extends React.Component<IconPros, IconState> {
     }
     openTooltip(target: HTMLElement) {
         if (this.tooltip < 0) {
-            this.tooltip = addTooltip(this.props.title, target);
+            this.tooltip = addTooltip(this.props.title, target, () => (this.tooltip = -1));
+            //this.tooltip = addTooltip(this.props.title, target, () => console.log("got closed"));
         }
     }
     closeTooltip() {
@@ -44,9 +39,6 @@ class Icon extends React.Component<IconPros, IconState> {
             removeTooltip(this.tooltip);
             this.tooltip = -1;
         }
-    }
-    componentDidUpdate() {
-        console.log("updat");
     }
     render() {
         const iconName = this.props.children;
@@ -85,8 +77,6 @@ class Icon extends React.Component<IconPros, IconState> {
                     }
                     onMouseLeave={() => {
                         if (!this.props.titleDuration && this.props.title) {
-                            console.log("fure");
-
                             this.closeTooltip();
                         }
                     }}
