@@ -41,7 +41,6 @@ const ThridpartysByCategory = (props: ThridpartysByCategoryProps) => {
         }
         return b.thirdparties.length - a.thirdparties.length;
     });
-    console.log(categories);
 
     return (
         <div className="connections">

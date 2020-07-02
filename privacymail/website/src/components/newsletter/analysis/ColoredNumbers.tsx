@@ -10,7 +10,6 @@ const ColoredNumbers = (props: ColoredNumbers) => {
     const numberToFraction = (number: number) => {
         return -Math.pow(1 - (props.pow ?? 0.5), number) + 1;
     };
-    console.log(props.pow, numberToFraction(props.number || 0));
 
     return (
         <div

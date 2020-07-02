@@ -10,8 +10,6 @@ interface PersonProps {
 }
 const Person = (props: PersonProps) => {
     const copyToClipboard = () => {
-        console.log("click");
-
         navigator.clipboard.writeText(props.identity?.mail || "");
     };
 
