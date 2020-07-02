@@ -5,6 +5,7 @@ import GerneralInfo from "../newsletter/GeneralInfo";
 import AnalysisEmbed from "./AnalysisEmbed";
 import { getEmbed, IEmbed } from "../../repository";
 import Spinner from "../../utils/Spinner";
+import EmbedHeadline from "./EmbedHeadline";
 
 interface EmbedProps extends RouteComponentProps {}
 
@@ -25,6 +26,8 @@ const Embed = (props: EmbedProps) => {
         <Spinner isSpinning={isLoading}>
             <div className="newsletter">
                 <FaqHint />
+                <EmbedHeadline embedName={embed?.embed.name || ""} />
+                <div className="divider" />
                 <GerneralInfo entity={embed?.embed} type="embed" />
                 <div className="divider" />
                 <AnalysisEmbed embed={embed} />

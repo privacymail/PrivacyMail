@@ -13,7 +13,9 @@ $privacyRatingHeadlineHeight: 2rem;
         border-bottom: $divider-border;
         margin: 2rem 0px;
     }
-
+    > .divider {
+        border-bottom: $divider-border-big;
+    }
     h1 {
         font-size: $privacyRatingHeadlineHeight;
         font-weight: 200;

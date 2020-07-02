@@ -15,13 +15,13 @@ const Statistics = () => {
                 </p>
             </div>
             <div className="grid-item-4 ">
-                <h5>{statistics?.service_count}</h5>
+                <h5>{statistics?.tracker_count}</h5>
                 <p className="regular normal">
                     <Trans>home_found3rdPraties</Trans>
                 </p>
             </div>
             <div className="grid-item-4 ">
-                <h5>{statistics?.tracker_count}</h5>
+                <h5>{statistics?.service_count}</h5>
                 <p className="regular normal">
                     <Trans>home_registeredNewsletters</Trans>
                 </p>
