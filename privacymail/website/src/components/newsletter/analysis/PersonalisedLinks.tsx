@@ -24,7 +24,9 @@ const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
         if (
             third_parties &&
             third_parties.length >= 1 &&
-            third_parties.find((elem: IThirdParty) => elem.address_leak_click || elem.address_leak_view)
+            third_parties.find(
+                (elem: IThirdParty) => elem.address_leak_click || elem.address_leak_view || elem.receives_identifier
+            )
         ) {
             return PassOrNotState.Denied;
         } else {
