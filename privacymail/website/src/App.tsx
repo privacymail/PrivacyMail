@@ -14,6 +14,8 @@ import FAQ from "./components/faq/FAQ";
 import Embed from "./components/embed/Embed";
 import Identity from "./components/identity/Identity";
 import Tooltip from "./utils/Tooltip";
+import DefaultNotFound from "./components/notfound/DefaultNotFound";
+import EmbedNotFound from "./components/notfound/EmbedNotFound";
 
 const getRoutes = () => {
     const routes = [];
@@ -52,8 +54,13 @@ const getRoutes = () => {
         </Route>
     );
     routes.push(
-        <Route key="/embedNotFound" path="/embedNotFound">
-            <ServiceNotFound />
+        <Route key="/embedNotFound" path="/embedNotFound/:id">
+            <EmbedNotFound />
+        </Route>
+    );
+    routes.push(
+        <Route key="/404">
+            <DefaultNotFound />
         </Route>
     );
     return routes;

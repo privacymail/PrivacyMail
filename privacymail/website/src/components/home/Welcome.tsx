@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Trans, WithTranslation, withTranslation } from "react-i18next";
-import { clickButtonOnEnterKeyById } from "../../utils/onEnterKey";
+import { clickButtonOnEnterKeyById } from "../../utils/functions/onEnterKey";
 import { Link } from "react-router-dom";
 import Statistics from "./Statistics";
 

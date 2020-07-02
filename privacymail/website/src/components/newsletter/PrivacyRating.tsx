@@ -2,7 +2,7 @@ import React from "react";
 import { Trans } from "react-i18next";
 import ShareButton from "./ShareButton";
 import { IRating } from "../../repository";
-import { getRatingColor } from "../../utils/getRatingColor";
+import { getRatingColor } from "../../utils/functions/getRatingColor";
 interface Color {
     red: number;
     green: number;

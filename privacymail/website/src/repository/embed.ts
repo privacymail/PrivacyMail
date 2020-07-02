@@ -43,7 +43,7 @@ export const getEmbed = (service: string = "", history: History, callback: (resu
                 }
                 callback(result as IEmbed);
             })
-            .catch(e => history.push("/404/" + service));
+            .catch(e => history.push("/embedNotFound/" + service));
     }
 };
 

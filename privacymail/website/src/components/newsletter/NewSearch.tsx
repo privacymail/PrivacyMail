@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Trans, withTranslation, WithTranslation } from "react-i18next";
 import { Link, useParams, withRouter, RouteComponentProps } from "react-router-dom";
-import { clickButtonOnEnterKeyById } from "../../utils/onEnterKey";
+import { clickButtonOnEnterKeyById } from "../../utils/functions/onEnterKey";
 
 interface NewSearchProps extends WithTranslation, RouteComponentProps {
     currentSearch?: string;

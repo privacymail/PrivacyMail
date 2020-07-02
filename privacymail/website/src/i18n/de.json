@@ -4,6 +4,7 @@
     "404_improvment": "Hilf uns dabei privacymail weiter zu verbessern und melde uns zu einen weiteren Newsletter an.",
     "404_message1": "Entweder ist dir ein Rechtschreibfehler unterlaufen oder wir haben ",
     "404_message2": " noch nicht in unserer Datenbank haben. ",
+    "404_message3": "Die Seite die du suchst exisitert leider nicht.",
     "analysis_abtesting": "AB Testing",
     "analysis_abtesting_no": "Kein AB Testing gefunden",
     "analysis_abtesting_problem": "Newsletter-Anbieter führen manchmal sogenanntes A/B-Testing durch. Dabei werden unterschiedliche Versionen einer Email an verschiedene Empfänger gesendet, um zu testen, welche Version erfolgreicher ist. Auch wenn dies keinen direkten Einfluss auf die Privatheit hat, ist es ein Indikator, dass Statistiken über die Newsletter gesammelt werden. ",

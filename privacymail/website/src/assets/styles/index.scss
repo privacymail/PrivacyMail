@@ -61,6 +61,14 @@ html {
         button.secondary {
             background: $button-color-secondary;
         }
+        .disabledButton {
+            cursor: not-allowed;
+            * {
+                pointer-events: none;
+
+                background: $button-color-secondary;
+            }
+        }
     }
 }
 

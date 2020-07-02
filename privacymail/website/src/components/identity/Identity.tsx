@@ -6,6 +6,8 @@ import Spinner from "../../utils/Spinner";
 import Person from "./Person";
 import { IconList, IconListItem } from "../../utils/IconList";
 import { useParams, Link } from "react-router-dom";
+import { isDomainVaild } from "../../utils/functions/isDomainValid";
+import InvalidDomain from "../../utils/InvalidDomain";
 
 const Identity = () => {
     const [identity, setIdentity] = useState<IIdentity>();
@@ -53,21 +55,11 @@ interface Page1 extends StepperItem {
     url?: string;
 }
 const Page1 = (props: Page1) => {
-    const [url, setUrl] = useState<string>(props.url || "");
-
-    useEffect(() => {
-        if (props.url) setUrl(props.url);
-    }, [props.url]);
     const createIdentity = () => {
         generateIdentity(props.url, props.setIdentity);
         props.next?.();
     };
-
-    //according to https://stackoverflow.com/a/26987741/9851505 this is a regex for valid domains
-    const validDomainRegex = new RegExp(
-        "^(((?!-))(xn--|_{1,1})?[a-z0-9-]{0,61}[a-z0-9]{1,1}.)*(xn--)?([a-z0-9][a-z0-9-]{0,60}|[a-z0-9-]{1,30}.[a-z]{2,})$"
-    );
-    return validDomainRegex.test(props.url || "") ? (
+    return isDomainVaild(props.url || "") ? (
         <div className="start">
             <h2>
                 <Trans>identity_start_headline</Trans>
@@ -90,26 +82,7 @@ const Page1 = (props: Page1) => {
             </div>
         </div>
     ) : (
-        <div className="invalid">
-            <h2>
-                <Trans>identity_invalid_domain</Trans>
-            </h2>
-            <div>
-                <p>
-                    <Trans i18nKey="identity_invalid_text">
-                        <span className="medium">{{ domain: props.url }}</span>
-                    </Trans>
-                </p>
-                <div>
-                    <input value={url} onChange={e => setUrl(e.target.value)} />
-                    <Link to={"/identity/" + url}>
-                        <button id="analizeButton">
-                            <Trans>404_button</Trans>
-                        </button>
-                    </Link>
-                </div>
-            </div>
-        </div>
+        <InvalidDomain url={props.url} urlPath={"identity"} />
     );
 };
 interface Page2 extends StepperItem {

@@ -1,5 +1,5 @@
 import React from "react";
-import { getRatingColor } from "../../../utils/getRatingColor";
+import { getRatingColor } from "../../../utils/functions/getRatingColor";
 
 interface ColoredNumbers {
     number?: number;

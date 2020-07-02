@@ -1,6 +1,7 @@
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Trans } from "react-i18next";
+import InvalidDomain from "../../utils/InvalidDomain";
 
 const EmbedNotFound = () => {
     let { id } = useParams();
@@ -10,11 +11,7 @@ const EmbedNotFound = () => {
             <div className="heading thin">
                 <Trans>404_heading</Trans>
             </div>
-            <div className="light">
-                <Trans>404_message1</Trans>
-                <span className="medium">{id}</span>
-                <Trans>404_message2</Trans>
-            </div>
+            <InvalidDomain url={id} urlPath="embed" showHeadline={false} buttonText={<Trans>home_analyise</Trans>} />
         </div>
     );
 };

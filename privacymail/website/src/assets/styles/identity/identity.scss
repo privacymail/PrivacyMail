@@ -24,32 +24,7 @@
                 justify-content: center;
             }
         }
-        .invalid > div {
-            max-width: 400px;
-            min-height: 200px;
 
-            margin: 0 auto;
-            padding: 0 1rem;
-
-            > div {
-                display: flex;
-
-                input {
-                    width: initial;
-                    flex: 1 1 auto;
-                    margin-right: 0.5rem;
-                }
-                @media only screen and (max-width: 550px) {
-                    input {
-                        margin: 0.5rem 0;
-                    }
-                    flex-wrap: wrap;
-                    * {
-                        width: 100%;
-                    }
-                }
-            }
-        }
         .instructions {
             display: flex;
             justify-content: center;
@@ -83,6 +58,32 @@
 
             > * {
                 margin-left: 0.5rem;
+            }
+        }
+    }
+}
+.invalid > div {
+    max-width: 400px;
+    min-height: 200px;
+
+    margin: 0 auto;
+    padding: 0 1rem;
+
+    > div {
+        display: flex;
+
+        input {
+            width: initial;
+            flex: 1 1 auto;
+            margin-right: 0.5rem;
+        }
+        @media only screen and (max-width: 550px) {
+            input {
+                margin: 0.5rem 0;
+            }
+            flex-wrap: wrap;
+            * {
+                width: 100%;
             }
         }
     }
