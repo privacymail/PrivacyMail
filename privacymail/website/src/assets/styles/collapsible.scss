@@ -1,6 +1,5 @@
 .collapsibleItem {
     border-top: $divider-border;
-    padding: 1rem 0px;
     .expandable {
         width: 24px;
         margin-left: auto;
@@ -25,9 +24,10 @@
         width: 100%;
         display: flex;
         align-items: center;
+        margin: 1rem 0;
     }
     .collapsibleBig {
-        margin: 1rem 0rem 1rem 1rem;
+        margin: 0;
         border-top: $divider-border;
     }
 }
