@@ -4,6 +4,7 @@ import ColoredNumbers from "./ColoredNumbers";
 import { Trans } from "react-i18next";
 import ThirdpartyConnections from "./ThirdpartyConnections";
 import CollapsibleItem from "../../../utils/CollapsibleItem";
+import { areThirdpartiesEvil } from "../../../utils/functions/isThirdpartyEvil";
 
 interface Category {
     name: string;
@@ -12,6 +13,7 @@ interface Category {
 interface ThridpartysByCategoryProps {
     thirdparties?: IThirdParty[];
     homeUrl?: string;
+    defaultPow?: number;
 }
 const ThridpartysByCategory = (props: ThridpartysByCategoryProps) => {
     const availableCategories: string[] = [];
@@ -26,24 +28,41 @@ const ThridpartysByCategory = (props: ThridpartysByCategoryProps) => {
             };
         }
     );
-    categories.sort((a, b) => b.thirdparties.length - a.thirdparties.length);
+    categories.sort((a, b) => {
+        if (a.name === "tracker") {
+            return -1;
+        } else if (b.name === "tracker") {
+            return 1;
+        }
+        if (a.name === "unknown") {
+            return 1;
+        } else if (b.name === "unknown") {
+            return -1;
+        }
+        return b.thirdparties.length - a.thirdparties.length;
+    });
+    console.log(categories);
 
     return (
         <div className="connections">
             {categories.map(category => (
-                <Category {...category} key={category.name} homeUrl={props.homeUrl} />
+                <Category {...category} key={category.name} homeUrl={props.homeUrl} defaultPow={props.defaultPow} />
             ))}
         </div>
     );
 };
 interface CategoryProps extends Category {
     homeUrl?: string;
+    defaultPow?: number;
 }
 const Category = (props: CategoryProps) => {
     return (
-        <CollapsibleItem defaultOpen>
+        <CollapsibleItem>
             <div className="category">
-                <ColoredNumbers number={props.thirdparties.length} />
+                <ColoredNumbers
+                    number={props.thirdparties.length}
+                    pow={areThirdpartiesEvil(props.thirdparties) ? 0.9 : props.defaultPow ?? 0.5}
+                />
                 <div className="name">
                     <Trans>{"sector_" + props.name}</Trans>
                 </div>

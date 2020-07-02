@@ -5,6 +5,7 @@ import Methode from "./Methode";
 import CollapsibleItem from "../../../utils/CollapsibleItem";
 import ThridpartysByCategory from "./ThridpartysByCategory";
 import ColoredNumbers from "./ColoredNumbers";
+import { areThirdpartiesEvil } from "../../../utils/functions/isThirdpartyEvil";
 
 interface OnOpenThirdpartiesProps {
     thirdparties?: IThirdParty[];
@@ -25,7 +26,10 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
             <div className="summarizedInfo">
-                <ColoredNumbers number={props.thirdparties?.length} />
+                <ColoredNumbers
+                    number={props.thirdparties?.length}
+                    pow={areThirdpartiesEvil(props.thirdparties) ? 0.9 : 0.5}
+                />
             </div>
             <div className="describeText">
                 <Trans>analysis_onopenThirdPartyShort</Trans>
@@ -36,6 +40,12 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
 const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisBig">
+            <h2>
+                <Trans>analysis_connections</Trans>
+            </h2>
+            <ThridpartysByCategory thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
+
+            <div className="divider" />
             <div>
                 <h2>
                     <Trans>analysis_problemHeadline</Trans>
@@ -48,12 +58,6 @@ const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-
-            <div className="divider" />
-            <h2>
-                <Trans>analysis_connections</Trans>
-            </h2>
-            <ThridpartysByCategory thirdparties={props.thirdparties} homeUrl={props.homeUrl} />
         </div>
     );
 };
