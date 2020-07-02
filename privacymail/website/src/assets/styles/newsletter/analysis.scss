@@ -24,16 +24,24 @@ $summarizeFontSize: 3rem;
                 font-weight: 200;
                 font-size: 1.2rem;
             }
-            .passOrNot img {
-                height: $summarizeFontSize * $line-height;
+            .passOrNot {
+                .icon {
+                    padding: ($summarizeFontSize * (($line-height - 1.2) / 2)) 0;
+                    span {
+                        font-size: $summarizeFontSize * 1.2;
+                    }
+                }
             }
             .expandable {
                 width: 24px;
                 margin-left: auto;
                 margin-right: 1rem;
 
-                img {
+                > div {
                     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) 50ms;
+                    span {
+                        font-size: 1.5rem;
+                    }
                 }
                 .expanded {
                     transform: rotate(180deg);
