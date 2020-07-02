@@ -25,7 +25,7 @@ $summarizeFontSize: 3rem;
                 font-size: 1.2rem;
             }
             .passOrNot img {
-                height: $summarizeFontSize * 1.2;
+                height: $summarizeFontSize * $line-height;
             }
             .expandable {
                 width: 24px;

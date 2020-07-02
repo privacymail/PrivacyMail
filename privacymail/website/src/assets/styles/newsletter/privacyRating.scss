@@ -13,9 +13,9 @@
     }
 
     .shareButton {
-        $sharebuttonHeight: 24px;
+        $sharebuttonHeight: 1.5rem;
 
-        height: $sharebuttonHeight;
+        font-size: $sharebuttonHeight;
         position: absolute;
         right: $paddingLevel;
         top: calc((#{$privacyRatingHeadlineHeight} * 1.2 - #{$sharebuttonHeight}) / 2 + 1.25rem);
