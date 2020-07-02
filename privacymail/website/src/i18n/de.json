@@ -16,6 +16,7 @@
     "analysis_editDisclaimer": "Kennst du diese Website? Hilf uns mehr Informationen zu sammeln.",
     "analysis_gerneralInfo": "Allgemein",
     "analysis_methode": "Mögliche Fehlerquellen",
+    "analysis_noEmailsReceived": "Der angefragte Newsletter wurde bereits bei uns in der Datenbank registriert. Leider haben wir bis jetzt noch keine E-Mail von diesem Newsletter erhalten. In der Zwischenzeit kannst du noch eine weitere E-Mail zu diesem Newsletter anmelden.",
     "analysis_noPotentialMistakes": "Keine potentiellen Fehler",
     "analysis_onclickThirdPartyShort": "kontaktierte Unternehmen beim klicken eines Links",
     "analysis_onopenThirdPartyShort": "kontaktierte Unternehmen beim öffnen des Newsletters",

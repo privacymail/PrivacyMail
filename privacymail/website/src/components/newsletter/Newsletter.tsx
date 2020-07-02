@@ -6,7 +6,9 @@ import PrivacyRating from "./PrivacyRating";
 import GerneralInfo from "./GeneralInfo";
 import Analysis from "./analysis/Analysis";
 import IdentityAlert from "./IdentityAlert";
+import NoEmailAlert from "./NoEmailAlert";
 import Spinner from "../../utils/Spinner";
+import SplitDomainName from "../../utils/SplitDomainName";
 interface NewsletterProps extends RouteComponentProps {}
 
 const Newsletter = (props: NewsletterProps) => {
@@ -25,20 +27,37 @@ const Newsletter = (props: NewsletterProps) => {
     return (
         <Spinner isSpinning={isLoading}>
             <div className="newsletter">
-                <FaqHint />
-                <PrivacyRating privacyRating={newsletter?.rating} newsletter={newsletter?.service.name || ""} />
-                {newsletter && newsletter?.num_different_idents < 2 && (
-                    <IdentityAlert newsletterName={newsletter?.service.name} />
+                {newsletter?.count_mails !== 0 ||
+                newsletter?.third_parties.length !== 0 || newsletter?.num_different_idents !== 0 ? (
+                    <>
+                        <FaqHint />
+                        <PrivacyRating privacyRating={newsletter?.rating} newsletter={newsletter?.service.name || ""} />
+                        {newsletter && newsletter?.num_different_idents < 2 && (
+                            <IdentityAlert newsletterName={newsletter?.service.name} />
+                        )}
+                        <div className="divider" />
+                        <GerneralInfo
+                            entity={newsletter?.service}
+                            count_mails={newsletter?.count_mails}
+                            num_different_idents={newsletter?.num_different_idents}
+                            type="service"
+                        />
+                        <div className="divider" />
+                        <Analysis newsletter={newsletter} />
+                    </>
+                ) : (
+                    <>
+                        <SplitDomainName domainName={newsletter?.service.name || ""} />
+                        <NoEmailAlert newsletterName={newsletter?.service.name || ""} />
+                        <div className="divider" />
+                        <GerneralInfo
+                            entity={newsletter?.service}
+                            count_mails={newsletter?.count_mails}
+                            num_different_idents={newsletter?.num_different_idents}
+                            type="service"
+                        />
+                    </>
                 )}
-                <div className="divider" />
-                <GerneralInfo
-                    entity={newsletter?.service}
-                    count_mails={newsletter?.count_mails}
-                    num_different_idents={newsletter?.num_different_idents}
-                    type="service"
-                />
-                <div className="divider" />
-                <Analysis newsletter={newsletter} />
             </div>
         </Spinner>
     );

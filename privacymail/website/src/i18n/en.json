@@ -16,6 +16,7 @@
     "analysis_editDisclaimer": "Do you know this Website? Help us collect more information.",
     "analysis_gerneralInfo": "Gerneral",
     "analysis_methode": "Potential scan errors",
+    "analysis_noEmailsReceived": "The requested newsletter is registered in our database. Butit has not received any eMails yet. Meanwhile you can submit an additional eMail to this newsletter.",
     "analysis_noPotentialMistakes": "No potential mistakes",
     "analysis_onclickThirdPartyShort": "contacted Companys when opening a link",
     "analysis_onopenThirdPartyShort": "contacted companys when opening the newsletter",
