@@ -4,8 +4,6 @@ import { IThirdParty, Reliability } from "../../repository";
 import CollapsibleItem from "../../utils/CollapsibleItem";
 import Methode from "../newsletter/analysis/Methode";
 import ThirdpartyConnections from "../newsletter/analysis/ThirdpartyConnections";
-import ColoredNumbers from "../newsletter/analysis/ColoredNumbers";
-
 interface OnClickThirdpartiesProps {
     thirdparties?: IThirdParty[];
     homeUrl?: string;
@@ -24,9 +22,7 @@ const EmbedOnClickThirdparties = (props: OnClickThirdpartiesProps) => {
 const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
-            <div className="summarizedInfo">
-                <ColoredNumbers number={props.thirdparties?.length} />
-            </div>
+            <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
                 <Trans>embed_onclickThirdPartyShort</Trans>
             </div>
@@ -36,6 +32,12 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
 const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
     return (
         <div className="analysisBig">
+            <h2>
+                <Trans>embed_connections</Trans>
+            </h2>
+            <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} linkTo="/service" />
+
+            <div className="divider" />
             <div>
                 <h2>
                     <Trans>embed_problemHeadline</Trans>
@@ -48,12 +50,6 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-
-            <div className="divider" />
-            <h2>
-                <Trans>embed_connections</Trans>
-                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} linkTo="/service" />
-            </h2>
         </div>
     );
 };

@@ -4,7 +4,6 @@ import { IThirdParty, Reliability } from "../../repository";
 import CollapsibleItem from "../../utils/CollapsibleItem";
 import Methode from "../newsletter/analysis/Methode";
 import ThirdpartyConnections from "../newsletter/analysis/ThirdpartyConnections";
-import ColoredNumbers from "../newsletter/analysis/ColoredNumbers";
 
 interface OnOpenThirdpartiesProps {
     thirdparties?: IThirdParty[];
@@ -24,9 +23,7 @@ const EmbedOnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
 const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisSmall">
-            <div className="summarizedInfo">
-                <ColoredNumbers number={props.thirdparties?.length} />
-            </div>
+            <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
                 <Trans>embed_onopenThirdPartyShort</Trans>
             </div>
@@ -36,6 +33,12 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
 const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
         <div className="analysisBig">
+            <h2>
+                <Trans>embed_connections</Trans>
+            </h2>
+            <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} linkTo="/service" />
+
+            <div className="divider" />
             <div>
                 <h2>
                     <Trans>embed_problemHeadline</Trans>
@@ -48,12 +51,6 @@ const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
             <div className="divider" />
 
             <Methode reliability={props.reliability} />
-
-            <div className="divider" />
-            <h2>
-                <Trans>embed_connections</Trans>
-                <ThirdpartyConnections thirdparties={props.thirdparties} homeUrl={props.homeUrl} linkTo="/service" />
-            </h2>
         </div>
     );
 };
