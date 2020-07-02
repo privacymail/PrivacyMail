@@ -28,7 +28,8 @@ const Newsletter = (props: NewsletterProps) => {
         <Spinner isSpinning={isLoading}>
             <div className="newsletter">
                 {newsletter?.count_mails !== 0 ||
-                newsletter?.third_parties.length !== 0 || newsletter?.num_different_idents !== 0 ? (
+                newsletter?.third_parties.length !== 0 ||
+                newsletter?.num_different_idents !== 0 ? (
                     <>
                         <FaqHint />
                         <PrivacyRating privacyRating={newsletter?.rating} newsletter={newsletter?.service.name || ""} />
