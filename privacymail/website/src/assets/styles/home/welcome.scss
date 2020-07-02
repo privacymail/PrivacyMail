@@ -5,6 +5,8 @@
     max-height: 800px;
     overflow: hidden;
 
+    z-index: 1;
+    width: 100%;
     color: $font-color-secondary;
 
     > * {
@@ -45,17 +47,22 @@
     }
 }
 .welcome::before {
-    $blurmargin: 4px;
+    display: block;
     position: absolute;
-    width: calc(100% + #{$blurmargin} * 4);
-    height: calc(100% + #{$blurmargin} * 4);
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     content: "";
-    margin: -$blurmargin * 2;
     z-index: -1;
-
+    width: 100%;
+    height: 100%;
     background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url("../../images/letter.jpg");
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Do not repeat the image */
+    //background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
     background-size: cover;
-    filter: blur($blurmargin);
+    filter: blur(4px);
+
+    transform: scale(1.05);
 }
