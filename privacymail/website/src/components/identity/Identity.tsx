@@ -164,10 +164,10 @@ const Page3 = (props: Page3) => {
             </div>
             <div className="identityButtons">
                 <button onClick={() => props.jump?.(0)} className="secondary">
-                    <Trans>cancel</Trans>
+                    <Trans>identity_cancel</Trans>
                 </button>
                 <button onClick={() => props.next?.()}>
-                    <Trans>next</Trans>
+                    <Trans>identity_next</Trans>
                 </button>
             </div>
         </Spinner>
