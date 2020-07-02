@@ -11,6 +11,8 @@ $screen-break: 700px;
 @import "./stepper.scss";
 @import "./iconList.scss";
 @import "./identity/";
+@import "../images/iconFont/style.css";
+
 html {
     font-family: Roboto;
     font-size: 16px;
@@ -80,7 +82,7 @@ body,
 }
 
 .icon {
-    img {
+    span {
         vertical-align: middle;
     }
     position: relative;

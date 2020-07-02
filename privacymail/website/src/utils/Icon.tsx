@@ -9,6 +9,7 @@ interface IconPros {
     titleDuration?: number;
     height?: number;
     id?: string;
+    importByFile?: boolean;
 }
 interface IconState {
     tooltip: number;
@@ -47,19 +48,21 @@ class Icon extends React.Component<IconPros, IconState> {
         }
 
         let image = null;
-        try {
-            image = require("../assets/images/icons/" + iconName + "-24px.svg");
-        } catch (error) {
+        if (this.props.importByFile) {
             try {
-                image = require("../assets/images/icons/" + iconName + ".svg");
+                image = require("../assets/images/icons/" + iconName + "-24px.svg");
             } catch (error) {
                 try {
-                    image = require("../assets/images/icons/" + iconName);
+                    image = require("../assets/images/icons/" + iconName + ".svg");
                 } catch (error) {
                     try {
-                        image = require("../assets/images/icons/" + iconName + ".png");
+                        image = require("../assets/images/icons/" + iconName);
                     } catch (error) {
-                        console.error("Can't find image: '" + iconName + "' . Please check your spelling");
+                        try {
+                            image = require("../assets/images/icons/" + iconName + ".png");
+                        } catch (error) {
+                            console.error("Can't find image: '" + iconName + "' . Please check your spelling");
+                        }
                     }
                 }
             }
@@ -67,21 +70,38 @@ class Icon extends React.Component<IconPros, IconState> {
 
         return (
             <div className={"icon " + (this.props.className || "")}>
-                <img
-                    alt={iconName}
-                    height={this.props.height}
-                    src={image}
-                    onClick={e => this.onClick(e)}
-                    onMouseEnter={e =>
-                        !this.props.titleDuration && this.props.title && this.openTooltip(e.target as HTMLElement)
-                    }
-                    onMouseLeave={() => {
-                        if (!this.props.titleDuration && this.props.title) {
-                            this.closeTooltip();
+                {this.props.importByFile ? (
+                    <img
+                        alt={iconName}
+                        height={this.props.height}
+                        src={image}
+                        onClick={e => this.onClick(e)}
+                        onMouseEnter={e =>
+                            !this.props.titleDuration && this.props.title && this.openTooltip(e.target as HTMLElement)
                         }
-                    }}
-                    id={this.props.id}
-                />
+                        onMouseLeave={() => {
+                            if (!this.props.titleDuration && this.props.title) {
+                                this.closeTooltip();
+                            }
+                        }}
+                        id={this.props.id}
+                    />
+                ) : (
+                    <span
+                        className={"icon-" + iconName}
+                        style={{ fontSize: this.props.height }}
+                        onClick={e => this.onClick(e)}
+                        onMouseEnter={e =>
+                            !this.props.titleDuration && this.props.title && this.openTooltip(e.target as HTMLElement)
+                        }
+                        onMouseLeave={() => {
+                            if (!this.props.titleDuration && this.props.title) {
+                                this.closeTooltip();
+                            }
+                        }}
+                        id={this.props.id}
+                    />
+                )}
             </div>
         );
     }

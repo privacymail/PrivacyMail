@@ -1,0 +1,151 @@
+@font-face {
+  font-family: 'PrivacyMail';
+  src:  url('fonts/PrivacyMail.eot?o7fn4b');
+  src:  url('fonts/PrivacyMail.eot?o7fn4b#iefix') format('embedded-opentype'),
+    url('fonts/PrivacyMail.ttf?o7fn4b') format('truetype'),
+    url('fonts/PrivacyMail.woff?o7fn4b') format('woff'),
+    url('fonts/PrivacyMail.svg?o7fn4b#PrivacyMail') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'PrivacyMail' !important;
+  speak: never;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-github:before {
+  content: "\e900";
+}
+.icon-alternate_email:before {
+  content: "\e901";
+}
+.icon-attach_money:before {
+  content: "\e902";
+}
+.icon-check_circle_fill:before {
+  content: "\e903";
+  color: #4caf50;
+}
+.icon-check_circle_outline:before {
+  content: "\e904";
+}
+.icon-de-DE .path1:before {
+  content: "\e905";
+  color: rgb(255, 206, 0);
+}
+.icon-de-DE .path2:before {
+  content: "\e906";
+  margin-left: -1em;
+  color: rgb(0, 0, 0);
+}
+.icon-de-DE .path3:before {
+  content: "\e907";
+  margin-left: -1em;
+  color: rgb(221, 0, 0);
+}
+.icon-done_all:before {
+  content: "\e908";
+}
+.icon-email:before {
+  content: "\e909";
+}
+.icon-en-US .path1:before {
+  content: "\e90a";
+  color: rgb(189, 61, 68);
+}
+.icon-en-US .path2:before {
+  content: "\e90b";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.icon-en-US .path3:before {
+  content: "\e90c";
+  margin-left: -1em;
+  color: rgb(25, 47, 93);
+}
+.icon-en-US .path4:before {
+  content: "\e90d";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+.icon-file_copy:before {
+  content: "\e90e";
+}
+.icon-how_to_reg:before {
+  content: "\e90f";
+}
+.icon-insert_link:before {
+  content: "\e910";
+}
+.icon-mood:before {
+  content: "\e911";
+}
+.icon-policy:before {
+  content: "\e912";
+}
+.icon-public:before {
+  content: "\e913";
+}
+.icon-question_answer:before {
+  content: "\e914";
+}
+.icon-record_voice_over:before {
+  content: "\e915";
+}
+.icon-remove_circle:before {
+  content: "\e916";
+}
+.icon-repeat:before {
+  content: "\e917";
+}
+.icon-school:before {
+  content: "\e918";
+}
+.icon-search:before {
+  content: "\e919";
+}
+.icon-warning:before {
+  content: "\e91a";
+}
+.icon-share:before {
+  content: "\e91b";
+}
+.icon-home:before {
+  content: "\e91c";
+}
+.icon-expand:before {
+  content: "\e91d";
+}
+.icon-danger:before {
+  content: "\e91e";
+  color: #f57c00;
+}
+.icon-check_circle:before {
+  content: "\e91f";
+  color: #4caf50;
+}
+.icon-cancel:before {
+  content: "\e920";
+  color: #e34134;
+}
+.icon-Checkbox .path1:before {
+  content: "\e921";
+  color: rgb(76, 175, 80);
+}
+.icon-Checkbox .path2:before {
+  content: "\e922";
+  margin-left: -1em;
+  color: rgb(234, 234, 234);
+}

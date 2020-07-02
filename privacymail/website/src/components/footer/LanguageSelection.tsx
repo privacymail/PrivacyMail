@@ -16,11 +16,15 @@ const LanguageSelection = (props: LanguageSelectionProps) => {
     return props.isOpen ? (
         <div className="languageSelection">
             <div className="language" onClick={() => changeLanguage("de-DE")}>
-                <Icon height={24}>de-DE</Icon>
+                <Icon importByFile height={24}>
+                    de-DE
+                </Icon>
                 <div className="text">Deutsch</div>
             </div>
             <div className="language" onClick={() => changeLanguage("en-US")}>
-                <Icon height={24}>en-US</Icon>
+                <Icon importByFile height={24}>
+                    en-US
+                </Icon>
                 <div className="text">English</div>
             </div>
         </div>

@@ -27,7 +27,9 @@ function Footer() {
         <footer className="footer">
             <div className="footerFlex">
                 <div className="item" onClick={e => openLanguageSelection(e)} id="languageSelection">
-                    <Icon height={24}>{i18n.language}</Icon>
+                    <Icon height={24} importByFile>
+                        {i18n.language}
+                    </Icon>
                     <div className="text">
                         <Trans>footer_language</Trans>
                     </div>
@@ -43,7 +45,7 @@ function Footer() {
                 </Link>
                 <a href="https://github.com/PrivacyMail/PrivacyMail" target="_blank" rel="noopener noreferrer">
                     <div className="item">
-                        <Icon height={24}>GitHub-Mark</Icon>
+                        <Icon height={24}>github</Icon>
                         <div className="text">
                             <Trans>footer_github</Trans>
                         </div>

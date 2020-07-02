@@ -156,7 +156,6 @@ const Page3 = (props: Page3) => {
                                             {{ company: props.identity?.service.url }}
                                         </a>
                                     </span>
-                                    }}
                                 </Trans>
                             </p>
                         </IconListItem>
