@@ -73,7 +73,7 @@ const StepperHeading = (props: StepperHeading) => {
                                     {lastIndex}
                                 </span>
                             ) : (
-                                <Icon>check_circle_fill</Icon>
+                                <Icon height={24}>check_circle_fill</Icon>
                             )}
                             {heading}
                         </span>
