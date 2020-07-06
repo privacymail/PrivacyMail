@@ -173,6 +173,7 @@ STATIC_ROOT = '{{ static_path }}'
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
     "mailfetcher.analyser_cron.Analyser",
+    "mailfetcher.cron_fetch_only.ImapFetcher"
 ]
 
 # Specifies a series of URLs to send GET requests to in specific conditions.
