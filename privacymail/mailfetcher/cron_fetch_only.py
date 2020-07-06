@@ -121,4 +121,6 @@ class ImapFetcher(CronJobBase):
             print('All inboxes are empty. No new mails to process.')
             return 0
 
+        # Simply fetch up to 500 messages per run and call it a day
+        fetch_new_messages(500)
         self.notify_webhook('success')
