@@ -32,17 +32,17 @@ const PrivacyRating = (props: PrivacyRatingProps) => {
         }
         return;
     };
-
+    const grade = convertRatingToMark(props.privacyRating?.rating || -1);
     return (
         <div className="privacyRating">
             <h1>
                 <Trans>analysis_privacyRating</Trans>
             </h1>
             <div className="rating" style={{ color: getRatingColor(((props.privacyRating?.rating || 1) - 1) / 5) }}>
-                {props.privacyRating?.rating && convertRatingToMark(props.privacyRating?.rating)}
+                {props.privacyRating?.rating && grade}
             </div>
             <SplitDomainName domainName={props.newsletter} />
-            <ShareButton newsletterName={props.newsletter} />
+            <ShareButton newsletterName={props.newsletter} rating={grade || ""} />
         </div>
     );
 };

@@ -134,7 +134,7 @@
     "sector_cdn": "Hosting / Content Distribution",
     "sector_tracker": "Tracker",
     "sector_unknown": "Unknown",
-    "share_text": "Discover how the newsletter of #company tracks you.",
+    "share_text": "The newsletter from #company has received a '#rating' in the PrivacyMail newsletter analysis! Discover how the grade was achieved.",
     "submit": "Submit",
     "thirdparty_receivesLeak": "Receives unique information about your identity."
 }

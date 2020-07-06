@@ -3,6 +3,7 @@ import { Icon } from "../../utils/Icon";
 import { withTranslation, WithTranslation } from "react-i18next";
 interface ShareButtonProps extends WithTranslation {
     newsletterName: string;
+    rating: string;
 }
 const ShareButton = (props: ShareButtonProps) => {
     const navigatorAny: any = navigator;
@@ -10,7 +11,11 @@ const ShareButton = (props: ShareButtonProps) => {
         const shareData = {
             title: window.location.hostname,
             url: window.location.href,
-            text: props.t("share_text").replace("#company", props.newsletterName) + "\n \n"
+            text:
+                props
+                    .t("share_text")
+                    .replace("#company", props.newsletterName)
+                    .replace("#rating", props.rating) + "\n \n"
         };
         navigatorAny.share(shareData);
     };
