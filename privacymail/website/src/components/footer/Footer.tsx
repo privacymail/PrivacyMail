@@ -28,7 +28,7 @@ function Footer() {
             <div className="footerFlex">
                 <div className="item" onClick={e => openLanguageSelection(e)} id="languageSelection">
                     <Icon height={24} importByFile>
-                        {i18n.language}
+                        {i18n.language.split("-")[0]}
                     </Icon>
                     <div className="text">
                         <Trans>footer_language</Trans>
