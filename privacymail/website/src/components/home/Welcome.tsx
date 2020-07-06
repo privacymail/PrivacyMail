@@ -27,7 +27,7 @@ const Welcome = (props: WithTranslation) => {
                             />
                             <div className={!newsletter ? "disabledButton colorful" : ""}>
                                 <Link to={"/service/" + newsletter}>
-                                    <button id="analizeButton" disabled={!!newsletter}>
+                                    <button id="analizeButton" disabled={!newsletter}>
                                         <Trans>home_analyise</Trans>
                                     </button>
                                 </Link>

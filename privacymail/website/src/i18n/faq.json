@@ -1,6 +1,62 @@
 [
     {
         "question": {
+            "de": "Wie funktioniert das PrivacyRating?",
+            "en": "How does the PrivacyRating work?"
+        },
+        "answer": {
+            "de": "PrivacyMail analysiert alle zur Verfügung stehenden Daten über einen Newsletter. Unterteilt in verschiedene Kategorien (z.B. personalisierte Links), bekommt jede dieser Kategorien eine Note. Die schlechteste Note, aus den analysierten Kategorien, ist das PrivacyRating.",
+            "en": "PrivacyMail analyses all available data about a newsletter. Divided into different categories (e.g. personalized links), each of these categories receives a rating. The worst rating, out of all the categories analysed, is the PrivacyRating."
+        },
+        "group": "faq_privacyrating"
+    },
+    {
+        "question": {
+            "de": "Auf welcher Skala werden die Noten vergeben?",
+            "en": "On which scale are the ratings awarded?"
+        },
+        "answer": {
+            "de": "Die Skala reicht von A bis F. Dabei bekommen nur Newsletter ein A, bei denen keine Privacy-Verstöße festgestellt werden konnten.",
+            "en": "The scale ranges from A to F. Only newsletters for which no privacy violations have been found will receive an A."
+        },
+        "group": "faq_privacyrating"
+    },
+    {
+        "question": {
+            "de": "Ab welcher Note sollte ich einen Newsletter abbestellen?",
+            "en": "At what rating should I unsubscribe from a newsletter?"
+        },
+        "answer": {
+            "de": "Prinzipiell ist es deine Entscheidung, ob du einen Newsletter abonierst oder nicht. Das PrivacyRating soll dir nur beim einordnen der Ergebnisse helfen. Sollte ein Newsletter ein D oder schlechter erhalten haben, solltest du dich damit auseinandersetzen, wie du das Tracking blockieren kannst.",
+            "en": "Basically it is your decision whether you subscribe to a newsletter or not. The PrivacyRating should only help you to classify the results. That being said: If a newsletter received a D or worse, you should inform yourself how to block the tracking."
+        },
+        "group": "faq_privacyrating"
+    },
+    {
+        "question": {
+            "de": "Wie wurden die Noten für verschiedene Verstöße bestimmt?",
+            "en": "How were the ratings for different infringements determined?"
+        },
+        "answer": {
+            "de": "In einer 5 monatigen Umfrage wurden PrivacyMail-Nutzer befragt, wie sie verschiedene Privacy-Verstöße bewerten würden. Aus den Ergebnissen der Umfrage wurde dann das Bewertungsschema der einzelnen Kategorien abgeleitet.",
+            "en": "In a 5-month survey, PrivacyMail users were asked how they would rate various privacy violations. The results of the survey were then used to derive the rating scheme for the individual categories."
+        },
+        "group": "faq_privacyrating"
+    },
+    {
+        "question": {
+            "de": "Ich weiß, dass Newsletter 'xyz' kein Tracking verwendet. Warum hat der Newsletter trotzdem eine schlechte Note bekommen?",
+            "en": "I know that Newsletter 'xyz' does not use tracking. Why did the newsletter still get a bad grade?"
+        },
+        "answer": {
+            "de": "Bei einer Reihe an Drittanbietern liegt noch keine Information vor, ob es sich um einen Tracker handelt oder nicht. Bei manchen Kategorien des PrivacyRatings muss daher leider davon ausgeganen werden, dass hier Tracking benutzt wurde. Sobald jedoch die Drittanbieter korrekt klassifiziert sind, wird das PrivacyRating entsprechend angepasst.",
+            "en": "For a number of third party providers, there is no information available yet as to whether or not a tracker is involved. For some categories of the PrivacyRating it must therefore unfortunately be assumed that tracking was used. However, as soon as the third-party providers are correctly classified, the PrivacyRating will be adjusted accordingly."
+        },
+        "group": "faq_privacyrating"
+    },
+
+    {
+        "question": {
             "de": "Was ist PrivacyMail?",
             "en": "What is PrivacyMail?"
         },
