@@ -23,13 +23,15 @@ const Welcome = (props: WithTranslation) => {
                                 value={newsletter}
                                 placeholder={props.t("home_inputPlaceholder")}
                                 onChange={e => setNewsletter(e.target.value)}
-                                onKeyUp={e => clickButtonOnEnterKeyById(e, "analizeButton")}
+                                onKeyUp={e => newsletter && clickButtonOnEnterKeyById(e, "analizeButton")}
                             />
-                            <Link to={"/service/" + newsletter}>
-                                <button id="analizeButton">
-                                    <Trans>home_analyise</Trans>
-                                </button>
-                            </Link>
+                            <div className={!newsletter ? "disabledButton colorful" : ""}>
+                                <Link to={"/service/" + newsletter}>
+                                    <button id="analizeButton" disabled={!!newsletter}>
+                                        <Trans>home_analyise</Trans>
+                                    </button>
+                                </Link>
+                            </div>
                         </div>
                     </div>
 
