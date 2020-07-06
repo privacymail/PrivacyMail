@@ -17,13 +17,13 @@ const LanguageSelection = (props: LanguageSelectionProps) => {
         <div className="languageSelection">
             <div className="language" onClick={() => changeLanguage("de-DE")}>
                 <Icon importByFile height={24}>
-                    de-DE
+                    de
                 </Icon>
                 <div className="text">Deutsch</div>
             </div>
             <div className="language" onClick={() => changeLanguage("en-US")}>
                 <Icon importByFile height={24}>
-                    en-US
+                    en
                 </Icon>
                 <div className="text">English</div>
             </div>
