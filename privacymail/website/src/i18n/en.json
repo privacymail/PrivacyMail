@@ -74,7 +74,7 @@
     "home_howWeDetectIt2": "We receive them and analyze them using an automated scanning system that inspects them for common types of tracking.",
     "home_howWeDetectIt3": "Information about newsletters and tracking companies is published on this website to allow you to inform yourself.",
     "home_howWeDetectIt4": "Others see the results, allowing them to make more informed decisions about their newsletter consumption.",
-    "home_inputPlaceholder": "Enter a Newsletter",
+    "home_inputPlaceholder": "Enter a Newsletter (e.g. nytimes.com)",
     "home_registeredNewsletters": "Newsletters Registered",
     "home_shiningALight": "Shining A Light On Email Tracking",
     "home_shiningALightDetail": "PrivacyMail makes the invisible tracking in newsletters visible. Email tracking is widely used to track which emails you read, which links you click, and how successful marketing campaigns are. To achieve this, they use the services of other companies, which may in turn use the data to profile you for targeted advertisements.",
