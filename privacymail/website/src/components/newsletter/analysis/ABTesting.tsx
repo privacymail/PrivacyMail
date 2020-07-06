@@ -63,7 +63,7 @@ const ABTestingBig = (props: ABTestingBigProps) => {
 
             <div className="divider" />
 
-            <Methode reliability={props.reliability} />
+            <Methode reliability={props.reliability} textId={"analysis_reliability_abTesting"} />
         </>
     );
 };

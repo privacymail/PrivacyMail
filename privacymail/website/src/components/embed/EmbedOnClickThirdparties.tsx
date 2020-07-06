@@ -24,7 +24,7 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
         <>
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
-                <Trans>embed_onclickThirdPartyShort</Trans>
+                <Trans i18nKey={"embed_onclickThirdPartyShort"} count={props.thirdparties?.length} />
             </div>
         </>
     );
@@ -49,7 +49,7 @@ const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
 
             <div className="divider" />
 
-            <Methode reliability={props.reliability} />
+            <Methode reliability={props.reliability} textId={"analysis_reliability_onClick"} />
         </>
     );
 };

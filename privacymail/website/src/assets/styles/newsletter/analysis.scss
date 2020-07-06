@@ -57,7 +57,10 @@ $summarizeFontSize: 3rem;
             .unreliable {
                 background: $methode-problem;
             }
-
+            .reliablityText {
+                font-weight: 200;
+                padding: $paddingLevel 0;
+            }
             .connections {
                 padding-right: 0px;
                 margin-bottom: -1rem;

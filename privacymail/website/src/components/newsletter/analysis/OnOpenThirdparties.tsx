@@ -32,7 +32,7 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
                 />
             </div>
             <div className="describeText">
-                <Trans>analysis_onopenThirdPartyShort</Trans>
+                <Trans i18nKey={"analysis_onopenThirdPartyShort"} count={props.thirdparties?.length} />
             </div>
         </>
     );

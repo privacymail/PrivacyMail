@@ -25,7 +25,7 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
         <>
             <div className="summarizedInfo">{props.thirdparties?.length}</div>
             <div className="describeText">
-                <Trans>embed_onopenThirdPartyShort</Trans>
+                <Trans i18nKey={"embed_onopenThirdPartyShort"} count={props.thirdparties?.length} />
             </div>
         </>
     );

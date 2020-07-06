@@ -18,7 +18,7 @@ const Methode = (props: MethodeProps) => {
                 </div>
             )}
             {props.textId && (
-                <div className="reliable">
+                <div className="reliablityText">
                     <Trans>{props.textId}</Trans>
                 </div>
             )}

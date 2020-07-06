@@ -58,7 +58,7 @@ const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
                     <Trans>embed_problemHeadline</Trans>
                 </h2>
                 <p>
-                    <Trans>embed_PersonalisedLinks_problem</Trans>
+                    <Trans>analysis_PersonalisedLinks_problem</Trans>
                 </p>
             </div>
 
