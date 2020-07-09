@@ -4,6 +4,11 @@ import { initReactI18next } from "react-i18next";
 
 import de from "./de.json";
 import en from "./en.json";
+
+/**
+ * This initializes the i18n library with all the settings used in this project
+ */
+
 i18n.use(LanguageDetector)
     .use(initReactI18next)
     .init({

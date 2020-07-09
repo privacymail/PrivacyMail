@@ -7,6 +7,11 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
+/**
+ * This is a Script to add new Translations in alphabetical to the Website
+ * execute this script by typing 'node addTranslation' and follow the instructions
+ */
+
 function orderKeys(obj) {
     return Object.keys(obj)
         .sort(function(a, b) {
