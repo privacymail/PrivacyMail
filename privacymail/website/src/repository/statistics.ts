@@ -8,6 +8,10 @@ export interface IStatistics {
     service_count: number;
     tracker_count: number;
 }
+/**
+ * fetches the statistics for the PrivacyMail Homepage
+ * @param callback function that gets called as soon as the identity comes in
+ */
 export const getStatistics = (callback: (result: IStatistics) => void): void => {
     execute("statistics").then((result: IGlobalStats) => callback(result.global_stats));
 };

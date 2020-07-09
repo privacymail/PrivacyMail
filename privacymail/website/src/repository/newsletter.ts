@@ -69,6 +69,12 @@ export interface IService {
     sector: string;
     country_of_origin: string;
 }
+/**
+ * fetched an service based on id or name
+ * @param service the name or id of the service
+ * @param history the history object of the website so it can redirect to the not found page
+ * @param callback function that gets called as soon as the results come in
+ */
 export const getNewsletter = (service: any = "", history: History, callback: (result: INewsletter) => void): void => {
     let url = "";
     if (service) {
@@ -90,7 +96,12 @@ export const getNewsletter = (service: any = "", history: History, callback: (re
             .catch(e => history.push("/serviceNotFound/" + service));
     }
 };
-
+/**
+ * submits the meta data of an service
+ * @param service name of the service
+ * @param sector sctor of the service
+ * @param country_of_origin country of the service
+ */
 export const postInformation = (service: string = "", sector: string, country_of_origin: string): void => {
     let url = "service/";
     if (service) {

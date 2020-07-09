@@ -25,13 +25,19 @@ export interface IEmbedData {
     country_of_origin: string;
 }
 
-export const getEmbed = (service: string = "", history: History, callback: (result: IEmbed) => void): void => {
+/**
+ * fetched an embed based on id or name
+ * @param embed the name or id of the embed
+ * @param history the history object of the website so it can redirect to the not found page
+ * @param callback function that gets called as soon as the results come in
+ */
+export const getEmbed = (embed: string = "", history: History, callback: (result: IEmbed) => void): void => {
     let url = "";
-    if (service) {
-        if (parseInt(service)) {
-            url = "embed/" + service;
+    if (embed) {
+        if (parseInt(embed)) {
+            url = "embed/" + embed;
         } else {
-            url = "embed/?url=" + service;
+            url = "embed/?url=" + embed;
         }
         execute(url)
             .then((result: any) => {
@@ -43,10 +49,15 @@ export const getEmbed = (service: string = "", history: History, callback: (resu
                 }
                 callback(result as IEmbed);
             })
-            .catch(e => history.push("/embedNotFound/" + service));
+            .catch(e => history.push("/embedNotFound/" + embed));
     }
 };
-
+/**
+ * submits the meta data of an embed
+ * @param embed name of the embed
+ * @param sector sctor of the embed
+ * @param country_of_origin country of the embed
+ */
 export const postInformationEmbed = (embed: string = "", sector: string, country_of_origin: string): void => {
     let url = "embed/";
     if (embed) {

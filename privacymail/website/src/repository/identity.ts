@@ -9,7 +9,11 @@ export interface IIdentity {
     mail: string;
     service: IService;
 }
-
+/**
+ * generates a new Identity for a newsletter
+ * @param newsletter the name of the newsletter the identity is for
+ * @param callback function that gets called as soon as the identity comes in
+ */
 export const generateIdentity = (newsletter: string = "", callback: (result?: IIdentity) => void): void => {
     let url = "identity/";
     if (newsletter) {
