@@ -4,6 +4,10 @@ import { clickButtonOnEnterKeyById } from "../../utils/functions/onEnterKey";
 import { Link } from "react-router-dom";
 import Statistics from "./Statistics";
 
+/**
+ * This is the first the the user will see
+ * This also includes the newsletter search
+ */
 const Welcome = (props: WithTranslation) => {
     const [newsletter, setNewsletter] = useState<string>("");
     return (

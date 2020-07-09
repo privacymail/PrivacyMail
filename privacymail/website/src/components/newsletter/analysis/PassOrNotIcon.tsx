@@ -11,7 +11,9 @@ export enum PassOrNotState {
     Passed = "Passed",
     Disabled = "Disabled"
 }
-
+/**
+ * This decides wich Icon should be displayed in the small version of some analysis items
+ */
 const PassOrNotIcon = (props: PassOrNotIconProps) => {
     const getIcon = (status: PassOrNotState | undefined) => {
         switch (status) {

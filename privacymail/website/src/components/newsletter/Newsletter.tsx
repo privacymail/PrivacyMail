@@ -10,12 +10,17 @@ import NoEmailAlert from "./NoEmailAlert";
 import Spinner from "../../utils/Spinner";
 import SplitDomainName from "../../utils/SplitDomainName";
 interface NewsletterProps extends RouteComponentProps {}
-
+/**
+ * Defines the Layout of the newsletteranalysis
+ */
 const Newsletter = (props: NewsletterProps) => {
     let { id } = useParams();
     const [newsletter, setNewsletter] = useState<INewsletter>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    /**
+     * Refetched the data from the backend if the newsletter id changes
+     */
     useEffect(() => {
         setIsLoading(true);
         getNewsletter(id, props.history, (newsletter: INewsletter) => {
@@ -27,6 +32,7 @@ const Newsletter = (props: NewsletterProps) => {
     return (
         <Spinner isSpinning={isLoading}>
             <div className="newsletter">
+                {/* Checks if the newsletter contains meaningfull data */}
                 {newsletter?.count_mails !== 0 ||
                 newsletter?.third_parties.length !== 0 ||
                 newsletter?.num_different_idents !== 0 ? (

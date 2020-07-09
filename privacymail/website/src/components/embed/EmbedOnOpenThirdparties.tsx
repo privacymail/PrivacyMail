@@ -10,7 +10,9 @@ interface OnOpenThirdpartiesProps {
     homeUrl?: string;
     reliability?: Reliability;
 }
-
+/**
+ * Defines how the ONOPEN analysis should look like
+ */
 const EmbedOnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
     return (
         <CollapsibleItem>
@@ -19,7 +21,9 @@ const EmbedOnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
         </CollapsibleItem>
     );
 };
-
+/**
+ * Defines how the ONOPEN analysis preview should look like
+ */
 const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
         <>
@@ -30,6 +34,9 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
         </>
     );
 };
+/**
+ * Defines how the ONOPEN analysis expanded view should look like
+ */
 const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
         <>

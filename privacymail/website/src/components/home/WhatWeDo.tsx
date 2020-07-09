@@ -1,6 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
 
+/**
+ * This gives a short summary why we do email tracking analysis
+ */
 const WhatWeDo = () => {
     return (
         <div className="whatWeDo">

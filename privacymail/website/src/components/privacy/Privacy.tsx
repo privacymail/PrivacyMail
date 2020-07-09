@@ -1,5 +1,9 @@
 import React from "react";
 
+/**
+ * This is the PrivacyPolicy of PrivacyMail.
+ * This is identical to the previous version of the website
+ */
 const Privacy = () => {
     return (
         <div className="privacy">

@@ -9,7 +9,9 @@ interface ABTestingProps {
     newsletter?: INewsletter;
     reliability?: Reliability;
 }
-
+/**
+ * A/B-Testing Analasis
+ */
 const ABTesting = (props: ABTestingProps) => {
     return (
         <CollapsibleItem>
@@ -18,7 +20,9 @@ const ABTesting = (props: ABTestingProps) => {
         </CollapsibleItem>
     );
 };
-
+/**
+ * A/B-Testing Preview
+ */
 const ABTestingSmall = (props: ABTestingProps) => {
     const getStatus = (newsletter: INewsletter | undefined) => {
         if (newsletter?.num_different_idents && newsletter?.num_different_idents < 2) {
@@ -49,6 +53,9 @@ const ABTestingSmall = (props: ABTestingProps) => {
 interface ABTestingBigProps {
     reliability?: Reliability;
 }
+/**
+ * A/B-Testing Detailed
+ */
 const ABTestingBig = (props: ABTestingBigProps) => {
     return (
         <>

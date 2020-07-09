@@ -15,6 +15,9 @@ interface ThridpartysByCategoryProps {
     homeUrl?: string;
     defaultPow?: number;
 }
+/**
+ * This shows a list of thirdparties grouped by their sectors
+ */
 const ThridpartysByCategory = (props: ThridpartysByCategoryProps) => {
     const availableCategories: string[] = [];
     props.thirdparties?.forEach(thirdparty => {
@@ -54,6 +57,9 @@ interface CategoryProps extends Category {
     homeUrl?: string;
     defaultPow?: number;
 }
+/**
+ * This shows a list of all thirdparties in a sinlge sector
+ */
 const Category = (props: CategoryProps) => {
     return (
         <CollapsibleItem>

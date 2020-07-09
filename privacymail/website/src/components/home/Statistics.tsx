@@ -3,6 +3,9 @@ import { Trans } from "react-i18next";
 import { IStatistics, getStatistics } from "../../repository";
 
 import i18n from "../../i18n/i18n";
+/**
+ * This show the current newsletter statistics of PrivacyMail
+ */
 const Statistics = () => {
     const [statistics, setStatistics] = useState<IStatistics>();
     useEffect(() => getStatistics(setStatistics), []);

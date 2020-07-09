@@ -12,10 +12,20 @@ interface GerneralInfoProps extends WithTranslation {
     num_different_idents?: number;
     type: "service" | "embed";
 }
+/**
+ * Displayes the gerneral Info of a newsletter or embed.
+ * If the info is not available it shows a form instead
+ */
 const GerneralInfo = (props: GerneralInfoProps) => {
     const [country, setCountry] = useState<string>(props.entity?.country_of_origin || "");
     const [sector, setSector] = useState<string>(props.entity?.sector || "");
 
+    /**
+     * picks the current translations from a given array
+     * @param arr the translation array. in this case either the countries or sectors array imported from the corresponding JSON
+     * @param key the key of the translation
+     * @returns the correct translation
+     */
     const getCurrentItemTranslation = (arr: any[], key?: string) => {
         const currentLanguage = i18n.language.split("-")[0];
         const trans = arr.find((elem: any) => elem.key === key);
@@ -23,6 +33,11 @@ const GerneralInfo = (props: GerneralInfoProps) => {
         return trans?.[currentLanguage];
     };
 
+    /**
+     * Generates the options for the countries / sectors select in the form
+     * @param arr all the countries / sectors
+     * @param defaultValue the default value if nothing is selected
+     */
     const generateOptions = (arr: any[], defaultValue: string = "") => {
         const currentLanguage = i18n.language.split("-")[0];
         const newArray = arr
@@ -41,7 +56,7 @@ const GerneralInfo = (props: GerneralInfoProps) => {
         );
         return newArray;
     };
-
+    //this defines if this Element should display information or the form
     const editalble = props.entity?.sector === "unknown" && props.entity?.country_of_origin === "";
 
     return (

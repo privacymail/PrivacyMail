@@ -11,10 +11,16 @@ interface AnalysisProps {
     newsletter?: INewsletter;
 }
 
+/**
+ * Defines the Analysis
+ */
 const Analysis = (props: AnalysisProps) => {
+    //Filters all ONVIEW Thirdparties
     const onOpenThirdparties = props.newsletter?.third_parties.filter(thirdpartie =>
         thirdpartie.embed_as.includes("ONVIEW")
     );
+
+    //Filters all ONCLICK Thirdparties
     const onClickThirdparties = props.newsletter?.third_parties.filter(thirdpartie =>
         thirdpartie.embed_as.includes("ONCLICK")
     );

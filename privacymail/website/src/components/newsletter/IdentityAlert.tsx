@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 interface IdentityAlertProps {
     newsletterName: string;
 }
-
+/**
+ * Displays a litte Alert thats informing the user that to few identitys have been registered for this newsletter
+ */
 const IdentityAlert = (props: IdentityAlertProps) => {
     return (
         <div className="alert warning identityAlert">

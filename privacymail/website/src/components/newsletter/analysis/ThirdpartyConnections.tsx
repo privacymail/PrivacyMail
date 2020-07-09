@@ -9,6 +9,10 @@ interface ThirdpartyConnectionsProps {
     homeUrl?: string;
     linkTo?: string;
 }
+/**
+ * This shows a displays a list of thirdparties.
+ * The List also ges sorted.
+ */
 const ThirdpartyConnections = (props: ThirdpartyConnectionsProps) => {
     return (
         <ul>
@@ -41,6 +45,9 @@ interface ThirdpartyProps {
     isHomeUrl: boolean;
     linkTo?: string;
 }
+/**
+ * This shows single Thirdparty
+ */
 const Thirdparty = (props: ThirdpartyProps) => {
     return (
         <li className="thirdparty">

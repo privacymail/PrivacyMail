@@ -4,6 +4,9 @@ import SplitDomainName from "../../utils/SplitDomainName";
 interface EmbedHeaderProps {
     embedName: string;
 }
+/**
+ * This displays the Embed name
+ */
 const EmbedHeadline = (props: EmbedHeaderProps) => {
     return (
         <div className="generalInfo">

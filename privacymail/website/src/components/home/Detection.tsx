@@ -2,6 +2,9 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { IconList, IconListItem } from "../../utils/IconList";
 
+/**
+ * This explains how we detect Tracking
+ */
 const Detection = () => {
     return (
         <div className="detection">

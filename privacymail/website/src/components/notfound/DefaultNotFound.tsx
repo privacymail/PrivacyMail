@@ -1,6 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
 
+/**
+ * This is the Default 404 page
+ */
 const DefaultNotFound = () => {
     return (
         <div className="notFound">

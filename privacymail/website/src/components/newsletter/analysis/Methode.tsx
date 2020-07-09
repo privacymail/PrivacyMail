@@ -6,6 +6,9 @@ interface MethodeProps {
     reliability?: Reliability;
     textId?: string;
 }
+/**
+ * Displays the methode part of the big few of the analysis items
+ */
 const Methode = (props: MethodeProps) => {
     return (
         <div>

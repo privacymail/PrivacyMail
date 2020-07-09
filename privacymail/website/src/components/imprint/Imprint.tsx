@@ -1,6 +1,9 @@
 import React from "react";
 import { Trans } from "react-i18next";
 
+/**
+ * This is the Imprint
+ */
 const Imprint = () => {
     return (
         <div className="imprint">

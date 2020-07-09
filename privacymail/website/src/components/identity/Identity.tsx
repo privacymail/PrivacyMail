@@ -9,13 +9,23 @@ import { useParams, Link } from "react-router-dom";
 import { isDomainVaild } from "../../utils/functions/isDomainValid";
 import InvalidDomain from "../../utils/InvalidDomain";
 
+/**
+ * the AddIdentity Process using a Stepper
+ */
 const Identity = () => {
     const [identity, setIdentity] = useState<IIdentity>();
     const [current, setCurrent] = useState<number>(0);
 
     const { id } = useParams();
+
+    //resets the scroll, if the urlparams changes
     useEffect(() => window.scrollTo(0, 0), [id]);
 
+    /**
+     * Sets the new Identity used in this process.
+     * It either sets the idenity or resets the stepper
+     * @param ident the new Identity
+     */
     const setIdentityCheck = (ident?: IIdentity) => {
         if (ident) {
             setIdentity(ident);
@@ -54,7 +64,13 @@ interface Page1 extends StepperItem {
     setIdentity: (identity?: IIdentity) => void;
     url?: string;
 }
+/**
+ * Page 1 of the AddIdentity Process
+ */
 const Page1 = (props: Page1) => {
+    /**
+     * This generates a new Identity
+     */
     const createIdentity = () => {
         generateIdentity(props.url, props.setIdentity);
         props.next?.();
@@ -88,6 +104,9 @@ const Page1 = (props: Page1) => {
 interface Page2 extends StepperItem {
     identity?: IIdentity;
 }
+/**
+ * Page 2 of the AddIdentity Process
+ */
 const Page2 = (props: Page2) => {
     return (
         <Spinner isSpinning={!props.identity}>
@@ -115,6 +134,9 @@ const Page2 = (props: Page2) => {
 interface Page3 extends StepperItem {
     identity?: IIdentity;
 }
+/**
+ * Page 3 of the AddIdentity Process
+ */
 const Page3 = (props: Page3) => {
     return (
         <Spinner isSpinning={!props.identity}>
@@ -173,7 +195,9 @@ const Page3 = (props: Page3) => {
         </Spinner>
     );
 };
-
+/**
+ * Page 4 of the AddIdentity Process
+ */
 const Page4 = (props: Page2) => {
     return (
         <div className="done">

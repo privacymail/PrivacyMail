@@ -12,7 +12,9 @@ interface OnOpenThirdpartiesProps {
     homeUrl?: string;
     reliability?: Reliability;
 }
-
+/**
+ * Defines how the ONVIEW analysis should look like
+ */
 const OnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
     return (
         <CollapsibleItem>
@@ -21,7 +23,9 @@ const OnOpenThirdparties = (props: OnOpenThirdpartiesProps) => {
         </CollapsibleItem>
     );
 };
-
+/**
+ * Defines how the ONVIEW analysis preview should look like
+ */
 const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
     return (
         <>
@@ -37,6 +41,9 @@ const OnOpenThirdpartiesSmall = (props: OnOpenThirdpartiesProps) => {
         </>
     );
 };
+/**
+ * Defines how the ONVIEW analysis expanded view should look like
+ */
 const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
     return (
         <>

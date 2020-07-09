@@ -8,9 +8,14 @@ import PersonalisedLinks from "./EmbedPersonalisedLinks";
 interface AnalysisProps {
     embed?: IEmbed;
 }
-
+/**
+ * Defines the Analysis of embeds
+ */
 const AnalysisEmbed = (props: AnalysisProps) => {
+    //Filters all Newslettes that embed this embed as ONVIEW
     const onOpenThirdparties = props.embed?.services.filter(service => service.embed_as.includes("ONVIEW"));
+
+    //Filters all Newslettes that embed this embed as ONCLICK
     const onClickThirdparties = props.embed?.services.filter(service => service.embed_as.includes("ONCLICK"));
     return (
         <div className="analysis">

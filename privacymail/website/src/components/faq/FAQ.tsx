@@ -5,12 +5,20 @@ import faqJson from "../../i18n/faq.json";
 import CollapsibleItem from "../../utils/CollapsibleItem";
 import { Trans } from "react-i18next";
 
+/**
+ * This generates the FAQ by the faq.json in the i18n folder
+ */
 const FAQ = () => {
+    //these are all the diffrent groups of questions
     const groups: string[] = [];
     faqJson.forEach(question => {
         if (!groups.includes(question.group)) groups.push(question.group);
     });
 
+    /**
+     * this generates the questions from a given list
+     * @param questions list of questions
+     */
     const generateQuestions = (questions: any[]) => {
         const currentLanguage = i18n.language.split("-")[0];
         return questions.map(question => (
@@ -21,6 +29,11 @@ const FAQ = () => {
         ));
     };
 
+    /**
+     * This generates the questions  by the faq.json in the i18n folder
+     * @param groups list of groups
+     * @param questions list of questions
+     */
     const generateGroups = (groups: string[], questions: any[]) => {
         return groups.map(group => (
             <React.Fragment key={group}>

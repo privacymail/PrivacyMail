@@ -5,7 +5,9 @@ import { Link } from "react-router-dom";
 interface NoEmailAlertProps {
     newsletterName: string;
 }
-
+/**
+ * Displays a litte alert if PrivacyMail has not received any email from this newsletter
+ */
 const NoEmailAlert = (props: NoEmailAlertProps) => {
     return (
         <div className="alert warning identityAlert">

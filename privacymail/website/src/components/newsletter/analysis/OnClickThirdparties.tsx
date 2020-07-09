@@ -12,7 +12,9 @@ interface OnClickThirdpartiesProps {
     homeUrl?: string;
     reliability?: Reliability;
 }
-
+/**
+ * Defines how the ONCLICK analysis should look like
+ */
 const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
     return (
         <CollapsibleItem>
@@ -21,7 +23,9 @@ const OnClickThirdparties = (props: OnClickThirdpartiesProps) => {
         </CollapsibleItem>
     );
 };
-
+/**
+ * Defines how the ONCLICK analysis preview should look like
+ */
 const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
     return (
         <>
@@ -37,6 +41,9 @@ const OnClickThirdpartiesSmall = (props: OnClickThirdpartiesProps) => {
         </>
     );
 };
+/**
+ * Defines how the ONCLICK analysis expanded view should look like
+ */
 const OnClickThirdpartiesBig = (props: OnClickThirdpartiesProps) => {
     return (
         <>

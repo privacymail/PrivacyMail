@@ -2,6 +2,9 @@ import React from "react";
 import { Trans } from "react-i18next";
 import { IconList, IconListItem } from "../../utils/IconList";
 
+/**
+ * This explaines why somebody should use PrivacyMail
+ */
 const WhyPrivacymail = () => {
     return (
         <div className="whyPrivacymail">

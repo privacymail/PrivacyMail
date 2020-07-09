@@ -9,7 +9,9 @@ interface SpamProps {
     newsletter?: INewsletter;
     reliability?: Reliability;
 }
-
+/**
+ * Defines how the Spam analysis should look like
+ */
 const Spam = (props: SpamProps) => {
     return (
         <CollapsibleItem>
@@ -18,7 +20,9 @@ const Spam = (props: SpamProps) => {
         </CollapsibleItem>
     );
 };
-
+/**
+ * Defines how the Spam analysis should look like
+ */
 const SpamSmall = (props: SpamProps) => {
     const getStatus = (newsletter: INewsletter | undefined) => {
         if (newsletter?.third_party_spam === 0) {
@@ -43,6 +47,9 @@ const SpamSmall = (props: SpamProps) => {
 interface SpamBigProps {
     reliability?: Reliability;
 }
+/**
+ * Defines how the Spam analysis should look like
+ */
 const SpamBig = (props: SpamBigProps) => {
     return (
         <>

@@ -1,40 +1,16 @@
-import React, { useState } from "react";
+import React from "react";
 import { Trans } from "react-i18next";
 import { Icon } from "../../utils/Icon";
 import { Link } from "react-router-dom";
 import LanguageSelection from "./LanguageSelection";
-import i18n from "i18next";
-
+/**
+ * Defines the Footer of PrivacyMail
+ */
 function Footer() {
-    const [isLanguageSelectionOpen, setLanguageSelectionOpen] = useState(false);
-
-    const onOutsideClick = () => {
-        setLanguageSelectionOpen(false);
-        window.removeEventListener("click", onOutsideClick);
-    };
-    const openLanguageSelection = (e: React.MouseEvent) => {
-        e.stopPropagation();
-
-        if (!isLanguageSelectionOpen) {
-            setLanguageSelectionOpen(true);
-            window.addEventListener("click", onOutsideClick);
-        } else {
-            onOutsideClick();
-        }
-    };
-
     return (
         <footer className="footer">
             <div className="footerFlex">
-                <div className="item" onClick={e => openLanguageSelection(e)} id="languageSelection">
-                    <Icon height={24} importByFile>
-                        {i18n.language.split("-")[0]}
-                    </Icon>
-                    <div className="text">
-                        <Trans>footer_language</Trans>
-                    </div>
-                    <LanguageSelection isOpen={isLanguageSelectionOpen} target="" />
-                </div>
+                <LanguageSelection />
                 <Link to="/faq">
                     <div className="item">
                         <Icon height={24}>question_answer</Icon>

@@ -9,7 +9,9 @@ interface PersonalisedLinksProps {
     newsletter?: INewsletter | IEmbed;
     reliability?: Reliability;
 }
-
+/**
+ * Defines how the PersonalisedLinks analysis should look like
+ */
 const PersonalisedLinks = (props: PersonalisedLinksProps) => {
     return (
         <CollapsibleItem>
@@ -18,7 +20,9 @@ const PersonalisedLinks = (props: PersonalisedLinksProps) => {
         </CollapsibleItem>
     );
 };
-
+/**
+ * Defines how the PersonalisedLinks analysis preview should look like
+ */
 const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
     const getStatus = (third_parties: IThirdParty[] | undefined) => {
         if (
@@ -52,6 +56,9 @@ const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
 interface PersonalisedLinksBigProps {
     reliability?: Reliability;
 }
+/**
+ * Defines how the PersonalisedLinks analysis expanded view should look like
+ */
 const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
     return (
         <>

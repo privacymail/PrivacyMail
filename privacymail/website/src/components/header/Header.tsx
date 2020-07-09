@@ -1,7 +1,11 @@
 import React from "react";
 import logo from "../../assets/images/logo.png";
 import { Link } from "react-router-dom";
-function Header() {
+
+/**
+ * Defines the Header of PrivacyMail
+ */
+const Header = () => {
     return (
         <div className="header">
             <Link to="/">
@@ -12,5 +16,5 @@ function Header() {
             </Link>
         </div>
     );
-}
+};
 export default Header;

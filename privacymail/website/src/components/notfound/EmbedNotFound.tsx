@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import { Trans } from "react-i18next";
 import InvalidDomain from "../../utils/InvalidDomain";
 
+/**
+ * This is the 404 page if a Embed is not found
+ */
 const EmbedNotFound = () => {
     let { id } = useParams();
 

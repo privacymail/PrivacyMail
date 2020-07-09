@@ -13,8 +13,14 @@ interface PrivacyRatingProps {
     newsletter: string;
     privacyRating?: IRating;
 }
-
+/**
+ * Displayes the PrivacyRating
+ */
 const PrivacyRating = (props: PrivacyRatingProps) => {
+    /**
+     * Converts a numerical rating to the letter scale
+     * @param rating rating of the newsletter
+     */
     const convertRatingToMark = (rating: number) => {
         switch (Math.round(rating)) {
             case 1:

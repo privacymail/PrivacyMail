@@ -8,7 +8,11 @@ interface PersonProps {
     identity?: IIdentity;
     className?: string;
 }
+/**
+ * This is how a Identity gets visualized.
+ */
 const Person = (props: PersonProps) => {
+    //copys the identity emailadress to the users clipboard
     const copyToClipboard = () => {
         navigator.clipboard.writeText(props.identity?.mail || "");
     };

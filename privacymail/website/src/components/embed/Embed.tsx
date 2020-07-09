@@ -9,11 +9,17 @@ import EmbedHeadline from "./EmbedHeadline";
 
 interface EmbedProps extends RouteComponentProps {}
 
+/**
+ * Defines the Layout of the embedanalysis
+ */
 const Embed = (props: EmbedProps) => {
     let { id } = useParams();
     const [embed, setEmbed] = useState<IEmbed>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
+    /**
+     * Refetched the data from the backend if the newsletter id changes
+     */
     useEffect(() => {
         setIsLoading(true);
         getEmbed(id, props.history, (newsletter: IEmbed) => {

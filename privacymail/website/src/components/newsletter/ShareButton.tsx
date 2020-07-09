@@ -5,8 +5,15 @@ interface ShareButtonProps extends WithTranslation {
     newsletterName: string;
     rating: string;
 }
+/**
+ * Displayes a Share Icon that triggers the native share of the device (only works on mobile browsers)
+ */
 const ShareButton = (props: ShareButtonProps) => {
     const navigatorAny: any = navigator;
+
+    /**
+     * Generates the Text that for the Share Funtion and triggers it
+     */
     const triggerNativeShare = () => {
         const shareData = {
             title: window.location.hostname,

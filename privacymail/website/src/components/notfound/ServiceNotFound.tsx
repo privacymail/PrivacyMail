@@ -4,6 +4,9 @@ import { Trans } from "react-i18next";
 import InvalidDomain from "../../utils/InvalidDomain";
 import { isDomainVaild } from "../../utils/functions/isDomainValid";
 
+/**
+ * This is the 404 page if a newsletter is not found
+ */
 const ServiceNotFound = () => {
     let { id } = useParams();
 
@@ -12,7 +15,7 @@ const ServiceNotFound = () => {
             <div className="heading thin">
                 <Trans>404_heading</Trans>
             </div>
-
+            {/* If the domain is valid but not in the database the user will see a link to the identity add page */}
             {isDomainVaild(id || "") ? (
                 <>
                     <div className="light">

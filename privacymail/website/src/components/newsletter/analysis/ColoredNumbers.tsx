@@ -2,11 +2,18 @@ import React from "react";
 import { getRatingColor } from "../../../utils/functions/getRatingColor";
 
 interface ColoredNumbers {
-    number?: number;
+    number?: number; //number of violations found
     className?: string;
-    pow?: number;
+    pow?: number; //decides how fast the conversion should reach 1
 }
+/**
+ * Colores a Number based on the number of violations
+ */
 const ColoredNumbers = (props: ColoredNumbers) => {
+    /**
+     * Converts any number to a number between 0 and 1
+     * @param number The number of violations
+     */
     const numberToFraction = (number: number) => {
         return -Math.pow(1 - (props.pow ?? 0.5), number) + 1;
     };
