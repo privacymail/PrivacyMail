@@ -17,8 +17,12 @@ import Tooltip from "./utils/Tooltip";
 import DefaultNotFound from "./components/notfound/DefaultNotFound";
 import EmbedNotFound from "./components/notfound/EmbedNotFound";
 
-const getRoutes = () => {
-    const routes = [];
+/**
+ * Generates all the routes required by PrivacyMail
+ * @returns An array with all Routs used for this website
+ */
+const getRoutes = (): JSX.Element[] => {
+    const routes: JSX.Element[] = [];
 
     routes.push(<Route key="/service/:id" path="/service/:id" children={<Newsletter />} />);
     routes.push(<Route key="/embed/:id" path="/embed/:id" children={<Embed />} />);
@@ -68,6 +72,7 @@ const getRoutes = () => {
 
 const App = () => {
     const history = createBrowserHistory();
+    //This resets the page to scroll back to the top on URL changes
     history.listen(() => {
         window.scrollTo(0, 0);
     });

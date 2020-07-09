@@ -2,19 +2,23 @@ import React, { useState, useRef, useEffect } from "react";
 import { Icon } from "./Icon";
 
 export interface StepperItem {
-    next?: () => void;
-    prev?: () => void;
-    jump?: (tab: number) => void;
+    next?: () => void; //this calls the next step
+    prev?: () => void; // this calls to the previous step
+    jump?: (tab: number) => void; //this jumps to a specific step
 }
 interface Stepper {
     content: {
-        child: React.ReactElement<StepperItem>;
-        heading?: string | JSX.Element;
+        //all the steps
+        child: React.ReactElement<StepperItem>; //the underlying content of the step
+        heading?: string | JSX.Element; //headline of the step
     }[];
-    onTabChange?: (step?: number) => void;
-    minHeight?: number;
-    tab?: number;
+    onTabChange?: (step?: number) => void; //this will get called if the current Step changes
+    minHeight?: number; //this is the minHeigt of the Stepper
+    tab?: number; //the initial tab where the Stepper should start.
 }
+/**
+ * This is the Logic behind the Stepper used to add a new Identity
+ */
 const Stepper = (props: Stepper) => {
     const [current, setCurrent] = useState<number>(0);
     const currentChild = props.content[current].child;
@@ -25,6 +29,7 @@ const Stepper = (props: Stepper) => {
         setCurrent(tab);
         props.onTabChange?.(tab);
     };
+    //this resets the view after each step
     useEffect(() => {
         if (current !== 0) {
             stepperRef?.current?.scrollIntoView({
@@ -39,6 +44,8 @@ const Stepper = (props: Stepper) => {
         }
         // eslint-disable-next-line
     }, [props.tab]);
+
+    //renders all the steps and provides them with the needed functions for a StepperItem
     return (
         <div className="stepper">
             <StepperHeading headings={props.content.map(elem => elem.heading)} current={current} />
@@ -58,6 +65,10 @@ interface StepperHeading {
     headings: (string | JSX.Element | undefined)[];
     current: number;
 }
+/**
+ * This acts as a progress bar.
+ * So the user knows at which step he/she is
+ */
 const StepperHeading = (props: StepperHeading) => {
     const getHeadings = (headings: (string | JSX.Element | undefined)[]): JSX.Element[] => {
         const arr: JSX.Element[] = [];

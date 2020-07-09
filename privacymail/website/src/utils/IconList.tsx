@@ -5,6 +5,9 @@ interface IconListProps {
     className?: string;
     children?: JSX.Element | JSX.Element[];
 }
+/**
+ * Generates an IconList as seen on the Homepage
+ */
 const IconList = (props: IconListProps) => {
     return (
         <div className={props.className || "image-list"}>
@@ -17,6 +20,9 @@ interface IconListItemProps {
     icon?: string;
     children?: JSX.Element | JSX.Element[];
 }
+/**
+ * Generates an IconListItem for the IconList
+ */
 const IconListItem = (props: IconListItemProps) => {
     return (
         <li>

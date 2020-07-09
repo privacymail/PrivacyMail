@@ -3,11 +3,15 @@ import Collapsible from "react-collapsible";
 import { Icon } from "./Icon";
 
 interface CollapsibleItemProps {
-    defaultOpen?: boolean;
-    small?: JSX.Element;
-    big?: JSX.Element | JSX.Element[];
-    children?: JSX.Element[];
+    defaultOpen?: boolean; //should the CollapsibleItem be opened by default?
+    small?: JSX.Element; //this gets displayed when the CollapsibleItem is collapsed
+    big?: JSX.Element | JSX.Element[]; //this gets displayed when the CollapsibleItem is expanded
+    children?: JSX.Element[]; //Alternative way to privide small and big. Small should always be the first element in the list.
 }
+/**
+ * This wraps the Collapsible Class from "react-collapsible" and handles its state.
+ *
+ */
 const CollapsibleItem = (props: CollapsibleItemProps) => {
     const [isExpanded, setIsExpanded] = useState(props.defaultOpen || false);
     return (

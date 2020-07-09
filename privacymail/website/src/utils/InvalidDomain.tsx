@@ -3,11 +3,14 @@ import { Trans } from "react-i18next";
 import { Link } from "react-router-dom";
 import { isDomainVaild } from "./functions/isDomainValid";
 interface InvalidDomainProps {
-    url?: string;
-    urlPath: string;
-    showHeadline?: boolean;
-    buttonText?: string | JSX.Element;
+    url?: string; //initial Domain
+    urlPath: string; //the urlPath where the analyse button will take the use
+    showHeadline?: boolean; //this option will toggle a headline
+    buttonText?: string | JSX.Element; //custon Buttontext for the analyse button
 }
+/**
+ * Provides an DomainInputElement that checks if a domain is valid
+ */
 const InvalidDomain = (props: InvalidDomainProps) => {
     const [url, setUrl] = useState<string>(props.url || "");
     let urlPath = props.urlPath;

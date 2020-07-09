@@ -1,10 +1,12 @@
-export const getRatingColor = (fadeFraction: number) => {
+/**
+ * Converts a PrivacyRating into a color
+ * @param fadeFraction Percitle of the desired color gradient
+ */
+export const getRatingColor = (fadeFraction: number): string => {
     let color1 = { red: 76, green: 175, blue: 80 };
     let color2 = { red: 251, green: 192, blue: 45 };
     let color3 = { red: 227, green: 65, blue: 52 };
     let fade = fadeFraction;
-
-    // Do we have 3 colors for the gradient? Need to adjust the params.
 
     fade = fade * 2;
 
