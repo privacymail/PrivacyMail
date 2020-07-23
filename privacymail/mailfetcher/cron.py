@@ -39,6 +39,7 @@ class ImapFetcher(CronJobBase):
 
     def do(self):
         self.notify_webhook('start')
+        # Work around a bug with the caching library
         cache.delete('ImapFetcher')
 
         PORT = 5000
@@ -51,6 +52,7 @@ class ImapFetcher(CronJobBase):
         server = http.server.HTTPServer(('127.0.0.1', PORT), Handler)
 
         def startThread():
+            # This function serves email messages as small websites
             # create a dummy favicon.ico
             open('/tmp/favicon.ico', 'a').close()
             thread = threading.Thread(target=server.serve_forever)
@@ -130,6 +132,7 @@ class ImapFetcher(CronJobBase):
                         continue
                     print('Queue size %s' % settings.CRON_MAILQUEUE_SIZE)
 
+                    # Parse messages and place in database
                     for i in range(1, messages_to_fetch + 1):
                         print("Parsing message: %s" % i)
                         response, data = mailbox.fetch(str(i), '(RFC822)')
@@ -200,6 +203,8 @@ class ImapFetcher(CronJobBase):
             print('{} unprocessed, {} viewed and {} link_clicked.'.format(unprocessed_mails, viewed_mails,
                                                                           clicked_mails))
 
+            # Have at most settings.CRON_MAILQUEUE_SIZE messages in the queue. If we have less than that,
+            # retrieve new messages from the mail server
             if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
                 print('Too many unfinished mails in database. Continuing without fetching new ones.')
             else:
@@ -226,6 +231,7 @@ class ImapFetcher(CronJobBase):
             # Run OpenWPM; View the Mail, then visit one of it's links.
             if settings.RUN_OPENWPM and mail_queue_count > 0:
                 print('Viewing %s mails.' % mail_queue_count)
+                # Analyze the email queue
                 failed_mails = Mail.call_openwpm_view_mail(mail_queue)
                 print('{} mail views of {} failed in openWPM.'.format(len(failed_mails), mail_queue_count))
 
@@ -237,10 +243,12 @@ class ImapFetcher(CronJobBase):
             # Clean up zombie processes
             kill_openwpm()
 
+            # Now we want to click some links
             if settings.VISIT_LINKS and settings.RUN_OPENWPM and mail_queue_count > 0:
                 link_mail_map = {}
                 print('Visiting %s links.' % mail_queue_count)
                 for mail in mail_queue:
+                    # Get a link that is not an unsubscribe link
                     link = mail.get_non_unsubscribe_link()
                     if 'http' in link:
                         link_mail_map[link] = mail
@@ -258,6 +266,7 @@ class ImapFetcher(CronJobBase):
                 mail_queue = Mail.objects.filter(processing_state=Mail.PROCESSING_STATES.VIEWED)
 
             print('Analyzing {} mails for leakages.'.format(mail_queue.count()))
+            # Check if the email address is leaked somewhere (hashes, ...)
             for mail in mail_queue:
                 mail.analyze_mail_connections_for_leakage()
                 mail.create_service_third_party_connections()

@@ -236,6 +236,7 @@ class Mail(models.Model):
         self.save()
 
     def create_service_third_party_connections(self):
+        # Connects a service to a third party if this connection has been observed
         identity = self.identity
         if identity.count() < 1:
             logger.error('Mail has no associated identity', extra={'mailID': self.pk})
@@ -725,6 +726,7 @@ class Mail(models.Model):
 
     @staticmethod
     def call_openwpm_view_mail(mailQueue):
+        # View a queue of emails with OpenWPM and save the observed connections
         print('Preparing data for OpenWPM.')
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
         if os.path.exists(wpm_db):
@@ -732,6 +734,8 @@ class Mail(models.Model):
 
         file_to_mail_map = {}
         mailFiles = []
+        # Go through all emails to create temporary files with their contents
+        # These can then be analyzed with OpenWPM later
         for mail in mailQueue:
             if mail.body_html:
                 # create unique filename
@@ -804,7 +808,8 @@ class Mail(models.Model):
             db_cursor = conn.cursor()
 
             for fileName in mailFiles:
-                if not Mail.import_openwpmresults(fileName, file_to_mail_map[fileName], db_cursor):
+                successful_import = Mail.import_openwpmresults(fileName, file_to_mail_map[fileName], db_cursor)
+                if not successful_import:
                     failed_mails.append(file_to_mail_map[fileName])
                     file_to_mail_map[fileName].processing_fails = file_to_mail_map[fileName].processing_fails + 1
                     file_to_mail_map[fileName].save()
@@ -812,7 +817,6 @@ class Mail(models.Model):
                     file_to_mail_map[fileName].processing_state = Mail.PROCESSING_STATES.VIEWED
                     file_to_mail_map[fileName].processing_fails = 0
                     file_to_mail_map[fileName].save()
-                # TODO
                 os.unlink('/tmp/' + fileName.split('/')[3])  # remove file to avoid zombie data
             db_cursor.close()
 
@@ -822,9 +826,9 @@ class Mail(models.Model):
         print('Done.')
         return failed_mails
 
-    # TODO merge import openwpm results and the call openWPM functions
     @staticmethod
     def import_openwpmresults(filename, mail, db_cursor):
+        # Import the results from the OpenWPM sqlite database and write it to the backend database of Django
         num_eresources = 0
 
         db_cursor.execute("SELECT * from crawl_history where arguments = ? and bool_success = 1;", (filename,))
@@ -886,6 +890,7 @@ class Mail(models.Model):
 
     @staticmethod
     def call_openwpm_click_links(link_mail_map):
+        # Click a specified link for a list of emails and save the results
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
         if os.path.exists(wpm_db):
             os.remove(wpm_db)
@@ -949,7 +954,8 @@ class Mail(models.Model):
             db_cursor = conn.cursor()
 
             for url in link_mail_map:
-                if not Mail.import_openwpmresults_click(url, link_mail_map[url], db_cursor):
+                import_success = Mail.import_openwpmresults_click(url, link_mail_map[url], db_cursor)
+                if not import_success:
                     failed_urls[url] = link_mail_map[url]
                     link_mail_map[url].processing_fails = link_mail_map[url].processing_fails + 1
                     link_mail_map[url].save()

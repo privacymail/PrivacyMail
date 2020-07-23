@@ -193,6 +193,7 @@ def create_service_cache(service, force=False):
     # Create data structure for frontend
 
     # All identities of the service
+    # TODO Currently seems to not filter for content from approved messages only
     identities = Identity.objects.filter(service=service)
     emails = Mail.objects.filter(identity__in=identities, identity__approved=True).distinct()
     service_3p_conns = ServiceThirdPartyEmbeds.objects.filter(service=service)
@@ -304,6 +305,8 @@ def create_service_cache(service, force=False):
 
 
 def analyse_dirty_services():
+    # Re-generate caches for services with updated data
+    # TODO Can this be parallelized
     dirty_services = Service.objects.filter(resultsdirty=True)
     for dirty_service in dirty_services:
         dirty_service.set_has_approved_identity()
