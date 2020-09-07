@@ -278,14 +278,3 @@ table.table thead th.desc::before {
     padding: 0;
     border: 0;
 }
-.invisible {
-    display: none;
-}
-#surveybanner {
-    margin-bottom: 0px;
-    opacity: 0.95;
-}
-#surveybanner a {
-    color: #000;
-    margin-left: 20px;
-}

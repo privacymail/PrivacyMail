@@ -21,7 +21,7 @@
         state: present
     - name: Install apt packages
       apt: 
-        name: ['python3.7', 'python3.7-dev', 'python-virtualenv', 'python-pip', 'apache2', 'apache2-dev', 'postgresql', 'postgresql-contrib', 'python-psycopg2', 'git']
+        name: ['python3.7', 'python3.7-dev', 'python-virtualenv', 'python-pip', 'apache2', 'apache2-dev', 'postgresql', 'postgresql-contrib', 'python-psycopg2', 'git', 'libpq-dev']
         update_cache: yes
     # Set up user
     - name: Create privacymail user
@@ -191,6 +191,15 @@
       shell: /opt/privacymail/privacymail/venv/bin/mod_wsgi-express module-config > /etc/apache2/mods-available/py-wsgi.load
       args:
         creates: /etc/apache2/mods-available/py-wsgi.load
+    - name: Set up special mod_wsgi config
+      lineinfile:
+        dest: /etc/apache2/conf-available/wsgi.conf
+        line: 'WSGIApplicationGroup %{GLOBAL}'
+        state: present
+    - name: Load new WSGI config
+      command: a2enconf wsgi
+      args:
+        creates: /etc/apache2/conf-enabled/wsgi.conf
     - name: Load mod_wsgi in Apache2
       apache2_module:
         state: present

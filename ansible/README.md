@@ -4,7 +4,7 @@ Deploying PrivacyMail is fairly simple. You need a server running a recent versi
 
 To allow pulling from the repository, you currently need a deploy key set up. Put the private key into files/id_deploy (make sure the key does not require a passphrase).
 
-We use the Ansible passwordstore lookup to store sensitive information such as keys and passwords. Ensure the relevant keys from templates/settings.py are in your local pass utility:
+We use the Ansible passwordstore lookup to store sensitive information such as keys and passwords from the [pass](https://www.passwordstore.org/) passwordstore. Ensure the relevant keys from templates/settings.py are in your local `pass` utility:
 
 - Database:
   - privacymail/postgres-user

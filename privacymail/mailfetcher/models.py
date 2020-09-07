@@ -91,15 +91,8 @@ class Mail(models.Model):
         message_raw = message.as_bytes().decode(encoding="UTF-8", errors="replace")
         message_id = message["Message-ID"]
         if message_id is None:
-            message_id = "".join(
-                choice(string.ascii_uppercase + string.digits) for _ in range(32)
-            )
-        print(
-            "Message ID:",
-            message_id,
-            " Subject:",
-            str(make_header(decode_header(message["subject"]))),
-        )
+            message_id = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(32))
+        print("Message ID:", message_id, " Subject:", str(make_header(decode_header(cls._clear_none_values(message['subject'])))))
         try:
             mail = Mail.objects.get(raw=message_raw)
             if mail.date_time is not None:
@@ -231,14 +224,14 @@ class Mail(models.Model):
 
     def calc_header(self):
         message = self.get_message()
-        self.h_x_original_to = message["X-Original-To"]
-        self.h_from = message["From"]
-        self.h_to = message["To"]
-        self.h_cc = message["Cc"]
-        self.h_bcc = message["BCC"]
-        self.h_subject = make_header(decode_header(message["Subject"]))
-        self.h_date = message["Date"]
-        self.h_user_agent = message["User-Agent"]
+        self.h_x_original_to = message['X-Original-To']
+        self.h_from = message['From']
+        self.h_to = message['To']
+        self.h_cc = message['Cc']
+        self.h_bcc = message['BCC']
+        self.h_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
+        self.h_date = message['Date']
+        self.h_user_agent = message['User-Agent']
         # date_obj = parsedate_to_datetime(self.h_date)
         # self.date_time = date_obj
 
@@ -255,6 +248,7 @@ class Mail(models.Model):
         self.save()
 
     def create_service_third_party_connections(self):
+        # Connects a service to a third party if this connection has been observed
         identity = self.identity
         if identity.count() < 1:
             logger.error("Mail has no associated identity", extra={"mailID": self.pk})
@@ -304,6 +298,12 @@ class Mail(models.Model):
         else:
             return []
 
+    @staticmethod
+    def _clear_none_values(value):
+        if value is None:
+            return ""
+        return value
+
     # Try to get a link for openWPM to click, which isn't an unsubscribe link.
     # In most cases it should be enough to only click one link, because if tracking occurs, every link should track.
     def get_non_unsubscribe_link(self):
@@ -311,14 +311,8 @@ class Mail(models.Model):
             type="a", mail_id=self.id, possible_unsub_link=False
         )
         if type_a_urls.count() < 1:
-            print(
-                "############################### Did not find possible unsubscribe link!"
-            )
-            message = self.get_message()
-            mails_without_unsubscribe_link.append(
-                make_header(decode_header(message["Subject"]))
-            )
-            return ""
+            print('############################### Did not find possible unsubscribe link!')
+            return ''
 
         while type_a_urls.count() > 1:
             rand = randint(0, type_a_urls.count() - 1)
@@ -363,13 +357,11 @@ class Mail(models.Model):
                     print("Found possible unsubscribe link: %s" % link)
         if num_detected_unsub_links < 1:
             message = self.get_message()
-            mail_subject = make_header(decode_header(message["Subject"]))
-            mails_without_unsubscribe_link.append(mail_subject)
-            logger.debug(
-                "No unsubscribe link was found.",
-                extra={"mail_subject": str(mail_subject),},
-            )
-            print("Did not find a possible unsubscribe link!")
+            mail_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
+            logger.debug('No unsubscribe link was found.', extra={
+                'mail_subject': str(mail_subject),
+            })
+            print('Did not find a possible unsubscribe link!')
 
         # First and last links in e-mail are more likely to be unsubscribe links.
         if len(a_links) > 2 * settings.NUM_LINKS_TO_SKIP:
@@ -820,13 +812,16 @@ class Mail(models.Model):
 
     @staticmethod
     def call_openwpm_view_mail(mailQueue):
-        print("Preparing data for OpenWPM.")
+        # View a queue of emails with OpenWPM and save the observed connections
+        print('Preparing data for OpenWPM.')
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
         if os.path.exists(wpm_db):
             os.remove(wpm_db)
 
         file_to_mail_map = {}
         mailFiles = []
+        # Go through all emails to create temporary files with their contents
+        # These can then be analyzed with OpenWPM later
         for mail in mailQueue:
             if mail.body_html:
                 # create unique filename
@@ -899,9 +894,8 @@ class Mail(models.Model):
             db_cursor = conn.cursor()
 
             for fileName in mailFiles:
-                if not Mail.import_openwpmresults(
-                    fileName, file_to_mail_map[fileName], db_cursor
-                ):
+                successful_import = Mail.import_openwpmresults(fileName, file_to_mail_map[fileName], db_cursor)
+                if not successful_import:
                     failed_mails.append(file_to_mail_map[fileName])
                     file_to_mail_map[fileName].processing_fails = (
                         file_to_mail_map[fileName].processing_fails + 1
@@ -913,10 +907,7 @@ class Mail(models.Model):
                     ].processing_state = Mail.PROCESSING_STATES.VIEWED
                     file_to_mail_map[fileName].processing_fails = 0
                     file_to_mail_map[fileName].save()
-                # TODO
-                os.unlink(
-                    "/tmp/" + fileName.split("/")[3]
-                )  # remove file to avoid zombie data
+                os.unlink('/tmp/' + fileName.split('/')[3])  # remove file to avoid zombie data
             db_cursor.close()
 
             # remove openwpm sqlite db to avoid waste of disk space
@@ -925,9 +916,9 @@ class Mail(models.Model):
         print("Done.")
         return failed_mails
 
-    # TODO merge import openwpm results and the call openWPM functions
     @staticmethod
     def import_openwpmresults(filename, mail, db_cursor):
+        # Import the results from the OpenWPM sqlite database and write it to the backend database of Django
         num_eresources = 0
 
         db_cursor.execute(
@@ -1017,6 +1008,7 @@ class Mail(models.Model):
 
     @staticmethod
     def call_openwpm_click_links(link_mail_map):
+        # Click a specified link for a list of emails and save the results
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
         if os.path.exists(wpm_db):
             os.remove(wpm_db)
@@ -1078,9 +1070,8 @@ class Mail(models.Model):
             db_cursor = conn.cursor()
 
             for url in link_mail_map:
-                if not Mail.import_openwpmresults_click(
-                    url, link_mail_map[url], db_cursor
-                ):
+                import_success = Mail.import_openwpmresults_click(url, link_mail_map[url], db_cursor)
+                if not import_success:
                     failed_urls[url] = link_mail_map[url]
                     link_mail_map[url].processing_fails = (
                         link_mail_map[url].processing_fails + 1
