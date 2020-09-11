@@ -8,7 +8,7 @@
 export const execute = (path: string, method: string = "GET", payload: any = {}): Promise<any> => {
     const options: any = {
         method,
-        headers: { "Content-Type": "application/json;charset=utf-8" }
+        headers: { "Content-Type": "application/json;charset=utf-8" },
     };
     if (method !== "GET") {
         options.body = JSON.stringify(payload);
@@ -18,6 +18,8 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
     //If a custom backendPath is provided it will be added to all requests
     if (process.env.REACT_APP_BACKEND_API_PATH) {
         url += "/" + process.env.REACT_APP_BACKEND_API_PATH;
+    } else {
+        url += "/api";
     }
 
     //Checks if a / is at the start of the path. If not a / will be added
@@ -33,7 +35,7 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
      */
     return new Promise<any>((resolve, reject) => {
         fetch(url, options)
-            .then(async response => {
+            .then(async (response) => {
                 if (response.status >= 400) {
                     reject(response);
                     return;
@@ -46,7 +48,7 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
                     resolve(json);
                 }
             })
-            .catch(error => {
+            .catch((error) => {
                 console.error(error);
                 reject(error);
             });
