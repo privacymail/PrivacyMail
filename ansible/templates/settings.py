@@ -194,7 +194,6 @@ CRON_CLASSES = [
 # Leave any hooks you do not want to use set to None, and add any URLs you want called as strings
 # You can also set the entire dictionary to None if you don't want to use this feature.
 
-CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
 
 OPENWPM_PATH = '{{ home_dir }}/privacymail/privacymail/runopenwpm.py'
 # Change these in runopenwpm.py as well, if you want to change them
