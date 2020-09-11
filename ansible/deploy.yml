@@ -31,7 +31,7 @@
             "apache2-dev",
             "postgresql",
             "postgresql-contrib",
-            "python-psycopg2",
+            "python3-psycopg2",
             "git",
             "libpq-dev",
           ]
@@ -228,15 +228,20 @@
         dest: /etc/apache2/conf-available/wsgi.conf
         line: "WSGIApplicationGroup %{GLOBAL}"
         state: present
-    - name: Load new WSGI config
-      command: a2enconf wsgi
-      args:
-        creates: /etc/apache2/conf-enabled/wsgi.conf
+        create: yes
     - name: Load mod_wsgi in Apache2
       apache2_module:
         state: present
         name: py-wsgi
         identifier: wsgi_module
+    - name: Restart apache2
+      service:
+        name: apache2
+        state: restarted
+    - name: Load new WSGI config
+      command: a2enconf wsgi
+      args:
+        creates: /etc/apache2/conf-enabled/wsgi.conf
     - name: Create site config
       copy:
         dest: "/etc/apache2/sites-available/{{ pm_domain }}.conf"
