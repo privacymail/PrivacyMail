@@ -36,6 +36,13 @@
             "libpq-dev",
           ]
         update_cache: yes
+    # Install nodejs
+    - name: Install nodejs
+      shell: |
+        set -e
+        curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
+        sudo apt-get install -y nodejs
+
     # Set up user
     - name: Create privacymail user
       user:
