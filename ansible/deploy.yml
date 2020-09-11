@@ -21,7 +21,7 @@
         state: present
     - name: Install apt packages
       apt: 
-        name: ['python3.7', 'python3.7-dev', 'python-virtualenv', 'python-pip', 'apache2', 'apache2-dev', 'postgresql', 'postgresql-contrib', 'python3-psycopg2', 'git', 'libpq-dev']
+        name: ['python3.7', 'python3.7-dev', 'python-virtualenv', 'python-pip', 'apache2', 'apache2-dev', 'postgresql', 'postgresql-contrib', 'python3-psycopg2', 'python-psycopg2', 'git', 'libpq-dev']
         update_cache: yes
     # Set up user
     - name: Create privacymail user
