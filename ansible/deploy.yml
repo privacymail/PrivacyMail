@@ -17,11 +17,24 @@
       shell: add-apt-repository universe
     - name: Install Python PPA
       apt_repository:
-        repo: 'ppa:deadsnakes/ppa'
+        repo: "ppa:deadsnakes/ppa"
         state: present
     - name: Install apt packages
-      apt: 
-        name: ['python3.7', 'python3.7-dev', 'python-virtualenv', 'python-pip', 'apache2', 'apache2-dev', 'postgresql', 'postgresql-contrib', 'python-psycopg2', 'git', 'libpq-dev']
+      apt:
+        name:
+          [
+            "python3.7",
+            "python3.7-dev",
+            "python-virtualenv",
+            "python-pip",
+            "apache2",
+            "apache2-dev",
+            "postgresql",
+            "postgresql-contrib",
+            "python-psycopg2",
+            "git",
+            "libpq-dev",
+          ]
         update_cache: yes
     # Set up user
     - name: Create privacymail user
@@ -31,7 +44,7 @@
         groups: www-data
         home: /opt/privacymail/
         shell: /bin/bash
-        # Ensure that this contains a password in the correct format, see 
+        # Ensure that this contains a password in the correct format, see
         # https://docs.ansible.com/ansible/latest/reference_appendices/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
         password: "{{ lookup('passwordstore', 'privacymail/privacymail-user-pass') }}"
     - name: Create privacymail SSH directory
@@ -128,9 +141,9 @@
         virtualenv: /opt/privacymail/privacymail/venv
         requirements: /opt/privacymail/privacymail/privacymail/OpenWPM/requirements.txt
     - name: Block Firefox software updates in Hosts file
-      lineinfile: 
-        dest: /etc/hosts 
-        line: '127.0.0.1 aus5.mozilla.org'
+      lineinfile:
+        dest: /etc/hosts
+        line: "127.0.0.1 aus5.mozilla.org"
         state: present
     - name: Create folder structure for OpenWPM - Part 1
       become_user: privacymail
@@ -173,14 +186,26 @@
         . ../venv/bin/activate
         python manage.py migrate
         python manage.py createcachetable
-    - name: Collect static files and update translations
+
+    - name: Install Frontend dependencies
       become_user: privacymail
       shell: |
         set -e
-        cd /opt/privacymail/privacymail/privacymail
-        . ../venv/bin/activate
-        python manage.py collectstatic --noinput
-        django-admin compilemessages
+        cd /opt/privacymail/privacymail/privacymail/website
+        npm install
+
+    - name: Build Frontend
+      become_user: privacymail
+      shell: |
+        set -e
+        cd /opt/privacymail/privacymail/privacymail/website
+        npm run build
+
+    - name: Collect static files and update translations
+      shell: |
+        set -e
+        cp -R /opt/privacymail/privacymail/privacymail/website/build {{ static_path }}
+
     # Prepare webserver
     - name: Install mod_wsgi from pip
       become_user: privacymail
@@ -194,7 +219,7 @@
     - name: Set up special mod_wsgi config
       lineinfile:
         dest: /etc/apache2/conf-available/wsgi.conf
-        line: 'WSGIApplicationGroup %{GLOBAL}'
+        line: "WSGIApplicationGroup %{GLOBAL}"
         state: present
     - name: Load new WSGI config
       command: a2enconf wsgi
@@ -245,6 +270,5 @@
       service:
         name: apache2
         state: restarted
-
 # Tasks left to do:
 # - Install cronjobs
