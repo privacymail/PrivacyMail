@@ -212,7 +212,7 @@
     - name: Collect static files and update translations
       shell: |
         set -e
-        cp -R /opt/privacymail/privacymail/privacymail/website/build {{ static_path }}
+        cp -aR /opt/privacymail/privacymail/privacymail/website/build/* {{ static_path }}
 
     # Prepare webserver
     - name: Install mod_wsgi from pip
@@ -250,25 +250,25 @@
         group: www-data
         content: |
           <VirtualHost *:80>
-          ServerName {{ pm_domain }}
-          WSGIScriptAlias / /opt/privacymail/privacymail/privacymail/privacymail/wsgi.py
+            ServerName {{ pm_domain }}
+            WSGIScriptAlias /api /opt/privacymail/privacymail/privacymail/privacymail/wsgi.py
 
-          WSGIDaemonProcess {{ pm_domain }} processes=2 threads=15 display-name=%{GROUP} python-home=/opt/privacymail/privacymail/venv/ python-path=/opt/privacymail/privacymail/privacymail/
-          WSGIProcessGroup {{ pm_domain }}
+            WSGIDaemonProcess {{ pm_domain }} processes=2 threads=15 display-name=%{GROUP} python-home=/opt/privacymail/privacymail/venv/ python-path=/opt/privacymail/privacymail/privacymail/
+            WSGIProcessGroup {{ pm_domain }}
 
-          Alias /static /var/www/pmail-static/
-          Alias /favicon.ico /var/www/pmail-static/img/favicon.ico
-          Alias /robots.txt /var/www/pmail-static/robots.txt
+            Alias / /var/www/pmail-static/
+            Alias /favicon.ico /var/www/pmail-static/img/favicon.ico
+            Alias /robots.txt /var/www/pmail-static/robots.txt
 
-          <Directory /var/www/pmail-static >
-          Require all granted
-          </Directory>
+            <Directory /var/www/pmail-static >
+              Require all granted
+            </Directory>
 
-          <Directory /opt/privacymail/privacymail/privacymail/privacymail>
-          <Files wsgi.py>
-          Require all granted
-          </Files>
-          </Directory>
+            <Directory /opt/privacymail/privacymail/privacymail/privacymail>
+            <Files wsgi.py>
+              Require all granted
+            </Files>
+            </Directory>
           </VirtualHost>
     - name: Give access to Django files to www-data
       file:
