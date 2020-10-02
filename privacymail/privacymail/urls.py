@@ -22,8 +22,5 @@ from identity.views import *
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('favicon.ico', TemplateView.as_view(template_name='favicon.ico'), name="favicon"),
-    path('logo192.png', TemplateView.as_view(template_name='logo192.png'), name="logo192"),
-    path('manifest.json', TemplateView.as_view(template_name='manifest.json'), name="manifest"),
     re_path(r'^', TemplateView.as_view(template_name='index.html'), name="ReactApp"),
 ]
