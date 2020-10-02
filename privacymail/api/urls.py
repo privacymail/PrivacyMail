@@ -27,5 +27,7 @@ urlpatterns = [
     path('embed/', EmbedView.as_view(), name='EmbedLookup'),
     path('identity/', IdentityView.as_view(), name='IdentityCreation'),
     path('statistics', StatisticView.as_view(), name='Statistic'),
-    path('bookmarklet/identity/', views.BookmarkletApiView.as_view(), name="BookmarkletApiEndpoint")
+    path('bookmarklet/identity/', views.BookmarkletApiView.as_view(), name="BookmarkletApiEndpoint"),
+    path('test/', views.FrontendAppView.as_view(), name="FrontendApp"),
+    path('testB/', views.StatisticTestView.as_view(), name="StatisticTest"),
 ]

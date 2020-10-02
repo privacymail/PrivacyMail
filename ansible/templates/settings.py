@@ -170,6 +170,13 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '{{ static_path }}'
 
+REACT_APP_DIR = os.path.join(BASE_DIR, 'website') 
+
+STATICFILES_DIRS = [
+    os.path.join(REACT_APP_DIR, 'build', 'static'),
+]
+
+
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
     "mailfetcher.analyser_cron.Analyser",
@@ -270,7 +277,7 @@ LOCALHOST_URL = 'localhost.privacymail.info:5000'
 
 # Django Mail
 SERVER_EMAIL = "admin@newsletterme.de"
-ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
+ADMINS = []
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 

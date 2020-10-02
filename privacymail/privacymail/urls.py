@@ -16,9 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf.urls import url
-from api.views import FrontendAppView
+from api.views import *
+from identity.views import *
 
 urlpatterns = [
     path('api/', include('api.urls')),
-    url(r'^', FrontendAppView.as_view())
+    path('/', FrontendAppView.as_view(), name="FrontendApp"),
+    path('testA/', FrontendAppView.as_view(), name="FrontendApp"),
+    path('testB/', StatisticTestView.as_view(), name="StatisticTest"),
+    url(r'^', FrontendAppView.as_view(), name="FrontendApp")
 ]

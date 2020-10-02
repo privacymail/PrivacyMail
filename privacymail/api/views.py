@@ -70,12 +70,19 @@ class BookmarkletApiView(View):
 
 
 class FrontendAppView(View):
-    """
-    Serves the compiled frontend entry point (only works if you have run `npm
-    run build`).
-    """
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(FrontendAppView, self).dispatch(request, *args, **kwargs)
+
     def get(self, request):
         print (os.path.join(settings.REACT_APP_DIR, 'build', 'index.html'))
+        return JsonResponse({"global_stats": {
+            "email_count": 123,
+            # TODO Ensure that service has at least 1 confirmed ident
+            "service_count": 123,
+            # TODO Model will be renamed on merge
+            "tracker_count": 123,
+        }}) 
         try:
             with open(os.path.join(settings.REACT_APP_DIR, 'build', 'index.html')) as f:
                 return HttpResponse(f.read())
@@ -89,3 +96,18 @@ class FrontendAppView(View):
                 """,
                 status=501,
             )
+
+class StatisticTestView(View):
+    def get_global_stats(self):
+        return {
+            "email_count": "123",
+            # TODO Ensure that service has at least 1 confirmed ident
+            "service_count": "Service.objects.count()",
+            # TODO Model will be renamed on merge
+            "tracker_count": "a",
+        }
+
+    def get(self, request, *args, **kwargs):
+        # Get the last approved services
+        return JsonResponse({"global_stats": self.get_global_stats()})
+
