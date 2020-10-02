@@ -1,9 +1,9 @@
 ---
-- hosts: privacymailLocal
+- hosts: privacymail-deploy
   become: true
   become_user: root
   vars:
-    pm_domain: "192.168.10.72"
+    pm_domain: "privacymail.info"
     db_user: "{{ lookup('passwordstore', 'privacymail/postgres-user') }}"
     db_pass: "{{ lookup('passwordstore', 'privacymail/postgres-password') }}"
     host_locale: en_US.UTF-8
@@ -97,7 +97,7 @@
     - name: Update remote repository
       become_user: privacymail
       git:
-        repo: https://github.com/jonathanschad/PrivacyMail.git
+        repo: https://github.com/privacymail/PrivacyMail.git
         dest: /opt/privacymail/privacymail
         version: "{{ branch }}"
         update: yes

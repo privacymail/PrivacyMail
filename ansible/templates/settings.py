@@ -201,6 +201,8 @@ CRON_CLASSES = [
 # You can also set the entire dictionary to None if you don't want to use this feature.
 
 
+CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
+
 OPENWPM_PATH = '{{ home_dir }}/privacymail/privacymail/runopenwpm.py'
 # Change these in runopenwpm.py as well, if you want to change them
 OPENWPM_DATA_DIR = '{{ home_dir }}/openwpm/data/'
@@ -276,7 +278,7 @@ LOCALHOST_URL = 'localhost.privacymail.info:5000'
 
 # Django Mail
 SERVER_EMAIL = "admin@newsletterme.de"
-ADMINS = []
+ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 
