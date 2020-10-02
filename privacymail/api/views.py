@@ -8,6 +8,7 @@ from identity.models import Identity, Service
 from mailfetcher.analyser_cron import create_service_cache
 import logging
 from random import shuffle
+from privacymail import settings
 
 logger = logging.getLogger(__name__)
 
@@ -64,3 +65,27 @@ class BookmarkletApiView(View):
             r = JsonResponse({"error": "Invalid URL passed."})
         r["Access-Control-Allow-Origin"] = "*"
         return r
+
+
+
+
+class FrontendAppView(View):
+    """
+    Serves the compiled frontend entry point (only works if you have run `npm
+    run build`).
+    """
+    def get(self, request):
+        print (os.path.join(settings.REACT_APP_DIR, 'build', 'index.html'))
+        try:
+            with open(os.path.join(settings.REACT_APP_DIR, 'build', 'index.html')) as f:
+                return HttpResponse(f.read())
+        except FileNotFoundError:
+            logging.exception('Production build of app not found')
+            return HttpResponse(
+                """
+                This URL is only used when you have built the production
+                version of the app. Visit http://localhost:3000/ instead, or
+                run `npm run build` to test the production version.
+                """,
+                status=501,
+            )

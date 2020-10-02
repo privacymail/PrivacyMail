@@ -15,8 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path, include
-
+from django.conf.urls import url
+from api.views import FrontendAppView
 
 urlpatterns = [
     path('api/', include('api.urls')),
+    url(r'^', FrontendAppView.as_view())
 ]
