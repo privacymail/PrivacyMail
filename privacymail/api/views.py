@@ -70,19 +70,8 @@ class BookmarkletApiView(View):
 
 
 class FrontendAppView(View):
-    @method_decorator(csrf_exempt)
-    def dispatch(self, request, *args, **kwargs):
-        return super(FrontendAppView, self).dispatch(request, *args, **kwargs)
-
     def get(self, request):
         print (os.path.join(settings.REACT_APP_DIR, 'build', 'index.html'))
-        return JsonResponse({"global_stats": {
-            "email_count": 123,
-            # TODO Ensure that service has at least 1 confirmed ident
-            "service_count": 123,
-            # TODO Model will be renamed on merge
-            "tracker_count": 123,
-        }}) 
         try:
             with open(os.path.join(settings.REACT_APP_DIR, 'build', 'index.html')) as f:
                 return HttpResponse(f.read())
@@ -100,7 +89,7 @@ class FrontendAppView(View):
 class StatisticTestView(View):
     def get_global_stats(self):
         return {
-            "email_count": "123",
+            "I am": "Fontend Statistic Test View",
             # TODO Ensure that service has at least 1 confirmed ident
             "service_count": "Service.objects.count()",
             # TODO Model will be renamed on merge
