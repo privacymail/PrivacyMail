@@ -8,7 +8,7 @@
 export const execute = (path: string, method: string = "GET", payload: any = {}): Promise<any> => {
     const options: any = {
         method,
-        headers: { "Content-Type": "application/json;charset=utf-8" },
+        headers: { "Content-Type": "application/json;charset=utf-8" }
     };
     if (method !== "GET") {
         options.body = JSON.stringify(payload);
@@ -35,7 +35,7 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
      */
     return new Promise<any>((resolve, reject) => {
         fetch(url, options)
-            .then(async (response) => {
+            .then(async response => {
                 if (response.status >= 400) {
                     reject(response);
                     return;
@@ -48,7 +48,7 @@ export const execute = (path: string, method: string = "GET", payload: any = {})
                     resolve(json);
                 }
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error(error);
                 reject(error);
             });

@@ -1,13 +1,12 @@
 ---
-- hosts: privacymail-deploy
+- hosts: privacymailLocal
   become: true
   become_user: root
   vars:
-    pm_domain: "privacymail.info"
+    pm_domain: "192.168.10.72"
     db_user: "{{ lookup('passwordstore', 'privacymail/postgres-user') }}"
     db_pass: "{{ lookup('passwordstore', 'privacymail/postgres-password') }}"
     host_locale: en_US.UTF-8
-    static_path: /var/www/pmail-static/
     install_path: /opt/privacymail/privacymail/
     home_dir: /opt/privacymail
     branch: develop
@@ -98,7 +97,7 @@
     - name: Update remote repository
       become_user: privacymail
       git:
-        repo: github:malexmave/PrivacyMail
+        repo: https://github.com/jonathanschad/PrivacyMail.git
         dest: /opt/privacymail/privacymail
         version: "{{ branch }}"
         update: yes
@@ -177,14 +176,7 @@
         group: www-data
         mode: 0770
         state: directory
-    # Prepare things for the app
-    - name: Create static folder
-      file:
-        path: "{{ static_path }}"
-        owner: www-data
-        group: privacymail
-        mode: 0770
-        state: directory
+
     # Create and migrate database
     - name: Migrate database
       become_user: privacymail
@@ -208,11 +200,6 @@
         set -e
         cd /opt/privacymail/privacymail/privacymail/website
         npm run build
-
-    - name: Collect static files and update translations
-      shell: |
-        set -e
-        cp -aR /opt/privacymail/privacymail/privacymail/website/build/* {{ static_path }}
 
     # Prepare webserver
     - name: Install mod_wsgi from pip
@@ -251,18 +238,10 @@
         content: |
           <VirtualHost *:80>
             ServerName {{ pm_domain }}
-            WSGIScriptAlias /api /opt/privacymail/privacymail/privacymail/privacymail/wsgi.py
+            WSGIScriptAlias / /opt/privacymail/privacymail/privacymail/privacymail/wsgi.py
 
             WSGIDaemonProcess {{ pm_domain }} processes=2 threads=15 display-name=%{GROUP} python-home=/opt/privacymail/privacymail/venv/ python-path=/opt/privacymail/privacymail/privacymail/
             WSGIProcessGroup {{ pm_domain }}
-
-            Alias / /var/www/pmail-static/
-            Alias /favicon.ico /var/www/pmail-static/img/favicon.ico
-            Alias /robots.txt /var/www/pmail-static/robots.txt
-
-            <Directory /var/www/pmail-static >
-              Require all granted
-            </Directory>
 
             <Directory /opt/privacymail/privacymail/privacymail/privacymail>
             <Files wsgi.py>

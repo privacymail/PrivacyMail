@@ -20,6 +20,7 @@ from api.views import *
 from identity.views import *
 
 urlpatterns = [
+    path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     re_path(r'^', TemplateView.as_view(template_name='index.html'), name="ReactApp")
 ]
