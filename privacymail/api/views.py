@@ -8,7 +8,7 @@ from identity.models import Identity, Service
 from mailfetcher.analyser_cron import create_service_cache
 import logging
 from random import shuffle
-from privacymail import settings
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -74,7 +74,7 @@ class FrontendAppView(View):
         print (os.path.join(settings.REACT_APP_DIR, 'build', 'index.html'))
         try:
             with open(os.path.join(settings.REACT_APP_DIR, 'build', 'index.html')) as f:
-                return HttpResponse(f.read())
+                #return HttpResponse(f.read())
         except FileNotFoundError:
             logging.exception('Production build of app not found')
             return HttpResponse(
