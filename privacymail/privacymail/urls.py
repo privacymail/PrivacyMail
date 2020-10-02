@@ -16,11 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.urls import path, re_path, include
-from django.conf.urls import url
 from api.views import *
 from identity.views import *
 
 urlpatterns = [
     path('api/', include('api.urls')),
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name="ReactApp")
+    re_path(r'^', TemplateView.as_view(template_name='index.html'), name="ReactApp")
 ]
