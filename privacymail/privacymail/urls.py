@@ -22,9 +22,5 @@ from identity.views import *
 
 urlpatterns = [
     path('api/', include('api.urls')),
-    path('', FrontendAppView.as_view(), name="FrontendApp"),
-    path('testA/', FrontendAppView.as_view(), name="FrontendApp"),
-    path('testB/', StatisticTestView.as_view(), name="StatisticTest"),
-    path('testC/', TemplateView.as_view(template_name='index.html'), name="StatisticIndex"),
-    url(r'^$', FrontendAppView.as_view(), name="FrontendApp")
+    url(r'^$', TemplateView.as_view(template_name='index.html'), name="ReactApp")
 ]
