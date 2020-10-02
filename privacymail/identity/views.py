@@ -47,6 +47,19 @@ class StatisticView(View):
         # Get the last approved services
         return JsonResponse({"global_stats": self.get_global_stats()})
 
+class StatisticTestView(View):
+    def get_global_stats(self):
+        return {
+            "email_count": "123",
+            # TODO Ensure that service has at least 1 confirmed ident
+            "service_count": Service.objects.count(),
+            # TODO Model will be renamed on merge
+            "tracker_count": Thirdparty.objects.count(),
+        }
+
+    def get(self, request, *args, **kwargs):
+        # Get the last approved services
+        return JsonResponse({"global_stats": self.get_global_stats()})
 
 class IdentityView(View):
     @method_decorator(csrf_exempt)

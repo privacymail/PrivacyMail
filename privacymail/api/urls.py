@@ -30,4 +30,5 @@ urlpatterns = [
     path('bookmarklet/identity/', views.BookmarkletApiView.as_view(), name="BookmarkletApiEndpoint"),
     path('test/', views.FrontendAppView.as_view(), name="FrontendApp"),
     path('testB/', views.StatisticTestView.as_view(), name="StatisticTest"),
+    path('testC/', StatisticTestView.as_view(), name="StatisticTest"),
 ]
