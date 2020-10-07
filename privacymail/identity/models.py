@@ -6,7 +6,7 @@ from django.apps import apps
 from model_utils import Choices
 from django_countries.fields import CountryField
 from django.contrib.postgres.fields import ArrayField
-
+from identity.util import convertForJsonResponse
 
 # Create your models here.
 class Identity(models.Model):
@@ -23,9 +23,9 @@ class Identity(models.Model):
     def create(cls, service, domain):
         def gen_name(gender):
             if gender:  # if male
-                first_name = names.get_first_name(gender='male')
+                first_name = names.get_first_name(gender="male")
             else:
-                first_name = names.get_first_name(gender='female')
+                first_name = names.get_first_name(gender="female")
             surname = names.get_last_name()
             return (first_name, surname)
 
@@ -36,7 +36,9 @@ class Identity(models.Model):
         # Keep generating names until we find a pair that is not yet taken
         while True:
             first_name, surname = gen_name(i.gender)
-            if not Identity.objects.filter(first_name=first_name, surname=surname).exists():
+            if not Identity.objects.filter(
+                first_name=first_name, surname=surname
+            ).exists():
                 break
 
         i.first_name = first_name
@@ -45,6 +47,16 @@ class Identity(models.Model):
 
         i.save()
         return i
+
+    def toJSON(self):
+        return {
+            "first_name": convertForJsonResponse(self.first_name),
+            "surname": convertForJsonResponse(self.surname),
+            "mail": convertForJsonResponse(self.mail),
+            "gender": convertForJsonResponse(self.gender),
+            "service": convertForJsonResponse(self.service),
+            "approved": convertForJsonResponse(self.approved),
+        }
 
     def __str__(self):
         return self.mail
@@ -69,33 +81,42 @@ class Service(models.Model):
     TRAVEL = "travel"
     UNKNOWN = "unknown"
 
-    SECTOR_CHOICES = ((ACTIVIST, "Activist"),
-                      (ADULT, "Adult"),
-                      (ADVERTISING, "Advertising"),
-                      (ART, "Art"),
-                      (B2B, "Business-to-Business"),
-                      (ENTERTAINMENT, "Entertainment"),
-                      (FINANCE, "Financial"),
-                      (GAMES, "Games"),
-                      (HEALTH, "Health"),
-                      (NEWS, "News"),
-                      (POLITICS, "Political Party / Politician"),
-                      (REFERENCE, "Reference"),
-                      (SCIENCE, "Science"),
-                      (SHOPPING, "Shopping"),
-                      (SPORTS, "Sports"),
-                      (TRAVEL, "Travel"),
-                      (UNKNOWN, "Unknown"))
+    SECTOR_CHOICES = (
+        (ACTIVIST, "Activist"),
+        (ADULT, "Adult"),
+        (ADVERTISING, "Advertising"),
+        (ART, "Art"),
+        (B2B, "Business-to-Business"),
+        (ENTERTAINMENT, "Entertainment"),
+        (FINANCE, "Financial"),
+        (GAMES, "Games"),
+        (HEALTH, "Health"),
+        (NEWS, "News"),
+        (POLITICS, "Political Party / Politician"),
+        (REFERENCE, "Reference"),
+        (SCIENCE, "Science"),
+        (SHOPPING, "Shopping"),
+        (SPORTS, "Sports"),
+        (TRAVEL, "Travel"),
+        (UNKNOWN, "Unknown"),
+    )
 
-    url = models.CharField(max_length=255)  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
+    url = models.CharField(
+        max_length=255
+    )  # should not contain http, because mailfetcher.check_for_unusual_sender uses this value to map sender domain
     name = models.CharField(max_length=50)
-    permitted_senders = ArrayField(models.CharField(max_length=255))  # List of permitted senders
-    thirdparties = models.ManyToManyField('mailfetcher.Thirdparty', through='ServiceThirdPartyEmbeds',
-                                          related_name='services')
+    permitted_senders = ArrayField(
+        models.CharField(max_length=255)
+    )  # List of permitted senders
+    thirdparties = models.ManyToManyField(
+        "mailfetcher.Thirdparty",
+        through="ServiceThirdPartyEmbeds",
+        related_name="services",
+    )
     resultsdirty = models.BooleanField(default=True)
     hasApprovedIdentity = models.BooleanField(default=False)
 
-    country_of_origin = CountryField(blank_label='(select country)', blank=True)
+    country_of_origin = CountryField(blank_label="(select country)", blank=True)
     sector = models.CharField(choices=SECTOR_CHOICES, max_length=30, default=UNKNOWN)
 
     def __str__(self):
@@ -108,7 +129,7 @@ class Service(models.Model):
         i.save()
         # Check if the service already exists as a third party
         try:
-            tp = apps.get_model('mailfetcher', 'Thirdparty').objects.get(host=url)
+            tp = apps.get_model("mailfetcher", "Thirdparty").objects.get(host=url)
             print("Found third party")
             # Third party found, set service foreign key and save
             tp.service = i
@@ -140,7 +161,7 @@ class Service(models.Model):
                 self.save()
 
     def mails(self):
-        Mail = apps.get_model('mailfetcher', 'Mail')
+        Mail = apps.get_model("mailfetcher", "Mail")
         return Mail.objects.filter(identity__service=self, identity__approved=True)
         # return Mail.objects.filter(identity__service=self)
 
@@ -152,7 +173,12 @@ class Service(models.Model):
         third_party_personalized_sum = 0
 
         for mail in self.mails():
-            first_party, first_party_personalized, third_party, third_party_personalized = mail.first_third_party_by_type(type)
+            (
+                first_party,
+                first_party_personalized,
+                third_party,
+                third_party_personalized,
+            ) = mail.first_third_party_by_type(type)
 
             first_party_personalized_sum += first_party_personalized
             first_party_sum += first_party
@@ -164,35 +190,68 @@ class Service(models.Model):
         if n == 0:
             return None
         if n_double == 0:
-            return first_party_sum / n, None, \
-                   third_party_sum / n, None
-        return first_party_sum / n, \
-               first_party_personalized_sum / n_double, \
-               third_party_sum / n, \
-               third_party_personalized_sum / n_double
+            return first_party_sum / n, None, third_party_sum / n, None
+        return (
+            first_party_sum / n,
+            first_party_personalized_sum / n_double,
+            third_party_sum / n,
+            third_party_personalized_sum / n_double,
+        )
 
     def derive_service_cache_path(self):
-        return 'frontend.ServiceView.result.' + str(self.id) + ".site_params"
+        return "frontend.ServiceView.result." + str(self.id) + ".site_params"
+
+    def toJSON(self):
+        return {
+            "url": convertForJsonResponse(self.url),
+            "name": convertForJsonResponse(self.name),
+            "permitted_senders": convertForJsonResponse(self.permitted_senders),
+            # "thirdparties" : convertForJsonResponse(list(self.thirdparties.all())),
+            "resultsdirty": convertForJsonResponse(self.resultsdirty),
+            "hasApprovedIdentity": convertForJsonResponse(self.hasApprovedIdentity),
+            "country_of_origin": convertForJsonResponse(self.country_of_origin.code),
+            "sector": convertForJsonResponse(self.sector),
+        }
 
 
 class ServiceThirdPartyEmbeds(models.Model):
-    STATIC = 'STATIC'
-    ONVIEW = 'ONVIEW'
-    ONCLICK = 'ONCLICK'
-    UNDETERMINED = 'UNDETERMINED'
+    STATIC = "STATIC"
+    ONVIEW = "ONVIEW"
+    ONCLICK = "ONCLICK"
+    UNDETERMINED = "UNDETERMINED"
 
     EMBED_TYPES = Choices(
-        (STATIC, 'static'),
-        (ONVIEW, 'onView'),
-        (ONCLICK, 'onClick'),
-        (UNDETERMINED, 'undetermined')
+        (STATIC, "static"),
+        (ONVIEW, "onView"),
+        (ONCLICK, "onClick"),
+        (UNDETERMINED, "undetermined"),
     )
 
-    service = models.ForeignKey(Service, related_name='embeds', on_delete=models.SET_NULL, null=True)
-    thirdparty = models.ForeignKey('mailfetcher.Thirdparty', related_name='embeds', on_delete=models.SET_NULL,
-                                   null=True, blank=True)
+    service = models.ForeignKey(
+        Service, related_name="embeds", on_delete=models.SET_NULL, null=True
+    )
+    thirdparty = models.ForeignKey(
+        "mailfetcher.Thirdparty",
+        related_name="embeds",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     leaks_address = models.BooleanField(default=False)
-    embed_type = models.CharField(choices=EMBED_TYPES, default=EMBED_TYPES.UNDETERMINED, max_length=20)
-    mail = models.ForeignKey('mailfetcher.Mail', on_delete=models.CASCADE, null=True)
+    embed_type = models.CharField(
+        choices=EMBED_TYPES, default=EMBED_TYPES.UNDETERMINED, max_length=20
+    )
+    mail = models.ForeignKey("mailfetcher.Mail", on_delete=models.CASCADE, null=True)
     sets_cookie = models.BooleanField(default=False)
     receives_identifier = models.BooleanField(default=False)
+
+    def toJSON(self):
+        return {
+            "service": convertForJsonResponse(self.service),
+            "thirdparty": convertForJsonResponse(self.thirdparty),
+            "leaks_address": convertForJsonResponse(self.leaks_address),
+            "embed_type": convertForJsonResponse(self.embed_type),
+            "mail": convertForJsonResponse(self.mail),
+            "sets_cookie": convertForJsonResponse(self.sets_cookie),
+            "receives_identifier": convertForJsonResponse(self.receives_identifier),
+        }

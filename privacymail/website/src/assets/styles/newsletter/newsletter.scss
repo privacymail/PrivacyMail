@@ -1,0 +1,29 @@
+$paddingLevel: 1.2rem;
+$privacyRatingHeadlineHeight: 2rem;
+
+.newsletter {
+    position: relative;
+    margin-top: 0.5rem;
+    > div {
+        margin-bottom: 0.5rem;
+    }
+    .divider {
+        width: 100%;
+        height: 0px;
+        border-bottom: $divider-border;
+        margin: 2rem 0px;
+    }
+    > .divider {
+        border-bottom: $divider-border-big;
+    }
+    h1 {
+        font-size: $privacyRatingHeadlineHeight;
+        font-weight: 200;
+        margin: 1.25rem 0px;
+    }
+    h2 {
+        font-size: 1.5rem;
+        font-weight: 200;
+        margin: 1.25rem 0px;
+    }
+}

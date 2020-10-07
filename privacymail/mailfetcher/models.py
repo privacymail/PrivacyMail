@@ -35,17 +35,20 @@ import logging
 from django.db import connection
 from django_countries.fields import CountryField
 
+from identity.util import convertForJsonResponse
+
+mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
 
 
 class Mail(models.Model):
     PROCESSING_STATES = Choices(
-        ('UNPROCESSED', 'unprocessed'),
-        ('VIEWED', 'viewed'),
-        ('LINK_CLICKED', 'link_clicked'),
-        ('DONE', 'done'),
-        ('NO_UNSUBSCRIBE_LINK', 'no_unsubscribe_link'),
-        ('FAILED', 'failed')
+        ("UNPROCESSED", "unprocessed"),
+        ("VIEWED", "viewed"),
+        ("LINK_CLICKED", "link_clicked"),
+        ("DONE", "done"),
+        ("NO_UNSUBSCRIBE_LINK", "no_unsubscribe_link"),
+        ("FAILED", "failed"),
     )
 
     raw = models.TextField()
@@ -61,11 +64,13 @@ class Mail(models.Model):
     h_date = models.CharField(max_length=200, null=True, blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
     h_user_agent = models.CharField(max_length=200, null=True, blank=True)
-    identity = models.ManyToManyField(Identity, related_name='message')
+    identity = models.ManyToManyField(Identity, related_name="message")
     suspected_spam = models.BooleanField(default=False)
     mail_from_another_identity = models.ManyToManyField("self", symmetrical=True)
     possible_AB_testing = models.BooleanField(default=False)
-    processing_state = models.CharField(choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20)
+    processing_state = models.CharField(
+        choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20
+    )
     processing_fails = models.IntegerField(default=0)
     contains_javascript = models.BooleanField(default=False)
 
@@ -83,8 +88,8 @@ class Mail(models.Model):
         message = raw_mail
         # print("raw={}".format(str(message)))
 
-        message_raw = message.as_bytes().decode(encoding='UTF-8', errors='replace')
-        message_id = message['Message-ID']
+        message_raw = message.as_bytes().decode(encoding="UTF-8", errors="replace")
+        message_id = message["Message-ID"]
         if message_id is None:
             message_id = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(32))
         print("Message ID:", message_id, " Subject:", str(make_header(decode_header(cls._clear_none_values(message['subject'])))))
@@ -96,15 +101,18 @@ class Mail(models.Model):
             mail = cls(raw=message_raw, message_id=message_id)
             mail.save()
         except InterfaceError:
-            print('###################################################################################')
-            print('Database Interface Error!\n')
+            print(
+                "###################################################################################"
+            )
+            print("Database Interface Error!\n")
 
             # reset the database connection
             from django.db import connection
+
             connection.connection.close()
             connection.connection = None
-            sys.exit('Lost connection to database!')
-            logger.error('Lost connection to the postgreSQL database!!')
+            sys.exit("Lost connection to database!")
+            logger.error("Lost connection to the postgreSQL database!!")
 
         mail.message = message
         mail.calc_bodies()
@@ -125,11 +133,11 @@ class Mail(models.Model):
         # Delete associated dynamic Eresources (leave static in)
         if link_only:
             # Delete only link click information, leave mail view unchanged
-            Eresource.objects.filter(mail=self, type='con_click').delete()
+            Eresource.objects.filter(mail=self, type="con_click").delete()
             self.processing_state = self.PROCESSING_STATES.VIEWED
         else:
             # Also delete mail view
-            Eresource.objects.filter(mail=self, type__contains='con').delete()
+            Eresource.objects.filter(mail=self, type__contains="con").delete()
             self.processing_state = self.PROCESSING_STATES.UNPROCESSED
         self.save()
 
@@ -157,20 +165,20 @@ class Mail(models.Model):
         if message.is_multipart():
             for part in message.walk():
                 ctype = part.get_content_type()
-                cdispo = str(part.get('Content-Disposition'))
-                charset = part.get_param('CHARSET')
+                cdispo = str(part.get("Content-Disposition"))
+                charset = part.get_param("CHARSET")
                 # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
                 if charset is None:
-                    charset = 'utf-8'
+                    charset = "utf-8"
                 # skip any text/plain (txt) attachments
-                if ctype == 'text/plain' and 'attachment' not in cdispo:
+                if ctype == "text/plain" and "attachment" not in cdispo:
                     try:
                         body_plain = part.get_payload(decode=True).decode(charset)
                     except UnicodeDecodeError:
                         body_plain = part.get_payload()
 
                     # body_plain = part.get_payload(decode=True).decode(charset)  # decode
-                if ctype == 'text/html' and 'attachment' not in cdispo:
+                if ctype == "text/html" and "attachment" not in cdispo:
                     try:
                         body_html = part.get_payload(decode=True).decode(charset)
                     except UnicodeDecodeError:
@@ -179,19 +187,19 @@ class Mail(models.Model):
         # not multipart - i.e. plain text, no attachments, keeping fingers crossed
         else:
             ctype = message.get_content_type()
-            cdispo = str(message.get('Content-Disposition'))
-            charset = message.get_param('CHARSET')
+            cdispo = str(message.get("Content-Disposition"))
+            charset = message.get_param("CHARSET")
             # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
             if charset is None:
-                charset = 'utf-8'
-            if ctype == 'text/plain' and 'attachment' not in cdispo:
+                charset = "utf-8"
+            if ctype == "text/plain" and "attachment" not in cdispo:
 
                 try:
                     body_plain = message.get_payload(decode=True).decode(charset)
                 except UnicodeDecodeError:
                     body_plain = message.get_payload()
                 # body_plain = message.get_payload(decode=True).decode(charset)
-            if ctype == 'text/html' and 'attachment' not in cdispo:
+            if ctype == "text/html" and "attachment" not in cdispo:
 
                 try:
                     body_html = message.get_payload(decode=True).decode(charset)
@@ -210,8 +218,8 @@ class Mail(models.Model):
                 self.body_html = ""
             if self.body_plain is None:
                 self.body_plain = ""
-            self.body_html = self.body_html.replace('\x00', '')
-            self.body_plain = self.body_plain.replace('\x00', '')
+            self.body_html = self.body_html.replace("\x00", "")
+            self.body_plain = self.body_plain.replace("\x00", "")
             self.save()
 
     def calc_header(self):
@@ -227,7 +235,11 @@ class Mail(models.Model):
         # date_obj = parsedate_to_datetime(self.h_date)
         # self.date_time = date_obj
 
-        identity_set = Identity.objects.filter(Q(mail__in=self.addresses_from_field(self.h_x_original_to)) | Q(mail__in=self.addresses_from_field(self.h_to)) | Q(mail__in=self.addresses_from_field(self.h_cc)))
+        identity_set = Identity.objects.filter(
+            Q(mail__in=self.addresses_from_field(self.h_x_original_to))
+            | Q(mail__in=self.addresses_from_field(self.h_to))
+            | Q(mail__in=self.addresses_from_field(self.h_cc))
+        )
 
         for ident in identity_set:
             self.identity.add(ident)
@@ -239,7 +251,7 @@ class Mail(models.Model):
         # Connects a service to a third party if this connection has been observed
         identity = self.identity
         if identity.count() < 1:
-            logger.error('Mail has no associated identity', extra={'mailID': self.pk})
+            logger.error("Mail has no associated identity", extra={"mailID": self.pk})
             return
         service = identity.get().service
         for eresource in self.eresource_set.all():
@@ -247,39 +259,42 @@ class Mail(models.Model):
             # Mail disclosure is also an identifier.
             receives_identifier = mail_leakage or eresource.personalised
             if eresource.response_headers is not None:
-                sets_cookie = 'Set-Cookie' in eresource.response_headers
+                sets_cookie = "Set-Cookie" in eresource.response_headers
             else:
                 sets_cookie = False
 
             def embed_switcher(argument):
                 switcher = {
-                    'a': ServiceThirdPartyEmbeds.STATIC,
-                    'img': ServiceThirdPartyEmbeds.STATIC,
-                    'link': ServiceThirdPartyEmbeds.STATIC,
-                    'script': ServiceThirdPartyEmbeds.STATIC,
-                    'con': ServiceThirdPartyEmbeds.ONVIEW,
-                    'con_click': ServiceThirdPartyEmbeds.ONCLICK,
+                    "a": ServiceThirdPartyEmbeds.STATIC,
+                    "img": ServiceThirdPartyEmbeds.STATIC,
+                    "link": ServiceThirdPartyEmbeds.STATIC,
+                    "script": ServiceThirdPartyEmbeds.STATIC,
+                    "con": ServiceThirdPartyEmbeds.ONVIEW,
+                    "con_click": ServiceThirdPartyEmbeds.ONCLICK,
                 }
                 return switcher.get(argument, ServiceThirdPartyEmbeds.UNDETERMINED)
 
             embed_type = embed_switcher(eresource.type)
-            embedding, created = ServiceThirdPartyEmbeds.objects.get_or_create(service=service,
-                                                                               thirdparty=eresource.host,
-                                                                               leaks_address=mail_leakage,
-                                                                               sets_cookie=sets_cookie,
-                                                                               embed_type=embed_type,
-                                                                               receives_identifier=receives_identifier,
-                                                                               mail=self)
+            embedding, created = ServiceThirdPartyEmbeds.objects.get_or_create(
+                service=service,
+                thirdparty=eresource.host,
+                leaks_address=mail_leakage,
+                sets_cookie=sets_cookie,
+                embed_type=embed_type,
+                receives_identifier=receives_identifier,
+                mail=self,
+            )
 
     @staticmethod
     def addresses_from_field(field):
         def address_from_field(ad):
             ad = ad.strip()
-            if '<' in ad:
-                return re.search('<(.*)>', ad).group(1)
+            if "<" in ad:
+                return re.search("<(.*)>", ad).group(1)
             return ad
+
         if field is not None:
-            return [address_from_field(a) for a in field.split(',')]
+            return [address_from_field(a) for a in field.split(",")]
         else:
             return []
 
@@ -292,7 +307,9 @@ class Mail(models.Model):
     # Try to get a link for openWPM to click, which isn't an unsubscribe link.
     # In most cases it should be enough to only click one link, because if tracking occurs, every link should track.
     def get_non_unsubscribe_link(self):
-        type_a_urls = Eresource.objects.filter(type='a', mail_id=self.id, possible_unsub_link=False)
+        type_a_urls = Eresource.objects.filter(
+            type="a", mail_id=self.id, possible_unsub_link=False
+        )
         if type_a_urls.count() < 1:
             print('############################### Did not find possible unsubscribe link!')
             return ''
@@ -300,12 +317,12 @@ class Mail(models.Model):
         while type_a_urls.count() > 1:
             rand = randint(0, type_a_urls.count() - 1)
             chosen_url = type_a_urls[rand].url
-            if 'http' in chosen_url:
+            if "http" in chosen_url:
                 return chosen_url
             type_a_urls.exclude(url=chosen_url)
 
         # print('Chosen URL to click: %s' % type_a_urls[rand])
-        return ''
+        return ""
 
     def extract_static_links(self):
         # extract external resources for more detailed analysis
@@ -313,9 +330,9 @@ class Mail(models.Model):
             # TODO Do we want to analyze links of plaintext mails?
             # The mail includes no html, but just plain text info
             return
-        soup = BeautifulSoup(self.body_html, 'html.parser')
+        soup = BeautifulSoup(self.body_html, "html.parser")
         a_links = []
-        for a in soup.find_all('a'):
+        for a in soup.find_all("a"):
             # prevent duplicate entries
             try:
                 # skip mailtos
@@ -329,7 +346,7 @@ class Mail(models.Model):
                 continue
             # Remove whitespace and newlines.
             # if a is not None:
-            a['href'] = ''.join(a['href'].split())
+            a["href"] = "".join(a["href"].split())
             a_links.append(a)
 
         num_detected_unsub_links = 0
@@ -337,7 +354,7 @@ class Mail(models.Model):
             if Eresource.is_unsub_word_in_link(link):
                 num_detected_unsub_links = num_detected_unsub_links + 1
                 if settings.DEVELOP_ENVIRONMENT:
-                    print('Found possible unsubscribe link: %s' % link)
+                    print("Found possible unsubscribe link: %s" % link)
         if num_detected_unsub_links < 1:
             message = self.get_message()
             mail_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
@@ -356,26 +373,28 @@ class Mail(models.Model):
                 Eresource.create_clickable(last_link, True, self)
 
         for link in a_links:
-            if 'http' not in link['href']:
+            if "http" not in link["href"]:
                 continue
             unsub_word_in_link = Eresource.is_unsub_word_in_link(link)
             Eresource.create_clickable(link, unsub_word_in_link, self)
 
-        for img in soup.find_all('img'):
-            Eresource.create_static_eresource(img, 'src', self)
+        for img in soup.find_all("img"):
+            Eresource.create_static_eresource(img, "src", self)
 
-        for link in soup.find_all('link'):
-            Eresource.create_static_eresource(link, 'href', self)
+        for link in soup.find_all("link"):
+            Eresource.create_static_eresource(link, "href", self)
 
-        for script in soup.find_all('script'):
-            Eresource.create_static_eresource(script, 'src', self)
+        for script in soup.find_all("script"):
+            Eresource.create_static_eresource(script, "src", self)
 
     def analyze_mail_connections_for_leakage(self):
         hashdict = None
 
-        all_eresources = Eresource.objects.filter(mail=self).exclude(possible_unsub_link=True)
+        all_eresources = Eresource.objects.filter(mail=self).exclude(
+            possible_unsub_link=True
+        )
         if self.h_x_original_to is None:
-            print('Did not find mailaddress. Mail: {}'.format(self))
+            print("Did not find mailaddress. Mail: {}".format(self))
             return
         hashdict = Mail.generate_match_dict(self.h_x_original_to)
         for eresource in all_eresources:
@@ -386,24 +405,31 @@ class Mail(models.Model):
         hashdictowner = None
         hashdictmatch = None
         # get all mails of the same service
-        samemails = Mail.objects.filter(identity__service__in=Service.objects.filter(identity__in=self.identity.all()))
+        samemails = Mail.objects.filter(
+            identity__service__in=Service.objects.filter(
+                identity__in=self.identity.all()
+            )
+        )
 
         # filter the list to a list of mails with same subject, but exclude the originalto header
-        samemails = samemails.filter(h_subject=self.h_subject)\
-                             .exclude(h_x_original_to=self.h_x_original_to)
+        samemails = samemails.filter(h_subject=self.h_subject).exclude(
+            h_x_original_to=self.h_x_original_to
+        )
         # iterate through all mails from different identities to check if eresources differ
         for email in samemails:
             # link same emails together
             self.mail_from_another_identity.add(email)
 
             # get eresources from these mails
-            actual = Eresource.objects.filter(mail=email).values('url')
+            actual = Eresource.objects.filter(mail=email).values("url")
             # get eresource form this mail
-            expected = Eresource.objects.filter(mail=self).values('url')
+            expected = Eresource.objects.filter(mail=self).values("url")
 
             if len(actual) != len(expected):
                 # TODO increase performance and extract interesting data
-                print('Different number of Eresources for same mail on different identities!')
+                print(
+                    "Different number of Eresources for same mail on different identities!"
+                )
                 continue
 
             # compare urls if they dont match set the differentsource field to the eresource object which is same
@@ -413,8 +439,16 @@ class Mail(models.Model):
                     if not str(url.values()) == str(actual[idx].values()):
                         # print(url.values())
                         # print(actual[idx].values())
-                        matchobject = Eresource.objects.filter(mail=email).filter(url__in=actual[idx].values())[:1].get()
-                        owneresource = Eresource.objects.filter(mail=self).filter(url__in=url.values())[:1].get()
+                        matchobject = (
+                            Eresource.objects.filter(mail=email)
+                            .filter(url__in=actual[idx].values())[:1]
+                            .get()
+                        )
+                        owneresource = (
+                            Eresource.objects.filter(mail=self)
+                            .filter(url__in=url.values())[:1]
+                            .get()
+                        )
 
                         # link eresource together
                         matchobject.diff_eresource = owneresource
@@ -426,9 +460,13 @@ class Mail(models.Model):
 
                         # make sure the dicts are only generated once
                         if not hashdictowner:
-                            hashdictowner = self.generate_match_dict(owneresource.mail.h_x_original_to)
+                            hashdictowner = self.generate_match_dict(
+                                owneresource.mail.h_x_original_to
+                            )
                         if not hashdictmatch:
-                            hashdictmatch = self.generate_match_dict(matchobject.mail.h_x_original_to)
+                            hashdictmatch = self.generate_match_dict(
+                                matchobject.mail.h_x_original_to
+                            )
 
                         Mail.analyze_eresource(owneresource, hashdictowner)
                         Mail.analyze_eresource(matchobject, hashdictmatch)
@@ -440,12 +478,19 @@ class Mail(models.Model):
 
     def get_similar_mails_of_different_identities(self):
         mail_date = self.date_time
-        earliest_date = mail_date - datetime.timedelta(minutes=11*60 + 30) # 11 hours and 30 minutes
-        last_date = mail_date + datetime.timedelta(minutes=11*60 + 30)
-        mails_in_timeframe = Mail.objects.filter(date_time__range=(earliest_date, last_date))
+        earliest_date = mail_date - datetime.timedelta(
+            minutes=11 * 60 + 30
+        )  # 11 hours and 30 minutes
+        last_date = mail_date + datetime.timedelta(minutes=11 * 60 + 30)
+        mails_in_timeframe = Mail.objects.filter(
+            date_time__range=(earliest_date, last_date)
+        )
 
-        service_mail_set = mails_in_timeframe.filter(identity__service__in=Service.objects.filter(identity__in=self.identity.all()))\
-            .exclude(h_x_original_to=self.h_x_original_to)
+        service_mail_set = mails_in_timeframe.filter(
+            identity__service__in=Service.objects.filter(
+                identity__in=self.identity.all()
+            )
+        ).exclude(h_x_original_to=self.h_x_original_to)
         similar_mails = []
         for mail in service_mail_set:
             if ratio(self.h_subject, mail.h_subject) > 0.9:
@@ -467,8 +512,16 @@ class Mail(models.Model):
         :param print_links: prints the links with X for the chars that are different.
         :return: list with links, num_different_links, total_num_links, min_difference, max_difference, mean, median
         """
-        mail1_eresources = Eresource.objects.filter(mail=self, personalised=False).exclude(type='con').exclude(type='con_click')
-        mail2_eresources = Eresource.objects.filter(mail=mail, personalised=False).exclude(type='con').exclude(type='con_click')
+        mail1_eresources = (
+            Eresource.objects.filter(mail=self, personalised=False)
+            .exclude(type="con")
+            .exclude(type="con_click")
+        )
+        mail2_eresources = (
+            Eresource.objects.filter(mail=mail, personalised=False)
+            .exclude(type="con")
+            .exclude(type="con_click")
+        )
         num_different_links = 0
         min_difference = 5000
         max_difference = 0
@@ -482,8 +535,10 @@ class Mail(models.Model):
             # print('Different number of links in the compared 2 mails.')
             # print('Id of first mail: {}. Subject:{}'.format(self.id, self.h_subject))
             # print('Id of second mail: {}. Subject:{}'.format(mail.id, mail.h_subject))
-            logger.warning('Different number of links in the compared 2 mails.', extra={
-                'ID first mail': self.id, 'ID second mail': mail.id})
+            logger.warning(
+                "Different number of links in the compared 2 mails.",
+                extra={"ID first mail": self.id, "ID second mail": mail.id},
+            )
             return [], -1, -1, -1, -1, -1, -1
         for counter, link in enumerate(own_mail_link_set):
             link1 = link
@@ -513,7 +568,7 @@ class Mail(models.Model):
             num_different_links += 1
             list_differences.append(len(index))
             for i in index:
-                link = link[:i] + 'X' + link[i + 1:]
+                link = link[:i] + "X" + link[i + 1 :]
             # print('Next Mail')
             links.append(link)
         if print_links:
@@ -524,10 +579,25 @@ class Mail(models.Model):
                 list_differences.append(0)
             if min_difference == 5000:
                 min_difference = 0
-            return links, num_different_links, l1, min_difference, max_difference, statistics.mean(list_differences), \
-               statistics.median(list_differences)
+            return (
+                links,
+                num_different_links,
+                l1,
+                min_difference,
+                max_difference,
+                statistics.mean(list_differences),
+                statistics.median(list_differences),
+            )
         except statistics.StatisticsError:
-            return links, num_different_links, l1, min_difference, max_difference, -1, -1
+            return (
+                links,
+                num_different_links,
+                l1,
+                min_difference,
+                max_difference,
+                -1,
+                -1,
+            )
         # l = [i for i in range(len(s1)) if s1[i] != s2[i]]
 
     def compare_text_of_mails(self, mail):
@@ -546,8 +616,8 @@ class Mail(models.Model):
             without_html2 = get_new_html_handler().handle(mail.body_html)
         except AttributeError:
             # Has no body_html.
-            without_html1 = get_new_html_handler().handle('')
-            without_html2 = get_new_html_handler().handle('')
+            without_html1 = get_new_html_handler().handle("")
+            without_html2 = get_new_html_handler().handle("")
         # Remove the name and domain from the resulting text.
         id1 = self.identity.all()
         id2 = mail.identity.all()
@@ -556,9 +626,9 @@ class Mail(models.Model):
             first_name = identity.first_name.lower()
             last_name = identity.surname.lower()
             address = identity.mail
-            cleaned = re.sub(address, '', text, flags=re.IGNORECASE)
-            cleaned = re.sub(last_name, '', cleaned, flags=re.IGNORECASE)
-            cleaned = re.sub(first_name, '', cleaned, flags=re.IGNORECASE)
+            cleaned = re.sub(address, "", text, flags=re.IGNORECASE)
+            cleaned = re.sub(last_name, "", cleaned, flags=re.IGNORECASE)
+            cleaned = re.sub(first_name, "", cleaned, flags=re.IGNORECASE)
             return cleaned
 
         if id1.count() > 0 and id2.count() > 0:
@@ -570,7 +640,7 @@ class Mail(models.Model):
             return -1
 
         similarity = ratio(cleaned1, cleaned2)
-        differences = ''
+        differences = ""
         if similarity < 0.9993:
             differences = Mail.inline_diff(cleaned1, cleaned2)
 
@@ -580,41 +650,42 @@ class Mail(models.Model):
     @staticmethod
     def inline_diff(a, b):
         import difflib
+
         matcher = difflib.SequenceMatcher(None, a, b)
 
         def process_tag(tag, i1, i2, j1, j2):
-            if tag == 'replace':
-                return '{' + matcher.a[i1:i2] + ' -> ' + matcher.b[j1:j2] + '}'
-            if tag == 'delete':
-                return '{- ' + matcher.a[i1:i2] + '}'
-            if tag == 'equal':
+            if tag == "replace":
+                return "{" + matcher.a[i1:i2] + " -> " + matcher.b[j1:j2] + "}"
+            if tag == "delete":
+                return "{- " + matcher.a[i1:i2] + "}"
+            if tag == "equal":
                 # return matcher.a[i1:i2]
-                return ''
-            if tag == 'insert':
-                return '{+ ' + matcher.b[j1:j2] + '}'
+                return ""
+            if tag == "insert":
+                return "{+ " + matcher.b[j1:j2] + "}"
             assert False, "Unknown tag %r" % tag
 
-        return ''.join(process_tag(*t) for t in matcher.get_opcodes())
+        return "".join(process_tag(*t) for t in matcher.get_opcodes())
 
     def extract_static_links_of_mail(self):
         if not self.body_html:
             # TODO Do we want to analyze links of plaintext mails?
             # The mail includes no html, but just plain text info
             return []
-        soup = BeautifulSoup(self.body_html, 'html.parser')
-        script_elements = [element['src'] for element in soup.select('script[src]')]
-        anchor_elements = [element['href'] for element in soup.select('a[href]')]
-        link_elements = [element['href'] for element in soup.select('link[href]')]
-        image_elements = [element['src'] for element in soup.select('img[src]')]
+        soup = BeautifulSoup(self.body_html, "html.parser")
+        script_elements = [element["src"] for element in soup.select("script[src]")]
+        anchor_elements = [element["href"] for element in soup.select("a[href]")]
+        link_elements = [element["href"] for element in soup.select("link[href]")]
+        image_elements = [element["src"] for element in soup.select("img[src]")]
 
         links = script_elements + anchor_elements + link_elements + image_elements
         cleaned_links = []
         for link in links:
-            if 'data:image' in link:
+            if "data:image" in link:
                 continue
-            elif 'mailto' in link:
+            elif "mailto" in link:
                 continue
-            li = ''.join(link.split())
+            li = "".join(link.split())
             cleaned_links.append(li)
         return cleaned_links
 
@@ -623,13 +694,16 @@ class Mail(models.Model):
         # check for leakage and if yes, set matched algorithm combination
         # case insensitive
         for key, val in dict.items():
-            if str(val) in eresource.url or str(val).casefold() in eresource.url.replace('-', '').casefold():
-                if eresource.mail_leakage is None or eresource.mail == '':
+            if (
+                str(val) in eresource.url
+                or str(val).casefold() in eresource.url.replace("-", "").casefold()
+            ):
+                if eresource.mail_leakage is None or eresource.mail == "":
                     eresource.mail_leakage = key
                 else:
                     if key in eresource.mail_leakage:
                         continue
-                    eresource.mail_leakage = eresource.mail_leakage + ', ' + key
+                    eresource.mail_leakage = eresource.mail_leakage + ", " + key
                 eresource.save()
                 # print('Found leakage!')
                 # break
@@ -640,22 +714,26 @@ class Mail(models.Model):
         encdict = {}
 
         hashdict.update({"Mailaddress": mailaddr})
-        hashdict.update({"Email Account": mailaddr.split('@')[0]})
-        hashdict.update({"Address Domain": mailaddr.split('@')[1]})
+        hashdict.update({"Email Account": mailaddr.split("@")[0]})
+        hashdict.update({"Address Domain": mailaddr.split("@")[1]})
 
         def create_upper_lower(dict, only_up=False):
             tempdict = {}
             for key, value in dict.items():
-                if not key.startswith('up'):
-                    tempdict.update({'up(' + key + ')': value.upper()})
+                if not key.startswith("up"):
+                    tempdict.update({"up(" + key + ")": value.upper()})
                 if only_up:
                     continue
-                if not key.startswith('plain') and not key.startswith('low') and not key.startswith('domain'):
-                    tempdict.update({'low(' + key + ')': value.lower()})
+                if (
+                    not key.startswith("plain")
+                    and not key.startswith("low")
+                    and not key.startswith("domain")
+                ):
+                    tempdict.update({"low(" + key + ")": value.lower()})
             return tempdict
 
         def create_algo_dict(old_dict):
-            algorithms = ['md5', 'md4', 'sha1', 'sha256', 'sha512', 'sha384']
+            algorithms = ["md5", "md4", "sha1", "sha256", "sha512", "sha384"]
             # Add upper and lower versions to be hashed, but don't add those to the enc dict. Comparison takes place on
             # casefold URL
             temp_dict = create_upper_lower(old_dict, True)
@@ -665,7 +743,7 @@ class Mail(models.Model):
                 for algo in algorithms:
                     h = hashlib.new(algo)
                     h.update(value.encode("utf8"))
-                    new_dict.update({algo + '(' + key + ')': h.hexdigest()})
+                    new_dict.update({algo + "(" + key + ")": h.hexdigest()})
             return new_dict
 
         hashdict.update(create_algo_dict(hashdict))
@@ -676,9 +754,17 @@ class Mail(models.Model):
         encdict = {}
 
         for key, val in hashdict.items():
-            encdict.update({'base64(' + key + ')': base64.b64encode(val.encode("utf8")).decode("utf-8", "replace")})
+            encdict.update(
+                {
+                    "base64("
+                    + key
+                    + ")": base64.b64encode(val.encode("utf8")).decode(
+                        "utf-8", "replace"
+                    )
+                }
+            )
 
-        encdict.update({'urlencode(plain)': urllib.parse.quote(mailaddr)})
+        encdict.update({"urlencode(plain)": urllib.parse.quote(mailaddr)})
 
         # put dicts together
         hashdict.update(encdict)
@@ -692,12 +778,13 @@ class Mail(models.Model):
             # todo check this (approved identity)
             # print(not ident.approved and (ident.lastapprovalremindersend is None or ident.lastapprovalremindersend > (now + delta).time()))
             if not ident.approved and (
-                    ident.lastapprovalremindersend is None or ident.lastapprovalremindersend > (now + delta).time()):
-                message = render_to_string('identity_approval_mail.txt', {
-                    'ident': ident,
-                    'mail': self,
-                    'URL': settings.SYSTEM_ROOT_URL
-                })
+                ident.lastapprovalremindersend is None
+                or ident.lastapprovalremindersend > (now + delta).time()
+            ):
+                message = render_to_string(
+                    "identity_approval_mail.txt",
+                    {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
+                )
                 subject = "A new identity needs approval"
                 if not settings.DISABLE_ADMIN_MAILS:
                     mail_admins(subject, message)
@@ -715,11 +802,10 @@ class Mail(models.Model):
             # Set it to be suspected spam and send a notification.
             self.suspected_spam = True
             subject = "Third-Party spam is suspected"
-            message = render_to_string('third_party_spam.txt', {
-                'ident': ident,
-                'mail': self,
-                'URL': settings.SYSTEM_ROOT_URL
-            })
+            message = render_to_string(
+                "third_party_spam.txt",
+                {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
+            )
             if not settings.DISABLE_ADMIN_MAILS:
                 mail_admins(subject, message)
             self.save()
@@ -739,10 +825,12 @@ class Mail(models.Model):
         for mail in mailQueue:
             if mail.body_html:
                 # create unique filename
-                file = tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.html')
+                file = tempfile.NamedTemporaryFile(
+                    mode="w", delete=False, suffix=".html"
+                )
                 file.write(mail.body_html)
                 file_basename = os.path.basename(file.name)
-                filename = 'http://' + settings.LOCALHOST_URL + '/' + file_basename
+                filename = "http://" + settings.LOCALHOST_URL + "/" + file_basename
                 mailFiles.append(filename)
                 file_to_mail_map[filename] = mail
             else:
@@ -756,24 +844,22 @@ class Mail(models.Model):
         sites = mailFiles
         # sites = ["file:///tmp/tmpvvfmzvpo"]
         # Loads the manager preference and 3 copies of the default browser dictionaries
-        print('Starting OpenWPM to view mails.')
+        print("Starting OpenWPM to view mails.")
         manager_params, browser_params = TaskManager.load_default_params(num_browsers)
 
         # Update browser configuration (use this for per-browser settings)
         for i in range(num_browsers):
             # Record HTTP Requests and Responses
-            browser_params[i]['http_instrument'] = True
+            browser_params[i]["http_instrument"] = True
             # Enable flash for all three browsers
             # browser_params[i]['disable_flash'] = False
-            browser_params[i]['headless'] = True
-            browser_params[i]['spoof_mailclient'] = True
-            browser_params[i]['prefs'] = {
-                'browser.chrome.site_icons': False
-            }
+            browser_params[i]["headless"] = True
+            browser_params[i]["spoof_mailclient"] = True
+            browser_params[i]["prefs"] = {"browser.chrome.site_icons": False}
 
         # Update TaskManager configuration (use this for crawl-wide settings)
-        manager_params['data_directory'] = settings.OPENWPM_DATA_DIR
-        manager_params['log_directory'] = settings.OPENWPM_LOG_DIR
+        manager_params["data_directory"] = settings.OPENWPM_DATA_DIR
+        manager_params["log_directory"] = settings.OPENWPM_LOG_DIR
 
         # Instantiates the measurement platform
         # Commands time out by default after 60 seconds
@@ -800,7 +886,7 @@ class Mail(models.Model):
         # Make sure the db connection is open
         connection.connect()
 
-        print('Importing OpenWPM results.')
+        print("Importing OpenWPM results.")
         failed_mails = []
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
         if os.path.isfile(wpm_db):
@@ -811,10 +897,14 @@ class Mail(models.Model):
                 successful_import = Mail.import_openwpmresults(fileName, file_to_mail_map[fileName], db_cursor)
                 if not successful_import:
                     failed_mails.append(file_to_mail_map[fileName])
-                    file_to_mail_map[fileName].processing_fails = file_to_mail_map[fileName].processing_fails + 1
+                    file_to_mail_map[fileName].processing_fails = (
+                        file_to_mail_map[fileName].processing_fails + 1
+                    )
                     file_to_mail_map[fileName].save()
                 else:
-                    file_to_mail_map[fileName].processing_state = Mail.PROCESSING_STATES.VIEWED
+                    file_to_mail_map[
+                        fileName
+                    ].processing_state = Mail.PROCESSING_STATES.VIEWED
                     file_to_mail_map[fileName].processing_fails = 0
                     file_to_mail_map[fileName].save()
                 os.unlink('/tmp/' + fileName.split('/')[3])  # remove file to avoid zombie data
@@ -823,7 +913,7 @@ class Mail(models.Model):
             # remove openwpm sqlite db to avoid waste of disk space
             if not settings.DEVELOP_ENVIRONMENT:
                 os.remove(wpm_db)
-        print('Done.')
+        print("Done.")
         return failed_mails
 
     @staticmethod
@@ -831,7 +921,10 @@ class Mail(models.Model):
         # Import the results from the OpenWPM sqlite database and write it to the backend database of Django
         num_eresources = 0
 
-        db_cursor.execute("SELECT * from crawl_history where arguments = ? and bool_success = 1;", (filename,))
+        db_cursor.execute(
+            "SELECT * from crawl_history where arguments = ? and bool_success = 1;",
+            (filename,),
+        )
         if len(db_cursor.fetchall()) == 0:
             return False
 
@@ -842,7 +935,9 @@ class Mail(models.Model):
             "LEFT OUTER JOIN http_redirects as r on h.channel_id = r.old_channel_id "
             "LEFT OUTER JOIN http_requests as h2 on r.new_channel_id = h2.channel_id "
             "LEFT OUTER JOIN http_responses as hr on h.url = hr.url "
-            "WHERE h.url not like '%favicon.ico' and site_url = ?;", (filename,))
+            "WHERE h.url not like '%favicon.ico' and site_url = ?;",
+            (filename,),
+        )
 
         openWPM_entries = db_cursor.fetchall()
         num_openWpm_entries = len(openWPM_entries)
@@ -851,41 +946,64 @@ class Mail(models.Model):
         #                                 "FROM http_requests as h JOIN site_visits as v ON "
         #                                 "h.visit_id = v.visit_id WHERE top_level_url = ?;", (filename,)):
 
-        for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
-                in openWPM_entries:
+        for (
+            url,
+            request_headers,
+            response_headers,
+            channel_id,
+            top_url,
+            new_channel_id,
+            redirects_to,
+        ) in openWPM_entries:
             # check if the url has a parent and is therefore not the start of a chain.
-            db_cursor.execute("select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
-                              (channel_id,))
+            db_cursor.execute(
+                "select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
+                (channel_id,),
+            )
 
             is_start_of_chain = False
             if db_cursor.fetchone() is None:
                 is_start_of_chain = True
 
             # eresource is end of chain
-            if new_channel_id is None or new_channel_id == '':
-                r, created = Eresource.objects.get_or_create(type="con", request_headers=request_headers,
-                                                             response_headers=response_headers,
-                                                             url=url, channel_id=channel_id,
-                                                             param=top_url, mail=mail,
-                                                             is_start_of_chain=is_start_of_chain, is_end_of_chain=True)
+            if new_channel_id is None or new_channel_id == "":
+                r, created = Eresource.objects.get_or_create(
+                    type="con",
+                    request_headers=request_headers,
+                    response_headers=response_headers,
+                    url=url,
+                    channel_id=channel_id,
+                    param=top_url,
+                    mail=mail,
+                    is_start_of_chain=is_start_of_chain,
+                    is_end_of_chain=True,
+                )
             # eresource redirects to other eresource
             else:
-                r, created = Eresource.objects.get_or_create(type="con", request_headers=request_headers,
-                                                             response_headers=response_headers, url=url,
-                                                             channel_id=channel_id,
-                                                             redirects_to_channel_id=new_channel_id,
-                                                             redirects_to_url=redirects_to,
-                                                             param=top_url, mail=mail,
-                                                             is_start_of_chain=is_start_of_chain, is_end_of_chain=False)
+                r, created = Eresource.objects.get_or_create(
+                    type="con",
+                    request_headers=request_headers,
+                    response_headers=response_headers,
+                    url=url,
+                    channel_id=channel_id,
+                    redirects_to_channel_id=new_channel_id,
+                    redirects_to_url=redirects_to,
+                    param=top_url,
+                    mail=mail,
+                    is_start_of_chain=is_start_of_chain,
+                    is_end_of_chain=False,
+                )
 
             # save load resources in eresource of type connection
             if created:
                 mail.connect_tracker(eresource=r)
                 r.save()
                 num_eresources = num_eresources + 1
-        print('Number of Eresources added to the Database: %s' % num_eresources)
-        if (num_openWpm_entries != num_eresources):
-            print('Different number of entries have been added, than the OpenWPM database returned!')
+        print("Number of Eresources added to the Database: %s" % num_eresources)
+        if num_openWpm_entries != num_eresources:
+            print(
+                "Different number of entries have been added, than the OpenWPM database returned!"
+            )
         return True
 
     @staticmethod
@@ -895,7 +1013,7 @@ class Mail(models.Model):
         if os.path.exists(wpm_db):
             os.remove(wpm_db)
 
-        print('Preparing data for OpenWPM.')
+        print("Preparing data for OpenWPM.")
         sites = []
         for url in link_mail_map:
             sites.append(url)
@@ -903,24 +1021,22 @@ class Mail(models.Model):
         num_browsers = settings.NUMBER_OF_THREADS
 
         # Loads the manager preference and 3 copies of the default browser dictionaries
-        print('Starting OpenWPM to visit links.')
+        print("Starting OpenWPM to visit links.")
         manager_params, browser_params = TaskManager.load_default_params(num_browsers)
 
         # Update browser configuration (use this for per-browser settings)
         for i in range(num_browsers):
             # Record HTTP Requests and Responses
-            browser_params[i]['http_instrument'] = True
+            browser_params[i]["http_instrument"] = True
             # Enable flash for all three browsers
             # browser_params[i]['disable_flash'] = False
             # browser_params['js_instrument'] = True
-            browser_params[i]['headless'] = True
-            browser_params[i]['prefs'] = {
-                'browser.chrome.site_icons': False
-            }
+            browser_params[i]["headless"] = True
+            browser_params[i]["prefs"] = {"browser.chrome.site_icons": False}
 
         # Update TaskManager configuration (use this for crawl-wide settings)
-        manager_params['data_directory'] = settings.OPENWPM_DATA_DIR
-        manager_params['log_directory'] = settings.OPENWPM_LOG_DIR
+        manager_params["data_directory"] = settings.OPENWPM_DATA_DIR
+        manager_params["log_directory"] = settings.OPENWPM_LOG_DIR
 
         # Instantiates the measurement platform
         # Commands time out by default after 60 seconds
@@ -945,7 +1061,7 @@ class Mail(models.Model):
         # Make sure the db connection is open
         connection.connect()
 
-        print('Importing OpenWPM results.')
+        print("Importing OpenWPM results.")
         failed_urls = {}
         wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
 
@@ -957,10 +1073,14 @@ class Mail(models.Model):
                 import_success = Mail.import_openwpmresults_click(url, link_mail_map[url], db_cursor)
                 if not import_success:
                     failed_urls[url] = link_mail_map[url]
-                    link_mail_map[url].processing_fails = link_mail_map[url].processing_fails + 1
+                    link_mail_map[url].processing_fails = (
+                        link_mail_map[url].processing_fails + 1
+                    )
                     link_mail_map[url].save()
                 else:
-                    link_mail_map[url].processing_state = Mail.PROCESSING_STATES.LINK_CLICKED
+                    link_mail_map[
+                        url
+                    ].processing_state = Mail.PROCESSING_STATES.LINK_CLICKED
                     link_mail_map[url].processing_fails = 0
                     link_mail_map[url].save()
             db_cursor.close()
@@ -968,7 +1088,7 @@ class Mail(models.Model):
             # remove openwpm sqlite db to avoid waste of disk space
             # if not settings.DEVELOP_ENVIRONMENT:
             #     os.remove(wpm_db)
-        print('Done.')
+        print("Done.")
         return failed_urls
 
     @staticmethod
@@ -976,7 +1096,10 @@ class Mail(models.Model):
         num_eresources = 0
         num_eresources_dropped = 0
         # connect to the input database
-        db_cursor.execute("SELECT * from crawl_history where arguments = ? and bool_success = 1;", (url,))
+        db_cursor.execute(
+            "SELECT * from crawl_history where arguments = ? and bool_success = 1;",
+            (url,),
+        )
         if len(db_cursor.fetchall()) == 0:
             return False
         # scans through the sqlite database, checking for all external calls and to which they redirect
@@ -986,35 +1109,46 @@ class Mail(models.Model):
             "LEFT OUTER JOIN http_redirects as r on h.channel_id = r.old_channel_id "
             "LEFT OUTER JOIN http_requests as h2 on r.new_channel_id = h2.channel_id "
             "LEFT OUTER JOIN http_responses as hr on h.url = hr.url "
-            "WHERE site_url = ? and h.url not like '%favicon.ico' and  h.top_level_url is null;", (url,))
+            "WHERE site_url = ? and h.url not like '%favicon.ico' and  h.top_level_url is null;",
+            (url,),
+        )
 
         openWPM_entries = db_cursor.fetchall()
         num_openWpm_entries = len(openWPM_entries)
 
         # check whether the final url is from the service. If not discard this chain.
-        service_url = ''
+        service_url = ""
         id = mail.identity.all()
         if id.exists():
             service_url = id[0].service.url
         else:
-            print('Mail has no associated identities.')
+            print("Mail has no associated identities.")
             return True
 
         eresources_to_save = []
         drop_host = None
 
-        for url, request_headers, response_headers, channel_id, top_url, new_channel_id, redirects_to \
-                in openWPM_entries:
+        for (
+            url,
+            request_headers,
+            response_headers,
+            channel_id,
+            top_url,
+            new_channel_id,
+            redirects_to,
+        ) in openWPM_entries:
             # check if the url has a parent and is therefore not the start of a chain.
-            db_cursor.execute("select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
-                              (channel_id,))
+            db_cursor.execute(
+                "select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
+                (channel_id,),
+            )
 
             is_start_of_chain = False
             if db_cursor.fetchone() is None:
                 is_start_of_chain = True
 
             # eresource is end of chain
-            if new_channel_id is None or new_channel_id == '':
+            if new_channel_id is None or new_channel_id == "":
 
                 # If the last domain of a chain is not of our service, it was most likely an external link.
                 # In many cases this would be unfair for the newsletter to track this as a thirdParty/ Tracker.
@@ -1022,21 +1156,33 @@ class Mail(models.Model):
                 if service_url not in url_domain:
                     drop_host = url_domain
 
-                e = Eresource(type="con_click", request_headers=request_headers,
-                              response_headers=response_headers, url=url,
-                              channel_id=channel_id,
-                              param=top_url, mail=mail,
-                              is_start_of_chain=is_start_of_chain, is_end_of_chain=True)
+                e = Eresource(
+                    type="con_click",
+                    request_headers=request_headers,
+                    response_headers=response_headers,
+                    url=url,
+                    channel_id=channel_id,
+                    param=top_url,
+                    mail=mail,
+                    is_start_of_chain=is_start_of_chain,
+                    is_end_of_chain=True,
+                )
                 eresources_to_save.append(e)
             # eresource redirects to other eresource
             else:
-                e = Eresource(type="con_click", request_headers=request_headers,
-                              response_headers=response_headers, url=url,
-                              channel_id=channel_id,
-                              redirects_to_channel_id=new_channel_id,
-                              redirects_to_url=redirects_to,
-                              param=top_url, mail=mail,
-                              is_start_of_chain=is_start_of_chain, is_end_of_chain=False)
+                e = Eresource(
+                    type="con_click",
+                    request_headers=request_headers,
+                    response_headers=response_headers,
+                    url=url,
+                    channel_id=channel_id,
+                    redirects_to_channel_id=new_channel_id,
+                    redirects_to_url=redirects_to,
+                    param=top_url,
+                    mail=mail,
+                    is_start_of_chain=is_start_of_chain,
+                    is_end_of_chain=False,
+                )
                 eresources_to_save.append(e)
 
         # save load resources in eresource of type connection
@@ -1046,11 +1192,14 @@ class Mail(models.Model):
                 e.save()
                 mail.connect_tracker(eresource=e)
                 e.save()
-                num_eresources += + 1
+                num_eresources += +1
             else:
                 print("Dropped:", e.url)
                 num_eresources_dropped += 1
-        print('Added %s Eresources to the database (%s dropped)' % (num_eresources, num_eresources_dropped))
+        print(
+            "Added %s Eresources to the database (%s dropped)"
+            % (num_eresources, num_eresources_dropped)
+        )
         # if (num_openWpm_entries != num_eresources):
         #     print('Different number of entries have been added, than the OpenWPM database returned!')
         #     logger.error('Different number of entries have been added, than the OpenWPM database returned!')
@@ -1090,11 +1239,11 @@ class Mail(models.Model):
 
     @cached_property
     def first_third_party_links(self):
-        return self.first_third_party_by_type('a')
+        return self.first_third_party_by_type("a")
 
     @cached_property
     def first_third_party_connections(self):
-        return self.first_third_party_by_type('con')
+        return self.first_third_party_by_type("con")
 
     def first_third_party_by_type(self, type):
         # Get all of this mail
@@ -1116,7 +1265,12 @@ class Mail(models.Model):
                     first_party += 1
                 else:
                     third_party += 1
-        return first_party, first_party_personalized, third_party, third_party_personalized
+        return (
+            first_party,
+            first_party_personalized,
+            third_party,
+            third_party_personalized,
+        )
 
     def get_service(self):
         identities = self.identity.all()
@@ -1126,15 +1280,14 @@ class Mail(models.Model):
             return None
 
 
-
 class Eresource(models.Model):
     RESOURCE_TYPES = (
-        ('a', 'Link'),
-        ('img', 'Image'),
-        ('con', 'Connection'),
-        ('con_click', 'Connection_clicked'),
-        ('link', 'css'),
-        ('script', 'JavaScript')
+        ("a", "Link"),
+        ("img", "Image"),
+        ("con", "Connection"),
+        ("con_click", "Connection_clicked"),
+        ("link", "css"),
+        ("script", "JavaScript"),
     )
     type = models.CharField(max_length=50, choices=RESOURCE_TYPES)
     url = models.TextField(max_length=2000, null=True, blank=True)
@@ -1144,12 +1297,16 @@ class Eresource(models.Model):
     request_headers = models.TextField(max_length=3000, null=True, blank=True)
     response_headers = models.TextField(max_length=3000, null=True, blank=True)
     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
-    host = models.ForeignKey('Thirdparty', null=True, on_delete=models.SET_NULL)
-    diff_eresource = models.ForeignKey('self', related_name='diff', on_delete=models.SET_NULL, null=True)
+    host = models.ForeignKey("Thirdparty", null=True, on_delete=models.SET_NULL)
+    diff_eresource = models.ForeignKey(
+        "self", related_name="diff", on_delete=models.SET_NULL, null=True
+    )
     mail_leakage = models.TextField(null=True, blank=True)
     personalised = models.BooleanField(default=False)
     # the eresource this one redirects to
-    redirects_to = models.ForeignKey('self', related_name='redirect', on_delete=models.CASCADE, null=True)
+    redirects_to = models.ForeignKey(
+        "self", related_name="redirect", on_delete=models.CASCADE, null=True
+    )
     # the url of the eresource this one redirects to
     redirects_to_url = models.CharField(max_length=2000, null=True, blank=True)
     # the channelID of the eresource this one connects to
@@ -1163,29 +1320,37 @@ class Eresource(models.Model):
 
     @classmethod
     def create_clickable(cls, link, possible_unsubscribe_link, mail):
-        r, created = Eresource.objects.get_or_create(type="a", url=link["href"],
-                                                     possible_unsub_link=possible_unsubscribe_link,
-                                                     param=str(link.attrs) + str(link.contents),
-                                                     mail=mail)
+        r, created = Eresource.objects.get_or_create(
+            type="a",
+            url=link["href"],
+            possible_unsub_link=possible_unsubscribe_link,
+            param=str(link.attrs) + str(link.contents),
+            mail=mail,
+        )
         if created:
             mail.connect_tracker(eresource=r)
             r.save()
 
     @classmethod
-    def create_static_eresource(cls, element, source_string, mail, possible_unsubscribe_link=False):
+    def create_static_eresource(
+        cls, element, source_string, mail, possible_unsubscribe_link=False
+    ):
         element_string = str(element)
-        if 'javascript' in element_string:
+        if "javascript" in element_string:
             mail.contains_javascript = True
         try:
-            if 'http' not in element[source_string] or element[source_string] is None:
+            if "http" not in element[source_string] or element[source_string] is None:
                 return
         except KeyError:
             return
-        element[source_string] = ''.join(element[source_string].split())
-        r, created = Eresource.objects.get_or_create(type=element.name, url=element[source_string],
-                                                     possible_unsub_link=possible_unsubscribe_link,
-                                                     param=str(element.attrs) + str(element.contents),
-                                                     mail=mail)
+        element[source_string] = "".join(element[source_string].split())
+        r, created = Eresource.objects.get_or_create(
+            type=element.name,
+            url=element[source_string],
+            possible_unsub_link=possible_unsubscribe_link,
+            param=str(element.attrs) + str(element.contents),
+            mail=mail,
+        )
         if created:
             mail.connect_tracker(eresource=r)
             r.save()
@@ -1198,14 +1363,17 @@ class Eresource(models.Model):
 
     @staticmethod
     def is_unsub_word_in_link(link):
-        if 'http' not in link['href']:
+        if "http" not in link["href"]:
             return False
         for unsub_word in settings.UNSUBSCRIBE_LINK_DICT:
-            if unsub_word in link["href"].casefold() or unsub_word in link.text.casefold():
+            if (
+                unsub_word in link["href"].casefold()
+                or unsub_word in link.text.casefold()
+            ):
                 # print('Found possible unsubscribe link: %s' % link)
                 return True
             try:
-                if unsub_word in link['alias'].casefold():
+                if unsub_word in link["alias"].casefold():
                     # print('Found possible unsubscribe link: %s' % link)
                     return True
             except KeyError:
@@ -1219,10 +1387,12 @@ class Thirdparty(models.Model):
     ALT_DOMAIN = "altdomain"
     UNKNOWN = "unknown"
 
-    SECTOR_CHOICES = ((TRACKER, "Tracking / Advertising"),
-                      (CDN, "Hosting / Content Distribution"),
-                      (ALT_DOMAIN, "Alternative Domain of first party"),
-                      (UNKNOWN, "Unknown"))
+    SECTOR_CHOICES = (
+        (TRACKER, "Tracking / Advertising"),
+        (CDN, "Hosting / Content Distribution"),
+        (ALT_DOMAIN, "Alternative Domain of first party"),
+        (UNKNOWN, "Unknown"),
+    )
 
     name = models.CharField(max_length=200, null=False, blank=False)
     host = models.CharField(max_length=200, null=False, blank=False, unique=True)
@@ -1233,7 +1403,7 @@ class Thirdparty(models.Model):
     # and get_sector(), as they also take connections to services into account.
     # (If a service is associated with this host, the metadata of the service are
     # used instead of that saved here)
-    country_of_origin = CountryField(blank_label='(select country)', blank=True)
+    country_of_origin = CountryField(blank_label="(select country)", blank=True)
     sector = models.CharField(choices=SECTOR_CHOICES, max_length=30, default=UNKNOWN)
     service = models.OneToOneField(Service, on_delete=models.SET_NULL, null=True)
 
@@ -1241,7 +1411,7 @@ class Thirdparty(models.Model):
         return "({})|{}".format(self.name, self.host)
 
     def derive_thirdparty_cache_path(self):
-        return 'frontend.ThirdPartyView.result.' + str(self.id) + ".site_params"
+        return "frontend.ThirdPartyView.result." + str(self.id) + ".site_params"
 
     @classmethod
     def create(cls, name, host):
@@ -1269,6 +1439,17 @@ class Thirdparty(models.Model):
             return self.service.get_sector_display()
         else:
             return self.get_sector_display()
+
+    def toJSON(self):
+        return {
+            "name": convertForJsonResponse(self.name),
+            "host": convertForJsonResponse(self.host),
+            "resultsdirty": convertForJsonResponse(self.resultsdirty),
+            "country_of_origin": convertForJsonResponse(self.country_of_origin.code),
+            "sector": convertForJsonResponse(self.sector),
+            "service": convertForJsonResponse(self.service),
+        }
+
 
 # class RequestChain(models.Model):
 #     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)

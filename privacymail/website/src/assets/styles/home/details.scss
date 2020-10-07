@@ -1,0 +1,39 @@
+.tracking {
+    grid-area: tracking;
+}
+.whatWeDo {
+    grid-area: whatWeDo;
+}
+.whyPrivacymail {
+    grid-area: whyPrivacymail;
+}
+.detection {
+    grid-area: detection;
+}
+.details {
+    margin: 0 auto 0 auto;
+    display: grid;
+    grid-row-gap: 4rem;
+    grid-column-gap: 4rem;
+    padding: 1rem;
+
+    @media only screen and (min-width: calc(500px + 2rem)) {
+        width: calc((100% - (500px + 2rem)) * 0.4 + 500px);
+    }
+    @media only screen and (min-width: calc((#{$screen-break} + 50px - (500px ))  *2.5 + (500px))) {
+        width: $screen-break + 50px;
+    }
+
+    @media only screen and (min-width: 800px) {
+        //medium sized screens
+        grid-template-areas:
+            "whatWeDo whatWeDo"
+            "whyPrivacymail whyPrivacymail"
+            "detection tracking";
+    }
+    grid-template-areas:
+        "whatWeDo"
+        "whyPrivacymail"
+        "detection"
+        "tracking";
+}

@@ -1,0 +1,30 @@
+$faq-button-width: 80px;
+$close-button-width: 50px;
+
+.faqHint {
+    background-color: $header-secondary-color;
+    position: relative;
+    padding: 0.8rem;
+    font-size: 0.9rem; //maybe add a media query so mobile devices dont have 4 lines of text
+
+    div {
+        font-weight: 200;
+        width: calc(100% - #{$faq-button-width} - #{$close-button-width});
+        margin: auto 0px;
+        text-align: center;
+        display: inline-block;
+    }
+    button {
+        width: $faq-button-width;
+        cursor: pointer;
+        position: absolute;
+        top: calc(50% - 16px);
+        right: $close-button-width;
+    }
+    .closeButton {
+        right: 0px;
+        background: none;
+        color: $font-color-primary;
+        width: $close-button-width;
+    }
+}

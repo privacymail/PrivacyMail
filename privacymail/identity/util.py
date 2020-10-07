@@ -30,3 +30,59 @@ def is_valid_domain(domain):
     :return: True if the provided string is a valid domain or URL, otherwise false.
     """
     return validators.domain(domain) or validators.url(domain)
+
+
+def convertForJsonResponse(obj):
+    json = {}
+    if isinstance(obj, dict):
+        i = 0
+        hasStringKey = False
+
+        for key in obj:
+            if isinstance(key, str):
+                hasStringKey = True
+
+        if not hasStringKey:
+            json = []
+
+        for key in obj:
+            if isinstance(key, str):
+                json[key] = executeToJSON(obj[key])
+            else:
+                if hasStringKey:
+                    json[i] = {**executeToJSON(obj[key]), **executeToJSON(key)}
+                else:
+                    json.append({**executeToJSON(obj[key]), **executeToJSON(key)})
+            i = i + 1
+
+    elif isinstance(obj, list):
+        json = []
+        for i in range(len(obj)):
+            json.append(executeToJSON(obj[i]))
+    else:
+        json = executeToJSON(obj, True)
+
+    return json
+
+
+def executeToJSON(obj, stopFunction=False):
+    json = {}
+    try:
+        json = obj.toJSON()
+
+    except AttributeError:
+        json = obj
+        if not stopFunction:
+            json = convertForJsonResponse(obj)
+
+    return json
+
+
+def filterDict(dictObj, callback):
+    newDict = dict()
+    # Iterate over all the items in dictionary
+    for (key, value) in dictObj.items():
+        # Check if item satisfies the given condition then add to new dict
+        if callback(key, value):
+            newDict[key] = value
+    return newDict

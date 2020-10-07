@@ -1,0 +1,80 @@
+.person.smallView {
+    @media only screen and (max-width: 550px) {
+        //everythin greater than
+        .profilePic {
+            background-image: none !important;
+        }
+        .profilePic:after {
+            all: initial;
+        }
+        .email {
+            position: initial !important;
+        }
+    }
+}
+
+.person {
+    margin: 0 auto;
+    border-radius: 4px;
+    overflow: hidden;
+    min-width: 16rem;
+    max-width: 20rem;
+    width: 100%;
+
+    background-color: #fff;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+
+    .profilePic {
+        min-width: 16rem;
+        max-width: 24rem;
+        width: 100%;
+
+        position: relative;
+
+        background-position: center; /* Center the image */
+        background-repeat: no-repeat; /* Do not repeat the image */
+        background-size: cover;
+
+        .email {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background-color: #dfdfdf;
+            opacity: 0.9;
+
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            p {
+                @extend .regular;
+                margin-right: 1rem;
+            }
+            img {
+                height: 1.5rem;
+                cursor: pointer;
+            }
+        }
+    }
+    .profilePic:after {
+        content: "";
+        display: block;
+        padding-bottom: 100%;
+    }
+    .profilePic.male {
+        background-image: url("../../images/male.jpg");
+    }
+    .profilePic.female {
+        background-image: url("../../images/female.jpg");
+    }
+
+    img.picture {
+        min-width: 16rem;
+        max-width: 24rem;
+        width: 100%;
+    }
+
+    .otherInfo {
+        padding: 0 1rem;
+    }
+}

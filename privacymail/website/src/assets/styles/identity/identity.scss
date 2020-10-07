@@ -1,0 +1,90 @@
+.identity {
+    a {
+        text-decoration: underline !important;
+    }
+    h2 {
+        margin-left: 1rem;
+    }
+    .stepperContent {
+        position: relative;
+        .start > div {
+            display: flex;
+            flex-flow: column;
+
+            max-width: 400px;
+            min-height: 400px;
+
+            margin: 0 auto;
+            padding: 0 1rem;
+
+            div {
+                flex: 1 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        .instructions {
+            display: flex;
+            justify-content: center;
+
+            @media only screen and (max-width: 550px) {
+                //everythin greater than
+                flex-wrap: wrap;
+            }
+
+            .steps {
+                margin: 1rem;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+
+                min-width: 16rem;
+                max-width: 20rem;
+                width: 100%;
+            }
+        }
+        .done {
+            > div {
+                max-width: 400px;
+                margin: 0 auto;
+            }
+        }
+        .identityButtons {
+            padding: 1rem 1rem 0 1rem;
+            display: flex;
+            justify-content: flex-end;
+
+            > * {
+                margin-left: 0.5rem;
+            }
+        }
+    }
+}
+.invalid > div {
+    max-width: 400px;
+    min-height: 200px;
+
+    margin: 0 auto;
+    padding: 0 1rem;
+
+    > div {
+        display: flex;
+
+        input {
+            width: initial;
+            flex: 1 1 auto;
+            margin-right: 0.5rem;
+        }
+        @media only screen and (max-width: 550px) {
+            input {
+                margin: 0.5rem 0;
+            }
+            flex-wrap: wrap;
+            * {
+                width: 100%;
+            }
+        }
+    }
+}

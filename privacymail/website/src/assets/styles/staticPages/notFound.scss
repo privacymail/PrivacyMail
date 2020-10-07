@@ -1,0 +1,11 @@
+.notFound {
+    margin-top: $header-height + 4.1rem;
+    padding: 1rem;
+    > div {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    .heading {
+        font-size: 6rem;
+    }
+}

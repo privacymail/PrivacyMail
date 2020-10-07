@@ -1,0 +1,36 @@
+.privacyRating {
+    padding: 0px $paddingLevel;
+    position: relative;
+    padding-top: 1px; //this is here to activate the h1 padding
+
+    .rating {
+        font-size: 12.5rem;
+        margin: -1rem 0px;
+        font-weight: 600;
+        color: #fbc02d;
+        width: 100%;
+        text-align: center;
+        line-height: normal;
+    }
+
+    .shareButton {
+        $sharebuttonHeight: 1.5rem;
+
+        font-size: $sharebuttonHeight;
+        position: absolute;
+        right: $paddingLevel;
+        top: calc((#{$privacyRatingHeadlineHeight} * 1.2 - #{$sharebuttonHeight}) / 2 + 1.25rem);
+    }
+}
+.newsletterName {
+    width: 100%;
+    text-align: center;
+    .big {
+        font-size: 2rem;
+        font-weight: 200;
+    }
+    .small {
+        font-size: 1.5rem;
+        font-weight: 100;
+    }
+}

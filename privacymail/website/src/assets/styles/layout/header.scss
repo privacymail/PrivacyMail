@@ -1,0 +1,28 @@
+$header-height: 3rem;
+$header-font-size: 1.25rem;
+
+.header {
+    width: 100%;
+    background-color: $header-color;
+    color: $font-color-secondary;
+    z-index: 1000;
+
+    a:focus {
+        outline: 0;
+    }
+    div {
+        padding-left: 5%;
+        display: flex;
+        align-items: center;
+
+        img {
+            height: $header-height * 2/3;
+        }
+        h1 {
+            font-weight: 400;
+            font-size: $header-font-size;
+            color: $font-color-secondary;
+            padding-left: 0.5rem;
+        }
+    }
+}

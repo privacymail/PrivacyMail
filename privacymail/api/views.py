@@ -8,6 +8,7 @@ from identity.models import Identity, Service
 from mailfetcher.analyser_cron import create_service_cache
 import logging
 from random import shuffle
+import os
 
 logger = logging.getLogger(__name__)
 

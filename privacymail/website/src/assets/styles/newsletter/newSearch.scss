@@ -1,0 +1,29 @@
+$faq-button-width: 120px;
+
+.newSearch {
+    // Note that I know this css is not optimal but it does its job
+    background-color: $header-secondary-color;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 99999;
+
+    //font-size: 0.9rem; //maybe add a media query so mobile devices dont have 4 lines of text
+
+    div {
+        margin: 0 auto;
+        max-width: $screen-break;
+        display: flex;
+        align-items: center;
+        padding: 0.8rem;
+    }
+    input {
+        margin: auto 0px;
+        flex-grow: 1;
+        width: 100px;
+    }
+    button {
+        margin-left: 1rem;
+        cursor: pointer;
+    }
+}

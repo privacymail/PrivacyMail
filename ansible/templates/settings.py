@@ -20,7 +20,7 @@ from django.utils.translation import gettext_lazy as _
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
+REACT_APP_DIR = os.path.join(BASE_DIR, 'website') 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
@@ -57,11 +57,13 @@ INSTALLED_APPS = [
     'django_extensions',
     'django_filters',
     'django_tables2',
-    'bootstrap4'
+    'bootstrap4',
+    'whitenoise.runserver_nostatic'
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -76,7 +78,7 @@ ROOT_URLCONF = 'privacymail.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(REACT_APP_DIR ,'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -86,6 +88,7 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
+        
     },
 ]
 
@@ -168,7 +171,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '{{ static_path }}'
+STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static') 
+
+STATICFILES_DIRS = []
 
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
@@ -193,6 +198,7 @@ CRON_CLASSES = [
 # }
 # Leave any hooks you do not want to use set to None, and add any URLs you want called as strings
 # You can also set the entire dictionary to None if you don't want to use this feature.
+
 
 CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
 

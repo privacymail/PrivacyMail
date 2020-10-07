@@ -1,0 +1,124 @@
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Black.ttf") format("truetype");
+    font-weight: 900;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-BlackItalic.ttf") format("truetype");
+    font-weight: 900;
+    font-style: italic;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Bold.ttf") format("truetype");
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-BoldItalic.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 700;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Medium.ttf") format("truetype");
+    font-weight: 600;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-MediumItalic.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 600;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Regular.ttf") format("truetype");
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Italic.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 400;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Light.ttf") format("truetype");
+    font-weight: 200;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-LightItalic.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 200;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-Thin.ttf") format("truetype");
+    font-weight: 100;
+}
+@font-face {
+    font-family: "Roboto";
+    src: url("../fonts/Roboto-ThinItalic.ttf") format("truetype");
+    font-style: italic;
+    font-weight: 100;
+}
+.italic {
+    font-style: italic;
+}
+.black {
+    font-weight: 900;
+}
+.bold {
+    font-weight: 700;
+}
+.medium {
+    font-weight: 600;
+}
+.regular {
+    font-weight: 400;
+}
+.light {
+    font-weight: 200;
+}
+.thin {
+    font-weight: 100;
+}
+.smallest {
+    font-size: 0.5rem;
+}
+.small {
+    font-size: 0.8rem;
+}
+.normal {
+    font-size: 1rem;
+}
+.big {
+    font-size: 1.3rem;
+}
+.biggest {
+    font-size: 1.5rem;
+}
+
+h1 {
+    @extend .light;
+    font-size: 2.25rem;
+}
+h2 {
+    font-size: 1.6rem;
+    @extend .light;
+}
+h3 {
+    @extend .bold;
+    font-size: 1rem;
+}
+p,
+li {
+    @extend .light;
+    font-size: 1rem;
+}
+
+b {
+    @extend .medium;
+}

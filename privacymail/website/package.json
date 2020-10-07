@@ -1,0 +1,82 @@
+{
+    "name": "website",
+    "version": "0.1.0",
+    "private": true,
+    "proxy": "http://localhost:8000/",
+    "dependencies": {
+        "@popperjs/core": "^2.4.0",
+        "@testing-library/jest-dom": "^4.2.4",
+        "@testing-library/react": "^9.5.0",
+        "@testing-library/user-event": "^7.2.1",
+        "@types/react-router-dom": "^5.1.3",
+        "@typescript-eslint/eslint-plugin": "^2.25.0",
+        "@typescript-eslint/parser": "^2.25.0",
+        "dotenv": "^8.2.0",
+        "eslint": "^6.8.0",
+        "eslint-config-airbnb": "^18.1.0",
+        "eslint-config-prettier": "^6.10.1",
+        "eslint-import-resolver-typescript": "^2.0.0",
+        "eslint-plugin-json": "^2.1.1",
+        "eslint-plugin-prettier": "^3.1.2",
+        "i18next": "^19.3.4",
+        "i18next-browser-languagedetector": "^4.0.2",
+        "is-valid-domain": "0.0.14",
+        "query-string": "^6.11.1",
+        "react": "^16.13.1",
+        "react-collapsible": "^2.7.0",
+        "react-dom": "^16.13.1",
+        "react-i18next": "^11.3.4",
+        "react-popper": "^2.2.3",
+        "react-router-dom": "^5.1.2",
+        "react-scripts": "^3.4.0",
+        "sass": "^1.26.3"
+    },
+    "scripts": {
+        "start": "HTTPS=true react-scripts start --host 0.0.0.0",
+        "build": "react-scripts build",
+        "buildAndServe": "react-scripts build && serve -s build ",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject",
+        "format": "prettier --write 'src/**/*.js' 'src/**/*.json' 'src/**/*.ts' 'src/**/*.tsx'",
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "prettier": {
+        "tabWidth": 4,
+        "printWidth": 120
+    },
+    "devDependencies": {
+        "@types/react": "^16.9.27",
+        "@types/react-dom": "^16.9.5",
+        "eslint-plugin-import": "^2.20.2",
+        "eslint-plugin-jsx-a11y": "^6.2.3",
+        "eslint-plugin-react": "^7.19.0",
+        "husky": "^3.0.0",
+        "prettier": "^1.19.1",
+        "react-codemod": "^5.2.0",
+        "selenium-webdriver": "^4.0.0-alpha.7",
+        "source-map-loader": "^0.2.4",
+        "ts-loader": "^6.2.2",
+        "typescript": "^3.8.3",
+        "node-fetch": "^2.6.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "prettier --write 'src/**/*.js' 'src/**/*.json' 'src/**/*.ts' 'src/**/*.tsx'"
+        }
+    },
+    "browserslist": {
+        "production": [
+            ">0.2%",
+            "not dead",
+            "not op_mini all"
+        ],
+        "development": [
+            "last 1 chrome version",
+            "last 1 firefox version",
+            "last 1 safari version"
+        ]
+    }
+}

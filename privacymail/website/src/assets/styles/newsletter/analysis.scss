@@ -1,0 +1,113 @@
+$summarizeFontSize: 3rem;
+
+.analysis {
+    padding-left: $paddingLevel;
+
+    .collapsibleItem {
+        .collapsibleSmall {
+            .summarizedInfo {
+                width: 20%;
+                min-width: 100px;
+                text-align: center;
+                font-size: $summarizeFontSize;
+                //color: #ff9800;
+            }
+            .describeText {
+                //width: 70%;
+                font-weight: 200;
+                font-size: 1.2rem;
+            }
+            .passOrNot {
+                .icon {
+                    padding: ($summarizeFontSize * (($line-height - 1.2) / 2)) 0;
+                    span {
+                        font-size: $summarizeFontSize * 1.2;
+                    }
+                }
+            }
+        }
+
+        .collapsibleBig {
+            padding-left: 1rem;
+            padding-bottom: 2rem;
+
+            background-color: $analysisBackgroud;
+
+            > * {
+                padding-right: $paddingLevel;
+            }
+
+            .divider {
+                margin: 1rem 0 2rem 0;
+            }
+            p {
+                font-weight: 200;
+            }
+            .methodeChip {
+                border-radius: 5px;
+                font-weight: 200;
+                color: $font-color-secondary;
+                display: inline-block;
+                padding: 0.3rem 1rem;
+                margin: 0 0.2rem;
+            }
+            .reliable {
+                background: $methode-noProblem;
+            }
+            .unreliable {
+                background: $methode-problem;
+            }
+            .reliablityText {
+                font-weight: 200;
+                padding: $paddingLevel 0;
+            }
+            .connections {
+                padding-right: 0px;
+                margin-bottom: -1rem;
+
+                .category {
+                    display: flex;
+                    align-items: center;
+
+                    .coloredNumber {
+                        width: 10%;
+                        text-align: center;
+                        font-size: $summarizeFontSize - 1rem;
+                        min-width: 80px;
+                    }
+                    .name {
+                        @extend .light;
+                        font-size: 1.2rem;
+                    }
+                }
+            }
+
+            ul {
+                padding-left: 1.2rem;
+                li {
+                    list-style-type: none;
+                    font-size: 1rem;
+                    margin: 0.6rem 0;
+                    height: 24px;
+
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+
+                    a {
+                        text-decoration: underline;
+                    }
+
+                    .icons {
+                        display: flex;
+                        align-items: center;
+                        * {
+                            margin-left: 0.5rem;
+                        }
+                        font-size: 1.5rem;
+                    }
+                }
+            }
+        }
+    }
+}

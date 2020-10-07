@@ -1,0 +1,79 @@
+$icon-size: 1.5rem;
+
+.stepper {
+    .heading {
+        display: flex;
+
+        @media only screen and (min-width: 600px) {
+            //everythin greater than
+
+            align-items: center;
+            flex-flow: row;
+
+            .step {
+                padding: 0 1rem;
+            }
+            .line {
+                display: initial;
+                flex: 1 1 auto;
+                border-color: #bdbdbd;
+                border-top-style: solid;
+                border-top-width: 1px;
+            }
+        }
+        @media only screen and (max-width: 600px) {
+            //everythin greater than
+
+            align-items: flex-start;
+            flex-flow: column;
+
+            .line {
+                display: none;
+            }
+            .step {
+                padding: 0.5rem 1rem;
+            }
+        }
+        .step {
+            > span {
+                display: flex;
+                align-items: center;
+
+                > span,
+                > div {
+                    margin-right: 0.5rem;
+
+                    height: $icon-size;
+                    width: $icon-size;
+                }
+            }
+        }
+    }
+
+    .stepperContent {
+        margin: 0.5rem 0;
+        padding: 0.5rem;
+
+        border-radius: 2px;
+        background-color: #f7f7f7;
+        box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    }
+}
+.numberIcon {
+    font-size: $icon-size/1.65;
+    border-radius: $icon-size/2;
+    height: $icon-size;
+    width: $icon-size;
+    min-width: $icon-size;
+    max-width: $icon-size;
+    text-align: center;
+    line-height: $icon-size;
+}
+.numberIcon.inactive {
+    background-color: $font-color-disabled;
+    color: $font-color-secondary;
+}
+.numberIcon.active {
+    background-color: $header-color;
+    color: $font-color-secondary;
+}

@@ -1,0 +1,37 @@
+.generalInfo {
+    padding-left: $paddingLevel;
+    .divider {
+        margin: 0px;
+    }
+    .info {
+        .row {
+            height: 100%;
+            border-bottom: 1px solid #d6d6d6;
+            padding: 0 $paddingLevel;
+            div {
+                display: inline-block;
+                width: 50%;
+                padding: 0.8rem 0px;
+                vertical-align: middle;
+            }
+            .category {
+                font-weight: 200;
+            }
+            .value {
+                padding-left: $paddingLevel;
+                margin-right: -$paddingLevel;
+
+                > * {
+                    width: 100%;
+                }
+            }
+        }
+    }
+    .submit {
+        display: flex;
+        justify-content: right;
+        button {
+            margin: 1rem 0rem 1rem 1rem;
+        }
+    }
+}
