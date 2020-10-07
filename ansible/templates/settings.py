@@ -174,7 +174,6 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static') 
 
 STATICFILES_DIRS = []
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
