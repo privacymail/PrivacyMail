@@ -229,7 +229,7 @@ class Mail(models.Model):
         self.h_to = message['To']
         self.h_cc = message['Cc']
         self.h_bcc = message['BCC']
-        self.h_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
+        self.h_subject = str(make_header(decode_header(self._clear_none_values(message['Subject']))))
         if len(self.h_subject) >= 5000:
             self.h_subject = self.h_subject[:4999]
         self.h_date = message['Date']
