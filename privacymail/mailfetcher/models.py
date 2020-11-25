@@ -60,7 +60,7 @@ class Mail(models.Model):
     h_to = models.CharField(max_length=200, null=True, blank=True)
     h_cc = models.CharField(max_length=200, null=True, blank=True)
     h_bcc = models.CharField(max_length=200, null=True, blank=True)
-    h_subject = models.CharField(max_length=500, null=True, blank=True)
+    h_subject = models.CharField(max_length=5000, null=True, blank=True)
     h_date = models.CharField(max_length=200, null=True, blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
     h_user_agent = models.CharField(max_length=200, null=True, blank=True)
