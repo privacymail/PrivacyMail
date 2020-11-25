@@ -1,6 +1,6 @@
 from __future__ import absolute_import
 from six.moves import range
-from OpenWPM.automation import CommandSequence, TaskManager
+from OpenWPM.openwpm import CommandSequence, TaskManager
 import sys
 from random import randint, choice
 import string
