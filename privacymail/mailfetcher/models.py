@@ -55,15 +55,15 @@ class Mail(models.Model):
     message_id = models.TextField()
     body_plain = models.TextField(null=True, blank=True)
     body_html = models.TextField(null=True, blank=True)
-    h_x_original_to = models.CharField(max_length=200, null=True, blank=True)
-    h_from = models.CharField(max_length=200, null=True, blank=True)
-    h_to = models.CharField(max_length=200, null=True, blank=True)
-    h_cc = models.CharField(max_length=200, null=True, blank=True)
-    h_bcc = models.CharField(max_length=200, null=True, blank=True)
+    h_x_original_to = models.CharField(max_length=500, null=True, blank=True)
+    h_from = models.CharField(max_length=500, null=True, blank=True)
+    h_to = models.CharField(max_length=500, null=True, blank=True)
+    h_cc = models.CharField(max_length=500, null=True, blank=True)
+    h_bcc = models.CharField(max_length=500, null=True, blank=True)
     h_subject = models.CharField(max_length=5000, null=True, blank=True)
-    h_date = models.CharField(max_length=200, null=True, blank=True)
+    h_date = models.CharField(max_length=500, null=True, blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
-    h_user_agent = models.CharField(max_length=200, null=True, blank=True)
+    h_user_agent = models.CharField(max_length=500, null=True, blank=True)
     identity = models.ManyToManyField(Identity, related_name="message")
     suspected_spam = models.BooleanField(default=False)
     mail_from_another_identity = models.ManyToManyField("self", symmetrical=True)
@@ -1406,8 +1406,8 @@ class Thirdparty(models.Model):
         (UNKNOWN, "Unknown"),
     )
 
-    name = models.CharField(max_length=200, null=False, blank=False)
-    host = models.CharField(max_length=200, null=False, blank=False, unique=True)
+    name = models.CharField(max_length=500, null=False, blank=False)
+    host = models.CharField(max_length=500, null=False, blank=False, unique=True)
     resultsdirty = models.BooleanField(default=True)
 
     # Metadata
