@@ -783,15 +783,20 @@ class Mail(models.Model):
                 ident.lastapprovalremindersend is None
                 or ident.lastapprovalremindersend > (now + delta).time()
             ):
-                message = render_to_string(
-                    "identity_approval_mail.txt",
-                    {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
-                )
-                subject = "A new identity needs approval"
-                if not settings.DISABLE_ADMIN_MAILS:
-                    mail_admins(subject, message)
-                ident.lastapprovalremindersend = now
-                ident.save()
+                # Make the cron run
+                # FIXME This needs to be fixed (currently the template is missing)
+                try:
+                    message = render_to_string(
+                        "identity_approval_mail.txt",
+                        {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
+                    )
+                    subject = "A new identity needs approval"
+                    if not settings.DISABLE_ADMIN_MAILS:
+                         mail_admins(subject, message)
+                    ident.lastapprovalremindersend = now
+                    ident.save()
+                except:
+                    pass
 
     def check_for_unusual_sender(self):
         for ident in self.identity.all():
@@ -803,13 +808,18 @@ class Mail(models.Model):
             # If we reach this point, h_from is not in any permitted sender list
             # Set it to be suspected spam and send a notification.
             self.suspected_spam = True
-            subject = "Third-Party spam is suspected"
-            message = render_to_string(
-                "third_party_spam.txt",
-                {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
-            )
-            if not settings.DISABLE_ADMIN_MAILS:
-                mail_admins(subject, message)
+            # Make the cron run
+            # FIXME This needs to be fixed (currently the template is missing)
+            try:
+                subject = "Third-Party spam is suspected"
+                message = render_to_string(
+                    "third_party_spam.txt",
+                    {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
+                )
+                if not settings.DISABLE_ADMIN_MAILS:
+                    mail_admins(subject, message)
+            except:
+                pass
             self.save()
 
     @staticmethod
