@@ -1,0 +1,3 @@
+The identity from {{ ident.service }} may have received third-party spam.
+Please check for approval on here: {{URL}}/mail/{{ mail.id }}
+Thanks.
