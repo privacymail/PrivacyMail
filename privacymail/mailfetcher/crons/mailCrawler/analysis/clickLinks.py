@@ -11,7 +11,6 @@ from mailfetcher.crons.mailCrawler.analysis.importClickResults import (
 import sqlite3 as lite
 
 
-
 def call_openwpm_click_links(link_mail_map):
     # Click a specified link for a list of emails and save the results
     wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"

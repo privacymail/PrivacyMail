@@ -1,6 +1,7 @@
 from mailfetcher.models import Mail, Eresource
 import hashlib
 
+
 def import_openwpmresults(filename, mail, db_cursor):
     # Import the results from the OpenWPM sqlite database and write it to the backend database of Django
     num_eresources = 0
@@ -18,7 +19,7 @@ def import_openwpmresults(filename, mail, db_cursor):
         "LEFT OUTER JOIN http_redirects as r on h.url = r.old_request_url "
         "LEFT OUTER JOIN http_responses as hr on (h.request_id = hr.request_id and h.visit_id = hr.visit_id) "
         "WHERE h.url not like '%favicon.ico' and h.url not like ? and h.top_level_url LIKE ?;",
-        (filename,filename),
+        (filename, filename),
     )
 
     openWPM_entries = db_cursor.fetchall()
@@ -51,7 +52,7 @@ def import_openwpmresults(filename, mail, db_cursor):
                 request_headers=request_headers,
                 response_headers=response_headers,
                 url=url,
-                channel_id=hashlib.md5(url.encode('utf-8')).hexdigest(),
+                channel_id=hashlib.md5(url.encode("utf-8")).hexdigest(),
                 param=top_url,
                 mail=mail,
                 is_start_of_chain=is_start_of_chain,
@@ -64,8 +65,10 @@ def import_openwpmresults(filename, mail, db_cursor):
                 request_headers=request_headers,
                 response_headers=response_headers,
                 url=url,
-                channel_id=hashlib.md5(url.encode('utf-8')).hexdigest(),
-                redirects_to_channel_id=hashlib.md5(redirects_to.encode('utf-8')).hexdigest(),
+                channel_id=hashlib.md5(url.encode("utf-8")).hexdigest(),
+                redirects_to_channel_id=hashlib.md5(
+                    redirects_to.encode("utf-8")
+                ).hexdigest(),
                 redirects_to_url=redirects_to,
                 param=top_url,
                 mail=mail,

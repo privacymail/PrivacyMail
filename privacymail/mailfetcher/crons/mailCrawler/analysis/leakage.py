@@ -3,7 +3,6 @@ from mailfetcher.models import Mail, Eresource
 
 def analyze_mail_connections_for_leakage(mail):
     hashdict = None
-
     all_eresources = Eresource.objects.filter(mail=mail).exclude(
         possible_unsub_link=True
     )

@@ -72,6 +72,8 @@ class Mail(models.Model):
     suspected_spam = models.BooleanField(default=False)
     mail_from_another_identity = models.ManyToManyField("self", symmetrical=True)
     possible_AB_testing = models.BooleanField(default=False)
+    similarity_processed = models.BooleanField(default=False)
+    cached = models.BooleanField(default=False)
     processing_state = models.CharField(
         choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20
     )
@@ -288,7 +290,7 @@ class Mail(models.Model):
                 return switcher.get(argument, ServiceThirdPartyEmbeds.UNDETERMINED)
 
             embed_type = embed_switcher(eresource.type)
-            embedding, created = ServiceThirdPartyEmbeds.objects.get_or_create(
+            ServiceThirdPartyEmbeds.objects.get_or_create(
                 service=service,
                 thirdparty=eresource.host,
                 leaks_address=mail_leakage,
@@ -697,10 +699,11 @@ class Mail(models.Model):
         return cleaned_links
 
     @staticmethod
-    def analyze_eresource(eresource, dict):
+    def analyze_eresource(eresource, hdict):
         # check for leakage and if yes, set matched algorithm combination
         # case insensitive
-        for key, val in dict.items():
+        for key, val in hdict.items():
+
             if (
                 str(val) in eresource.url
                 or str(val).casefold() in eresource.url.replace("-", "").casefold()

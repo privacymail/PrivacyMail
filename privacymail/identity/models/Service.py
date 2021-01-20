@@ -1,5 +1,4 @@
 import random
-
 import names
 from django.apps import apps
 from django.contrib.postgres.fields import ArrayField
@@ -113,6 +112,18 @@ class Service(models.Model):
         return Mail.objects.filter(identity__service=self, identity__approved=True)
         # return Mail.objects.filter(identity__service=self)
 
+    def mails_similarity_not_processed(self):
+        Mail = apps.get_model("mailfetcher", "Mail")
+        return Mail.objects.filter(
+            identity__service=self, identity__approved=True, similarity_processed=False
+        )
+
+    def mails_not_cached(self):
+        Mail = apps.get_model("mailfetcher", "Mail")
+        return Mail.objects.filter(
+            identity__service=self, identity__approved=True, cached=False
+        )
+
     # calculate the avererage by Eresource type
     def avg(self, type):
         first_party_sum = 0
@@ -148,6 +159,9 @@ class Service(models.Model):
 
     def derive_service_cache_path(self):
         return "frontend.ServiceView.result." + str(self.id) + ".site_params"
+
+    def derive_service_information_cache(self):
+        return "frontend.ServiceView.result." + str(self.id) + ".mail_info"
 
     def toJSON(self):
         return {
