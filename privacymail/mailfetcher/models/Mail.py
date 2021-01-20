@@ -1,41 +1,45 @@
 from __future__ import absolute_import
-from six.moves import range
-from OpenWPM.openwpm import CommandSequence, TaskManager
-import sys
-from random import randint, choice
-import string
-import email
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
-from bs4 import BeautifulSoup
-import sqlite3 as lite
-import hashlib
-import os
-import tldextract
-from django.conf import settings
-import tempfile
-from identity.models import Identity, Service, ServiceThirdPartyEmbeds
-import re
-from datetime import datetime as dt
-import datetime
-from django.db import models
-import html2text
-from django.db.utils import InterfaceError
-from django.utils.functional import cached_property
-from django.core.mail import mail_admins
-from django.template.loader import render_to_string
-import base64
-import urllib
-from email.header import decode_header, make_header
-from model_utils import Choices
-from Levenshtein import ratio
-from email.utils import parsedate_to_datetime
-import statistics
-import logging
-from django.db import connection
-from django_countries.fields import CountryField
 
+import base64
+import datetime
+import email
+import hashlib
+import logging
+import os
+import re
+import sqlite3 as lite
+import statistics
+import string
+import sys
+import urllib
+from .Thirdparty import Thirdparty
+from .Eresource import Eresource
+from datetime import datetime as dt
+from email.header import decode_header, make_header
+from email.utils import parsedate_to_datetime
+from random import choice, randint
+
+import html2text
+import tldextract
+from bs4 import BeautifulSoup
+from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.mail import mail_admins
+from django.db import connection, models
+from django.db.models import Q
+from django.db.utils import InterfaceError
+from django.template.loader import render_to_string
+from django.utils.functional import cached_property
+from django_countries.fields import CountryField
+from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from identity.util import convertForJsonResponse
+from Levenshtein import ratio
+from model_utils import Choices
+from OpenWPM.openwpm import CommandSequence, TaskManager
+from six.moves import range
+
+
+# from mailfetcher.models import Thirdparty, Eresource
 
 mails_without_unsubscribe_link = []
 logger = logging.getLogger(__name__)
@@ -91,8 +95,15 @@ class Mail(models.Model):
         message_raw = message.as_bytes().decode(encoding="UTF-8", errors="replace")
         message_id = message["Message-ID"]
         if message_id is None:
-            message_id = ''.join(choice(string.ascii_uppercase + string.digits) for _ in range(32))
-        print("Message ID:", message_id, " Subject:", str(make_header(decode_header(cls._clear_none_values(message['subject'])))))
+            message_id = "".join(
+                choice(string.ascii_uppercase + string.digits) for _ in range(32)
+            )
+        print(
+            "Message ID:",
+            message_id,
+            " Subject:",
+            str(make_header(decode_header(cls._clear_none_values(message["subject"])))),
+        )
         try:
             mail = Mail.objects.get(raw=message_raw)
             if mail.date_time is not None:
@@ -224,14 +235,16 @@ class Mail(models.Model):
 
     def calc_header(self):
         message = self.get_message()
-        self.h_x_original_to = message['X-Original-To']
-        self.h_from = message['From']
-        self.h_to = message['To']
-        self.h_cc = message['Cc']
-        self.h_bcc = message['BCC']
-        self.h_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
-        self.h_date = message['Date']
-        self.h_user_agent = message['User-Agent']
+        self.h_x_original_to = message["X-Original-To"]
+        self.h_from = message["From"]
+        self.h_to = message["To"]
+        self.h_cc = message["Cc"]
+        self.h_bcc = message["BCC"]
+        self.h_subject = make_header(
+            decode_header(self._clear_none_values(message["Subject"]))
+        )
+        self.h_date = message["Date"]
+        self.h_user_agent = message["User-Agent"]
         # date_obj = parsedate_to_datetime(self.h_date)
         # self.date_time = date_obj
 
@@ -311,8 +324,10 @@ class Mail(models.Model):
             type="a", mail_id=self.id, possible_unsub_link=False
         )
         if type_a_urls.count() < 1:
-            print('############################### Did not find possible unsubscribe link!')
-            return ''
+            print(
+                "############################### Did not find possible unsubscribe link!"
+            )
+            return ""
 
         while type_a_urls.count() > 1:
             rand = randint(0, type_a_urls.count() - 1)
@@ -357,11 +372,16 @@ class Mail(models.Model):
                     print("Found possible unsubscribe link: %s" % link)
         if num_detected_unsub_links < 1:
             message = self.get_message()
-            mail_subject = make_header(decode_header(self._clear_none_values(message['Subject'])))
-            logger.debug('No unsubscribe link was found.', extra={
-                'mail_subject': str(mail_subject),
-            })
-            print('Did not find a possible unsubscribe link!')
+            mail_subject = make_header(
+                decode_header(self._clear_none_values(message["Subject"]))
+            )
+            logger.debug(
+                "No unsubscribe link was found.",
+                extra={
+                    "mail_subject": str(mail_subject),
+                },
+            )
+            print("Did not find a possible unsubscribe link!")
 
         # First and last links in e-mail are more likely to be unsubscribe links.
         if len(a_links) > 2 * settings.NUM_LINKS_TO_SKIP:
@@ -386,19 +406,6 @@ class Mail(models.Model):
 
         for script in soup.find_all("script"):
             Eresource.create_static_eresource(script, "src", self)
-
-    def analyze_mail_connections_for_leakage(self):
-        hashdict = None
-
-        all_eresources = Eresource.objects.filter(mail=self).exclude(
-            possible_unsub_link=True
-        )
-        if self.h_x_original_to is None:
-            print("Did not find mailaddress. Mail: {}".format(self))
-            return
-        hashdict = Mail.generate_match_dict(self.h_x_original_to)
-        for eresource in all_eresources:
-            Mail.analyze_eresource(eresource, hashdict)
 
     # Deprecated, not used.
     def extract_diff(self):
@@ -811,401 +818,6 @@ class Mail(models.Model):
             self.save()
 
     @staticmethod
-    def call_openwpm_view_mail(mailQueue):
-        # View a queue of emails with OpenWPM and save the observed connections
-        print('Preparing data for OpenWPM.')
-        wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
-        if os.path.exists(wpm_db):
-            os.remove(wpm_db)
-
-        file_to_mail_map = {}
-        mailFiles = []
-        # Go through all emails to create temporary files with their contents
-        # These can then be analyzed with OpenWPM later
-        for mail in mailQueue:
-            if mail.body_html:
-                # create unique filename
-                file = tempfile.NamedTemporaryFile(
-                    mode="w", delete=False, suffix=".html"
-                )
-                file.write(mail.body_html)
-                file_basename = os.path.basename(file.name)
-                filename = "http://" + settings.LOCALHOST_URL + "/" + file_basename
-                mailFiles.append(filename)
-                file_to_mail_map[filename] = mail
-            else:
-                mail.processing_state = Mail.PROCESSING_STATES.DONE
-                mail.save()
-                continue
-            file.close()
-
-        # The list of sites that we wish to crawl
-        num_browsers = settings.NUMBER_OF_THREADS
-        sites = mailFiles
-        # sites = ["file:///tmp/tmpvvfmzvpo"]
-        # Loads the manager preference and 3 copies of the default browser dictionaries
-        print("Starting OpenWPM to view mails.")
-        manager_params, browser_params = TaskManager.load_default_params(num_browsers)
-
-        # Update browser configuration (use this for per-browser settings)
-        for i in range(num_browsers):
-            # Record HTTP Requests and Responses
-            browser_params[i]["http_instrument"] = True
-            # Enable flash for all three browsers
-            # browser_params[i]['disable_flash'] = False
-            browser_params[i]["headless"] = True
-            browser_params[i]["spoof_mailclient"] = True
-            browser_params[i]["prefs"] = {"browser.chrome.site_icons": False}
-
-        # Update TaskManager configuration (use this for crawl-wide settings)
-        manager_params["data_directory"] = settings.OPENWPM_DATA_DIR
-        manager_params["log_directory"] = settings.OPENWPM_LOG_DIR
-
-        # Instantiates the measurement platform
-        # Commands time out by default after 60 seconds
-        manager = TaskManager.TaskManager(manager_params, browser_params)
-
-        # Visits the sites in succession rotating the browsers
-        for site in sites:
-            print(site)
-            command_sequence = CommandSequence.CommandSequence(site, reset=True)
-
-            # Start by visiting the page
-            command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)
-
-            # dump_profile_cookies/dump_flash_cookies closes the current tab.
-            # Not dumping cookies here, as they should be extractable from the response headers.
-            # command_sequence.dump_profile_cookies(120)
-
-            # index=None browsers visit sites asynchronously
-            manager.execute_command_sequence(command_sequence, index=None)
-
-        # Shuts down the browsers and waits for the data to finish logging
-        manager.close()
-
-        # Make sure the db connection is open
-        connection.connect()
-
-        print("Importing OpenWPM results.")
-        failed_mails = []
-        wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
-        if os.path.isfile(wpm_db):
-            conn = lite.connect(wpm_db)
-            db_cursor = conn.cursor()
-
-            for fileName in mailFiles:
-                successful_import = Mail.import_openwpmresults(fileName, file_to_mail_map[fileName], db_cursor)
-                if not successful_import:
-                    failed_mails.append(file_to_mail_map[fileName])
-                    file_to_mail_map[fileName].processing_fails = (
-                        file_to_mail_map[fileName].processing_fails + 1
-                    )
-                    file_to_mail_map[fileName].save()
-                else:
-                    file_to_mail_map[
-                        fileName
-                    ].processing_state = Mail.PROCESSING_STATES.VIEWED
-                    file_to_mail_map[fileName].processing_fails = 0
-                    file_to_mail_map[fileName].save()
-                os.unlink('/tmp/' + fileName.split('/')[3])  # remove file to avoid zombie data
-            db_cursor.close()
-
-            # remove openwpm sqlite db to avoid waste of disk space
-            if not settings.DEVELOP_ENVIRONMENT:
-                os.remove(wpm_db)
-        print("Done.")
-        return failed_mails
-
-    @staticmethod
-    def import_openwpmresults(filename, mail, db_cursor):
-        # Import the results from the OpenWPM sqlite database and write it to the backend database of Django
-        num_eresources = 0
-
-        db_cursor.execute(
-            "SELECT * from crawl_history where arguments = ? and bool_success = 1;",
-            (filename,),
-        )
-        if len(db_cursor.fetchall()) == 0:
-            return False
-
-        # scans through the sqlite database, checking for all external calls and to which they redirect
-        db_cursor.execute(
-            "SELECT DISTINCT h.url, h.headers, hr.headers, h.channel_id, v.site_url, r.new_channel_id, h2.url "
-            "FROM http_requests as h INNER JOIN site_visits as v on h.visit_id = v.visit_id "
-            "LEFT OUTER JOIN http_redirects as r on h.channel_id = r.old_channel_id "
-            "LEFT OUTER JOIN http_requests as h2 on r.new_channel_id = h2.channel_id "
-            "LEFT OUTER JOIN http_responses as hr on h.url = hr.url "
-            "WHERE h.url not like '%favicon.ico' and site_url = ?;",
-            (filename,),
-        )
-
-        openWPM_entries = db_cursor.fetchall()
-        num_openWpm_entries = len(openWPM_entries)
-        # scans through the database, checking for all external calls
-        # for url, top_url in cur.execute("SELECT DISTINCT h.url, v.site_url "
-        #                                 "FROM http_requests as h JOIN site_visits as v ON "
-        #                                 "h.visit_id = v.visit_id WHERE top_level_url = ?;", (filename,)):
-
-        for (
-            url,
-            request_headers,
-            response_headers,
-            channel_id,
-            top_url,
-            new_channel_id,
-            redirects_to,
-        ) in openWPM_entries:
-            # check if the url has a parent and is therefore not the start of a chain.
-            db_cursor.execute(
-                "select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
-                (channel_id,),
-            )
-
-            is_start_of_chain = False
-            if db_cursor.fetchone() is None:
-                is_start_of_chain = True
-
-            # eresource is end of chain
-            if new_channel_id is None or new_channel_id == "":
-                r, created = Eresource.objects.get_or_create(
-                    type="con",
-                    request_headers=request_headers,
-                    response_headers=response_headers,
-                    url=url,
-                    channel_id=channel_id,
-                    param=top_url,
-                    mail=mail,
-                    is_start_of_chain=is_start_of_chain,
-                    is_end_of_chain=True,
-                )
-            # eresource redirects to other eresource
-            else:
-                r, created = Eresource.objects.get_or_create(
-                    type="con",
-                    request_headers=request_headers,
-                    response_headers=response_headers,
-                    url=url,
-                    channel_id=channel_id,
-                    redirects_to_channel_id=new_channel_id,
-                    redirects_to_url=redirects_to,
-                    param=top_url,
-                    mail=mail,
-                    is_start_of_chain=is_start_of_chain,
-                    is_end_of_chain=False,
-                )
-
-            # save load resources in eresource of type connection
-            if created:
-                mail.connect_tracker(eresource=r)
-                r.save()
-                num_eresources = num_eresources + 1
-        print("Number of Eresources added to the Database: %s" % num_eresources)
-        if num_openWpm_entries != num_eresources:
-            print(
-                "Different number of entries have been added, than the OpenWPM database returned!"
-            )
-        return True
-
-    @staticmethod
-    def call_openwpm_click_links(link_mail_map):
-        # Click a specified link for a list of emails and save the results
-        wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
-        if os.path.exists(wpm_db):
-            os.remove(wpm_db)
-
-        print("Preparing data for OpenWPM.")
-        sites = []
-        for url in link_mail_map:
-            sites.append(url)
-        # The list of sites that we wish to crawl
-        num_browsers = settings.NUMBER_OF_THREADS
-
-        # Loads the manager preference and 3 copies of the default browser dictionaries
-        print("Starting OpenWPM to visit links.")
-        manager_params, browser_params = TaskManager.load_default_params(num_browsers)
-
-        # Update browser configuration (use this for per-browser settings)
-        for i in range(num_browsers):
-            # Record HTTP Requests and Responses
-            browser_params[i]["http_instrument"] = True
-            # Enable flash for all three browsers
-            # browser_params[i]['disable_flash'] = False
-            # browser_params['js_instrument'] = True
-            browser_params[i]["headless"] = True
-            browser_params[i]["prefs"] = {"browser.chrome.site_icons": False}
-
-        # Update TaskManager configuration (use this for crawl-wide settings)
-        manager_params["data_directory"] = settings.OPENWPM_DATA_DIR
-        manager_params["log_directory"] = settings.OPENWPM_LOG_DIR
-
-        # Instantiates the measurement platform
-        # Commands time out by default after 60 seconds
-        manager = TaskManager.TaskManager(manager_params, browser_params)
-
-        # Visits the sites in succession rotating the browsers
-        for site in sites:
-            command_sequence = CommandSequence.CommandSequence(site, reset=True)
-
-            # Start by visiting the page
-            command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)
-
-            # Not dumping cookies here, as they can be extracted from the response headers
-            # command_sequence.dump_profile_cookies(120)
-
-            # index=None browsers visit sites asynchronously
-            manager.execute_command_sequence(command_sequence, index=None)
-
-        # Shuts down the browsers and waits for the data to finish logging
-        manager.close()
-
-        # Make sure the db connection is open
-        connection.connect()
-
-        print("Importing OpenWPM results.")
-        failed_urls = {}
-        wpm_db = settings.OPENWPM_DATA_DIR + "crawl-data.sqlite"
-
-        if os.path.isfile(wpm_db):
-            conn = lite.connect(wpm_db)
-            db_cursor = conn.cursor()
-
-            for url in link_mail_map:
-                import_success = Mail.import_openwpmresults_click(url, link_mail_map[url], db_cursor)
-                if not import_success:
-                    failed_urls[url] = link_mail_map[url]
-                    link_mail_map[url].processing_fails = (
-                        link_mail_map[url].processing_fails + 1
-                    )
-                    link_mail_map[url].save()
-                else:
-                    link_mail_map[
-                        url
-                    ].processing_state = Mail.PROCESSING_STATES.LINK_CLICKED
-                    link_mail_map[url].processing_fails = 0
-                    link_mail_map[url].save()
-            db_cursor.close()
-
-            # remove openwpm sqlite db to avoid waste of disk space
-            # if not settings.DEVELOP_ENVIRONMENT:
-            #     os.remove(wpm_db)
-        print("Done.")
-        return failed_urls
-
-    @staticmethod
-    def import_openwpmresults_click(url, mail, db_cursor):
-        num_eresources = 0
-        num_eresources_dropped = 0
-        # connect to the input database
-        db_cursor.execute(
-            "SELECT * from crawl_history where arguments = ? and bool_success = 1;",
-            (url,),
-        )
-        if len(db_cursor.fetchall()) == 0:
-            return False
-        # scans through the sqlite database, checking for all external calls and to which they redirect
-        db_cursor.execute(
-            "SELECT DISTINCT h.url, h.headers, hr.headers, h.channel_id, v.site_url, r.new_channel_id, h2.url "
-            "FROM http_requests as h INNER JOIN site_visits as v on h.visit_id = v.visit_id "
-            "LEFT OUTER JOIN http_redirects as r on h.channel_id = r.old_channel_id "
-            "LEFT OUTER JOIN http_requests as h2 on r.new_channel_id = h2.channel_id "
-            "LEFT OUTER JOIN http_responses as hr on h.url = hr.url "
-            "WHERE site_url = ? and h.url not like '%favicon.ico' and  h.top_level_url is null;",
-            (url,),
-        )
-
-        openWPM_entries = db_cursor.fetchall()
-        num_openWpm_entries = len(openWPM_entries)
-
-        # check whether the final url is from the service. If not discard this chain.
-        service_url = ""
-        id = mail.identity.all()
-        if id.exists():
-            service_url = id[0].service.url
-        else:
-            print("Mail has no associated identities.")
-            return True
-
-        eresources_to_save = []
-        drop_host = None
-
-        for (
-            url,
-            request_headers,
-            response_headers,
-            channel_id,
-            top_url,
-            new_channel_id,
-            redirects_to,
-        ) in openWPM_entries:
-            # check if the url has a parent and is therefore not the start of a chain.
-            db_cursor.execute(
-                "select * FROM http_redirects WHERE http_redirects.new_channel_id = ?;",
-                (channel_id,),
-            )
-
-            is_start_of_chain = False
-            if db_cursor.fetchone() is None:
-                is_start_of_chain = True
-
-            # eresource is end of chain
-            if new_channel_id is None or new_channel_id == "":
-
-                # If the last domain of a chain is not of our service, it was most likely an external link.
-                # In many cases this would be unfair for the newsletter to track this as a thirdParty/ Tracker.
-                url_domain = tldextract.extract(url).registered_domain
-                if service_url not in url_domain:
-                    drop_host = url_domain
-
-                e = Eresource(
-                    type="con_click",
-                    request_headers=request_headers,
-                    response_headers=response_headers,
-                    url=url,
-                    channel_id=channel_id,
-                    param=top_url,
-                    mail=mail,
-                    is_start_of_chain=is_start_of_chain,
-                    is_end_of_chain=True,
-                )
-                eresources_to_save.append(e)
-            # eresource redirects to other eresource
-            else:
-                e = Eresource(
-                    type="con_click",
-                    request_headers=request_headers,
-                    response_headers=response_headers,
-                    url=url,
-                    channel_id=channel_id,
-                    redirects_to_channel_id=new_channel_id,
-                    redirects_to_url=redirects_to,
-                    param=top_url,
-                    mail=mail,
-                    is_start_of_chain=is_start_of_chain,
-                    is_end_of_chain=False,
-                )
-                eresources_to_save.append(e)
-
-        # save load resources in eresource of type connection
-        for e in eresources_to_save:
-            if drop_host is None or drop_host not in e.url:
-                print(e.url)
-                e.save()
-                mail.connect_tracker(eresource=e)
-                e.save()
-                num_eresources += +1
-            else:
-                print("Dropped:", e.url)
-                num_eresources_dropped += 1
-        print(
-            "Added %s Eresources to the database (%s dropped)"
-            % (num_eresources, num_eresources_dropped)
-        )
-        # if (num_openWpm_entries != num_eresources):
-        #     print('Different number of entries have been added, than the OpenWPM database returned!')
-        #     logger.error('Different number of entries have been added, than the OpenWPM database returned!')
-        return True
-
-    @staticmethod
     def connect_tracker(eresource):
         extracturl = tldextract.extract(eresource.url)
         host = "{}.{}".format(extracturl.domain, extracturl.suffix)
@@ -1278,179 +890,3 @@ class Mail(models.Model):
             return identities[0].service
         except:
             return None
-
-
-class Eresource(models.Model):
-    RESOURCE_TYPES = (
-        ("a", "Link"),
-        ("img", "Image"),
-        ("con", "Connection"),
-        ("con_click", "Connection_clicked"),
-        ("link", "css"),
-        ("script", "JavaScript"),
-    )
-    type = models.CharField(max_length=50, choices=RESOURCE_TYPES)
-    url = models.TextField(max_length=2000, null=True, blank=True)
-    # the http channel id of OpenWPM for identification
-    channel_id = models.CharField(max_length=255, null=True, blank=True)
-    param = models.TextField(max_length=2000, null=True, blank=True)
-    request_headers = models.TextField(max_length=3000, null=True, blank=True)
-    response_headers = models.TextField(max_length=3000, null=True, blank=True)
-    mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
-    host = models.ForeignKey("Thirdparty", null=True, on_delete=models.SET_NULL)
-    diff_eresource = models.ForeignKey(
-        "self", related_name="diff", on_delete=models.SET_NULL, null=True
-    )
-    mail_leakage = models.TextField(null=True, blank=True)
-    personalised = models.BooleanField(default=False)
-    # the eresource this one redirects to
-    redirects_to = models.ForeignKey(
-        "self", related_name="redirect", on_delete=models.CASCADE, null=True
-    )
-    # the url of the eresource this one redirects to
-    redirects_to_url = models.CharField(max_length=2000, null=True, blank=True)
-    # the channelID of the eresource this one connects to
-    redirects_to_channel_id = models.CharField(max_length=255, null=True, blank=True)
-    is_end_of_chain = models.BooleanField(default=True)
-    is_start_of_chain = models.BooleanField(default=True)
-    possible_unsub_link = models.BooleanField(default=False)
-
-    def __str__(self):
-        return "({})|{}".format(self.type, self.url)
-
-    @classmethod
-    def create_clickable(cls, link, possible_unsubscribe_link, mail):
-        r, created = Eresource.objects.get_or_create(
-            type="a",
-            url=link["href"],
-            possible_unsub_link=possible_unsubscribe_link,
-            param=str(link.attrs) + str(link.contents),
-            mail=mail,
-        )
-        if created:
-            mail.connect_tracker(eresource=r)
-            r.save()
-
-    @classmethod
-    def create_static_eresource(
-        cls, element, source_string, mail, possible_unsubscribe_link=False
-    ):
-        element_string = str(element)
-        if "javascript" in element_string:
-            mail.contains_javascript = True
-        try:
-            if "http" not in element[source_string] or element[source_string] is None:
-                return
-        except KeyError:
-            return
-        element[source_string] = "".join(element[source_string].split())
-        r, created = Eresource.objects.get_or_create(
-            type=element.name,
-            url=element[source_string],
-            possible_unsub_link=possible_unsubscribe_link,
-            param=str(element.attrs) + str(element.contents),
-            mail=mail,
-        )
-        if created:
-            mail.connect_tracker(eresource=r)
-            r.save()
-
-    @property
-    def personalized(self):
-        if self.diff_eresource:
-            return True
-        return False
-
-    @staticmethod
-    def is_unsub_word_in_link(link):
-        if "http" not in link["href"]:
-            return False
-        for unsub_word in settings.UNSUBSCRIBE_LINK_DICT:
-            if (
-                unsub_word in link["href"].casefold()
-                or unsub_word in link.text.casefold()
-            ):
-                # print('Found possible unsubscribe link: %s' % link)
-                return True
-            try:
-                if unsub_word in link["alias"].casefold():
-                    # print('Found possible unsubscribe link: %s' % link)
-                    return True
-            except KeyError:
-                continue
-        return False
-
-
-class Thirdparty(models.Model):
-    TRACKER = "tracker"
-    CDN = "cdn"
-    ALT_DOMAIN = "altdomain"
-    UNKNOWN = "unknown"
-
-    SECTOR_CHOICES = (
-        (TRACKER, "Tracking / Advertising"),
-        (CDN, "Hosting / Content Distribution"),
-        (ALT_DOMAIN, "Alternative Domain of first party"),
-        (UNKNOWN, "Unknown"),
-    )
-
-    name = models.CharField(max_length=200, null=False, blank=False)
-    host = models.CharField(max_length=200, null=False, blank=False, unique=True)
-    resultsdirty = models.BooleanField(default=True)
-
-    # Metadata
-    # Do not access country_of_origin and sector directly. Instead, use get_country()
-    # and get_sector(), as they also take connections to services into account.
-    # (If a service is associated with this host, the metadata of the service are
-    # used instead of that saved here)
-    country_of_origin = CountryField(blank_label="(select country)", blank=True)
-    sector = models.CharField(choices=SECTOR_CHOICES, max_length=30, default=UNKNOWN)
-    service = models.OneToOneField(Service, on_delete=models.SET_NULL, null=True)
-
-    def __str__(self):
-        return "({})|{}".format(self.name, self.host)
-
-    def derive_thirdparty_cache_path(self):
-        return "frontend.ThirdPartyView.result." + str(self.id) + ".site_params"
-
-    @classmethod
-    def create(cls, name, host):
-        tp = cls(name=name, host=host)
-        try:
-            service = Service.objects.get(url=host)
-            tp.service = service
-        except ObjectDoesNotExist:
-            pass
-        tp.save()
-        return tp
-
-    def set_dirty(self):
-        self.resultsdirty = True
-        self.save()
-
-    def get_country(self):
-        if self.service:
-            return self.service.country_of_origin
-        else:
-            return self.country_of_origin
-
-    def get_sector(self):
-        if self.service:
-            return self.service.get_sector_display()
-        else:
-            return self.get_sector_display()
-
-    def toJSON(self):
-        return {
-            "name": convertForJsonResponse(self.name),
-            "host": convertForJsonResponse(self.host),
-            "resultsdirty": convertForJsonResponse(self.resultsdirty),
-            "country_of_origin": convertForJsonResponse(self.country_of_origin.code),
-            "sector": convertForJsonResponse(self.sector),
-            "service": convertForJsonResponse(self.service),
-        }
-
-
-# class RequestChain(models.Model):
-#     mail = models.ForeignKey(Mail, on_delete=models.CASCADE)
-#     host = models.ForeignKey('Trackhosts', null=True, on_delete=models.SET_NULL)

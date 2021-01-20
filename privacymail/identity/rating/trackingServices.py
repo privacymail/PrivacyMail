@@ -83,7 +83,11 @@ def smallTrackers(service):
 
 
 def trackers(service, rMin, rMax):
-    return countToRating(bigTrackers(service) * 2 + smallTrackers(service), rMin, rMax,)
+    return countToRating(
+        bigTrackers(service) * 2 + smallTrackers(service),
+        rMin,
+        rMax,
+    )
 
 
 def calculateTrackingServices(service, weights, rMin, rMax):
