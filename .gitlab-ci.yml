@@ -15,5 +15,5 @@ package:
     - docker build --pull -f _docker/Backend -t "$CI_REGISTRY_IMAGE" .
     - docker push "$CI_REGISTRY_IMAGE"
   only:
-    - master
+    - develop
 
