@@ -16,6 +16,7 @@ import Identity from "./components/identity/Identity";
 import Tooltip from "./utils/Tooltip";
 import DefaultNotFound from "./components/notfound/DefaultNotFound";
 import EmbedNotFound from "./components/notfound/EmbedNotFound";
+import OnDemand from "./components/onDemand/OnDemand";
 
 /**
  * Generates all the routes required by PrivacyMail
@@ -63,10 +64,16 @@ const getRoutes = (): JSX.Element[] => {
         </Route>
     );
     routes.push(
+        <Route key="/onDemand" path="/onDemand">
+            <OnDemand/>
+        </Route>
+    );
+    routes.push(
         <Route key="/404">
             <DefaultNotFound />
         </Route>
     );
+
     return routes;
 };
 

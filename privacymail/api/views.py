@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from identity.util import validate_domain
 from django.conf import settings
 from identity.models import Identity, Service
+from identity.util import convertForJsonResponse
 from mailfetcher.analyser_cron import create_service_cache
 import logging
 from random import shuffle
@@ -35,7 +36,12 @@ class BookmarkletApiView(View):
             # Iterate through it
             for identityDomain in domains:
                 # If the domain has not yet been used, stop the loop, otherwise try the next
-                if Identity.objects.filter(service_id=service.pk).filter(mail__contains=identityDomain).count() == 0:
+                if (
+                    Identity.objects.filter(service_id=service.pk)
+                    .filter(mail__contains=identityDomain)
+                    .count()
+                    == 0
+                ):
                     break
             # At this point, we have either selected a domain that has not yet been used for the
             # provided service, or the service already has at least one identity for each domain,
@@ -49,19 +55,42 @@ class BookmarkletApiView(View):
                 create_service_cache(service, force=True)
 
             # Return the created identity
-            r = JsonResponse({
-                "site": url,
-                "email": ident.mail,
-                "first": ident.first_name,
-                "last": ident.surname,
-                "gender": "Male" if ident.gender else "Female"
-            })
+            r = JsonResponse(
+                {
+                    "site": url,
+                    "email": ident.mail,
+                    "first": ident.first_name,
+                    "last": ident.surname,
+                    "gender": "Male" if ident.gender else "Female",
+                }
+            )
         except KeyError:
-            logger.warning("BookmarkletApiView.post: Malformed request received, missing url.", extra={'request': request})
+            logger.warning(
+                "BookmarkletApiView.post: Malformed request received, missing url.",
+                extra={"request": request},
+            )
             r = JsonResponse({"error": "No URL passed"})
         except AssertionError:
             # Invalid URL passed
-            logger.warning("BookmarkletApiView.post: Malformed request received, malformed URL.", extra={'request': request})
+            logger.warning(
+                "BookmarkletApiView.post: Malformed request received, malformed URL.",
+                extra={"request": request},
+            )
             r = JsonResponse({"error": "Invalid URL passed."})
         r["Access-Control-Allow-Origin"] = "*"
         return r
+
+
+class AnalysisView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AnalysisView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            message = request.body.decode("utf-8")
+            print(message)
+            # Return the created identity
+        except:
+            pass
+        return JsonResponse(convertForJsonResponse({"Message": message}))

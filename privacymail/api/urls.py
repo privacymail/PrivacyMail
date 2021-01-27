@@ -20,12 +20,17 @@ from mailfetcher.views import *
 
 
 urlpatterns = [
-    path('service/<int:service>/', ServiceView.as_view(), name='Service'),
-    path('service/', ServiceView.as_view(), name='ServiceLookup'),
-    path('services/', ServiceListView.as_view(), name="ServiceList"),
-    path('embed/<int:embed>/', EmbedView.as_view(), name='Embed'),
-    path('embed/', EmbedView.as_view(), name='EmbedLookup'),
-    path('identity/', IdentityView.as_view(), name='IdentityCreation'),
-    path('statistics', StatisticView.as_view(), name='Statistic'),
-    path('bookmarklet/identity/', views.BookmarkletApiView.as_view(), name="BookmarkletApiEndpoint"),
+    path("service/<int:service>/", ServiceView.as_view(), name="Service"),
+    path("service/", ServiceView.as_view(), name="ServiceLookup"),
+    path("services/", ServiceListView.as_view(), name="ServiceList"),
+    path("embed/<int:embed>/", EmbedView.as_view(), name="Embed"),
+    path("embed/", EmbedView.as_view(), name="EmbedLookup"),
+    path("identity/", IdentityView.as_view(), name="IdentityCreation"),
+    path("statistics", StatisticView.as_view(), name="Statistic"),
+    path(
+        "bookmarklet/identity/",
+        views.BookmarkletApiView.as_view(),
+        name="BookmarkletApiEndpoint",
+    ),
+    path("analysis", views.AnalysisView.as_view(), name="Analysis"),
 ]
