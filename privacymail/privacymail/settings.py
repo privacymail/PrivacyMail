@@ -14,24 +14,25 @@ import os
 import raven
 from raven.transport.requests import RequestsHTTPTransport
 from django.utils.translation import gettext_lazy as _
+from dotenv import load_dotenv
 
-
+load_dotenv()
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REACT_APP_DIR = os.path.join(BASE_DIR, 'website') 
+REACT_APP_DIR = os.path.join(BASE_DIR, 'website')
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '{{ lookup('passwordstore', 'privacymail/django-secret-key' )}}'
+SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv('APPLICATION_DEBUG')
 
-ALLOWED_HOSTS = ['{{ pm_domain }}']
+ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST')]
 
 
 # Application definition
@@ -51,7 +52,6 @@ INSTALLED_APPS = [
     'util',
     'identity',
     'api',
-    'fontawesome',
     'bootstrap_themes',
     'raven.contrib.django.raven_compat',
     'django_extensions',
@@ -88,7 +88,6 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
             ],
         },
-        
     },
 ]
 
@@ -108,11 +107,11 @@ WSGI_APPLICATION = 'privacymail.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'privacymail',
-        'USER': '{{ lookup('passwordstore', 'privacymail/postgres-user' )}}',
-        'PASSWORD': '{{ lookup('passwordstore', 'privacymail/postgres-password' )}}',
-        'HOST': 'localhost',
-        'PORT': '',
+        'NAME': os.getenv('DATABASE_NAME'),
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('DATABASE_HOST'),
+        'PORT': os.getenv('DATABASE_PORT'),
         'CONN_MAX_AGE': None,
     }
 }
@@ -200,12 +199,10 @@ CRON_CLASSES = [
 # You can also set the entire dictionary to None if you don't want to use this feature.
 
 
-CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
+#CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
 
-OPENWPM_PATH = '{{ home_dir }}/privacymail/privacymail/runopenwpm.py'
-# Change these in runopenwpm.py as well, if you want to change them
-OPENWPM_DATA_DIR = '{{ home_dir }}/openwpm/data/'
-OPENWPM_LOG_DIR = '{{ home_dir }}/openwpm/log/'
+OPENWPM_DATA_DIR = os.path.dirname(__file__) + '/tmp/data/'
+OPENWPM_LOG_DIR = os.path.dirname(__file__) + '/tmp/log/'
 
 #URL on which the server is reached
 SYSTEM_ROOT_URL = 'http://{{ pm_domain }}'
@@ -215,20 +212,20 @@ SYSTEM_ROOT_URL = 'http://{{ pm_domain }}'
 MAILCREDENTIALS = [
     {
         'MAILHOST': 'mail.newsletterme.de',
-        'MAILUSERNAME': '{{ lookup('passwordstore', 'privacymail/email/newsletterme/user' )}}',
-        'MAILPASSWORD': '{{ lookup('passwordstore', 'privacymail/email/newsletterme/pass' )}}',
+        'MAILUSERNAME': os.getenv("MAIL_NEWSLETTER_USERNAME"),
+        'MAILPASSWORD': os.getenv("MAIL_NEWSLETTER_PASSWORD"),
         'DOMAIN': 'newsletterme.de',
     },
     {
         'MAILHOST': 'mail.privacyletter.de',
-        'MAILUSERNAME': '{{ lookup('passwordstore', 'privacymail/email/privacyletter/user' )}}',
-        'MAILPASSWORD': '{{ lookup('passwordstore', 'privacymail/email/privacyletter/pass' )}}',
+        'MAILUSERNAME': os.getenv("MAIL_PRIVAYCLETTER_USERNAME"),
+        'MAILPASSWORD': os.getenv("MAIL_PRIVAYCLETTER_PASSWORD"),
         'DOMAIN': 'privacyletter.de',
     },
     {
         'MAILHOST': 'mail.privacy-mail.org',
-        'MAILUSERNAME': '{{ lookup('passwordstore', 'privacymail/email/privacy-mail/user' )}}',
-        'MAILPASSWORD': '{{ lookup('passwordstore', 'privacymail/email/privacy-mail/pass' )}}',
+        'MAILUSERNAME': os.getenv("MAIL_PRIVACYMAIL_USERNAME"),
+        'MAILPASSWORD': os.getenv("MAIL_PRIVACYMAIL_PASSWORD"),
         'DOMAIN': 'privacy-mail.org',
     },
 ]
@@ -277,7 +274,8 @@ LOCALHOST_URL = 'localhost.privacymail.info:5000'
 
 # Django Mail
 SERVER_EMAIL = "admin@newsletterme.de"
-ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
+#ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
+ADMINS = []
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 
@@ -286,8 +284,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'mail.newsletterme.de'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = '{{ lookup('passwordstore', 'privacymail/admin/send-user' )}}'
-EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' )}}'
+#EMAIL_HOST_USER = '{{ lookup('passwordstore', 'privacymail/admin/send-user' )}}'
+#EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' )}}'
 EMAIL_SUBJECT_PREFIX = '[PMail] '
 # For debugging you may use the console backend
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
@@ -299,10 +297,10 @@ SILKY_AUTHENTICATION = True  # User must login
 SILKY_AUTHORISATION = True  # User must have permissions
 
 RAVEN_CONFIG = {
-    'dsn': '{{ lookup('passwordstore', 'privacymail/raven-dsn') }}',
+    'dsn': os.getenv('RAVEN_DSN'),
     # If you are using git, you can also automatically configure the
     # release based on the git info.
-    'release': raven.fetch_git_sha("{{ install_path }}"),
+    'release': '2.1',
     'transport': RequestsHTTPTransport,
 }
 
