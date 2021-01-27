@@ -1,0 +1,48 @@
+FROM continuumio/miniconda3
+
+# Copy Project
+WORKDIR /opt/privacymail
+
+RUN apt-get clean -qq \
+    && rm -r /var/lib/apt/lists/* -vf \
+    && apt-get clean -qq \
+    && apt-get update -qq \
+    && apt-get upgrade -qq \
+    # deps to run firefox inc. with xvfb
+    && apt-get install curl make libgtk-3-0 libx11-xcb1 libdbus-glib-1-2 libxt6 xvfb -qq
+
+# create conda environment
+COPY environment.yaml .
+RUN conda env create --file=environment.yaml
+RUN /opt/conda/bin/activate privacymail
+
+# install new node version
+RUN curl -sL https://deb.nodesource.com/setup_14.x | bash -
+RUN apt-get install nodejs -qq
+
+COPY privacymail privacymail
+COPY .git .git
+
+# create openwpm log and data directories
+RUN mkdir -p /opt/privacymail/privacymail/privacymail/tmp/data
+RUN mkdir -p /opt/privacymail/privacymail/privacymail/tmp/log
+
+# install openwpm
+WORKDIR /opt/privacymail/privacymail/OpenWPM
+RUN ./scripts/install-firefox.sh
+
+WORKDIR /opt/privacymail/privacymail/OpenWPM/openwpm/Extension/firefox
+# Building firefox extension
+RUN npm install && npm run build
+
+# Building webext-instrumentation extension
+WORKDIR /opt/privacymail/privacymail/OpenWPM/openwpm/Extension/webext-instrumentation
+RUN npm install --legacy-peer-deps && npm run build:main && npm run build:module
+
+# build frontend
+WORKDIR /opt/privacymail/privacymail/website
+RUN npm install && npm run build
+
+WORKDIR /opt/privacymail
+COPY _docker/entrypoint.sh .
+ENTRYPOINT ["bash", "/opt/privacymail/entrypoint.sh"]

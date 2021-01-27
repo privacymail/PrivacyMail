@@ -115,20 +115,15 @@ ENV/
 privacymail/db.sqlite3
 privacymail/static
 
-# Settings.py
-privacymail/privacymail/settings.py
-
-# SSH keys
-ansible/files/id_deploy
-ansible/files/id_deploy.pub
-
-# Local test files
-ansible/localdeploy.yml
-ansible/betadeploy.yml
-ansible/*.retry
-
 # Temporary editor files
 *.swp
 
 # Personal scripts
 dev.sh
+
+# docker volume
+dbdata/
+docker-compose.yml
+docker-compose.yml.prod
+
+privacymail/privacymail/tmp/

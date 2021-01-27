@@ -26,8 +26,8 @@ dependencies:
   - brotlipy=0.7.0=py38h8df0ef7_1001
   - bzip2=1.0.8=h516909a_3
   - c-ares=1.17.1=h36c2ea0_0
-  - ca-certificates=2020.11.8=ha878542_0
-  - certifi=2020.11.8=py38h578d9bd_0
+  - ca-certificates=2020.12.5=ha878542_0
+  - certifi=2020.12.5=py38h578d9bd_0
   - cffi=1.14.4=py38ha312104_0
   - cfgv=3.2.0=py_0
   - chardet=3.0.4=py38h924ce5b_1008
@@ -56,12 +56,13 @@ dependencies:
   - gflags=2.2.2=he1b5a44_1004
   - glog=0.4.0=h49b9bf7_3
   - grpc-cpp=1.33.2=h1870a98_1
+  - gunicorn=20.0.4=py38_0
   - html2text=2020.1.16=py_0
   - icu=68.1=h58526e2_0
   - identify=1.5.10=pyhd3deb0d_0
   - idna=2.10=pyh9f0ad1d_0
   - iniconfig=1.1.1=pyh9f0ad1d_0
-  - ipython=7.19.0=py38h81c977d_0
+  - ipython=7.19.0
   - ipython_genutils=0.2.0=py_1
   - jedi=0.17.2=py38h578d9bd_1
   - jmespath=0.10.0=pyh9f0ad1d_0
@@ -137,6 +138,7 @@ dependencies:
   - pytest-cov=2.10.1=pyh9f0ad1d_0
   - python=3.8.6=h852b56e_0_cpython
   - python-dateutil=2.8.1=py_0
+  - python-dotenv=0.15.0=pyhd8ed1ab_0
   - python-levenshtein=0.12.0=py38h1e0a361_1004
   - python_abi=3.8=1_cp38
   - pytz=2020.4=pyhd8ed1ab_0
@@ -198,11 +200,8 @@ dependencies:
     - docker==4.4.0
     - domain-utils==0.7.1
     - ecdsa==0.16.1
-    - flask==1.1.2
     - flask-cors==3.0.9
-    - future==0.18.2
     - importlib-metadata==3.1.0
-    - itsdangerous==1.1.0
     - jinja2==2.11.2
     - jsondiff==1.2.0
     - jsonpatch==1.27
@@ -225,8 +224,8 @@ dependencies:
     - subprocess32==3.5.4
     - tldextract==2.2.2
     - websocket-client==0.57.0
-    - werkzeug==1.0.1
     - wrapt==1.12.1
     - xmltodict==0.12.0
     - zipp==3.4.0
-prefix: /home/jidbo/miniconda3/envs/privacymail
+prefix: ~/.conda/envs/privacymail
+
