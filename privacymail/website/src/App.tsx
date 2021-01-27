@@ -65,7 +65,7 @@ const getRoutes = (): JSX.Element[] => {
     );
     routes.push(
         <Route key="/onDemand" path="/onDemand">
-            <OnDemand/>
+            <OnDemand />
         </Route>
     );
     routes.push(

@@ -13,8 +13,21 @@ const OnDemand = () => {
             <h1>
                 <Trans>onDemand_headline</Trans>
             </h1>
-            <textarea id="text" value={rawMail} placeholder="Hier Raw-Email eingeben" onChange={e => setRawMail(e.target.value)} />
-            <button onClick={e => getEmailAnalysis(rawMail, (analysis: IEmailAnalysis) => {setEmailAnalysis(analysis)})}>Send </button>
+            <textarea
+                id="text"
+                value={rawMail}
+                placeholder="Hier Raw-Email eingeben"
+                onChange={e => setRawMail(e.target.value)}
+            />
+            <button
+                onClick={e =>
+                    getEmailAnalysis(rawMail, (analysis: IEmailAnalysis) => {
+                        setEmailAnalysis(analysis);
+                    })
+                }
+            >
+                Send{" "}
+            </button>
             <p>{emailAnalysis?.Message}</p>
         </div>
     );
