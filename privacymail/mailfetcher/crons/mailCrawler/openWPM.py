@@ -2,12 +2,14 @@ import psutil
 import signal
 import os
 from mailfetcher.models import Mail
+import email
 from django.conf import settings
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
 )
 from mailfetcher.crons.mailCrawler.analysis.viewMail import (
     call_openwpm_view_mail,
+    call_openwpm_view_single_mail,
 )
 from mailfetcher.crons.mailCrawler.analysis.clickLinks import (
     call_openwpm_click_links,
@@ -68,6 +70,71 @@ def analyzeOnView():
 
     # Clean up zombie processes
     kill_openwpm()
+
+
+def analyzeSingleMail(mail):
+    message = email.message_from_string(mail)
+    print(message.get_content_type())
+    body_html = calc_bodies(message)
+    eresources = None
+    # if settings.RUN_OPENWPM and mail:
+    # eresources = call_openwpm_view_single_mail(body_html)
+
+    # kill_openwpm()
+
+    return eresources
+
+
+def calc_bodies(message):
+    # print("Mail to: " + message['To'])
+    body_html = None
+    if message.is_multipart():
+        for part in message.walk():
+            ctype = part.get_content_type()
+            cdispo = str(part.get("Content-Disposition"))
+            charset = part.get_param("CHARSET")
+            # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
+            if charset is None:
+                charset = "utf-8"
+            # skip any text/plain (txt) attachments
+            if ctype == "text/plain" and "attachment" not in cdispo:
+                try:
+                    body_plain = part.get_payload(decode=True).decode(charset)
+                except UnicodeDecodeError:
+                    body_plain = part.get_payload()
+
+                # body_plain = part.get_payload(decode=True).decode(charset)  # decode
+            if ctype == "text/html" and "attachment" not in cdispo:
+                try:
+                    body_html = part.get_payload(decode=True).decode(charset)
+                except UnicodeDecodeError:
+                    body_html = part.get_payload()
+                # body_html = part.get_payload(decode=True).decode(charset)  # decode
+    # not multipart - i.e. plain text, no attachments, keeping fingers crossed
+    else:
+        ctype = message.get_content_type()
+        cdispo = str(message.get("Content-Disposition"))
+        charset = message.get_param("CHARSET")
+        # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
+        if charset is None:
+            charset = "utf-8"
+        if ctype == "text/plain" and "attachment" not in cdispo:
+
+            try:
+                body_plain = message.get_payload(decode=True).decode(charset)
+            except UnicodeDecodeError:
+                body_plain = message.get_payload()
+            # body_plain = message.get_payload(decode=True).decode(charset)
+        if ctype == "text/html" and "attachment" not in cdispo:
+
+            try:
+                body_html = message.get_payload(decode=True).decode(charset)
+            except UnicodeDecodeError:
+                body_html = message.get_payload()
+
+            # body_html = message.get_payload(decode=True).decode(charset)
+    # print(body_html)
+    return body_html
 
 
 def analyzeOnClick():

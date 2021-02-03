@@ -7,6 +7,7 @@ from django.conf import settings
 from identity.models import Identity, Service
 from identity.util import convertForJsonResponse
 from mailfetcher.analyser_cron import create_service_cache
+from mailfetcher.crons.mailCrawler.openWPM import analyzeSingleMail
 import logging
 from random import shuffle
 import os
@@ -87,10 +88,12 @@ class AnalysisView(View):
         return super(AnalysisView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        try:
-            message = request.body.decode("utf-8")
-            print(message)
-            # Return the created identity
-        except:
-            pass
-        return JsonResponse(convertForJsonResponse({"Message": message}))
+
+        message = request.body.decode("utf-8")
+        data = analyzeSingleMail(message)
+        print(data)
+        if data:
+            return JsonResponse(convertForJsonResponse(data))
+        # Return the created identity
+
+        return JsonResponse(convertForJsonResponse({"messag": "hello"}))

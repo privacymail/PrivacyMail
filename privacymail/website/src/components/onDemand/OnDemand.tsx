@@ -6,7 +6,7 @@ import { getEmailAnalysis, IEmailAnalysis } from "../../repository";
  * This generates the On Demand Site
  */
 const OnDemand = () => {
-    const [emailAnalysis, setEmailAnalysis] = useState<IEmailAnalysis>();
+    const [emailAnalysis, setEmailAnalysis] = useState<any>();
     const [rawMail, setRawMail] = useState<string>("");
     return (
         <div>
@@ -28,7 +28,7 @@ const OnDemand = () => {
             >
                 Send{" "}
             </button>
-            <p>{emailAnalysis?.Message}</p>
+            {/*emailAnalysis?.map( (e:any ) => <p>e</p> ) */} 
         </div>
     );
 };
