@@ -47,16 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_countries',
     'django_cron',
-    'widget_tweaks',
     'mailfetcher',
     'util',
     'identity',
     'api',
-    'bootstrap_themes',
     'raven.contrib.django.raven_compat',
     'django_extensions',
     'django_filters',
-    'django_tables2',
     'bootstrap4',
     'whitenoise.runserver_nostatic'
 ]
@@ -78,7 +75,7 @@ ROOT_URLCONF = 'privacymail.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(REACT_APP_DIR ,'build')],
+        'DIRS': [os.path.join(REACT_APP_DIR, 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

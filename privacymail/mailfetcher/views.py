@@ -1,28 +1,30 @@
 from django.shortcuts import render
 from django.contrib.admin.views.decorators import staff_member_required
-from django.views.generic import View
-from mailfetcher.models import Mail
 from django.shortcuts import get_object_or_404
+from identity.models import Identity
 
 
 @staff_member_required
-def mailview(request, mail):
-    mail = get_object_or_404(Mail, id=mail)
-    if request.method == 'POST' and request.POST['action']:
+def confirmview(request):
+    if request.method == 'POST' and request.POST['action'] and request.POST['identity']:
         if request.POST['action'] == 'markSpam':
-            for ident in mail.identity.all():
-                ident.receives_third_party_spam = True
-                ident.save()
+            ident = get_object_or_404(Identity, id=request.POST['identity'])
+            ident.receives_third_party_spam = True
+            ident.save()
         elif request.POST['action'] == 'markRegistered':
-            for ident in mail.identity.all():
-                ident.approved = True
-                ident.save()
+            ident = get_object_or_404(Identity, id=request.POST['identity'])
+            ident.approved = True
+            ident.save()
         elif request.POST['action'] == 'markPermittedSender':
-            for ident in mail.identity.all():
-                if request.POST['payload'] not in ident.service.permitted_senders:
-                    ident.service.permitted_senders.append(request.POST['payload'])
-                    ident.service.save()
-            # Check if the Mail is still fishy
-            mail.check_for_unusual_sender()
+            ident = get_object_or_404(Identity, id=request.POST['identity'])
+            if request.POST['payload'] not in ident.service.permitted_senders:
+                ident.service.permitted_senders.append(
+                    request.POST['payload'])
+                ident.service.save()
 
-    return render(request, 'mailfetcher/mail.html', {'mail': mail})
+    identities = Identity.objects.filter(
+        approved__exact=False
+    )
+
+    return render(request, 'mailfetcher/confirm.html', {'identities':
+                                                        identities})
