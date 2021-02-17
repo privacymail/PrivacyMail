@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+import sys
 import raven
 from raven.transport.requests import RequestsHTTPTransport
 from django.utils.translation import gettext_lazy as _
@@ -110,8 +111,15 @@ DATABASES = {
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT'),
         'CONN_MAX_AGE': None,
+        'TEST': {
+            'NAME': 'TEST',
+        }
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default']['PORT'] = 5431
+
 
 # Caching
 CACHES = {
