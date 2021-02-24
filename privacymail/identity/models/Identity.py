@@ -1,13 +1,9 @@
 import random
-
 import names
-from django.apps import apps
-from django.contrib.postgres.fields import ArrayField
-from django.core import exceptions
+
 from django.db import models
-from django_countries.fields import CountryField
 from identity.util import convertForJsonResponse
-from model_utils import Choices
+from mailfetcher.crons.mailCrawler.confirmMail import approve_from_mail
 
 
 class Identity(models.Model):
@@ -15,7 +11,9 @@ class Identity(models.Model):
     surname = models.CharField(max_length=50)
     mail = models.EmailField(unique=True)
     gender = models.BooleanField()  # True is male
-    service = models.ForeignKey("Service", on_delete=models.SET_NULL, null=True)
+    service = models.ForeignKey("Service",
+                                on_delete=models.SET_NULL,
+                                null=True)
     approved = models.BooleanField(default=False)
     lastapprovalremindersend = models.TimeField(default=None, null=True)
     receives_third_party_spam = models.BooleanField(default=False)
@@ -23,10 +21,9 @@ class Identity(models.Model):
     @classmethod
     def create(cls, service, domain):
         def gen_name(gender):
-            if gender:  # if male
-                first_name = names.get_first_name(gender="male")
-            else:
-                first_name = names.get_first_name(gender="female")
+            gender_name = "male" if gender else "female"
+
+            first_name = names.get_first_name(gender=gender_name)
             surname = names.get_last_name()
             return (first_name, surname)
 
@@ -37,9 +34,8 @@ class Identity(models.Model):
         # Keep generating names until we find a pair that is not yet taken
         while True:
             first_name, surname = gen_name(i.gender)
-            if not Identity.objects.filter(
-                first_name=first_name, surname=surname
-            ).exists():
+            if not Identity.objects.filter(first_name=first_name,
+                                           surname=surname).exists():
                 break
 
         i.first_name = first_name
@@ -61,3 +57,24 @@ class Identity(models.Model):
 
     def __str__(self):
         return self.mail
+
+    def try_auto_approve(self, mail):
+        '''
+        Tries to auto approve an identity with a given email.
+
+        Returns whether the approve was successfull or not.
+        '''
+        if self.approved:
+            return False
+
+        first_mail = self.message.order_by('date_time').first()
+        if first_mail and first_mail.id == mail.id:
+            if mail.body_html:
+                approved = approve_from_mail(mail)
+                if approved:
+                    self.approved = True
+                    self.save()
+                    return True
+            else:
+                return False
+        return False
