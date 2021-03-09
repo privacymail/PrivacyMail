@@ -15,9 +15,7 @@ Including another URLconf
 """
 from django.urls import path
 from . import views
-from identity.views import *
-from mailfetcher.views import *
-
+from identity.views import StatisticView, IdentityView, EmbedView, ServiceView, ServiceListView
 
 urlpatterns = [
     path('service/<int:service>/', ServiceView.as_view(), name='Service'),
