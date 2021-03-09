@@ -1,12 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-
-SIGN_UP_WORDS = [
-    'weiter', 'registrier', 'Anmeldung', 'klicke', 'Anmelden', 'bestätig',
-    'hier', 'confirm', 'subscribe', 'register'
-]
-SIGN_UP_URL = ['subscribe']
-BLACKLIST = ['unsubscribe', 'abmeldung', 'abmelden']
+from mailfetcher.models import Scanword
 
 
 class URL:
@@ -58,16 +52,19 @@ def filter_urls(urls):
     '''
     Filter list of URLs for keywords
     '''
+    name_words = Scanword.objects.filter(type__exact='name')
+    link_words = Scanword.objects.filter(type__exact='link')
+
     found_urls = []
 
     for url in urls:
         if url.name:
-            for word in SIGN_UP_WORDS:
+            for word in name_words:
                 if word.lower() in url.name.lower():
                     found_urls.append(url)
                     break
         if url.link:
-            for word in SIGN_UP_URL:
+            for word in link_words:
                 if word.lower() in url.link.lower():
                     found_urls.append(url)
                     break
@@ -77,7 +74,8 @@ def filter_urls(urls):
 
 
 def filter_blacklist_words(url):
-    for word in BLACKLIST:
+    blacklist_words = Scanword.objects.filter(type__exact='blacklist')
+    for word in blacklist_words:
         lower_word = word.lower()
         if url.name and lower_word in url.name.lower():
             return False

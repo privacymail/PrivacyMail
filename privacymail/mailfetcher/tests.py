@@ -1,5 +1,5 @@
 from django.test import TestCase
-from mailfetcher.models import Mail
+from mailfetcher.models import Mail, Scanword
 from identity.models import Identity, Service
 import email
 
@@ -15,6 +15,8 @@ class AutoConfirm(TestCase):
         identity.first_name = "cathy"
         identity.mail = 'cathy.cartier@newsletterme.de'
         identity.save()
+
+        Scanword.objects.create(type="word", word="Subscribe")
 
     def test_auto_approval(self):
         mail = b''

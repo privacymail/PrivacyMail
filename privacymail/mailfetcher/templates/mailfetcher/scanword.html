@@ -21,7 +21,7 @@
       <div class="card-header">Name Scanword</div>
       <div class="card-body">
         <div class="card-title">
-          <div class="d-flex flex-row">
+          <div class="d-flex flex-row flex-wrap">
             {% for word in word %}
             <form action="" method="post">
               {% csrf_token %}
@@ -57,7 +57,7 @@
       <div class="card-header">Link Scanword</div>
       <div class="card-body">
         <div class="card-title">
-          <div class="d-flex flex-row">
+          <div class="d-flex flex-row flex-wrap">
             {% for word in link %}
             <form action="" method="post">
               {% csrf_token %}
@@ -93,7 +93,7 @@
       <div class="card-header">Blacklistwords</div>
       <div class="card-body">
         <div class="card-title">
-          <div class="d-flex flex-row">
+          <div class="d-flex flex-row flex-wrap">
             {% for word in blacklist %}
             <form action="" method="post">
               {% csrf_token %}

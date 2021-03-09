@@ -30,6 +30,7 @@ def confirmview(request):
                   {'identities': identities})
 
 
+@staff_member_required
 def wordlistmanager(request):
     if request.method == 'POST':
         if 'action' in request.POST:
