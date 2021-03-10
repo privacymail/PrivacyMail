@@ -13,12 +13,13 @@ from mailfetcher.crons.mailCrawler.analysis.importViewResults import (
 
 
 def call_openwpm_view_single_mail(mail):
-    db_name = mail.name + ".sqlite"
+    db_name = "analysis.sqlite"
     wpm_db = settings.OPENWPM_DATA_DIR + db_name
     if os.path.exists(wpm_db):
         os.remove(wpm_db)
     filename = write_mail_to_file(mail)
     manager = open_browsers(1, db_name)
+    print(filename)
     visit_site(filename, manager)
     manager.close()
     if os.path.isfile(wpm_db):
@@ -33,7 +34,6 @@ def call_openwpm_view_single_mail(mail):
         # remove openwpm sqlite db to avoid waste of disk space
         if not settings.DEVELOP_ENVIRONMENT:
             os.remove(wpm_db)
-
     return eresources
 
 
@@ -145,7 +145,6 @@ def open_browsers(num_browsers, db_name):
 
 
 def visit_site(site, manager):
-    print(site)
     command_sequence = CommandSequence.CommandSequence(site, reset=True)
     # Start by visiting the page
     command_sequence.get(sleep=0, timeout=settings.OPENWPM_TIMEOUT)

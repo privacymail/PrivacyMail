@@ -8,6 +8,7 @@ from identity.models import Identity, Service
 from identity.util import convertForJsonResponse
 from mailfetcher.analyser_cron import create_service_cache
 from mailfetcher.crons.mailCrawler.openWPM import analyzeSingleMail
+import json
 import logging
 from random import shuffle
 import os
@@ -88,12 +89,12 @@ class AnalysisView(View):
         return super(AnalysisView, self).dispatch(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-
-        message = request.body.decode("utf-8")
+        body_unicode = request.body.decode("utf-8")
+        body_json = json.loads(body_unicode)
+        message = body_json["rawData"]
         data = analyzeSingleMail(message)
-        print(data)
         if data:
-            return JsonResponse(convertForJsonResponse(data))
+            return JsonResponse(convertForJsonResponse({"rawData": data}))
         # Return the created identity
 
         return JsonResponse(convertForJsonResponse({"messag": "hello"}))

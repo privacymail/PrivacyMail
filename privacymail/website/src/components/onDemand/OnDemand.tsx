@@ -28,7 +28,7 @@ const OnDemand = () => {
             >
                 Send{" "}
             </button>
-            {/*emailAnalysis?.map( (e:any ) => <p>e</p> ) */} 
+            {/*emailAnalysis?.map( (e:any ) => <p>e</p> ) */}
         </div>
     );
 };

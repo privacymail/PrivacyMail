@@ -1,11 +1,12 @@
 import psutil
 import signal
 import os
-from mailfetcher.models import Mail
+from mailfetcher.models import Mail, Eresource
 import email
 from django.conf import settings
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
+    analyze_single_mail_for_leakage,
 )
 from mailfetcher.crons.mailCrawler.analysis.viewMail import (
     call_openwpm_view_mail,
@@ -14,6 +15,11 @@ from mailfetcher.crons.mailCrawler.analysis.viewMail import (
 from mailfetcher.crons.mailCrawler.analysis.clickLinks import (
     call_openwpm_click_links,
 )
+from mailfetcher.analyser_cron import (
+    get_stats_of_mail,
+)
+from mailfetcher.crons.mailCrawler.init import init
+from bs4 import BeautifulSoup
 
 
 def kill_openwpm(ignore=[]):
@@ -73,16 +79,101 @@ def analyzeOnView():
 
 
 def analyzeSingleMail(mail):
+    server, thread = init()
     message = email.message_from_string(mail)
-    print(message.get_content_type())
     body_html = calc_bodies(message)
     eresources = None
     # if settings.RUN_OPENWPM and mail:
-    # eresources = call_openwpm_view_single_mail(body_html)
-
-    # kill_openwpm()
-
+    staticeresources = extract_static_eresources(body_html)
+    eresources = call_openwpm_view_single_mail(body_html)
+    eresources = staticeresources + eresources
+    kill_openwpm()
+    server.shutdown()
+    server.socket.close()
+    thread.join(5)
+    if "X-Original-To" in message:
+        to = message["X-Original-To"]
+    else:
+        to = message["To"]
+    service_url = message["From"].split("@")[1].replace(">", "")
+    print(service_url)
+    print(to)
+    eresources = analyze_single_mail_for_leakage(to, eresources)
+    get_stats_of_mail(service_url, eresources)
     return eresources
+
+
+def extract_static_eresources(body_html):
+    static_eresources = []
+    soup = BeautifulSoup(body_html, "html.parser")
+    a_links = []
+    for a in soup.find_all("a"):
+        # prevent duplicate entries
+        try:
+            # skip mailtos
+            if "mailto:" in a["href"]:
+                continue
+            # Touch the href
+            a["href"]
+        except KeyError:
+            # print("a tag has no href attribute")
+            # print(a.attrs)
+            continue
+        # Remove whitespace and newlines.
+        # if a is not None:
+        a["href"] = "".join(a["href"].split())
+        a_links.append(a)
+
+    for link in a_links:
+        if "http" not in link["href"]:
+            continue
+        static_eresources.append(
+            {
+                "type": "a",
+                "is_end_of_chain": True,
+                "is_start_of_chain": True,
+                "url": link["href"],
+                "possible_unsub_link": False,
+                "param": str(link.attrs) + str(link.contents),
+            }
+        )
+
+    for img in soup.find_all("img"):
+        static_eresources.append(
+            {
+                "type": img.name,
+                "url": img["src"],
+                "possible_unsub_link": False,
+                "param": str(img.attrs) + str(img.contents),
+                "is_end_of_chain": True,
+                "is_start_of_chain": True,
+            }
+        )
+
+    for link in soup.find_all("link"):
+        static_eresources.append(
+            {
+                "type": link.name,
+                "url": link["href"],
+                "possible_unsub_link": False,
+                "param": str(link.attrs) + str(link.contents),
+                "is_end_of_chain": True,
+                "is_start_of_chain": True,
+            }
+        )
+
+    for script in soup.find_all("script"):
+        static_eresources.append(
+            {
+                "type": script.name,
+                "url": script["src"],
+                "possible_unsub_link": False,
+                "param": str(script.attrs) + str(script.contents),
+                "is_end_of_chain": True,
+                "is_start_of_chain": True,
+            }
+        )
+    return static_eresources
 
 
 def calc_bodies(message):
