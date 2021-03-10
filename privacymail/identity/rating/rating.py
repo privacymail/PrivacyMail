@@ -6,6 +6,16 @@ from identity.rating.loadedResources import calculateCDNs
 from identity.rating.ABTesting import calculateABTesting
 from identity.rating.calculate import calculateRating
 
+
+from identity.models import  ServiceThirdPartyEmbeds
+
+
+from identity.models import Identity
+from mailfetcher.models import Mail
+
+
+import time
+
 minRating = 1
 maxRating = 6
 
@@ -78,38 +88,84 @@ weights = {
 }
 
 
-def getRating(service):
-    category_rating = {
-        "emailLeaks": calculateEmailLeaks(
-            service, weights["emailLeaks"], rMin["emailLeaks"], rMax["emailLeaks"]
-        ),
-        "personalizedLinks": calculatePersonalizedLinks(
-            service,
-            weights["personalizedLinks"],
-            rMin["personalizedLinks"],
-            rMax["personalizedLinks"],
-        ),
-        "unpersonalizedLinks": calculateUnpersonalizedLinks(
-            service,
-            weights["unpersonalizedLinks"],
-            rMin["unpersonalizedLinks"],
-            rMax["unpersonalizedLinks"],
-        ),
-        "trackingServices": calculateTrackingServices(
-            service,
-            weights["trackingServices"],
-            rMin["trackingServices"],
-            rMax["trackingServices"],
-        ),
-        "loadedResources": calculateCDNs(
-            service,
-            weights["loadedResources"],
-            rMin["loadedResources"],
-            rMax["loadedResources"],
-        ),
-        "ABTesting": calculateABTesting(
-            service, weights["ABTesting"], rMin["ABTesting"], rMax["ABTesting"]
-        ),
-    }
+def getRating(mail):
 
-    return calculateRating(category_rating)
+    try:
+        service = mail.identity.service
+        embeds = ServiceThirdPartyEmbeds.objects.filter(mail=mail)
+        embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
+        embeds_onclick = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONCLICK)
+
+        category_rating = {
+            "emailLeaks": calculateEmailLeaks(
+                service, embeds , weights["emailLeaks"], rMin["emailLeaks"], rMax["emailLeaks"]
+            ),
+            "personalizedLinks": calculatePersonalizedLinks(
+                embeds,
+                service,
+                weights["personalizedLinks"],
+                rMin["personalizedLinks"],
+                rMax["personalizedLinks"],
+            ),
+            "unpersonalizedLinks": calculateUnpersonalizedLinks(
+                embeds, 
+                mail,
+                weights["unpersonalizedLinks"],
+                rMin["unpersonalizedLinks"],
+                rMax["unpersonalizedLinks"],
+            ),
+            "trackingServices": calculateTrackingServices(
+                embeds, 
+                mail,
+                weights["trackingServices"],
+                rMin["trackingServices"],
+                rMax["trackingServices"],
+            ),
+            "loadedResources": calculateCDNs(
+                embeds, 
+                mail,
+                weights["loadedResources"],
+                rMin["loadedResources"],
+                rMax["loadedResources"],
+            ),
+            "ABTesting": calculateABTesting(
+                service, weights["ABTesting"], rMin["ABTesting"], rMax["ABTesting"]
+            ),
+        }
+
+        return calculateRating(category_rating)
+    except:
+        return {"rating": 0, "penalty": 0}
+    
+    
+
+
+def getAdjustedRating(service):
+
+    start = time.time()
+
+
+    idents = Identity.objects.filter(service=service)
+
+    mails = Mail.objects.filter(
+        identity__in=idents, 
+        identity__approved=True,
+    ).distinct()
+
+    rating = 0;
+
+    for mail in mails: 
+        newRating = getRating(mail)
+        
+        rating = rating + newRating["rating"]
+
+    mail_count = mails.count()
+    if mail_count > 0:
+        rating = rating / mail_count;
+
+    end = time.time()
+    timedelta = (end -start) / 1000
+
+    print("Building Rating for ",service.name , " took " , timedelta , " seconds")
+
+    return rating

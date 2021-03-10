@@ -4,48 +4,41 @@ from identity.rating.calculate import (
     countToRating,
 )
 from identity.util import filterDict
+from identity.models import ServiceThirdPartyEmbeds
 
 
-def calculatePersonalizedLinksToOwnWebsite(service, rMin, rMax):  # TODO
-    if (
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: "ONCLICK" in value["embed_as"]
-                and key.name == service["service"].name
-                and value["receives_identifier"],
-            )
-        )
-        >= 1
-    ):
+def calculatePersonalizedLinksToOwnWebsite(embeds,service, rMin, rMax):
+    if (embeds.filter(
+            embed_type=ServiceThirdPartyEmbeds.ONCLICK, 
+            thirdparty__name=service.name, 
+            receives_identifier=True
+        ).count() >= 1):
         return 1
     else:
         return 0
 
 
 def calculatePersonalizedLinksThirdParties(
-    service, rMin, rMax
+    embeds,service, rMin, rMax
 ):  # TODO should I filter the links to the newsletters own site?
     return countToRating(
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: "ONCLICK" in value["embed_as"]
-                and key.name != service["service"].name
-                and value["receives_identifier"],
-            )
-        ),
+        embeds.filter(
+            embed_type=ServiceThirdPartyEmbeds.ONCLICK, 
+            receives_identifier=True
+        ).exclude(
+            thirdparty__name=service.name
+        ).count(),
         rMin,
         rMax,
     )
 
 
-def calculatePersonalizedLinks(service, weights, rMin, rMax):
+def calculatePersonalizedLinks(embeds,service, weights, rMin, rMax):
     categories = {
         "toOwnWebsite": {
             "rating": scaleToRating(
                 calculatePersonalizedLinksToOwnWebsite(
-                    service, rMin["toOwnWebsite"], rMax["toOwnWebsite"],
+                    embeds,service, rMin["toOwnWebsite"], rMax["toOwnWebsite"],
                 ),
                 rMax["toOwnWebsite"],
             ),
@@ -54,7 +47,7 @@ def calculatePersonalizedLinks(service, weights, rMin, rMax):
         "toThirdParties": {
             "rating": scaleToRating(
                 calculatePersonalizedLinksThirdParties(
-                    service, rMin["toThirdParties"], rMax["toThirdParties"]
+                    embeds,service, rMin["toThirdParties"], rMax["toThirdParties"]
                 ),
                 rMax["toThirdParties"],
             ),

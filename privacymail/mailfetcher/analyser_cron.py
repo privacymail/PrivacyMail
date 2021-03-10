@@ -18,6 +18,7 @@ from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
 )
 
+from identity.rating.rating import getAdjustedRating
 logger = logging.getLogger(__name__)
 LONG_SEPERATOR = "##########################################################"
 
@@ -267,11 +268,30 @@ def create_service_cache(service, force=False):
         if third_party not in third_parties_dict:
             create_third_party_cache(third_party, False)
             third_party_dict = {}
+            historic_dict = {}
             embeds = service_3p_conns.filter(thirdparty=third_party)
             embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
             embeds_onclick = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONCLICK)
 
             third_party_dict["last_seen"] = embeds.order_by("-mail__date_time").first().mail.date_time
+
+
+            historic_dict["embed_as"] = list(
+                embeds.values_list("embed_type", flat=True).distinct()
+            )
+            historic_dict["address_leak_view"] = embeds_onview.filter(
+                leaks_address=True
+            ).exists()
+            historic_dict["address_leak_click"] = embeds_onclick.filter(
+                leaks_address=True
+            ).exists()
+            historic_dict["sets_cookie"] = embeds.filter(sets_cookie=True).exists()
+            historic_dict["receives_identifier"] = embeds.filter(
+                receives_identifier=True
+            ).exists()
+            third_party_dict["historic"] = historic_dict
+            
+            #Now check for the relevant timeframe
             third_party_dict["embed_as"] = list(
                 embeds.values_list("embed_type", flat=True).distinct()
             )
@@ -285,6 +305,8 @@ def create_service_cache(service, force=False):
             third_party_dict["receives_identifier"] = embeds.filter(
                 receives_identifier=True
             ).exists()
+
+
             third_parties_dict[third_party] = third_party_dict
 
     site_params = {
@@ -302,6 +324,7 @@ def create_service_cache(service, force=False):
         "cache_dirty": False,
         "cache_timestamp": datetime.now().time(),
     }
+    site_params["rating"] = getAdjustedRating(service)
     service_information = {
         "personalised_links": personalised_links,
         "personalised_anchor_links": personalised_anchor_links,
@@ -325,7 +348,7 @@ def analyse_dirty_services():
     else:
         cpus = 1
 
-    cpus = 1
+    
     with Pool(cpus) as p:
         p.map(analyse_dirty_service, dirty_services)
 
