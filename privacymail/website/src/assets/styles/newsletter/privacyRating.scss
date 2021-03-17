@@ -22,6 +22,36 @@
         top: calc((#{$privacyRatingHeadlineHeight} * 1.2 - #{$sharebuttonHeight}) / 2 + 1.25rem);
     }
 }
+.ratingHistory {
+    padding: 0px 1.2rem;
+    h2 {
+        margin: 1.5em 0 0.5rem 0;
+    }
+    .ratings {
+        display: flex;
+        flex-flow: row;
+        justify-content: space-between;
+
+        overflow-x: auto;
+        margin: 0 0 1rem 0;
+
+        .historicRating {
+            flex: 1 0 4rem;
+
+            display: flex;
+            flex-flow: column;
+            justify-content: center;
+            align-items: center;
+
+            .grade {
+                font-size: 2rem;
+            }
+            .date {
+                font-weight: 200;
+            }
+        }
+    }
+}
 .newsletterName {
     width: 100%;
     text-align: center;

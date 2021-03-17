@@ -132,9 +132,9 @@ def calculateAccumulativeRating(ratings):
             else:
                 wheigt = wheigt + 2
 
-        if accRating["rating"] > worstIdentRating:
+        if "rating" in accRating and  accRating["rating"] > worstIdentRating:
             worstIdentRating = identsRating[identity]["rating"]
-            worstIdent = identity    
+            worstIdent = identity   
 
     completeHistory = {}
     i = 0
