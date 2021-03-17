@@ -5,7 +5,7 @@ from identity.util import filterDict
 from identity.models import ServiceThirdPartyEmbeds
 from django.db.models import Q
 
-def CDNs(service,embeds, rMin, rMax):
+def CDNs(embeds, service, rMin, rMax):
     return countToRating(
         embeds.filter(
             Q(embed_type=ServiceThirdPartyEmbeds.ONVIEW) & 
@@ -16,8 +16,8 @@ def CDNs(service,embeds, rMin, rMax):
     )
 
 
-def calculateCDNs(service,embeds, weight, rMin, rMax):
+def calculateCDNs(embeds, service, weight, rMin, rMax):
     return {
         "weight": weight,
-        "rating": scaleToRating(CDNs(service,embeds, rMin, rMax), rMax),
+        "rating": scaleToRating(CDNs(embeds,service, rMin, rMax), rMax),
     }

@@ -30,11 +30,11 @@ def trackers(embeds,service, rMin, rMax):
             (Q(embed_type=ServiceThirdPartyEmbeds.ONCLICK) & 
             (Q(thirdparty__sector="tracker") | Q(thirdparty__sector="unkown"))) &
             Q(thirdparty__name = service.name))
-        ).count(),
+        ).distinct(),
     big = 0
     small = 0
 
-    for tracker_embed in tracker_embeds:
+    for tracker_embed in tracker_embeds[0]:
         if Service.objects.filter(thirdparties=tracker_embed.thirdparty).count() > 10 :
             big=big+1
         else :
@@ -51,7 +51,7 @@ def calculateTrackingServices(embeds, service, weights, rMin, rMax):
     return {
         "weight": weights["bigTrackers"],
         "rating": scaleToRating(
-            trackers(service, embeds, rMin["smallTrackers"], rMax["bigTrackers"]),
+            trackers(embeds, service, rMin["smallTrackers"], rMax["bigTrackers"]),
             rMax["bigTrackers"],
         ),
     }

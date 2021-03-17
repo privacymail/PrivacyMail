@@ -4,7 +4,7 @@ from identity.rating.unpersonalizedLinks import calculateUnpersonalizedLinks
 from identity.rating.trackingServices import calculateTrackingServices
 from identity.rating.loadedResources import calculateCDNs
 from identity.rating.ABTesting import calculateABTesting
-from identity.rating.calculate import calculateRating
+from identity.rating.calculate import calculateRating, calculateAccumulativeRating
 
 
 from identity.models import  ServiceThirdPartyEmbeds
@@ -15,6 +15,8 @@ from mailfetcher.models import Mail
 
 
 import time
+from datetime import datetime, timedelta
+from django.utils import timezone
 
 minRating = 1
 maxRating = 6
@@ -88,10 +90,10 @@ weights = {
 }
 
 
-def getRating(mail):
+def getMailRating(mail):
 
     try:
-        service = mail.identity.service
+        service = mail.identity.first().service
         embeds = ServiceThirdPartyEmbeds.objects.filter(mail=mail)
         embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
         embeds_onclick = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONCLICK)
@@ -109,21 +111,21 @@ def getRating(mail):
             ),
             "unpersonalizedLinks": calculateUnpersonalizedLinks(
                 embeds, 
-                mail,
+                service,
                 weights["unpersonalizedLinks"],
                 rMin["unpersonalizedLinks"],
                 rMax["unpersonalizedLinks"],
             ),
             "trackingServices": calculateTrackingServices(
                 embeds, 
-                mail,
+                service,
                 weights["trackingServices"],
                 rMin["trackingServices"],
                 rMax["trackingServices"],
             ),
             "loadedResources": calculateCDNs(
                 embeds, 
-                mail,
+                service,
                 weights["loadedResources"],
                 rMin["loadedResources"],
                 rMax["loadedResources"],
@@ -137,35 +139,44 @@ def getRating(mail):
     except:
         return {"rating": 0, "penalty": 0}
     
-    
-
 
 def getAdjustedRating(service):
 
     start = time.time()
 
 
-    idents = Identity.objects.filter(service=service)
+    idents = Identity.objects.filter(service=service, is_dead=False)
 
-    mails = Mail.objects.filter(
-        identity__in=idents, 
-        identity__approved=True,
-    ).distinct()
+    identityMailRatings = {}
 
-    rating = 0;
+    for identity in idents: 
 
-    for mail in mails: 
-        newRating = getRating(mail)
+        mails = Mail.objects.filter(
+            identity=identity,
+            identity__approved=True,
+        ).distinct().order_by("-date_time")
         
-        rating = rating + newRating["rating"]
+        if mails.count()>10:
+            past180Days = timedelta(days=180)
+            dateFilteredMails = mails.filter(date_time = timezone.now() - past180Days)
 
-    mail_count = mails.count()
-    if mail_count > 0:
-        rating = rating / mail_count;
+            if dateFilteredMails.count() < 10 :
+                mails = mails[:10]
+            else:
+                mails = dateFilteredMails
+                
+        identityMailRatings[identity] = {}
+
+        for mail in mails: 
+            identityMailRatings[identity][mail] = getMailRating(mail)
+
+    rating = calculateAccumulativeRating(identityMailRatings)
+
 
     end = time.time()
-    timedelta = (end -start) / 1000
+    delta = (end -start) / 1000
 
-    print("Building Rating for ",service.name , " took " , timedelta , " seconds")
+    if delta > 1:
+        print("Building Rating for ",service.name , " took " , delta , " seconds")
 
     return rating

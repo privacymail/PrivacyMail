@@ -6,13 +6,12 @@ from identity.rating.calculate import (
 from identity.util import filterDict
 
 from identity.models import ServiceThirdPartyEmbeds
-
+from django.db.models import Q
 def toOwnWebsite(embeds,service, rMin, rMax):
     if (embeds.filter(
-            embed_type=ServiceThirdPartyEmbeds.ONCLICK, 
-            thirdparty__name=service.name
-        ).exclude(
-            receives_identifier=True
+            (Q(embed_type=ServiceThirdPartyEmbeds.ONCLICK) | Q(embed_type=ServiceThirdPartyEmbeds.STATIC)) &
+            Q(thirdparty__name=service.name) & 
+            ~Q(receives_identifier=True)
         ).count() >= 1
     ):
         return 1
@@ -24,15 +23,15 @@ def toThirdParties(
     embeds, service, rMin, rMax
 ):  # TODO should I filter the links to the newsletters own site?
     diffrentCountries =  embeds.filter(
-            embed_type=ServiceThirdPartyEmbeds.ONCLICK, 
+            (Q(embed_type=ServiceThirdPartyEmbeds.ONCLICK) | Q(embed_type=ServiceThirdPartyEmbeds.STATIC))
         ).exclude(
             receives_identifier=True, 
             thirdparty__name=service.name,
             thirdparty__country_of_origin= service.country_of_origin
         ).count()
     sameCountry = embeds.filter(
-            embed_type=ServiceThirdPartyEmbeds.ONCLICK, 
-            thirdparty__country_of_origin= service.country_of_origin
+            (Q(embed_type=ServiceThirdPartyEmbeds.ONCLICK) | Q(embed_type=ServiceThirdPartyEmbeds.STATIC)) &
+            Q(thirdparty__country_of_origin= service.country_of_origin)
         ).exclude(
             receives_identifier=True, 
             thirdparty__name=service.name
@@ -44,8 +43,8 @@ def toThirdParties(
 def toTrackers(embeds, service, rMin, rMax):
     return countToRating(
         embeds.filter(
-            embed_type=ServiceThirdPartyEmbeds.ONCLICK, 
-            thirdparty__sector = "tracker"
+            (Q(embed_type=ServiceThirdPartyEmbeds.ONCLICK) | Q(embed_type=ServiceThirdPartyEmbeds.STATIC))&
+            Q(thirdparty__sector = "tracker")
         ).exclude(
             thirdparty__name=service.name
         ).count(),
