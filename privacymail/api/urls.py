@@ -20,7 +20,7 @@ from mailfetcher.views import *
 
 
 urlpatterns = [
-    path('service/<int:service>/', ServiceView.as_view(), name='Service'),
+    path('service/<int:service>', ServiceView.as_view(), name='Service'),
     path('service/', ServiceView.as_view(), name='ServiceLookup'),
     path('services/', ServiceListView.as_view(), name="ServiceList"),
     path('embed/<int:embed>/', EmbedView.as_view(), name='Embed'),
