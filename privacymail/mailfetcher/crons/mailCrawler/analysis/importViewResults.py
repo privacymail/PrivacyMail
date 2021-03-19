@@ -33,6 +33,7 @@ def import_openwpmresults_single_mail(filename, db_cursor):
                     "param": top_url,
                     "is_start_of_chain": is_start_of_chain,
                     "is_end_of_chain": True,
+                    "redirects_to_channel_id": None,
                 }
             )
         # eresource redirects to other eresource

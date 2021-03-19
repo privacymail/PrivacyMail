@@ -35,7 +35,7 @@
     "analysis_sector": "Sector",
     "analysis_Spam": "Third party spam detected",
     "analysis_Spam_no": "No third party spam detected",
-    "analysis_Spam_problem": "Service providers may perform so-called A/B testing by sending different versions of emails to different recipients to test which wording generates more clicks. While this is not a privacy problem in itself, it indicates that marketing analysis is taking place.",
+    "analysis_Spam_problem": "Service providers may intentionally or unintentionally disclose your email address to third parties, including spammers. We try to detect this by tracking if identities associated with this service start receiving eMails from other senders.",
     "analysis_thridpartysByCategory": "Split by category",
     "analysis_unreliable": "Known scan errors",
     "copied": "Copied!",

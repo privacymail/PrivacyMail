@@ -1,34 +1,40 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Trans } from "react-i18next";
-import { useParams, withRouter, RouteComponentProps } from "react-router-dom";
 import { getEmailAnalysis, IEmailAnalysis } from "../../repository";
+import OnDemandAnalysis from "./OnDemandAnalysis";
+import OnDemandInput from "./OnDemandInput";
 /**
- * This generates the On Demand Site
+ * This generates the On Demand Sited
  */
 const OnDemand = () => {
     const [emailAnalysis, setEmailAnalysis] = useState<any>();
-    const [rawMail, setRawMail] = useState<string>("");
+    const [rawEmail, setRawEmail] = useState<string>("");
+    const [viewAnalysis, setViewAnalysis] = useState<boolean>(false);
+    const runAnalysis = () => {
+        setViewAnalysis(true);
+        setEmailAnalysis(null);
+        getEmailAnalysis(rawEmail, (analysis: IEmailAnalysis | null) => {
+            setEmailAnalysis(analysis);
+        });
+    };
+    const returnToInput = () => {
+        setViewAnalysis(false);
+    };
     return (
         <div>
-            <h1>
-                <Trans>onDemand_headline</Trans>
-            </h1>
-            <textarea
-                id="text"
-                value={rawMail}
-                placeholder="Hier Raw-Email eingeben"
-                onChange={e => setRawMail(e.target.value)}
-            />
-            <button
-                onClick={e =>
-                    getEmailAnalysis(rawMail, (analysis: IEmailAnalysis) => {
-                        setEmailAnalysis(analysis);
-                    })
-                }
-            >
-                Send{" "}
-            </button>
-            {/*emailAnalysis?.map( (e:any ) => <p>e</p> ) */}
+            <div className="newsletter">
+                <div className="privacyRating">
+                    <h1>
+                        <Trans>onDemand_headline</Trans>
+                    </h1>
+                </div>
+            </div>
+
+            {viewAnalysis ? (
+                <OnDemandAnalysis emailAnalysis={emailAnalysis} returnToInput={returnToInput} />
+            ) : (
+                <OnDemandInput rawEmail={rawEmail} setRawEmail={setRawEmail} runAnalysis={runAnalysis} />
+            )}
         </div>
     );
 };

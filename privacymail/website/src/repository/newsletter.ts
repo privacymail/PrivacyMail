@@ -60,6 +60,7 @@ export interface IThirdParty {
     sector: string;
     service: any;
 }
+
 export interface IService {
     url: string;
     name: string;

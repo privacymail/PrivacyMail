@@ -92,9 +92,6 @@ class AnalysisView(View):
         body_unicode = request.body.decode("utf-8")
         body_json = json.loads(body_unicode)
         message = body_json["rawData"]
-        data = analyzeSingleMail(message)
-        if data:
-            return JsonResponse(convertForJsonResponse({"rawData": data}))
-        # Return the created identity
+        stats = analyzeSingleMail(message)
 
-        return JsonResponse(convertForJsonResponse({"messag": "hello"}))
+        return JsonResponse(stats)

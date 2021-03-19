@@ -16,7 +16,6 @@ def analyze_mail_connections_for_leakage(mail):
 
 def analyze_single_mail_for_leakage(h_x_original_to, eresources):
     hashdict = Mail.generate_match_dict(h_x_original_to)
-    print(hashdict)
     for eresource in eresources:
         analyze_eresource(eresource, hashdict)
     return eresources
@@ -28,8 +27,7 @@ def analyze_eresource(eresource, hashdict):
             str(val) in eresource["url"]
             or str(val).casefold() in eresource["url"].replace("-", "").casefold()
         ):
-            print("leakage")
-            if eresource["mail_leakage"] is None or eresource["mail"] == "":
+            if "mail_leakage" not in eresource or eresource["mail_leakage"] is None:
                 eresource["mail_leakage"] = key
             else:
                 if key in eresource["mail_leakage"]:

@@ -15,7 +15,7 @@ from mailfetcher.crons.mailCrawler.analysis.viewMail import (
 from mailfetcher.crons.mailCrawler.analysis.clickLinks import (
     call_openwpm_click_links,
 )
-from mailfetcher.analyser_cron import (
+from mailfetcher.crons.mailCrawler.singleMail import (
     get_stats_of_mail,
 )
 from mailfetcher.crons.mailCrawler.init import init
@@ -97,10 +97,10 @@ def analyzeSingleMail(mail):
         to = message["To"]
     service_url = message["From"].split("@")[1].replace(">", "")
     print(service_url)
-    print(to)
     eresources = analyze_single_mail_for_leakage(to, eresources)
-    get_stats_of_mail(service_url, eresources)
-    return eresources
+    stats = get_stats_of_mail(service_url, eresources)
+    stats["cookies"] = analyze_cookies(eresources)
+    return stats
 
 
 def extract_static_eresources(body_html):
@@ -128,52 +128,45 @@ def extract_static_eresources(body_html):
         if "http" not in link["href"]:
             continue
         static_eresources.append(
-            {
-                "type": "a",
-                "is_end_of_chain": True,
-                "is_start_of_chain": True,
-                "url": link["href"],
-                "possible_unsub_link": False,
-                "param": str(link.attrs) + str(link.contents),
-            }
+            create_static_eresource(
+                "a", link["href"], str(link.attrs) + str(link.contents)
+            )
         )
 
     for img in soup.find_all("img"):
         static_eresources.append(
-            {
-                "type": img.name,
-                "url": img["src"],
-                "possible_unsub_link": False,
-                "param": str(img.attrs) + str(img.contents),
-                "is_end_of_chain": True,
-                "is_start_of_chain": True,
-            }
+            create_static_eresource(
+                img.name, img["src"], str(img.attrs) + str(img.contents)
+            )
         )
 
     for link in soup.find_all("link"):
         static_eresources.append(
-            {
-                "type": link.name,
-                "url": link["href"],
-                "possible_unsub_link": False,
-                "param": str(link.attrs) + str(link.contents),
-                "is_end_of_chain": True,
-                "is_start_of_chain": True,
-            }
+            create_static_eresource(
+                link.name, link["href"], str(link.attrs) + str(link.contents)
+            )
         )
 
     for script in soup.find_all("script"):
         static_eresources.append(
-            {
-                "type": script.name,
-                "url": script["src"],
-                "possible_unsub_link": False,
-                "param": str(script.attrs) + str(script.contents),
-                "is_end_of_chain": True,
-                "is_start_of_chain": True,
-            }
+            create_static_eresource(
+                script.name, script["src"], str(script.attrs) + str(script.contents)
+            )
         )
     return static_eresources
+
+
+def create_static_eresource(eresource_type, url, param):
+    return {
+        "type": eresource_type,
+        "url": url,
+        "possible_unsub_link": False,
+        "param": param,
+        "is_end_of_chain": True,
+        "is_start_of_chain": True,
+        "redirects_to_channel_id": None,
+        "channel_id": None,
+    }
 
 
 def calc_bodies(message):
@@ -226,6 +219,18 @@ def calc_bodies(message):
             # body_html = message.get_payload(decode=True).decode(charset)
     # print(body_html)
     return body_html
+
+
+def analyze_cookies(eresources):
+    sets_cookie = False
+    for eresource in eresources:
+        if "response_headers" in eresource:
+            sets_cookie = "Set-Cookie" in eresource["response_headers"]
+            if sets_cookie:
+                return sets_cookie
+        else:
+            sets_cookie = False
+    return sets_cookie
 
 
 def analyzeOnClick():
