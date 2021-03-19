@@ -156,14 +156,13 @@ def getAdjustedRating(service):
             identity__approved=True,
         ).distinct().order_by("-date_time")
         
-        if mails.count()>10:
-            past180Days = timedelta(days=180)
-            dateFilteredMails = mails.filter(date_time = timezone.now() - past180Days)
+        past180Days = timedelta(days=180)
+        dateFilteredMails = mails.filter(date_time = timezone.now() - past180Days)
 
-            if dateFilteredMails.count() < 10 :
-                mails = mails[:10]
-            else:
-                mails = dateFilteredMails
+        if dateFilteredMails.count() < 10 :
+            mails = mails[:10]
+        else:
+            mails = dateFilteredMails
                 
         identityMailRatings[identity] = {}
 
