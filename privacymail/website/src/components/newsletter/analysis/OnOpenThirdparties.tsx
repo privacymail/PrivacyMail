@@ -64,7 +64,7 @@ const OnOpenThirdpartiesBig = (props: OnOpenThirdpartiesProps) => {
 
             <div className="divider" />
 
-            <Methode reliability={props.reliability} />
+            {props.reliability && <Methode reliability={props.reliability} />}
         </>
     );
 };

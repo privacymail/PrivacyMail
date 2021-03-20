@@ -1,71 +1,38 @@
 from django.conf import settings
-from django.core.cache import cache
-from identity.models import ServiceThirdPartyEmbeds
+from ...models import Thirdparty
 import tldextract
 
 
 def get_stats_of_mail(service_url, eresources):
     stats = {}
-
+    stats["third_parties"] =  []
+    service_ext = tldextract.extract(service_url)
+    stats["home_url"] = service_ext.domain + "." + service_ext.suffix
+    stats["eresources"] = eresources
     eresources_on_view = [
         eresource for eresource in eresources if eresource["type"] == "con"
     ]
-    stats["eresources_on_view"] = len(eresources_on_view)
-    eresources_static = [
-        eresource for eresource in eresources_on_view if eresource["is_start_of_chain"]
-    ]
+    for domain,eresource in third_parties_in_single_mail(eresources_on_view).items():
+        third_party = {"name": domain, "url":domain}
+        thirdpartyObject = Thirdparty.objects.filter(name=domain)
+        if thirdpartyObject.count() > 0:
+            
+            third_party["sector"] = thirdpartyObject.sector
+            third_party["host"] = thirdpartyObject.host
+        else:
+            third_party["sector"] = "unknown"
+        if "mail_leakage" in eresource:
+            third_party["address_leak_view"]: True
+            third_party["receives_identifier"] = True
+        else:
+            third_party["address_leak_view"] = False
+            third_party["receives_identifier"] = False
+        stats["third_parties"].append(third_party)
 
-    (
-        _,
-        directly_embedded_parties,
-    ) = third_parties_in_single_mail(service_url, eresources_static)
-    stats["directly_embedded_eresources"] = len(eresources_static)
-    stats["directly_embedded_third_party"] = len(directly_embedded_parties)
-    stats["third_parties"] =  []
-    """
-    for thirdparty in directly_embedded_parties:
-        thirdpartyObject = ServiceThirdPartyEmbeds.objects.filter(thirdparty__name=thirdparty)
-        if thirdpartyObject:
-            stats["third_parties"].append(thirdpartyObject)
-    """
-    additionaly_loaded_eresource_set = [
-        eresource for eresource in eresources_on_view if eresource["is_end_of_chain"]
-    ]
-
-    (
-        additionaly_loaded__third_party_count,
-        additionaly_loaded_parties,
-    ) = third_parties_in_single_mail(service_url, additionaly_loaded_eresource_set)
-    stats["additionaly_loaded_parties"] = len(additionaly_loaded_parties)
-    stats[
-        "additionaly_loaded__third_party_count"
-    ] = additionaly_loaded__third_party_count
-    stats["additionaly_loaded_parties"] = additionaly_loaded_parties
-
-    leak_eresource_set = [
+    eresources_mail_leakage = [
         eresource for eresource in eresources if "mail_leakage" in eresource
     ]
-    leak_eresource_set_count = len(leak_eresource_set)
-
-    num_of_leaks_to_third_parties = 0
-    num_of_leaks_through_forwards = 0
-    chains = []
-    leaking_methods = []
-
-    for r in leak_eresource_set:
-        if is_third_party(service_url, r):
-            num_of_leaks_to_third_parties += 1
-        if not r["is_start_of_chain"]:
-            num_of_leaks_through_forwards += 1
-            chains.append(get_url_chain(r, eresources))
-            if r["mail_leakage"] not in leaking_methods:
-                leaking_methods.append(r["mail_leakage"])
-    stats["leak_eresource_set_count"] = leak_eresource_set_count
-    stats["num_of_leaks_to_third_parties"] = num_of_leaks_to_third_parties
-    stats["num_of_leaks_through_forwards"] = num_of_leaks_through_forwards
-    stats["leaking_methods"] = leaking_methods
-    stats["leak_eresource_set"] = leak_eresource_set
-    stats["chain"] = chains
+    stats["mailLeakage"] = len(eresources_mail_leakage) > 0
     return stats
 
 
@@ -105,30 +72,15 @@ def get_url_chain(eresource, eresources):
     return url_chain
 
 
-def third_parties_in_single_mail(mail_url, eresource_set):
-    third_party_embeds = 0  # total embeds
-    # What kind of third parties
+def third_parties_in_single_mail( eresource_set):
     third_parties = {}
-    # identities of mail
-    # all resources, that are pulled when viewing mail that don't contain the domain of the
-    # service in their url
-    service_ext = tldextract.extract(mail_url)
+
     for eresource in eresource_set:
         resource_ext = tldextract.extract(eresource["url"])
-        if service_ext.domain in resource_ext.domain or "privacymail.info" in (
-            resource_ext.domain + "." + resource_ext.suffix
-        ):
-            continue
         third_party_domain = resource_ext.domain + "." + resource_ext.suffix
-        third_party_embeds += 1
-        if third_party_domain in third_parties:
-            third_parties[third_party_domain] += 1
-        else:
-            third_parties[third_party_domain] = 1
-    third_parties_list = []
-    for third_party in third_parties.keys():
-        third_parties_list.append(third_party)
-    return third_party_embeds, third_parties_list
+        if third_party_domain not in third_parties:
+            third_parties[third_party_domain]= eresource
+    return  third_parties
 
 
 def is_third_party(service_url, eresource):

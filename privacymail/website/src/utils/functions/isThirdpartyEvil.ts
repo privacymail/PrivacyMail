@@ -6,7 +6,7 @@ import { IThirdParty } from "../../repository";
 export const isThirdpartyEvil = (thirdparty?: IThirdParty): boolean => {
     return (
         !!thirdparty &&
-        (thirdparty.sector === "tracker" || thirdparty.receives_identifier || thirdparty.address_leak_click)
+        (thirdparty.sector === "tracker" || thirdparty.receives_identifier || !!thirdparty.address_leak_click)
     );
 };
 
