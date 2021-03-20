@@ -77,22 +77,14 @@ def calculateRating(categories):
     return {"rating": rating, "penalty": penalty, "categories": categories}
 
 def mergeRating(accumulated, new_rating, weight):
-    accRating = 0
-    accPenalty = 0
     accCategories = {}
 
-    newRating = 0
-    newPenalty = 0
+    
+    newRating = new_rating.get("rating", 0)
+    newPenalty = new_rating.get("penalty", 0)
 
-    if "rating" in new_rating:
-        newRating = new_rating["rating"]
-    if "penalty" in new_rating:
-        newPenalty = new_rating["penalty"]
-
-    if "rating" in accumulated:
-        accRating = accumulated["rating"]
-    if "penalty" in accumulated:
-        accPenalty = accumulated["penalty"]
+    accRating = accumulated.get("rating", 0)
+    accPenalty = accumulated.get("penalty", 0)
 
     if "categories" in accumulated:
         for key, category in accumulated["categories"].items():
