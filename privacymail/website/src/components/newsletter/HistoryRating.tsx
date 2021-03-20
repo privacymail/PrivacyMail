@@ -14,26 +14,31 @@ const HistoryRating = (props: IHistoryRating) => {
                     <Trans>analysis_ratingHistory</Trans>
                 </h2>
                 <div className="ratings">
-                    {props.ratings?.map((rating, index) => {
-                        const date = new Date(rating.date ?? 0);
-                        const now = new Date();
-                        const datestring =
-                            date.getFullYear() === now.getFullYear()
-                                ? date.getDate() + "." + date.getMonth() + "."
-                                : date.getMonth() + "/" + date.getFullYear();
+                    {props.ratings
+                        ?.sort((a, b) => {
+                            return new Date(b.date ?? 0).getTime() - new Date(a.date ?? 0).getTime();
+                        })
+                        .slice(0, 10)
+                        .map((rating, index) => {
+                            const date = new Date(rating.date ?? 0);
+                            const now = new Date();
+                            const datestring =
+                                date.getFullYear() === now.getFullYear()
+                                    ? date.getDate() + "." + date.getMonth() + "."
+                                    : date.getMonth() + "/" + date.getFullYear();
 
-                        return (
-                            <div key={index} className="historicRating">
-                                <span
-                                    className="grade"
-                                    style={{ color: getRatingColor(((rating?.rating || 1) - 1) / 5) }}
-                                >
-                                    {convertRatingToMark(rating?.rating || -1)}
-                                </span>
-                                <span className="date">{datestring}</span>
-                            </div>
-                        );
-                    })}
+                            return (
+                                <div key={index} className="historicRating">
+                                    <span
+                                        className="grade"
+                                        style={{ color: getRatingColor(((rating?.rating || 1) - 1) / 5) }}
+                                    >
+                                        {convertRatingToMark(rating?.rating || -1)}
+                                    </span>
+                                    <span className="date">{datestring}</span>
+                                </div>
+                            );
+                        })}
                 </div>
             </div>
         </>
