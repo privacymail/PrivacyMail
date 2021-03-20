@@ -12,11 +12,13 @@ from django.conf import settings
 from datetime import datetime
 from django.db.models import Q
 from django import db
+from datetime import date
 import requests
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
 )
 
+from identity.rating.rating import getAdjustedRating
 logger = logging.getLogger(__name__)
 LONG_SEPERATOR = "##########################################################"
 
@@ -220,6 +222,10 @@ def create_service_cache(service, force=False):
     service_3p_conns = ServiceThirdPartyEmbeds.objects.filter(service=service)
     third_parties = service.thirdparties.all().distinct()
 
+    # Check if service has dead identities
+    # Look for the 5th newest mail an identity has received
+    
+
     if not force:
         mails = service.mails_not_cached()
 
@@ -265,6 +271,10 @@ def create_service_cache(service, force=False):
             embeds = service_3p_conns.filter(thirdparty=third_party)
             embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
             embeds_onclick = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONCLICK)
+
+            third_party_dict["last_seen"] = embeds.order_by("-mail__date_time").first().mail.date_time
+
+            #Now check for the relevant timeframe
             third_party_dict["embed_as"] = list(
                 embeds.values_list("embed_type", flat=True).distinct()
             )
@@ -278,6 +288,8 @@ def create_service_cache(service, force=False):
             third_party_dict["receives_identifier"] = embeds.filter(
                 receives_identifier=True
             ).exists()
+
+
             third_parties_dict[third_party] = third_party_dict
 
     site_params = {
@@ -295,6 +307,7 @@ def create_service_cache(service, force=False):
         "cache_dirty": False,
         "cache_timestamp": datetime.now().time(),
     }
+    site_params["rating"] = getAdjustedRating(service)
     service_information = {
         "personalised_links": personalised_links,
         "personalised_anchor_links": personalised_anchor_links,
@@ -317,6 +330,8 @@ def analyse_dirty_services():
         cpus = cpu_count() - 3
     else:
         cpus = 1
+
+    
     with Pool(cpus) as p:
         p.map(analyse_dirty_service, dirty_services)
 
@@ -325,6 +340,7 @@ def analyse_dirty_service(dirty_service):
     connections.close_all()
     dirty_service.set_has_approved_identity()
     print(dirty_service)
+    mark_idents_as_dead(dirty_service)
     analyze_differences_between_similar_mails(dirty_service)
     dirty_service.resultsdirty = False
     dirty_service.save()
@@ -583,3 +599,32 @@ def get_url_chain(eresource):
         except:
             end_of_chain_reached = True
     return url_chain
+
+def mark_idents_as_dead(service): 
+
+    idents = Identity.objects.filter(service=service)
+    last_5_mail_date = date.min;
+
+    for identity in idents: 
+        identity_mails = Mail.objects.filter(
+            identity=identity
+        ).distinct().order_by("-date_time")
+
+        if len(identity_mails) >= 5:
+            date_time = identity_mails[4].date_time.date()
+
+            if date_time > last_5_mail_date:
+                last_5_mail_date = date_time
+        
+    for identity in idents: 
+        identity_mails = Mail.objects.filter(
+            identity=identity
+        ).distinct().order_by("-date_time")
+
+        if len(identity_mails) > 0:
+            last_mail_date = identity_mails.first().date_time.date()
+
+            if last_mail_date < last_5_mail_date: 
+                identity.mark_as_dead()
+            else : 
+                identity.resurrect()

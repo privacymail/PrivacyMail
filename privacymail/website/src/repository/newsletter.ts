@@ -32,10 +32,18 @@ export interface INewsletter {
         spam: Reliability;
         personalisedLinks: Reliability;
     };
-    rating: IRating;
+    rating: {
+        newsletterRating: IRating;
+        history: IRating[];
+        completeHistory: {
+            worstIdenity: IRating[];
+            [key: string]: IRating[];
+        };
+    };
 }
 export interface IRating {
     rating: number;
+    date?: string;
     categories: {
         [category: string]: IRatingCategory;
     };

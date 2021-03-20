@@ -1,5 +1,9 @@
+from datetime import datetime, timedelta
+
+from mailfetcher.models import Mail
+
 def scaleToRating(value, rMax):
-    return (value * (rMax - 1)) + 1
+    return (value * (rMax- 1)) + 1
 
 
 def countToRating(count, minRating, maxRating):
@@ -33,7 +37,7 @@ def getWeightedRating(categories):
 
 def flattenCategories(categories, prefix=""):
     flatten = {}
-    for (category, value) in categories.items():
+    for category, value in categories.items():
 
         if "categories" in value:
             flatten = {**flatten, **flattenCategories(value["categories"], category)}
@@ -49,12 +53,12 @@ def flattenCategories(categories, prefix=""):
 def calculateRating(categories):
     flattend = flattenCategories(categories)
 
-    max = 1
+    maxRating= 1
     maxCategory = ""
 
     for (category, value) in flattend.items():
-        if max <= value["rating"]:
-            max = value["rating"]
+        if maxRating<= value["rating"]:
+            maxRating= value["rating"]
             maxCategory = category
 
     accumulatedWeights = 0
@@ -66,8 +70,80 @@ def calculateRating(categories):
 
     penalty = ((weightedRating / accumulatedWeights) - 1) / 5
 
-    rating = max + penalty
+    rating = maxRating+ penalty
     if rating > 6:
         rating = 6
 
     return {"rating": rating, "penalty": penalty, "categories": categories}
+
+def mergeRating(accumulated, new_rating, weight):
+    accCategories = {}
+
+    
+    newRating = new_rating.get("rating", 0)
+    newPenalty = new_rating.get("penalty", 0)
+
+    accRating = accumulated.get("rating", 0)
+    accPenalty = accumulated.get("penalty", 0)
+
+    if "categories" in accumulated:
+        for key, category in accumulated["categories"].items():
+            accCategories[key] = mergeRating( category, new_rating["categories"][key], weight)
+    elif "categories" in new_rating:
+        for key, category in new_rating["categories"].items():
+            accCategories[key] = mergeRating( {}, category, weight)
+
+    return {
+        "rating": accRating * (1 - weight) + newRating * weight,
+        "penalty": accPenalty * (1 - weight) + newPenalty * weight,
+        "categories": accCategories
+        }
+
+def calculateAccumulativeRating(ratings):
+
+    identsRating = {}
+    identsMailRatingHistory = {}
+    worstIdent= None
+    worstIdentRating = 0
+
+    for identity in ratings:
+        wheigt = 1
+        accRating = {}
+
+        identsMailRatingHistory[identity] = []
+
+        for mail, rating in ratings[identity].items():
+            accRating = mergeRating(accRating, rating, 1 / wheigt)
+
+            rating["date"] = mail.date_time
+            identsMailRatingHistory[identity].append(rating)
+            identsRating[identity] = accRating
+
+            if wheigt < 5:
+                wheigt = wheigt + 1
+            else:
+                wheigt = wheigt + 2
+
+        if "rating" in accRating and  accRating["rating"] > worstIdentRating:
+            worstIdentRating = identsRating[identity]["rating"]
+            worstIdent = identity   
+
+    completeHistory = {}
+    i = 0
+    for identity, rating in identsMailRatingHistory.items():
+        if identity == worstIdent:
+            completeHistory["worstIdent"] = rating
+        else : 
+            completeHistory["identity"+str(i)] = rating
+            i = i +1
+
+    if worstIdent is not None:
+        return {
+            "newsletterRating" : identsRating[worstIdent],
+            "history": identsMailRatingHistory[worstIdent],
+            "completeHistory" : completeHistory
+        }
+    else: 
+        return {
+            "rating" : "NA"
+        }

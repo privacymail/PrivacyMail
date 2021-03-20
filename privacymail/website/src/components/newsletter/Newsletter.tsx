@@ -4,6 +4,7 @@ import { getNewsletter, INewsletter } from "../../repository";
 import FaqHint from "./FaqHint";
 import PrivacyRating from "./PrivacyRating";
 import GerneralInfo from "./GeneralInfo";
+import HistoryRating from "./HistoryRating";
 import Analysis from "./analysis/Analysis";
 import IdentityAlert from "./IdentityAlert";
 import NoEmailAlert from "./NoEmailAlert";
@@ -14,7 +15,7 @@ interface NewsletterProps extends RouteComponentProps {}
  * Defines the Layout of the newsletteranalysis
  */
 const Newsletter = (props: NewsletterProps) => {
-    let { id } = useParams();
+    let { id } = useParams<any>();
     const [newsletter, setNewsletter] = useState<INewsletter>();
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -38,7 +39,12 @@ const Newsletter = (props: NewsletterProps) => {
                 newsletter?.num_different_idents !== 0 ? (
                     <>
                         <FaqHint />
-                        <PrivacyRating privacyRating={newsletter?.rating} newsletter={newsletter?.service.name || ""} />
+                        <PrivacyRating
+                            privacyRating={newsletter?.rating.newsletterRating}
+                            newsletter={newsletter?.service.name || ""}
+                        />
+                        <HistoryRating ratings={newsletter?.rating.history} />
+
                         {newsletter && newsletter?.num_different_idents < 2 && (
                             <IdentityAlert newsletterName={newsletter?.service.name} />
                         )}

@@ -19,6 +19,7 @@ class Identity(models.Model):
     approved = models.BooleanField(default=False)
     lastapprovalremindersend = models.TimeField(default=None, null=True)
     receives_third_party_spam = models.BooleanField(default=False)
+    is_dead = models.BooleanField(default=True)
 
     @classmethod
     def create(cls, service, domain):
@@ -48,6 +49,17 @@ class Identity(models.Model):
 
         i.save()
         return i
+
+    def mark_as_dead (self):
+        if not self.is_dead:
+            self.is_dead = True
+            self.save()
+
+    def resurrect (self):
+
+        if self.is_dead:
+            self.is_dead = False
+            self.save()
 
     def toJSON(self):
         return {
