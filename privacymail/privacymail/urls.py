@@ -16,10 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.urls import path, re_path, include
-from mailfetcher.views import confirmview, wordlistmanager
+from mailfetcher.views import confirmview, wordlistmanager, mailview
 
 urlpatterns = [
     path('admin/confirm', confirmview),
+    path('admin/mail/<mail>', mailview),
     path('admin/wordlist', wordlistmanager),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),

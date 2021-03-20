@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 
 import os
 import sys
-import raven
 from raven.transport.requests import RequestsHTTPTransport
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
@@ -95,13 +94,6 @@ WSGI_APPLICATION = 'privacymail.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -175,7 +167,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static') 
+STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static')
 
 STATICFILES_DIRS = []
 
