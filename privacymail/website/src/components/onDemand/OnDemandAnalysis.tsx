@@ -13,26 +13,33 @@ interface OnDemandAnalysisProps {
 
 const OnDemandAnalysis = (props: OnDemandAnalysisProps) => {
     return (
-        <Spinner isSpinning={!props.emailAnalysis}>
-            <div className="analysis">
-                <CollapsibleItem>
-                    <EresourcesSmall {...props} />
-                    <EresourcesBig {...props} />
-                </CollapsibleItem>
-                <CollapsibleItem>
-                    <LeakageSmall {...props} />
-                    <LeakageBig {...props} />
-                </CollapsibleItem>
-                <Cookies {...props} />
-                <button
-                    onClick={() => {
-                        props.returnToInput();
-                    }}
-                >
-                    Return
-                </button>
-            </div>
-        </Spinner>
+        <>
+            {!props.emailAnalysis && (
+                <div className="alert warning">
+                    <Trans>onDemand_warning</Trans>
+                </div>
+            )}
+            <Spinner isSpinning={!props.emailAnalysis}>
+                <div className="analysis">
+                    <CollapsibleItem>
+                        <EresourcesSmall {...props} />
+                        <EresourcesBig {...props} />
+                    </CollapsibleItem>
+                    <CollapsibleItem>
+                        <LeakageSmall {...props} />
+                        <LeakageBig {...props} />
+                    </CollapsibleItem>
+                    <Cookies {...props} />
+                    <button
+                        onClick={() => {
+                            props.returnToInput();
+                        }}
+                    >
+                        Return
+                    </button>
+                </div>
+            </Spinner>
+        </>
     );
 };
 

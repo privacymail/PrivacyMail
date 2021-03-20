@@ -1,5 +1,4 @@
 import { execute } from "./execute";
-import { IThirdParty } from "./newsletter";
 
 export interface IEmailAnalysis {
     eresources_on_view: number;

@@ -16,7 +16,7 @@ const Identity = () => {
     const [identity, setIdentity] = useState<IIdentity>();
     const [current, setCurrent] = useState<number>(0);
 
-    const { id } = useParams();
+    const { id } = useParams<any>();
 
     //resets the scroll, if the urlparams changes
     useEffect(() => window.scrollTo(0, 0), [id]);

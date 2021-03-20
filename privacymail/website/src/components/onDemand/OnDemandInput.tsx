@@ -1,4 +1,6 @@
 import React from "react";
+import { Trans, useTranslation } from "react-i18next";
+import Instructions from "./instructions/Instructions";
 
 interface OnDemandInputProps {
     rawEmail: string;
@@ -7,24 +9,32 @@ interface OnDemandInputProps {
 }
 
 const OnDemandInput = (props: OnDemandInputProps) => {
+    const { t } = useTranslation();
     return (
-        <div>
-            <textarea
-                id="text"
-                value={props.rawEmail}
-                placeholder="Hier Raw-Email eingeben"
-                onChange={e => props.setRawEmail(e.target.value)}
-                rows={20}
-            />
-
-            <button
-                onClick={e => {
-                    props.runAnalysis();
-                }}
-            >
-                Send
-            </button>
-        </div>
+        <>
+            <Instructions />
+            <div className="emailInput">
+                <h2>
+                    <Trans>E-Mail Eingabe</Trans>
+                </h2>
+                <textarea
+                    id="text"
+                    value={props.rawEmail}
+                    placeholder={t("onDemand_inputPlaceholder")}
+                    onChange={e => props.setRawEmail(e.target.value)}
+                    rows={20}
+                />
+                <div>
+                    <button
+                        onClick={e => {
+                            props.runAnalysis();
+                        }}
+                    >
+                        <Trans>home_analyise</Trans>
+                    </button>
+                </div>
+            </div>
+        </>
     );
 };
 
