@@ -41,7 +41,7 @@ html {
             text-decoration: none;
             color: inherit;
         }
-        input {
+        input[type="text"] {
             @extend .light;
             width: 100%;
             height: 2rem;

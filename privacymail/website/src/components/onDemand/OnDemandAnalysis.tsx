@@ -13,23 +13,30 @@ interface OnDemandAnalysisProps {
 
 const OnDemandAnalysis = (props: OnDemandAnalysisProps) => {
     return (
-        <Spinner isSpinning={!props.emailAnalysis}>
-            <div className="analysis">
-                <OnOpenThirdparties
-                    thirdparties={props.emailAnalysis?.third_parties}
-                    homeUrl={props.emailAnalysis?.homeUrl}
-                />
-                <PersonalisedLinks mailLeakage={props.emailAnalysis?.mailLeakage} />
-                <Cookies {...props} />
-                <button
-                    onClick={() => {
-                        props.returnToInput();
-                    }}
-                >
-                    Return
-                </button>
-            </div>
-        </Spinner>
+        <>
+            {!props.emailAnalysis && (
+                <div className="alert warning">
+                    <Trans>onDemand_warning</Trans>
+                </div>
+            )}
+            <Spinner isSpinning={!props.emailAnalysis}>
+                <div className="analysis">
+                    <OnOpenThirdparties
+                        thirdparties={props.emailAnalysis?.third_parties}
+                        homeUrl={props.emailAnalysis?.homeUrl}
+                    />
+                    <PersonalisedLinks mailLeakage={props.emailAnalysis?.mailLeakage} />
+                    <Cookies {...props} />
+                    <button
+                        onClick={() => {
+                            props.returnToInput();
+                        }}
+                    >
+                        Return
+                    </button>
+                </div>
+            </Spinner>
+        </>
     );
 };
 

@@ -22,13 +22,9 @@ const OnDemand = () => {
     };
     return (
         <div>
-            <div className="newsletter">
-                <div className="privacyRating">
-                    <h1>
-                        <Trans>onDemand_headline</Trans>
-                    </h1>
-                </div>
-            </div>
+            <h1>
+                <Trans>onDemand_headline</Trans>
+            </h1>
 
             {viewAnalysis ? (
                 <OnDemandAnalysis emailAnalysis={emailAnalysis} returnToInput={returnToInput} />

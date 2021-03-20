@@ -7,6 +7,7 @@ interface CollapsibleItemProps {
     small?: JSX.Element; //this gets displayed when the CollapsibleItem is collapsed
     big?: JSX.Element | JSX.Element[]; //this gets displayed when the CollapsibleItem is expanded
     children?: JSX.Element[]; //Alternative way to privide small and big. Small should always be the first element in the list.
+    className?: string;
 }
 /**
  * This wraps the Collapsible Class from "react-collapsible" and handles its state.
@@ -15,7 +16,7 @@ interface CollapsibleItemProps {
 const CollapsibleItem = (props: CollapsibleItemProps) => {
     const [isExpanded, setIsExpanded] = useState(props.defaultOpen || false);
     return (
-        <div className="collapsibleItem">
+        <div className={(props.className ?? "") + " collapsibleItem"}>
             <Collapsible
                 onOpening={() => setIsExpanded(true)}
                 onClosing={() => setIsExpanded(false)}
