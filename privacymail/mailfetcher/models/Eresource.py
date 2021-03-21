@@ -1,42 +1,6 @@
-from __future__ import absolute_import
-
-import base64
-import datetime
-import email
-import hashlib
 import logging
-import os
-import re
-import sqlite3 as lite
-import statistics
-import string
-import sys
-import tempfile
-import urllib
-from datetime import datetime as dt
-from email.header import decode_header, make_header
-from email.utils import parsedate_to_datetime
-from random import choice, randint
-
-import html2text
-import tldextract
-from bs4 import BeautifulSoup
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django.core.mail import mail_admins
-from django.db import connection, models
-from django.db.models import Q
-from django.db.utils import InterfaceError
-from django.template.loader import render_to_string
-from django.utils.functional import cached_property
-from django_countries.fields import CountryField
-from identity.models import Identity, Service, ServiceThirdPartyEmbeds
-from identity.util import convertForJsonResponse
-from Levenshtein import ratio
-
-from model_utils import Choices
-from OpenWPM.openwpm import CommandSequence, TaskManager
-from six.moves import range
+from django.db import models
 
 logger = logging.getLogger(__name__)
 

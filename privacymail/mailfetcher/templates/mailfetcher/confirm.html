@@ -1,0 +1,51 @@
+{% load static %}
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Confirm Identities - Privacymail</title>
+	<meta charset="utf-8" />
+	{% bootstrap_css %}
+</head>
+<body class="container">
+	<h1 class="m-2 text-center">Unregistered Identities:</h1>
+	{% for identity in identities %}
+	{% if identity.message.count > 0 %}
+	<div class="mb-2 card card-light">
+		<form action="" method="post">{% csrf_token %}
+			<input type="hidden" name="action" value="markRegistered" />
+			<input type="hidden" name="identity" value="{{ identity.id }}" />
+
+			<div class="card-header d-flex flex-wrap flex-row">
+				<h3 class="flex-grow-1">{{ identity.service.name }}</h3>
+				<button type="submit" class="btn btn-success">Mark identity registered</button>
+			</div>
+		</form>
+		<div class="card-body">
+			<strong>From:</strong> {{ identity.message.first.h_from }}<br>
+			<strong>To:</strong> {{ identity.message.first.h_to }}<br>
+			<strong>X-Original-To:</strong> {{ identity.message.first.h_x_original_to }}<br>
+			<strong>CC:</strong> {{ identity.message.first.h_cc }}<br>
+			<strong>BCC:</strong> {{ identity.message.first.h_bcc }}<br>
+			<strong>Subject:</strong> {{ identity.message.first.h_subject }}<br>
+			<strong>Date:</strong> {{ identity.message.first.h_date }}<br>
+			<strong>Message:</strong>
+			<button
+				type="button"
+				class="btn btn-secondary btn-sm"
+				data-toggle="collapse"
+				data-target="#mail{{ identity.message.first.id }}"
+				aria-expanded="false"
+				aria-controls="mail{{ identity.message.first.id }}">
+				show
+			</button>
+			<div class="collapse" id="mail{{ identity.message.first.id }}">
+				{{ identity.message.first.get_cleartext|linebreaks }}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+	{% endfor %}
+{% bootstrap_javascript jquery='full' %}
+</body>
+</html>

@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
-import raven
+import sys
 from raven.transport.requests import RequestsHTTPTransport
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
@@ -47,16 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'django_countries',
     'django_cron',
-    'widget_tweaks',
     'mailfetcher',
     'util',
     'identity',
     'api',
-    'bootstrap_themes',
     'raven.contrib.django.raven_compat',
     'django_extensions',
     'django_filters',
-    'django_tables2',
     'bootstrap4',
     'whitenoise.runserver_nostatic'
 ]
@@ -78,7 +75,7 @@ ROOT_URLCONF = 'privacymail.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(REACT_APP_DIR ,'build')],
+        'DIRS': [os.path.join(REACT_APP_DIR, 'build')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -97,13 +94,6 @@ WSGI_APPLICATION = 'privacymail.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#    }
-#}
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -113,8 +103,15 @@ DATABASES = {
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT'),
         'CONN_MAX_AGE': None,
+        'TEST': {
+            'NAME': 'TEST',
+        }
     }
 }
+
+if 'test' in sys.argv:
+    DATABASES['default']['PORT'] = 5431
+
 
 # Caching
 CACHES = {
@@ -170,7 +167,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static') 
+STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static')
 
 STATICFILES_DIRS = []
 

@@ -5,16 +5,13 @@ import datetime
 import email
 import hashlib
 import logging
-import os
 import re
-import sqlite3 as lite
 import statistics
 import string
 import sys
 import urllib
 from .Thirdparty import Thirdparty
 from .Eresource import Eresource
-from datetime import datetime as dt
 from email.header import decode_header, make_header
 from email.utils import parsedate_to_datetime
 from random import choice, randint
@@ -30,14 +27,9 @@ from django.db.models import Q
 from django.db.utils import InterfaceError
 from django.template.loader import render_to_string
 from django.utils.functional import cached_property
-from django_countries.fields import CountryField
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
-from identity.util import convertForJsonResponse
 from Levenshtein import ratio
 from model_utils import Choices
-from OpenWPM.openwpm import CommandSequence, TaskManager
-from six.moves import range
-
 
 # from mailfetcher.models import Thirdparty, Eresource
 
@@ -70,41 +62,47 @@ class Mail(models.Model):
     h_user_agent = models.CharField(max_length=200, null=True, blank=True)
     identity = models.ManyToManyField(Identity, related_name="message")
     suspected_spam = models.BooleanField(default=False)
-    mail_from_another_identity = models.ManyToManyField("self", symmetrical=True)
+    mail_from_another_identity = models.ManyToManyField("self",
+                                                        symmetrical=True)
     possible_AB_testing = models.BooleanField(default=False)
     similarity_processed = models.BooleanField(default=False)
     cached = models.BooleanField(default=False)
-    processing_state = models.CharField(
-        choices=PROCESSING_STATES, default=PROCESSING_STATES.UNPROCESSED, max_length=20
-    )
+    processing_state = models.CharField(choices=PROCESSING_STATES,
+                                        default=PROCESSING_STATES.UNPROCESSED,
+                                        max_length=20)
     processing_fails = models.IntegerField(default=0)
     contains_javascript = models.BooleanField(default=False)
 
-    # The message will be saved here. It is not saved in the database and may be recalculated
+    # The message will be saved here. It is not saved in the database and may
+    # be recalculated
     # Access by get_message
 
     message = None
 
     def __str__(self):
-        return "({})|{} from {}".format(self.message_id, self.h_subject, self.h_from)
+        return f"({self.message_id})|{self.h_subject} from {self.h_from}"
 
-    # Creates the mail in the database and does some analysis. It still has to be run through OpenWPM!
+    # Creates the mail in the database and does some analysis.
+    # It still has to be run through OpenWPM!
     @classmethod
     def create(cls, raw_mail):
         message = raw_mail
-        # print("raw={}".format(str(message)))
 
-        message_raw = message.as_bytes().decode(encoding="UTF-8", errors="replace")
+        message_raw = message.as_bytes().decode(encoding="UTF-8",
+                                                errors="replace")
         message_id = message["Message-ID"]
         if message_id is None:
             message_id = "".join(
-                choice(string.ascii_uppercase + string.digits) for _ in range(32)
-            )
+                choice(string.ascii_uppercase + string.digits)
+                for _ in range(32))
         print(
             "Message ID:",
             message_id,
             " Subject:",
-            str(make_header(decode_header(cls._clear_none_values(message["subject"])))),
+            str(
+                make_header(
+                    decode_header(cls._clear_none_values(
+                        message["subject"])))),
         )
         try:
             mail = Mail.objects.get(raw=message_raw)
@@ -114,14 +112,10 @@ class Mail(models.Model):
             mail = cls(raw=message_raw, message_id=message_id)
             mail.save()
         except InterfaceError:
-            print(
-                "###################################################################################"
-            )
+            print(40 * "#")
             print("Database Interface Error!\n")
 
             # reset the database connection
-            from django.db import connection
-
             connection.connection.close()
             connection.connection = None
             sys.exit("Lost connection to database!")
@@ -131,11 +125,9 @@ class Mail(models.Model):
         mail.calc_bodies()
         mail.calc_header()
         mail.extract_static_links()
-        # mail.extract_diff()
         mail.check_for_approved_identity()
         mail.check_for_unusual_sender()
         mail.parse_h_date_create_datetime()
-        # mail.get_non_unsubscribe_link()
         return mail
 
     def reset_for_recrawl(self, link_only=False):
@@ -172,7 +164,6 @@ class Mail(models.Model):
 
     def calc_bodies(self):
         message = self.get_message()
-        # print("Mail to: " + message['To'])
         body_plain = None
         body_html = None
         if message.is_multipart():
@@ -180,20 +171,21 @@ class Mail(models.Model):
                 ctype = part.get_content_type()
                 cdispo = str(part.get("Content-Disposition"))
                 charset = part.get_param("CHARSET")
-                # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
                 if charset is None:
                     charset = "utf-8"
                 # skip any text/plain (txt) attachments
                 if ctype == "text/plain" and "attachment" not in cdispo:
                     try:
-                        body_plain = part.get_payload(decode=True).decode(charset)
+                        body_plain = part.get_payload(
+                            decode=True).decode(charset)
                     except UnicodeDecodeError:
                         body_plain = part.get_payload()
 
                     # body_plain = part.get_payload(decode=True).decode(charset)  # decode
                 if ctype == "text/html" and "attachment" not in cdispo:
                     try:
-                        body_html = part.get_payload(decode=True).decode(charset)
+                        body_html = part.get_payload(
+                            decode=True).decode(charset)
                     except UnicodeDecodeError:
                         body_html = part.get_payload()
                     # body_html = part.get_payload(decode=True).decode(charset)  # decode
@@ -202,24 +194,22 @@ class Mail(models.Model):
             ctype = message.get_content_type()
             cdispo = str(message.get("Content-Disposition"))
             charset = message.get_param("CHARSET")
-            # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
             if charset is None:
                 charset = "utf-8"
             if ctype == "text/plain" and "attachment" not in cdispo:
 
                 try:
-                    body_plain = message.get_payload(decode=True).decode(charset)
+                    body_plain = message.get_payload(
+                        decode=True).decode(charset)
                 except UnicodeDecodeError:
                     body_plain = message.get_payload()
-                # body_plain = message.get_payload(decode=True).decode(charset)
             if ctype == "text/html" and "attachment" not in cdispo:
 
                 try:
-                    body_html = message.get_payload(decode=True).decode(charset)
+                    body_html = message.get_payload(
+                        decode=True).decode(charset)
                 except UnicodeDecodeError:
                     body_html = message.get_payload()
-
-                # body_html = message.get_payload(decode=True).decode(charset)
 
         self.body_html = body_html
         self.body_plain = body_plain
@@ -236,6 +226,11 @@ class Mail(models.Model):
             self.save()
 
     def calc_header(self):
+        '''
+        Calculate info from mail headers and add it to model.
+
+        This includes connecting identities.
+        '''
         message = self.get_message()
         self.h_x_original_to = message["X-Original-To"]
         self.h_from = message["From"]
@@ -243,8 +238,7 @@ class Mail(models.Model):
         self.h_cc = message["Cc"]
         self.h_bcc = message["BCC"]
         self.h_subject = make_header(
-            decode_header(self._clear_none_values(message["Subject"]))
-        )
+            decode_header(self._clear_none_values(message["Subject"])))
         self.h_date = message["Date"]
         self.h_user_agent = message["User-Agent"]
         # date_obj = parsedate_to_datetime(self.h_date)
@@ -253,8 +247,7 @@ class Mail(models.Model):
         identity_set = Identity.objects.filter(
             Q(mail__in=self.addresses_from_field(self.h_x_original_to))
             | Q(mail__in=self.addresses_from_field(self.h_to))
-            | Q(mail__in=self.addresses_from_field(self.h_cc))
-        )
+            | Q(mail__in=self.addresses_from_field(self.h_cc)))
 
         for ident in identity_set:
             self.identity.add(ident)
@@ -263,10 +256,14 @@ class Mail(models.Model):
         self.save()
 
     def create_service_third_party_connections(self):
-        # Connects a service to a third party if this connection has been observed
+        """
+        Connects a service to a third party if this connection
+        has been observed
+        """
         identity = self.identity
         if identity.count() < 1:
-            logger.error("Mail has no associated identity", extra={"mailID": self.pk})
+            logger.error("Mail has no associated identity",
+                         extra={"mailID": self.pk})
             return
         service = identity.get().service
         for eresource in self.eresource_set.all():
@@ -287,7 +284,8 @@ class Mail(models.Model):
                     "con": ServiceThirdPartyEmbeds.ONVIEW,
                     "con_click": ServiceThirdPartyEmbeds.ONCLICK,
                 }
-                return switcher.get(argument, ServiceThirdPartyEmbeds.UNDETERMINED)
+                return switcher.get(argument,
+                                    ServiceThirdPartyEmbeds.UNDETERMINED)
 
             embed_type = embed_switcher(eresource.type)
             ServiceThirdPartyEmbeds.objects.get_or_create(
@@ -322,9 +320,9 @@ class Mail(models.Model):
     # Try to get a link for openWPM to click, which isn't an unsubscribe link.
     # In most cases it should be enough to only click one link, because if tracking occurs, every link should track.
     def get_non_unsubscribe_link(self):
-        type_a_urls = Eresource.objects.filter(
-            type="a", mail_id=self.id, possible_unsub_link=False
-        )
+        type_a_urls = Eresource.objects.filter(type="a",
+                                               mail_id=self.id,
+                                               possible_unsub_link=False)
         if type_a_urls.count() < 1:
             print(
                 "############################### Did not find possible unsubscribe link!"
@@ -375,8 +373,7 @@ class Mail(models.Model):
         if num_detected_unsub_links < 1:
             message = self.get_message()
             mail_subject = make_header(
-                decode_header(self._clear_none_values(message["Subject"]))
-            )
+                decode_header(self._clear_none_values(message["Subject"])))
             logger.debug(
                 "No unsubscribe link was found.",
                 extra={
@@ -416,14 +413,11 @@ class Mail(models.Model):
         # get all mails of the same service
         samemails = Mail.objects.filter(
             identity__service__in=Service.objects.filter(
-                identity__in=self.identity.all()
-            )
-        )
+                identity__in=self.identity.all()))
 
         # filter the list to a list of mails with same subject, but exclude the originalto header
         samemails = samemails.filter(h_subject=self.h_subject).exclude(
-            h_x_original_to=self.h_x_original_to
-        )
+            h_x_original_to=self.h_x_original_to)
         # iterate through all mails from different identities to check if eresources differ
         for email in samemails:
             # link same emails together
@@ -448,16 +442,11 @@ class Mail(models.Model):
                     if not str(url.values()) == str(actual[idx].values()):
                         # print(url.values())
                         # print(actual[idx].values())
-                        matchobject = (
-                            Eresource.objects.filter(mail=email)
-                            .filter(url__in=actual[idx].values())[:1]
-                            .get()
-                        )
-                        owneresource = (
-                            Eresource.objects.filter(mail=self)
-                            .filter(url__in=url.values())[:1]
-                            .get()
-                        )
+                        matchobject = (Eresource.objects.filter(
+                            mail=email).filter(
+                                url__in=actual[idx].values())[:1].get())
+                        owneresource = (Eresource.objects.filter(
+                            mail=self).filter(url__in=url.values())[:1].get())
 
                         # link eresource together
                         matchobject.diff_eresource = owneresource
@@ -470,12 +459,10 @@ class Mail(models.Model):
                         # make sure the dicts are only generated once
                         if not hashdictowner:
                             hashdictowner = self.generate_match_dict(
-                                owneresource.mail.h_x_original_to
-                            )
+                                owneresource.mail.h_x_original_to)
                         if not hashdictmatch:
                             hashdictmatch = self.generate_match_dict(
-                                matchobject.mail.h_x_original_to
-                            )
+                                matchobject.mail.h_x_original_to)
 
                         Mail.analyze_eresource(owneresource, hashdictowner)
                         Mail.analyze_eresource(matchobject, hashdictmatch)
@@ -488,18 +475,15 @@ class Mail(models.Model):
     def get_similar_mails_of_different_identities(self):
         mail_date = self.date_time
         earliest_date = mail_date - datetime.timedelta(
-            minutes=11 * 60 + 30
-        )  # 11 hours and 30 minutes
+            minutes=11 * 60 + 30)  # 11 hours and 30 minutes
         last_date = mail_date + datetime.timedelta(minutes=11 * 60 + 30)
         mails_in_timeframe = Mail.objects.filter(
-            date_time__range=(earliest_date, last_date)
-        )
+            date_time__range=(earliest_date, last_date))
 
         service_mail_set = mails_in_timeframe.filter(
             identity__service__in=Service.objects.filter(
-                identity__in=self.identity.all()
-            )
-        ).exclude(h_x_original_to=self.h_x_original_to)
+                identity__in=self.identity.all())).exclude(
+                    h_x_original_to=self.h_x_original_to)
         similar_mails = []
         for mail in service_mail_set:
             if ratio(self.h_subject, mail.h_subject) > 0.9:
@@ -521,16 +505,12 @@ class Mail(models.Model):
         :param print_links: prints the links with X for the chars that are different.
         :return: list with links, num_different_links, total_num_links, min_difference, max_difference, mean, median
         """
-        mail1_eresources = (
-            Eresource.objects.filter(mail=self, personalised=False)
-            .exclude(type="con")
-            .exclude(type="con_click")
-        )
-        mail2_eresources = (
-            Eresource.objects.filter(mail=mail, personalised=False)
-            .exclude(type="con")
-            .exclude(type="con_click")
-        )
+        mail1_eresources = (Eresource.objects.filter(
+            mail=self,
+            personalised=False).exclude(type="con").exclude(type="con_click"))
+        mail2_eresources = (Eresource.objects.filter(
+            mail=mail,
+            personalised=False).exclude(type="con").exclude(type="con_click"))
         num_different_links = 0
         min_difference = 5000
         max_difference = 0
@@ -546,7 +526,10 @@ class Mail(models.Model):
             # print('Id of second mail: {}. Subject:{}'.format(mail.id, mail.h_subject))
             logger.warning(
                 "Different number of links in the compared 2 mails.",
-                extra={"ID first mail": self.id, "ID second mail": mail.id},
+                extra={
+                    "ID first mail": self.id,
+                    "ID second mail": mail.id
+                },
             )
             return [], -1, -1, -1, -1, -1, -1
         for counter, link in enumerate(own_mail_link_set):
@@ -577,7 +560,7 @@ class Mail(models.Model):
             num_different_links += 1
             list_differences.append(len(index))
             for i in index:
-                link = link[:i] + "X" + link[i + 1 :]
+                link = link[:i] + "X" + link[i + 1:]
             # print('Next Mail')
             links.append(link)
         if print_links:
@@ -611,7 +594,6 @@ class Mail(models.Model):
 
     def compare_text_of_mails(self, mail):
         """ Compare the html body of two mails via string similarity """
-
         def get_new_html_handler():
             html_handler = html2text.HTML2Text()
             # Ignore converting links from HTML
@@ -682,10 +664,18 @@ class Mail(models.Model):
             # The mail includes no html, but just plain text info
             return []
         soup = BeautifulSoup(self.body_html, "html.parser")
-        script_elements = [element["src"] for element in soup.select("script[src]")]
-        anchor_elements = [element["href"] for element in soup.select("a[href]")]
-        link_elements = [element["href"] for element in soup.select("link[href]")]
-        image_elements = [element["src"] for element in soup.select("img[src]")]
+        script_elements = [
+            element["src"] for element in soup.select("script[src]")
+        ]
+        anchor_elements = [
+            element["href"] for element in soup.select("a[href]")
+        ]
+        link_elements = [
+            element["href"] for element in soup.select("link[href]")
+        ]
+        image_elements = [
+            element["src"] for element in soup.select("img[src]")
+        ]
 
         links = script_elements + anchor_elements + link_elements + image_elements
         cleaned_links = []
@@ -704,10 +694,8 @@ class Mail(models.Model):
         # case insensitive
         for key, val in hdict.items():
 
-            if (
-                str(val) in eresource.url
-                or str(val).casefold() in eresource.url.replace("-", "").casefold()
-            ):
+            if (str(val) in eresource.url or str(val).casefold()
+                    in eresource.url.replace("-", "").casefold()):
                 if eresource.mail_leakage is None or eresource.mail == "":
                     eresource.mail_leakage = key
                 else:
@@ -734,18 +722,15 @@ class Mail(models.Model):
                     tempdict.update({"up(" + key + ")": value.upper()})
                 if only_up:
                     continue
-                if (
-                    not key.startswith("plain")
-                    and not key.startswith("low")
-                    and not key.startswith("domain")
-                ):
+                if (not key.startswith("plain") and not key.startswith("low")
+                        and not key.startswith("domain")):
                     tempdict.update({"low(" + key + ")": value.lower()})
             return tempdict
 
         def create_algo_dict(old_dict):
             algorithms = ["md5", "md4", "sha1", "sha256", "sha512", "sha384"]
-            # Add upper and lower versions to be hashed, but don't add those to the enc dict. Comparison takes place on
-            # casefold URL
+            # Add upper and lower versions to be hashed, but don't add those to the enc dict.
+            # Comparison takes place on casefold URL
             temp_dict = create_upper_lower(old_dict, True)
             temp_dict.update(old_dict)
             new_dict = {}
@@ -764,15 +749,11 @@ class Mail(models.Model):
         encdict = {}
 
         for key, val in hashdict.items():
-            encdict.update(
-                {
-                    "base64("
-                    + key
-                    + ")": base64.b64encode(val.encode("utf8")).decode(
-                        "utf-8", "replace"
-                    )
-                }
-            )
+            encdict.update({
+                "base64(" + key + ")":
+                base64.b64encode(val.encode("utf8")).decode(
+                    "utf-8", "replace")
+            })
 
         encdict.update({"urlencode(plain)": urllib.parse.quote(mailaddr)})
 
@@ -782,24 +763,35 @@ class Mail(models.Model):
         return hashdict
 
     def check_for_approved_identity(self):
+        """
+        check if mail has approved identities
+
+        try to auto approve them if not
+        """
         for ident in self.identity.all():
-            now = dt.now()
-            delta = datetime.timedelta(hours=settings.REMINDER_MAIL_THRESHOLD_IN_HOURS)
-            # todo check this (approved identity)
-            # print(not ident.approved and (ident.lastapprovalremindersend is None or ident.lastapprovalremindersend > (now + delta).time()))
-            if not ident.approved and (
-                ident.lastapprovalremindersend is None
-                or ident.lastapprovalremindersend > (now + delta).time()
-            ):
-                message = render_to_string(
-                    "identity_approval_mail.txt",
-                    {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
-                )
-                subject = "A new identity needs approval"
-                if not settings.DISABLE_ADMIN_MAILS:
-                    mail_admins(subject, message)
-                ident.lastapprovalremindersend = now
-                ident.save()
+            if not ident.approved:
+                if ident.try_auto_approve(self):
+                    continue
+
+                now = datetime.datetime.now()
+                delta = datetime.timedelta(
+                    hours=settings.REMINDER_MAIL_THRESHOLD_IN_HOURS)
+
+                if ident.lastapprovalremindersend is None or ident.lastapprovalremindersend > (now + delta).time():
+                    message = render_to_string(
+                        "identity_approval_mail.txt",
+                        {
+                            "ident": ident,
+                            "mail": self,
+                            "URL": settings.SYSTEM_ROOT_URL
+                        },
+                    )
+
+                    subject = "A new identity needs approval"
+                    if not settings.DISABLE_ADMIN_MAILS:
+                        mail_admins(subject, message)
+                    ident.lastapprovalremindersend = now
+                    ident.save()
 
     def check_for_unusual_sender(self):
         for ident in self.identity.all():
@@ -814,7 +806,11 @@ class Mail(models.Model):
             subject = "Third-Party spam is suspected"
             message = render_to_string(
                 "third_party_spam.txt",
-                {"ident": ident, "mail": self, "URL": settings.SYSTEM_ROOT_URL},
+                {
+                    "ident": ident,
+                    "mail": self,
+                    "URL": settings.SYSTEM_ROOT_URL
+                },
             )
             if not settings.DISABLE_ADMIN_MAILS:
                 mail_admins(subject, message)

@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+
+  backend:
+    build:
+      context: .
+      dockerfile: _docker/Backend
+    networks:
+      - default
+    ports:
+      - "8000:8000"
+    depends_on:
+        - "db"
+    environment:
+      - APPLICATION_DEBUG=True
+      - DATABASE_NAME=privacymail
+      - DATABASE_USER=privacymail
+      - DATABASE_PASSWORD=privacymail
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - RAVEN_DSN=https://test@my-sentry.local
+      - MAIL_NEWSLETTER_USERNAME=test
+      - MAIL_NEWSLETTER_PASSWORD=test
+      - MAIL_PRIVAYCLETTER_USERNAME=test
+      - MAIL_PRIVAYCLETTER_PASSWORD=test
+      - MAIL_PRIVACYMAIL_USERNAME=test
+      - MAIL_PRIVACYMAIL_PASSWORD=test
+      - ALLOWED_HOST=localhost
+
+  db:
+    image: postgres
+    networks:
+      - default
+    volumes:
+      - ./dbdata/:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=privacymail
+      - POSTGRES_USER=privacymail
+      - POSTGRES_PASSWORD=privacymail
+
+  testdb:
+    image: postgres
+    networks:
+      - default
+    volumes:
+      - ./testdbdata/:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    environment:
+      - POSTGRES_DB=TEST
+      - POSTGRES_USER=privacymail
+      - POSTGRES_PASSWORD=privacymail
+
+networks:
+  default:

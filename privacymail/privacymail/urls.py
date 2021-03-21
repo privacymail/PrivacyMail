@@ -16,10 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.views.generic import TemplateView
 from django.urls import path, re_path, include
-from api.views import *
-from identity.views import *
+from mailfetcher.views import confirmview, wordlistmanager, mailview
 
 urlpatterns = [
+    path('admin/confirm', confirmview),
+    path('admin/mail/<mail>', mailview),
+    path('admin/wordlist', wordlistmanager),
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
     re_path(r'^', TemplateView.as_view(template_name='index.html'), name="ReactApp"),

@@ -8,9 +8,13 @@ import time
 
 logger = logging.getLogger(__name__)
 
-# fetches mails from the mailserver
-# returns boolean if there are mails left on the server
+
 def fetchMails(unfinished_mail_count):
+    """
+    fetches mails from the mailserver
+
+    returns boolean if there are mails left on the server
+    """
     num_mails_to_fetch = settings.CRON_MAILQUEUE_SIZE - unfinished_mail_count
     # Get new messages from the mailserver
     messages_fetched = fetch_new_messages(num_mails_to_fetch)
@@ -26,24 +30,25 @@ def fetchMails(unfinished_mail_count):
     return True
 
 
-# Fetch messages_to_fetch many mails from the mailserver and report how many were actually fetched.
-# Also adds them to the database as 'UNPROCESSED'
 def fetch_new_messages(num_mails_to_fetch):
+    """
+    Fetch messages_to_fetch many mails from the mailserver
+    and report how many were actually fetched.
+    Also adds them to the database as 'UNPROCESSED'
+    """
     # Loop through all the mailservers in the settings to fetch new mails.
     for mailserver in settings.MAILCREDENTIALS:
         # # Don't loop when in developer mode
-        # if settings.DEVELOP_ENVIRONMENT:
-        #     mails_left = False
         try:
             # print('Mailboxes: %s' % directories)
             mailbox, list_of_messages = imap_connect(mailserver)
-            message_count = len(list_of_messages[0].split())
+            messages_to_fetch = len(list_of_messages[0].split())
             print(
                 "Server: "
                 + mailserver["MAILHOST"]
-                + ", Number of messages: %s" % message_count
+                + ", Number of messages: %s" % messages_to_fetch
             )
-            messages_to_fetch = message_count
+
             # Check whether there are more mails than we want in this round.
             if messages_to_fetch > num_mails_to_fetch:
                 messages_to_fetch = num_mails_to_fetch
@@ -53,17 +58,17 @@ def fetch_new_messages(num_mails_to_fetch):
 
             # Parse messages and place in database
             for i in range(1, messages_to_fetch + 1):
-                print("Parsing message: %s" % i)
+                print(f"Parsing message: {i}")
                 response, data = mailbox.fetch(str(i), "(RFC822)")
                 if response != "OK":
                     logger.warn(
-                        "fetch_new_messages: ERROR fetching message %s from %s: %s"
-                        % (i, mailserver["MAILHOST"], response)
+                        f"""fetch_new_messages: ERROR fetching message
+                        {i} from {mailserver["MAILHOST"]}: {response}"""
                     )
                     return
 
                 raw = email.message_from_bytes(data[0][1])
-                mail = Mail.create(raw)
+                Mail.create(raw)
             mailbox.close()
             mailbox.logout()
 
@@ -77,8 +82,9 @@ def fetch_new_messages(num_mails_to_fetch):
                     response, data = mailbox.create("INBOX.processed")
                     if response != "OK":
                         logger.error(
-                            "fetch_new_messages: Something went wrong while creating processed inbox folder on %s: %s, %s"
-                            % (mailserver["MAILHOST"], response, data)
+                            "fetch_new_messages:"
+                            "Something went wrong while creating processed inbox folder"
+                            f"on {mailserver['MAILHOST']}: {response}, {data}"
                         )
                 # Switch back to the main INBOX
                 response, data = mailbox.select("INBOX")
