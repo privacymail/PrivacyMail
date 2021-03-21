@@ -24,10 +24,17 @@ export const getEmailAnalysis = (rawData: string, callback: (result: IEmailAnaly
             callback(result as IEmailAnalysis);
         })
         .catch(e => {
+            if (e.status === 503) {
+                addTooltipByCord(<Trans>onDemand_error_serviceUnavailable</Trans>, 0, 0, {
+                    timeout: 5000,
+                    className: "tooltip error"
+                });
+            } else {
+                addTooltipByCord(<Trans>onDemand_error_analysis</Trans>, 0, 0, {
+                    timeout: 5000,
+                    className: "tooltip error"
+                });
+            }
             callback(null);
-            addTooltipByCord(<Trans>onDemand_error_analysis</Trans>, 0, 0, {
-                timeout: 3000,
-                className: "tooltip error"
-            });
         });
 };

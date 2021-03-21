@@ -2,6 +2,7 @@ import psutil
 import signal
 import os
 import email
+import time
 from mailfetcher.models import Mail, Eresource
 from django.conf import settings
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
@@ -27,7 +28,9 @@ def kill_openwpm(ignore=[]):
         # check whether the process name matches
         if proc.pid in ignore:
             continue
-        if proc.name() in ["geckodriver", "firefox", "firefox-bin", "Xvfb"]:
+        created = time.time() - proc.create_time()
+        #kill only zombie processes that are older than two hours so not to disrupt other processes using openwpm
+        if proc.name() in ["geckodriver", "firefox", "firefox-bin", "Xvfb"] and created >= 7200 :
             # Kill process tree
             gone, alive = kill_proc_tree(proc.pid)
             for p in alive:

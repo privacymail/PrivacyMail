@@ -51,7 +51,7 @@ const Cookies = (props: OnDemandAnalysisProps) => {
             <div className="collapsibleSmall">
                 <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
                 <div className="describeText">
-                    {status === PassOrNotState.Passed ? <Trans>Sets No Cookies</Trans> : <Trans>Sets Cookies</Trans>}
+                    {status === PassOrNotState.Passed ? <Trans>sets_no_cookies</Trans> : <Trans>sets_cookies</Trans>}
                 </div>
             </div>
         </div>

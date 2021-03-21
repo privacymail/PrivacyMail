@@ -96,15 +96,23 @@ class AnalysisView(View):
         queue = cache.get("onDemand_analysis_queue")
         if queue is None:
             queue = {}
-        if len(queue) >= 1:
+        print(settings.MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND)
+        if len(queue) >= settings.MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND:
             return HttpResponse(status=503)
         else:
             analysis_id = str(uuid.uuid4())
             queue[analysis_id] = analysis_id
             cache.set("onDemand_analysis_queue",queue)
-            body_unicode = request.body.decode("utf-8")
-            body_json = json.loads(body_unicode)
-            message = body_json["rawData"]
-            stats = analyzeSingleMail(message)
-            queue.pop(analysis_id,None)
-            return JsonResponse(stats)
+            try:
+                body_unicode = request.body.decode("utf-8")
+                body_json = json.loads(body_unicode)
+                message = body_json["rawData"]
+                stats = analyzeSingleMail(message)
+                queue.pop(analysis_id,None)
+                cache.set("onDemand_analysis_queue",queue)
+                return JsonResponse(stats)
+            except:
+                queue.pop(analysis_id,None)
+                cache.set("onDemand_analysis_queue",queue)
+                raise
+            

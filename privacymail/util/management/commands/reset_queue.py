@@ -16,12 +16,5 @@ import time
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
-        try:
-            # t = time.time()
-            # print("Needed seconds {}".format(time.time() - t))
-            analyse_dirty_services()
-            # create_service_cache(service[0])
-            print("All done. Exiting.")
-        except Exception:
-            traceback.print_exc()
+        cache.delete('onDemand_analysis_queue')
         print("Done")
