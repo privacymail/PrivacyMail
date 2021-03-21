@@ -28,10 +28,6 @@ class Icon extends React.Component<IconPros, IconState> {
         this.props.onClick?.(e);
         if (this.props.title) {
             if (this.tooltip < 0) {
-                if (this.props.titleDuration) {
-                    window.setTimeout(() => this.closeTooltip(), this.props.titleDuration);
-                }
-
                 this.openTooltip(e.target as HTMLElement);
             }
         }
@@ -42,7 +38,10 @@ class Icon extends React.Component<IconPros, IconState> {
      */
     openTooltip(target: HTMLElement) {
         if (this.tooltip < 0) {
-            this.tooltip = addTooltip(this.props.title, target, () => (this.tooltip = -1));
+            this.tooltip = addTooltip(this.props.title, target, {
+                onClose: () => (this.tooltip = -1),
+                timeout: this.props.titleDuration
+            });
             //this.tooltip = addTooltip(this.props.title, target, () => console.log("got closed"));
         }
     }
