@@ -16,9 +16,8 @@ def get_stats_of_mail(service_url, eresources):
         third_party = {"name": domain, "url":domain}
         thirdpartyObject = Thirdparty.objects.filter(name=domain)
         if thirdpartyObject.count() > 0:
-            
-            third_party["sector"] = thirdpartyObject.sector
-            third_party["host"] = thirdpartyObject.host
+            third_party["sector"] = thirdpartyObject[0].sector
+            third_party["host"] = thirdpartyObject[0].host
         else:
             third_party["sector"] = "unknown"
         if "mail_leakage" in eresource:

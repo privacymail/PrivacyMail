@@ -1,4 +1,8 @@
+import React from "react";
+import { Trans } from "react-i18next";
+import { addTooltipByCord } from "../utils/Tooltip";
 import { execute } from "./execute";
+import { IThirdParty } from "./newsletter";
 
 export interface IEmailAnalysis {
     homeUrl: string;
@@ -19,5 +23,8 @@ export const getEmailAnalysis = (rawData: string, callback: (result: IEmailAnaly
         .then((result: any) => {
             callback(result as IEmailAnalysis);
         })
-        .catch(e => callback(null));
+        .catch(e => {
+            callback(null);
+            addTooltipByCord(<Trans>onDemand_error_analysis</Trans>, 0, 0);
+        });
 };

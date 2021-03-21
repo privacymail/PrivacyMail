@@ -4,13 +4,13 @@ import tempfile
 from mailfetcher.models import Mail, Eresource
 from OpenWPM.openwpm import CommandSequence, TaskManager
 import sqlite3 as lite
+from multiprocessing import Process
 
 from django.db import connection, models
 from mailfetcher.crons.mailCrawler.analysis.importViewResults import (
     import_openwpmresults,
     import_openwpmresults_single_mail,
 )
-
 
 def call_openwpm_view_single_mail(mail):
     db_name = "analysis.sqlite"
@@ -19,7 +19,6 @@ def call_openwpm_view_single_mail(mail):
         os.remove(wpm_db)
     filename = write_mail_to_file(mail)
     manager = open_browsers(1, db_name)
-    print(filename)
     visit_site(filename, manager)
     manager.close()
     if os.path.isfile(wpm_db):
@@ -35,7 +34,6 @@ def call_openwpm_view_single_mail(mail):
         if not settings.DEVELOP_ENVIRONMENT:
             os.remove(wpm_db)
     return eresources
-
 
 def call_openwpm_view_mail(mailQueue):
     # View a queue of emails with OpenWPM and save the observed connections

@@ -134,6 +134,7 @@ def read_openWPM(filename, db_cursor):
         "SELECT arguments from crawl_history where arguments LIKE ? AND command_status = 'ok' ;",
         ('%"url": "' + filename + '"%',),
     )
+    
     if len(db_cursor.fetchall()) == 0:
         return False
     # scans through the sqlite database, checking for all external calls and to which they redirect

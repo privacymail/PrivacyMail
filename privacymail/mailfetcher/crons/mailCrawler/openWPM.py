@@ -77,9 +77,14 @@ def analyzeOnView():
     # Clean up zombie processes
     kill_openwpm()
 
+server = None
+thread = None
 
 def analyzeSingleMail(mail):
-    server, thread = init()
+    global server 
+    global thread 
+    if not server:
+        server, thread = init()
     message = email.message_from_string(mail)
     body_html = calc_bodies(message)
     eresources = None
