@@ -27,13 +27,16 @@ const OnDemandAnalysis = (props: OnDemandAnalysisProps) => {
                     />
                     <PersonalisedLinks mailLeakage={props.emailAnalysis?.mailLeakage} />
                     <Cookies {...props} />
-                    <button
-                        onClick={() => {
-                            props.returnToInput();
-                        }}
-                    >
-                        Return
-                    </button>
+
+                    <div className="buttonRight">
+                        <button
+                            onClick={e => {
+                                props.returnToInput();
+                            }}
+                        >
+                            <Trans>onDemand_newAnalysis</Trans>
+                        </button>
+                    </div>
                 </div>
             </Spinner>
         </>

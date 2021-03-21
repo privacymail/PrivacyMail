@@ -7,10 +7,16 @@ import OnDemandInput from "./OnDemandInput";
  * This generates the On Demand Sited
  */
 const OnDemand = () => {
-    const session = sessionStorage.getItem("emailAnalysis");
-    const [emailAnalysis, setEmailAnalysis] = useState<IEmailAnalysis | undefined>(session && JSON.parse(session));
+    let session;
+
+    try {
+        session = JSON.parse(sessionStorage.getItem("emailAnalysis") ?? "");
+    } catch (error) {
+        session = undefined;
+    }
+    const [emailAnalysis, setEmailAnalysis] = useState<IEmailAnalysis | undefined>(session);
     const [rawEmail, setRawEmail] = useState<string>("");
-    const [viewAnalysis, setViewAnalysis] = useState<boolean>(false);
+    const [viewAnalysis, setViewAnalysis] = useState<boolean>(session ? true : false);
     const runAnalysis = () => {
         setViewAnalysis(true);
         setEmailAnalysis(undefined);
@@ -18,7 +24,7 @@ const OnDemand = () => {
         getEmailAnalysis(rawEmail, (analysis: IEmailAnalysis | null) => {
             if (analysis) {
                 setEmailAnalysis(analysis);
-                sessionStorage.setItem("emailAnalysis", JSON.stringify(emailAnalysis));
+                sessionStorage.setItem("emailAnalysis", JSON.stringify(analysis));
             } else {
                 setViewAnalysis(false);
             }
@@ -26,6 +32,7 @@ const OnDemand = () => {
     };
 
     const returnToInput = () => {
+        sessionStorage.removeItem("emailAnalysis");
         setViewAnalysis(false);
     };
 
