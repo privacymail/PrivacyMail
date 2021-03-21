@@ -1,13 +1,4 @@
 .emailInput {
-    div {
-        display: flex;
-        width: 100%;
-        flex-flow: row-reverse;
-
-        button {
-            flex: 0 0 auto;
-        }
-    }
     textarea {
         padding: 0;
         margin: 0 0 1rem 0;

@@ -15,8 +15,11 @@ const OnDemandInput = (props: OnDemandInputProps) => {
             <Instructions />
             <div className="emailInput">
                 <h2>
-                    <Trans>E-Mail Eingabe</Trans>
+                    <Trans>onDemand_input_headlind</Trans>
                 </h2>
+                <p className="alert info">
+                    <Trans>onDemand_dataPrivacyInfo</Trans>
+                </p>
                 <textarea
                     id="text"
                     value={props.rawEmail}
@@ -24,7 +27,7 @@ const OnDemandInput = (props: OnDemandInputProps) => {
                     onChange={e => props.setRawEmail(e.target.value)}
                     rows={20}
                 />
-                <div>
+                <div className="buttonRight">
                     <button
                         onClick={e => {
                             props.runAnalysis();
