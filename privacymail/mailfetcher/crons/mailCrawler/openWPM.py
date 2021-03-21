@@ -1,8 +1,8 @@
 import psutil
 import signal
 import os
-from mailfetcher.models import Mail, Eresource
 import email
+from mailfetcher.models import Mail, Eresource
 from django.conf import settings
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
@@ -77,14 +77,9 @@ def analyzeOnView():
     # Clean up zombie processes
     kill_openwpm()
 
-server = None
-thread = None
-
 def analyzeSingleMail(mail):
-    global server 
-    global thread 
-    if not server:
-        server, thread = init()
+
+    init()
     message = email.message_from_string(mail)
     body_html = calc_bodies(message)
     eresources = None
@@ -93,9 +88,6 @@ def analyzeSingleMail(mail):
     eresources = call_openwpm_view_single_mail(body_html)
     eresources = staticeresources + eresources
     kill_openwpm()
-    server.shutdown()
-    server.socket.close()
-    thread.join(5)
     if "X-Original-To" in message:
         to = message["X-Original-To"]
     else:

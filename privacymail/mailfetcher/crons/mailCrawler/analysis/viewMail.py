@@ -11,9 +11,12 @@ from mailfetcher.crons.mailCrawler.analysis.importViewResults import (
     import_openwpmresults,
     import_openwpmresults_single_mail,
 )
+import time
+import uuid
 
 def call_openwpm_view_single_mail(mail):
-    db_name = "analysis.sqlite"
+    db_name =str(uuid.uuid4()) + ".sql"
+
     wpm_db = settings.OPENWPM_DATA_DIR + db_name
     if os.path.exists(wpm_db):
         os.remove(wpm_db)
