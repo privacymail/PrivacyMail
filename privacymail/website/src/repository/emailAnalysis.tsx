@@ -25,6 +25,9 @@ export const getEmailAnalysis = (rawData: string, callback: (result: IEmailAnaly
         })
         .catch(e => {
             callback(null);
-            addTooltipByCord(<Trans>onDemand_error_analysis</Trans>, 0, 0);
+            addTooltipByCord(<Trans>onDemand_error_analysis</Trans>, 0, 0, {
+                timeout: 3000,
+                className: "tooltip error"
+            });
         });
 };

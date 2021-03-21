@@ -98,7 +98,6 @@ body,
     line-height: 1;
 }
 .tooltip {
-    position: fixed;
     max-width: 200px;
     //width: 100%;
 
@@ -108,7 +107,14 @@ body,
     color: $font-color-secondary;
     border-radius: 2px;
     padding: 0.3rem 1rem;
-    z-index: 9999;
+}
+.tooltip.error {
+    background-color: $tooltip-error;
+    transform: initial;
+    border-radius: 2px;
+    padding: 0.3rem 1rem;
+    margin: 1rem;
+    max-width: 250px;
 }
 
 .app {
