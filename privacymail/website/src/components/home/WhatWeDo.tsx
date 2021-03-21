@@ -1,5 +1,6 @@
 import React from "react";
 import { Trans } from "react-i18next";
+import Statistics from "./Statistics";
 
 /**
  * This gives a short summary why we do email tracking analysis
@@ -15,6 +16,8 @@ const WhatWeDo = () => {
                     <Trans>home_shiningALightDetail</Trans>
                 </p>
             </div>
+
+            <Statistics />
         </div>
     );
 };

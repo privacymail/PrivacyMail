@@ -7,6 +7,7 @@ import CollapsibleItem from "../../../utils/CollapsibleItem";
 
 interface PersonalisedLinksProps {
     newsletter?: INewsletter | IEmbed;
+    mailLeakage?: boolean;
     reliability?: Reliability;
 }
 /**
@@ -15,7 +16,7 @@ interface PersonalisedLinksProps {
 const PersonalisedLinks = (props: PersonalisedLinksProps) => {
     return (
         <CollapsibleItem>
-            <PersonalisedLinksSmall newsletter={props.newsletter} />
+            <PersonalisedLinksSmall newsletter={props.newsletter} mailLeakage={props.mailLeakage} />
             <PersonalisedLinksBig reliability={props.reliability} />
         </CollapsibleItem>
     );
@@ -37,8 +38,17 @@ const PersonalisedLinksSmall = (props: PersonalisedLinksProps) => {
             return PassOrNotState.Passed;
         }
     };
+    const getLeakage = (leakage: boolean | undefined) => {
+        if (leakage) {
+            return PassOrNotState.Denied;
+        } else {
+            return PassOrNotState.Passed;
+        }
+    };
     const newsletter = props.newsletter as any;
-    const status = getStatus(newsletter?.third_parties || newsletter?.services);
+    const status = newsletter
+        ? getStatus(newsletter?.third_parties || newsletter?.services)
+        : getLeakage(props.mailLeakage);
     return (
         <>
             <PassOrNotIcon status={status} className="passOrNot summarizedInfo" />
@@ -73,7 +83,7 @@ const PersonalisedLinksBig = (props: PersonalisedLinksBigProps) => {
 
             <div className="divider" />
 
-            <Methode reliability={props.reliability} />
+            {props.reliability && <Methode reliability={props.reliability} />}
         </>
     );
 };

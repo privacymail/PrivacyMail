@@ -85,7 +85,8 @@ class ImapFetcher(CronJobBase):
         #         print(subject)
         # else:
         #     print('No messages without possible unsubscribe links found.')
-        server.shutdown()
-        server.socket.close()
-        thread.join(5)
-        self.notify_webhook("success")
+        if server and thread:
+            server.shutdown()
+            server.socket.close()
+            thread.join(5)
+            self.notify_webhook("success")

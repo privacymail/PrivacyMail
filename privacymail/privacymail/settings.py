@@ -21,91 +21,99 @@ load_dotenv()
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REACT_APP_DIR = os.path.join(BASE_DIR, 'website')
+REACT_APP_DIR = os.path.join(BASE_DIR, "website")
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
+SECRET_KEY = str(os.getenv("SECRET_KEY"))
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('APPLICATION_DEBUG')
+DEBUG = os.getenv("APPLICATION_DEBUG")
 
-ALLOWED_HOSTS = [os.getenv('ALLOWED_HOST')]
+ALLOWED_HOSTS = [os.getenv("ALLOWED_HOST")]
 
+MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND = int(os.getenv("MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND"))
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'django.contrib.humanize',
-    'django_countries',
-    'django_cron',
-    'mailfetcher',
-    'util',
-    'identity',
-    'api',
-    'raven.contrib.django.raven_compat',
-    'django_extensions',
-    'django_filters',
-    'bootstrap4',
-    'whitenoise.runserver_nostatic'
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "django.contrib.humanize",
+    "django_countries",
+    "django_cron",
+    "widget_tweaks",
+    "mailfetcher",
+    "util",
+    "identity",
+    "api",
+    "bootstrap_themes",
+    "raven.contrib.django.raven_compat",
+    "django_extensions",
+    "django_filters",
+    "django_tables2",
+    "bootstrap4",
+    "whitenoise.runserver_nostatic",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.locale.LocaleMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.locale.LocaleMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'privacymail.urls'
+ROOT_URLCONF = "privacymail.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(REACT_APP_DIR, 'build')],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [os.path.join(REACT_APP_DIR, "build")],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'privacymail.wsgi.application'
+WSGI_APPLICATION = "privacymail.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#    }
+# }
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DATABASE_NAME'),
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'HOST': os.getenv('DATABASE_HOST'),
-        'PORT': os.getenv('DATABASE_PORT'),
-        'CONN_MAX_AGE': None,
-        'TEST': {
-            'NAME': 'TEST',
-        }
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": os.getenv("DATABASE_NAME"),
+        "USER": os.getenv("DATABASE_USER"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD"),
+        "HOST": os.getenv("DATABASE_HOST"),
+        "PORT": os.getenv("DATABASE_PORT"),
+        "CONN_MAX_AGE": None,
     }
 }
 
@@ -115,13 +123,13 @@ if 'test' in sys.argv:
 
 # Caching
 CACHES = {
-    'default': {
-        "BACKEND": 'django.core.cache.backends.db.DatabaseCache',
-        "LOCATION": 'pmail_cache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "pmail_cache",
         "TIMEOUT": None,  # Cache does not automatically expire
-        'OPTIONS': {
+        "OPTIONS": {
             "MAX_ENTRIES": 10000,  # Allow a lot of entries in the cache to avoid culling
-        }
+        },
     }
 }
 
@@ -130,16 +138,16 @@ CACHES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -147,14 +155,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
 
-LANGUAGE_CODE = 'en'
+LANGUAGE_CODE = "en"
 
 LANGUAGES = [
-  ('de', _('German')),
-  ('en', _('English')),
+    ("de", _("German")),
+    ("en", _("English")),
 ]
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -166,15 +174,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(REACT_APP_DIR, 'build', 'static')
+STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(REACT_APP_DIR, "build", "static")
 
 STATICFILES_DIRS = []
 
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
     "mailfetcher.analyser_cron.Analyser",
-    "mailfetcher.cron_fetch_only.ImapFetcher"
+    "mailfetcher.cron_fetch_only.ImapFetcher",
 ]
 
 # Specifies a series of URLs to send GET requests to in specific conditions.
@@ -196,34 +204,34 @@ CRON_CLASSES = [
 # You can also set the entire dictionary to None if you don't want to use this feature.
 
 
-#CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
+# CRON_WEBHOOKS = {{ lookup('passwordstore', 'privacymail/cron/webhooks' )}}
 
-OPENWPM_DATA_DIR = os.path.dirname(__file__) + '/tmp/data/'
-OPENWPM_LOG_DIR = os.path.dirname(__file__) + '/tmp/log/'
+OPENWPM_DATA_DIR = os.path.dirname(__file__) + "/tmp/data/"
+OPENWPM_LOG_DIR = os.path.dirname(__file__) + "/tmp/log/"
 
-#URL on which the server is reached
-SYSTEM_ROOT_URL = 'http://{{ pm_domain }}'
+# URL on which the server is reached
+SYSTEM_ROOT_URL = "http://{{ pm_domain }}"
 
 # Mail credentials
 
 MAILCREDENTIALS = [
     {
-        'MAILHOST': 'mail.newsletterme.de',
-        'MAILUSERNAME': os.getenv("MAIL_NEWSLETTER_USERNAME"),
-        'MAILPASSWORD': os.getenv("MAIL_NEWSLETTER_PASSWORD"),
-        'DOMAIN': 'newsletterme.de',
+        "MAILHOST": "mail.newsletterme.de",
+        "MAILUSERNAME": os.getenv("MAIL_NEWSLETTER_USERNAME"),
+        "MAILPASSWORD": os.getenv("MAIL_NEWSLETTER_PASSWORD"),
+        "DOMAIN": "newsletterme.de",
     },
     {
-        'MAILHOST': 'mail.privacyletter.de',
-        'MAILUSERNAME': os.getenv("MAIL_PRIVAYCLETTER_USERNAME"),
-        'MAILPASSWORD': os.getenv("MAIL_PRIVAYCLETTER_PASSWORD"),
-        'DOMAIN': 'privacyletter.de',
+        "MAILHOST": "mail.privacyletter.de",
+        "MAILUSERNAME": os.getenv("MAIL_PRIVAYCLETTER_USERNAME"),
+        "MAILPASSWORD": os.getenv("MAIL_PRIVAYCLETTER_PASSWORD"),
+        "DOMAIN": "privacyletter.de",
     },
     {
-        'MAILHOST': 'mail.privacy-mail.org',
-        'MAILUSERNAME': os.getenv("MAIL_PRIVACYMAIL_USERNAME"),
-        'MAILPASSWORD': os.getenv("MAIL_PRIVACYMAIL_PASSWORD"),
-        'DOMAIN': 'privacy-mail.org',
+        "MAILHOST": "mail.privacy-mail.org",
+        "MAILUSERNAME": os.getenv("MAIL_PRIVACYMAIL_USERNAME"),
+        "MAILPASSWORD": os.getenv("MAIL_PRIVACYMAIL_PASSWORD"),
+        "DOMAIN": "privacy-mail.org",
     },
 ]
 
@@ -237,22 +245,23 @@ VISIT_LINKS = True
 NUM_LINKS_TO_SKIP = 6
 
 # Dictionary of fragments, for which links are scanned to determine, wether they are unsubscribe links.
-UNSUBSCRIBE_LINK_DICT = ['sub',  # unsubscribe, subscribtion
-                         'abmelden',  # unsubscribe german
-                         'stop',
-                         'rem',  # remove
-                         'abbes',  # abbestellen german
-                         'here',  # german
-                         'hier',  # German
-                         'annu',  # annulla italian, annuler french
-                         'canc',  # cancel and cancellarsi italian
-                         'disdici',  # italian
-                         #'qui',  # here in italian
-                         #'ici',  # here in french
-                         'dés',  # french
-                         'abonn',  # abonn french
-                         'retiré'  # french
-                        ]
+UNSUBSCRIBE_LINK_DICT = [
+    "sub",  # unsubscribe, subscribtion
+    "abmelden",  # unsubscribe german
+    "stop",
+    "rem",  # remove
+    "abbes",  # abbestellen german
+    "here",  # german
+    "hier",  # German
+    "annu",  # annulla italian, annuler french
+    "canc",  # cancel and cancellarsi italian
+    "disdici",  # italian
+    #'qui',  # here in italian
+    #'ici',  # here in french
+    "dés",  # french
+    "abonn",  # abonn french
+    "retiré",  # french
+]
 
 # Number of mails to be processed per batch by the cronjob.
 CRON_MAILQUEUE_SIZE = 100
@@ -266,24 +275,24 @@ NUMBER_OF_THREADS = 10
 
 OPENWPM_FAIL_INCREASE = 1
 
-LOCALHOST_URL = 'localhost.privacymail.info:5000'
+LOCALHOST_URL = "localhost:5000"
 
 
 # Django Mail
 SERVER_EMAIL = "admin@newsletterme.de"
-#ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
+# ADMINS = [{{ lookup('passwordstore', 'privacymail/admin/contacts' )}}]
 ADMINS = []
 REMINDER_MAIL_THRESHOLD_IN_HOURS = 24
 
 
 DISABLE_ADMIN_MAILS = False
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'mail.newsletterme.de'
+EMAIL_HOST = "mail.newsletterme.de"
 EMAIL_PORT = 587
-#EMAIL_HOST_USER = '{{ lookup('passwordstore', 'privacymail/admin/send-user' )}}'
-#EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' )}}'
-EMAIL_SUBJECT_PREFIX = '[PMail] '
+# EMAIL_HOST_USER = '{{ lookup('passwordstore', 'privacymail/admin/send-user' )}}'
+# EMAIL_HOST_PASSWORD = '{{ lookup('passwordstore', 'privacymail/admin/send-pass' )}}'
+EMAIL_SUBJECT_PREFIX = "[PMail] "
 # For debugging you may use the console backend
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
@@ -294,64 +303,51 @@ SILKY_AUTHENTICATION = True  # User must login
 SILKY_AUTHORISATION = True  # User must have permissions
 
 RAVEN_CONFIG = {
-    'dsn': os.getenv('RAVEN_DSN'),
+    "dsn": os.getenv("RAVEN_DSN"),
     # If you are using git, you can also automatically configure the
     # release based on the git info.
-    'release': '2.1',
-    'transport': RequestsHTTPTransport,
+    "release": "2.1",
+    "transport": RequestsHTTPTransport,
 }
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'root': {
-        'level': 'WARNING',
-        'handlers': ['sentry'],
+    "version": 1,
+    "disable_existing_loggers": False,
+    "root": {
+        "level": "WARNING",
+        "handlers": ["sentry"],
     },
-    'formatters': {
-        'verbose': {
-            'format': ('%(levelname)s %(asctime)s %(module)s %(process)d '
-                       '%(thread)d %(message)s')
+    "formatters": {
+        "verbose": {
+            "format": (
+                "%(levelname)s %(asctime)s %(module)s %(process)d "
+                "%(thread)d %(message)s"
+            )
         },
-        'console': {
-            'format': '[%(asctime)s][%(levelname)s] '
-                      '%(message)s',
-            'datefmt': '%H:%M:%S',
-        },
-
-    },
-    'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'console'
-        },
-        'sentry': {
-            'level': 'DEBUG',
-            'class': ('raven.contrib.django.raven_compat.handlers.'
-                      'SentryHandler'),
+        "console": {
+            "format": "[%(asctime)s][%(levelname)s] " "%(message)s",
+            "datefmt": "%H:%M:%S",
         },
     },
-    'loggers': {
-        'mailfetcher': {
-            'level': 'DEBUG',
-            'handlers': ['sentry'],
-            'propagate': False
-        },
-        'identity': {
-            'level': "DEBUG",
-            'handlers': ['sentry'],
-            'propagate': False
-        },
-        'OpenWPM.automation.MPLogger': {
-            'level': 'ERROR',
-            'handlers': ['console'],
-            'propagate': False
-        },
-        'cron': {
+    "handlers": {
+        "console": {
             "level": "INFO",
-            'handlers': ['sentry'],
-            'propagate': False
-        }
-    }
+            "class": "logging.StreamHandler",
+            "formatter": "console",
+        },
+        "sentry": {
+            "level": "DEBUG",
+            "class": ("raven.contrib.django.raven_compat.handlers." "SentryHandler"),
+        },
+    },
+    "loggers": {
+        "mailfetcher": {"level": "DEBUG", "handlers": ["sentry"], "propagate": False},
+        "identity": {"level": "DEBUG", "handlers": ["sentry"], "propagate": False},
+        "OpenWPM.automation.MPLogger": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": False,
+        },
+        "cron": {"level": "INFO", "handlers": ["sentry"], "propagate": False},
+    },
 }

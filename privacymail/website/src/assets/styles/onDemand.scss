@@ -1,0 +1,71 @@
+.emailInput {
+    div {
+        display: flex;
+        width: 100%;
+        flex-flow: row-reverse;
+
+        button {
+            flex: 0 0 auto;
+        }
+    }
+    textarea {
+        padding: 0;
+        margin: 0 0 1rem 0;
+        width: calc(100% - 2px);
+        height: 100%;
+    }
+}
+.onDemandInstructions {
+    margin: 1rem 0;
+    border: 1px solid $header-secondary-color;
+    > div {
+        border: none;
+    }
+    .collapsibleSmall {
+        background-color: $header-secondary-color;
+        display: flex;
+        align-items: center;
+        padding: 0 1rem;
+        h2 {
+            margin-right: 1rem;
+        }
+        button {
+            flex: 0 0 auto;
+        }
+    }
+    .collapsibleBig {
+        border: none;
+    }
+
+    .instructions {
+        margin: 1rem;
+        h3 {
+            font-weight: 300;
+            font-size: 1.25rem;
+        }
+        h4 {
+            font-weight: 300;
+            font-size: 1rem;
+            margin: 0.5rem;
+        }
+        .selection {
+            .radioButton {
+                margin: 1rem 0;
+                font-size: 1.125rem;
+                font-weight: 300;
+                display: flex;
+
+                input {
+                    margin: 0 1rem;
+                }
+            }
+        }
+        .instruction {
+            img {
+                display: block;
+                margin: 1rem auto;
+                max-width: 100%;
+            }
+        }
+    }
+}

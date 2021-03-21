@@ -24,7 +24,7 @@
     }
     h5 {
         @extend .medium;
-        color: $font-color-secondary;
+        color: $font-color-primary;
         padding-bottom: 0.2rem;
         margin: 0;
         font-size: 2rem;
@@ -40,6 +40,7 @@
     }
 
     .statistic {
+        margin-top: 3rem;
         text-align: center;
         p {
             margin-bottom: 0.7rem;

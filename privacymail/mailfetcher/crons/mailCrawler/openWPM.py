@@ -1,17 +1,26 @@
 import psutil
 import signal
 import os
-from mailfetcher.models import Mail
+import email
+import time
+from mailfetcher.models import Mail, Eresource
 from django.conf import settings
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
+    analyze_single_mail_for_leakage,
 )
 from mailfetcher.crons.mailCrawler.analysis.viewMail import (
     call_openwpm_view_mail,
+    call_openwpm_view_single_mail,
 )
 from mailfetcher.crons.mailCrawler.analysis.clickLinks import (
     call_openwpm_click_links,
 )
+from mailfetcher.crons.mailCrawler.singleMail import (
+    get_stats_of_mail,
+)
+from mailfetcher.crons.mailCrawler.init import init
+from bs4 import BeautifulSoup
 
 
 def kill_openwpm(ignore=[]):
@@ -19,7 +28,9 @@ def kill_openwpm(ignore=[]):
         # check whether the process name matches
         if proc.pid in ignore:
             continue
-        if proc.name() in ["geckodriver", "firefox", "firefox-bin", "Xvfb"]:
+        created = time.time() - proc.create_time()
+        #kill only zombie processes that are older than two hours so not to disrupt other processes using openwpm
+        if proc.name() in ["geckodriver", "firefox", "firefox-bin", "Xvfb"] and created >= 7200 :
             # Kill process tree
             gone, alive = kill_proc_tree(proc.pid)
             for p in alive:
@@ -68,6 +79,158 @@ def analyzeOnView():
 
     # Clean up zombie processes
     kill_openwpm()
+
+def analyzeSingleMail(mail):
+
+    init()
+    message = email.message_from_string(mail)
+    body_html = calc_bodies(message)
+    eresources = None
+    # if settings.RUN_OPENWPM and mail:
+    staticeresources = extract_static_eresources(body_html)
+    eresources = call_openwpm_view_single_mail(body_html)
+    eresources = staticeresources + eresources
+    kill_openwpm()
+    if "X-Original-To" in message:
+        to = message["X-Original-To"]
+    else:
+        to = message["To"]
+    service_url = message["From"].split("@")[1].replace(">", "")
+    print(service_url)
+    eresources = analyze_single_mail_for_leakage(to, eresources)
+    stats = get_stats_of_mail(service_url, eresources)
+    stats["cookies"] = analyze_cookies(eresources)
+    return stats
+
+
+def extract_static_eresources(body_html):
+    static_eresources = []
+    soup = BeautifulSoup(body_html, "html.parser")
+    a_links = []
+    for a in soup.find_all("a"):
+        # prevent duplicate entries
+        try:
+            # skip mailtos
+            if "mailto:" in a["href"]:
+                continue
+            # Touch the href
+            a["href"]
+        except KeyError:
+            # print("a tag has no href attribute")
+            # print(a.attrs)
+            continue
+        # Remove whitespace and newlines.
+        # if a is not None:
+        a["href"] = "".join(a["href"].split())
+        a_links.append(a)
+
+    for link in a_links:
+        if "http" not in link["href"]:
+            continue
+        static_eresources.append(
+            create_static_eresource(
+                "a", link["href"], str(link.attrs) + str(link.contents)
+            )
+        )
+
+    for img in soup.find_all("img"):
+        static_eresources.append(
+            create_static_eresource(
+                img.name, img["src"], str(img.attrs) + str(img.contents)
+            )
+        )
+
+    for link in soup.find_all("link"):
+        static_eresources.append(
+            create_static_eresource(
+                link.name, link["href"], str(link.attrs) + str(link.contents)
+            )
+        )
+
+    for script in soup.find_all("script"):
+        static_eresources.append(
+            create_static_eresource(
+                script.name, script["src"], str(script.attrs) + str(script.contents)
+            )
+        )
+    return static_eresources
+
+
+def create_static_eresource(eresource_type, url, param):
+    return {
+        "type": eresource_type,
+        "url": url,
+        "possible_unsub_link": False,
+        "param": param,
+        "is_end_of_chain": True,
+        "is_start_of_chain": True,
+        "redirects_to_channel_id": None,
+        "channel_id": None,
+    }
+
+
+def calc_bodies(message):
+    # print("Mail to: " + message['To'])
+    body_html = None
+    if message.is_multipart():
+        for part in message.walk():
+            ctype = part.get_content_type()
+            cdispo = str(part.get("Content-Disposition"))
+            charset = part.get_param("CHARSET")
+            # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
+            if charset is None:
+                charset = "utf-8"
+            # skip any text/plain (txt) attachments
+            if ctype == "text/plain" and "attachment" not in cdispo:
+                try:
+                    body_plain = part.get_payload(decode=True).decode(charset)
+                except UnicodeDecodeError:
+                    body_plain = part.get_payload()
+
+                # body_plain = part.get_payload(decode=True).decode(charset)  # decode
+            if ctype == "text/html" and "attachment" not in cdispo:
+                try:
+                    body_html = part.get_payload(decode=True).decode(charset)
+                except UnicodeDecodeError:
+                    body_html = part.get_payload()
+                # body_html = part.get_payload(decode=True).decode(charset)  # decode
+    # not multipart - i.e. plain text, no attachments, keeping fingers crossed
+    else:
+        ctype = message.get_content_type()
+        cdispo = str(message.get("Content-Disposition"))
+        charset = message.get_param("CHARSET")
+        # print("ctype={}; cdispo={}; charset={}".format(ctype, cdispo, charset))
+        if charset is None:
+            charset = "utf-8"
+        if ctype == "text/plain" and "attachment" not in cdispo:
+
+            try:
+                body_plain = message.get_payload(decode=True).decode(charset)
+            except UnicodeDecodeError:
+                body_plain = message.get_payload()
+            # body_plain = message.get_payload(decode=True).decode(charset)
+        if ctype == "text/html" and "attachment" not in cdispo:
+
+            try:
+                body_html = message.get_payload(decode=True).decode(charset)
+            except UnicodeDecodeError:
+                body_html = message.get_payload()
+
+            # body_html = message.get_payload(decode=True).decode(charset)
+    # print(body_html)
+    return body_html
+
+
+def analyze_cookies(eresources):
+    sets_cookie = False
+    for eresource in eresources:
+        if "response_headers" in eresource:
+            sets_cookie = "Set-Cookie" in eresource["response_headers"]
+            if sets_cookie:
+                return sets_cookie
+        else:
+            sets_cookie = False
+    return sets_cookie
 
 
 def analyzeOnClick():
