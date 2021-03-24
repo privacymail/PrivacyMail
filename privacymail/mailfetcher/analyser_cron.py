@@ -266,7 +266,7 @@ def create_service_cache(service, force=False):
 
     for third_party in third_parties:
         if third_party not in third_parties_dict:
-            create_third_party_cache(third_party, False)
+            #create_third_party_cache(third_party, False)
             third_party_dict = {}
             embeds = service_3p_conns.filter(thirdparty=third_party)
             embeds_onview = embeds.filter(embed_type=ServiceThirdPartyEmbeds.ONVIEW)
@@ -351,6 +351,9 @@ def multiprocessing_create_service_cache(service):
     connections.close_all()
     create_service_cache(service, True)
 
+def multiprocessing_create_thirdparty_cache(thirdparty):
+    connections.close_all()
+    create_third_party_cache(thirdparty, True)
 
 class Analyser(CronJobBase):
     RUN_EVERY_MINS = 2 * 60  # every 2 hours
