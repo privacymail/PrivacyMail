@@ -7,7 +7,7 @@ from mailfetcher.models import Scanword
 
 @staff_member_required
 def mailview(request, mail):
-    mail = get_object_or_404(Mail, id=mail)
+    mail = get_object_or_404(mail, id=mail)
     if request.method == 'POST' and request.POST['action']:
         if request.POST['action'] == 'markSpam':
             for ident in mail.identity.all():
