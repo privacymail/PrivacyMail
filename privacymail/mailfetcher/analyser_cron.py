@@ -166,13 +166,13 @@ def create_service_cache(service, force=False):
     service_information = cache.get(service.derive_service_information_cache())
 
     if service_information and not force:
-        print(service_information)
         third_parties_dict = service_information["third_parties_dict"]
         personalised_links = service_information["personalised_links"]
         personalised_anchor_links = service_information["personalised_anchor_links"]
         personalised_image_links = service_information["personalised_image_links"]
         num_embedded_links = service_information["num_embedded_links"]
         cookies_per_mail = service_information["cookies_per_mail"]
+        algos = service_information["algos"]
     else:
         third_parties_dict = {}
         personalised_links = []
@@ -180,6 +180,7 @@ def create_service_cache(service, force=False):
         personalised_image_links = []
         num_embedded_links = []
         cookies_per_mail = []
+        algos = []
 
     counter_personalised_links = 0
     avg_personalised_image_links = 0
@@ -192,24 +193,28 @@ def create_service_cache(service, force=False):
     #        return
 
     print("Building cache for service: {}".format(service.name))
-
     # Get all identities associated with this service
     idents = Identity.objects.filter(service=service)
+    if not force:
+        mails = service.mails_not_cached()
+    else:
+        mails = Mail.objects.filter(
+        identity__in=idents, identity__approved=True
+        ).distinct()
     # Count how many identities have received spam
     third_party_spam = idents.filter(receives_third_party_spam=True).count()
     # Get all mails associated with this domain
-    mails = Mail.objects.filter(
+    allmails = Mail.objects.filter(
         identity__in=idents, identity__approved=True
     ).distinct()  # Count these eMails
-    count_mails = mails.count()
+    count_mails = allmails.count()
     # Count eMail that have pairs from another identity
     # TODO How does this deal with situations with more than two identities?
-    count_mult_ident_mails = mails.exclude(mail_from_another_identity=None).count()
-
+    count_mult_ident_mails = allmails.exclude(mail_from_another_identity=None).count()
+    print(mails.count())
     mail_leakage_resources = Eresource.objects.filter(
-        mail_leakage__isnull=False, mail__in=service.mails()
+        mail_leakage__isnull=False, mail__in=mails
     )
-    algos = []
     if mail_leakage_resources.exists():
         for algorithms_list in mail_leakage_resources.values_list(
             "mail_leakage"
@@ -224,11 +229,6 @@ def create_service_cache(service, force=False):
 
     # Check if service has dead identities
     # Look for the 5th newest mail an identity has received
-    
-
-    if not force:
-        mails = service.mails_not_cached()
-
     for mail in mails:
         cookies_per_mail.append(
             service_3p_conns.filter(mail=mail, sets_cookie=True).count()
@@ -248,21 +248,20 @@ def create_service_cache(service, force=False):
         personalised_links.append(personalised_mails.count())
         mail.cached = True
         mail.save()
+
     try:
         cookies_set_mean = statistics.mean(cookies_per_mail)
     except:
         cookies_set_mean = 0
-    if counter_personalised_links == 0:
-        ratio = -1
+ 
+    avg_num_embedded_links = statistics.mean(num_embedded_links)
+    # TODO When does this happen?
+    if avg_num_embedded_links == 0:
+        ratio = 0
     else:
-        avg_num_embedded_links = statistics.mean(num_embedded_links)
-        # TODO When does this happen?
-        if avg_num_embedded_links == 0:
-            ratio = 0
-        else:
-            ratio = statistics.mean(personalised_links) / avg_num_embedded_links
-        avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
-        avg_personalised_image_links = statistics.mean(personalised_image_links)
+        ratio = statistics.mean(personalised_links) / avg_num_embedded_links
+    avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
+    avg_personalised_image_links = statistics.mean(personalised_image_links)
 
     for third_party in third_parties:
         if third_party not in third_parties_dict:
@@ -315,6 +314,7 @@ def create_service_cache(service, force=False):
         "num_embedded_links": num_embedded_links,
         "third_parties_dict": third_parties_dict,
         "cookies_per_mail": cookies_per_mail,
+        "algos": algos
     }
     # print ('AVG_ANCHOR: {}, AVG_IMAGE: {}, RATIO: {}, AVG_LINKS: {}'.format(avg_personalised_anchor_links, avg_personalised_image_links, ratio * 100, avg_num_embedded_links))
     # Cache the result
