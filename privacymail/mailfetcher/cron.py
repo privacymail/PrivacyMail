@@ -1,11 +1,8 @@
 import logging
 import poplib
 
-import requests
 from django.conf import settings
 from django_cron import CronJobBase, Schedule
-
-from mailfetcher.models import Mail
 
 from mailfetcher.crons.mailCrawler.init import init
 from mailfetcher.crons.mailCrawler.getUnfinishedMailCount import getUnfinishedMailCount
@@ -29,21 +26,7 @@ class ImapFetcher(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = "org.privacy-mail.imapfetcher"  # a unique code
 
-    def notify_webhook(self, case):
-        if settings.CRON_WEBHOOKS:
-            try:
-                url = settings.CRON_WEBHOOKS["mailfetcher.cron.ImapFetcher"][case]
-                if url:
-                    requests.get(url)
-            except Exception:
-                logger.warning(
-                    "ImapFetcher.notify_webhook: Failed to send signal.", exc_info=True
-                )
-                # No matter what happens here
-                pass
-
     def do(self):
-        # self.notify_webhook("start")
         # Work around a bug with the caching library
 
         # Start measuring the time from the beginning.
@@ -89,4 +72,3 @@ class ImapFetcher(CronJobBase):
             server.shutdown()
             server.socket.close()
             thread.join(5)
-            self.notify_webhook("success")

@@ -365,37 +365,20 @@ class Analyser(CronJobBase):
     # tp = Thirdparty.objects.get(pk=1)
     # embedding = ServiceThirdPartyEmbeds.objects.create(
     #     service=ser, thirdparty=tp)
-
-    def notify_webhook(self, case):
-        if settings.CRON_WEBHOOKS:
-            try:
-                url = settings.CRON_WEBHOOKS["mailfetcher.analyser_cron.Analyser"][case]
-                if url:
-                    requests.get(url)
-            except Exception:
-                logger.warning(
-                    "Analyser.notify_webhook: Failed to send signal.", exc_info=True
-                )
-                # No matter what happens here
-                pass
-
     def do(self):
 
         try:
-            # self.notify_webhook("start")
             analyse_dirty_services()
 
             # get_stats_of_mail(Mail.objects.get(id=1899))
             # address_leakage_statistics()
 
-            self.notify_webhook("success")
         except Exception as e:
             logger.error(
                 "AnalyserCron: Exception encoutered: %s" % e.__class__.__name__,
                 exc_info=True,
             )
             traceback.print_exc()
-            self.notify_webhook("fail")
 
 
 # analyze one mail in more detail.
