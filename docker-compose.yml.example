@@ -28,6 +28,7 @@ services:
       - MAIL_PRIVACYMAIL_USERNAME=test
       - MAIL_PRIVACYMAIL_PASSWORD=test
       - ALLOWED_HOST=<your-host-name>
+      - MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND=5
 
   db:
     image: postgres

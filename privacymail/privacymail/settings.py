@@ -48,16 +48,14 @@ INSTALLED_APPS = [
     "django.contrib.humanize",
     "django_countries",
     "django_cron",
-    "widget_tweaks",
     "mailfetcher",
     "util",
     "identity",
     "api",
-    "bootstrap_themes",
+    "django_tables2",
     "raven.contrib.django.raven_compat",
     "django_extensions",
     "django_filters",
-    "django_tables2",
     "bootstrap4",
     "whitenoise.runserver_nostatic",
 ]
@@ -182,7 +180,6 @@ STATICFILES_DIRS = []
 CRON_CLASSES = [
     "mailfetcher.cron.ImapFetcher",
     "mailfetcher.analyser_cron.Analyser",
-    "mailfetcher.cron_fetch_only.ImapFetcher",
 ]
 
 # Specifies a series of URLs to send GET requests to in specific conditions.
