@@ -1,0 +1,130 @@
+{% load static %} {% load bootstrap4 %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Scanwords - Privacymail</title>
+    <meta charset="utf-8" />
+    {% bootstrap_css %}
+  </head>
+  <body class="container">
+    <h1 class="m-2 text-center">Scanwords</h1>
+	<p class="text-center m-4">
+		Scanwords are used to scan an email for subscribe-links. These potential subscribe
+		links are then programatically clicked to regiser a new newsletter. A Name Scanword is
+		used to scan the clickable name of a link. A link scanword is used to scan the actual
+		url of the link. If a link contains either one of these words, the link is
+		registered to be clicked. Blacklist words are used to blacklist a Link. If a blacklist word is
+		in a name or url of a link, the link is automatically discarded, even if the link
+		contains a name or link scanword.
+	</p>
+    <div class="card mb-2">
+      <div class="card-header">Name Scanword</div>
+      <div class="card-body">
+        <div class="card-title">
+          <div class="d-flex flex-row flex-wrap">
+            {% for word in word %}
+            <form action="" method="post">
+              {% csrf_token %}
+              <span class="rounded bg-primary p-1 m-1 text-white">
+                {{ word.word }}
+                <input type="hidden" name="delete" value="{{ word.id }}" />
+                <button class="btn p-1 text-white" type="submit">
+                  &#10799;
+                </button>
+              </span>
+            </form>
+            {% endfor %}
+          </div>
+        </div>
+        <form action="" method="post">
+          <div class="input-group">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="addname" />
+            <input
+              class="form-control"
+              name="word"
+              type="text"
+              placeholder="New Name Word"
+            />
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="submit">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card mb-2">
+      <div class="card-header">Link Scanword</div>
+      <div class="card-body">
+        <div class="card-title">
+          <div class="d-flex flex-row flex-wrap">
+            {% for word in link %}
+            <form action="" method="post">
+              {% csrf_token %}
+              <span class="rounded bg-primary p-1 m-1 text-white">
+                {{ word.word }}
+                <input type="hidden" name="delete" value="{{ word.id }}" />
+                <button class="btn p-1 text-white" type="submit">
+                  &#10799;
+                </button>
+              </span>
+            </form>
+            {% endfor %}
+          </div>
+        </div>
+        <form action="" method="post">
+          <div class="input-group">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="addlink" />
+            <input
+              class="form-control"
+              name="word"
+              type="text"
+              placeholder="New Link Word"
+            />
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="submit">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="card mb-2">
+      <div class="card-header">Blacklistwords</div>
+      <div class="card-body">
+        <div class="card-title">
+          <div class="d-flex flex-row flex-wrap">
+            {% for word in blacklist %}
+            <form action="" method="post">
+              {% csrf_token %}
+              <span class="rounded bg-primary p-1 m-1 text-white">
+                {{ word.word }}
+                <input type="hidden" name="delete" value="{{ word.id }}" />
+                <button class="btn p-1 text-white" type="submit">
+                  &#10799;
+                </button>
+              </span>
+            </form>
+            {% endfor %}
+          </div>
+        </div>
+        <form action="" method="post">
+          <div class="input-group">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="addblacklist" />
+            <input
+              class="form-control"
+              name="word"
+              type="text"
+              placeholder="New Blacklist Word"
+            />
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="submit">Add</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% bootstrap_javascript jquery='full' %}
+  </body>
+</html>

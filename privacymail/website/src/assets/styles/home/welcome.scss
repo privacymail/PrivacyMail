@@ -1,8 +1,6 @@
 .welcome {
     position: relative;
-    height: 70vh;
-    min-height: 600px;
-    max-height: 800px;
+    max-height: 900px;
     overflow: hidden;
 
     z-index: 1;
@@ -24,25 +22,47 @@
         @media only screen and (min-width: calc((#{$screen-break} + 50px - (500px ))  *2.5 + (500px))) {
             width: $screen-break + 50px;
         }
-
+        h4 {
+            padding-top: 1rem;
+        }
         > * {
             margin: 2rem 0 0 0;
         }
         .dynamics {
+            min-height: 600px;
             margin-top: 0;
             display: flex;
             flex-grow: 1;
             flex-flow: column;
             justify-content: space-around;
+            > * {
+            }
+        }
+        h1 {
+            padding: 0;
         }
         .input {
+            margin: 1.5rem 0 1.5rem 0;
+            input {
+                margin-top: 2rem;
+            }
             > * {
                 width: 100%;
             }
         }
+    }
 
-        .statistic {
-            margin: 0;
+    .onDemandLink {
+        margin: 1.5rem 0 3rem 0;
+        h2 {
+            color: $font-color-secondary;
+            //margin: 0.5rem 0;
+            //padding: 0;
+            padding: 0;
+        }
+        #onDemandButton {
+            margin-top: 2rem;
+            background: #007dc8;
         }
     }
 }

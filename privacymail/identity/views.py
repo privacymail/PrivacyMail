@@ -2,7 +2,7 @@ import site
 
 from django.shortcuts import render
 from django.views.generic import View
-from identity.rating.rating import getRating
+from identity.rating.rating import getAdjustedRating
 from identity.util import validate_domain, convertForJsonResponse
 from identity.models import Identity, Service, ServiceThirdPartyEmbeds
 from django.http import HttpResponseNotFound
@@ -226,7 +226,6 @@ class ServiceView(View):
             "spam": "reliable",
             "personalisedLinks": "reliable",
         }
-        site_params["rating"] = getRating(site_params)
         # Run checks
         # for check in checks.SERVICE_CHECKS:
         #    site_params['checks'].append(check(site_params))
@@ -252,7 +251,6 @@ class ServiceView(View):
         third_party_conns_setting_cookies = service_3p_conns.filter(sets_cookie=True)
         third_parties = service.thirdparties.distinct()
 
-        print(identities)
 
         site_params["service"] = service
         # site_params["num_different_idents"] = identities.count()

@@ -35,6 +35,7 @@ const ABTestingSmall = (props: ABTestingProps) => {
             return undefined;
         }
     };
+
     const status = getStatus(props.newsletter);
     return (
         <>
@@ -42,6 +43,8 @@ const ABTestingSmall = (props: ABTestingProps) => {
             <div className="describeText">
                 {status === PassOrNotState.Passed ? (
                     <Trans>analysis_abtesting_no</Trans>
+                ) : status === PassOrNotState.Disabled ? (
+                    <Trans>analysis_abtesting_disabled</Trans>
                 ) : (
                     <Trans>analysis_abtesting</Trans>
                 )}

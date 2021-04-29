@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
 
+interface TooltipOptions {
+    onClose?: () => void;
+    timeout?: number;
+    className?: string;
+}
+
 interface Tooltip {
     id: number;
     position: {
@@ -7,7 +13,7 @@ interface Tooltip {
         y: number;
     };
     content?: JSX.Element | JSX.Element[] | string;
-    onClose?: () => void;
+    options?: TooltipOptions;
 }
 //This is a counter to count the displayed tooltips. With this no tooltip id should be assigned twice
 let tooltipIdCounter = 1;
@@ -22,10 +28,10 @@ let tooltipIdCounter = 1;
 export const addTooltip = (
     content: JSX.Element | JSX.Element[] | string | undefined,
     element: HTMLElement,
-    onClose: () => void
+    options?: TooltipOptions
 ): number => {
     const rect = element.getBoundingClientRect();
-    return addTooltipByCord(content, rect.left, rect.top, onClose);
+    return addTooltipByCord(content, rect.left, rect.top + 30, options);
 };
 
 /**
@@ -40,7 +46,7 @@ export const addTooltipByCord = (
     content: JSX.Element | JSX.Element[] | string | undefined,
     x: number,
     y: number,
-    onClose?: () => void
+    options?: TooltipOptions
 ): number => {
     tooltipIdCounter++;
     const event = new CustomEvent<Tooltip>("openTooltip", {
@@ -48,13 +54,19 @@ export const addTooltipByCord = (
             id: tooltipIdCounter,
             position: {
                 x: x,
-                y: y + 30
+                y: y
             },
             content,
-            onClose
+            options
         }
     });
     document.dispatchEvent(event);
+
+    if (options?.timeout) {
+        window.setTimeout(() => {
+            removeTooltip(tooltipIdCounter);
+        }, options.timeout);
+    }
     return tooltipIdCounter;
 };
 /**
@@ -91,7 +103,7 @@ const Tooltip = () => {
             setTooltips(old => {
                 const index = old.findIndex(tooltip => tooltip.id === e.detail);
                 if (index >= 0) {
-                    old[index]?.onClose?.();
+                    old[index]?.options?.onClose?.();
                     old.splice(index, 1);
                 }
                 return [...old];
@@ -103,7 +115,7 @@ const Tooltip = () => {
          */
         const closeAll = () => {
             if (tooltips.length >= 1) {
-                tooltips.forEach(tooltip => tooltip.onClose?.());
+                tooltips.forEach(tooltip => tooltip.options?.onClose?.());
 
                 setTooltips([]);
             }
@@ -126,7 +138,11 @@ const Tooltip = () => {
     return (
         <div className="tooltips">
             {tooltips.map((tooltip, index) => (
-                <div className="tooltip" key={index} style={{ top: tooltip.position.y, left: tooltip.position.x }}>
+                <div
+                    className={tooltip.options?.className ?? "tooltip"}
+                    key={index}
+                    style={{ top: tooltip.position.y, left: tooltip.position.x, position: "fixed", zIndex: 9999 }}
+                >
                     {tooltip.content}
                 </div>
             ))}

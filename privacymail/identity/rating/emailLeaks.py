@@ -1,23 +1,23 @@
 from identity.rating.calculate import scaleToRating, calculateRating
-
+from identity.models import Identity
 
 def calculateSpam(service):
-    if service["third_party_spam"] > 0:
+    if Identity.objects.filter(service=service, receives_third_party_spam=True).count() > 0:
         return 1
     else:
         return 0
 
 
 def calculateEmailLeaksThirdparties(
-    service,
+    embeds,
 ):  # TODO Sicherstellen, dass das so auch richtig ist
-    if service["leaks_address"]:
+    if embeds.filter(leaks_address=True).exists():
         return 1
     else:
         return 0
 
 
-def calculateEmailLeaks(service, weights, rMin, rMax):
+def calculateEmailLeaks(service, embeds, weights, rMin, rMax):
     categories = {
         "spam": {
             "rating": scaleToRating(calculateSpam(service), rMax["spam"]),
@@ -25,7 +25,7 @@ def calculateEmailLeaks(service, weights, rMin, rMax):
         },
         "emailLeaks": {
             "rating": scaleToRating(
-                calculateEmailLeaksThirdparties(service), rMax["thirdparties"]
+                calculateEmailLeaksThirdparties(embeds), rMax["thirdparties"]
             ),
             "weight": weights["thirdparties"],
         },

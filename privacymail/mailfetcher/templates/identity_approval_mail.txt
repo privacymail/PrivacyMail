@@ -1,0 +1,3 @@
+The identity {{ ident }} from service {{ ident.service }} is not approved yet, but received mail.
+Please check for approval on here: {{URL}}/mail/{{ mail.id }}
+Thanks.

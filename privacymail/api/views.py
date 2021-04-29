@@ -4,10 +4,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from identity.util import validate_domain
 from django.conf import settings
+from django.core.cache import cache
 from identity.models import Identity, Service
+from identity.util import convertForJsonResponse
 from mailfetcher.analyser_cron import create_service_cache
+from mailfetcher.crons.mailCrawler.openWPM import analyzeSingleMail
+from django.http import HttpResponse
+import json
 import logging
 from random import shuffle
+import uuid
 import os
 
 logger = logging.getLogger(__name__)
@@ -35,7 +41,12 @@ class BookmarkletApiView(View):
             # Iterate through it
             for identityDomain in domains:
                 # If the domain has not yet been used, stop the loop, otherwise try the next
-                if Identity.objects.filter(service_id=service.pk).filter(mail__contains=identityDomain).count() == 0:
+                if (
+                    Identity.objects.filter(service_id=service.pk)
+                    .filter(mail__contains=identityDomain)
+                    .count()
+                    == 0
+                ):
                     break
             # At this point, we have either selected a domain that has not yet been used for the
             # provided service, or the service already has at least one identity for each domain,
@@ -49,19 +60,59 @@ class BookmarkletApiView(View):
                 create_service_cache(service, force=True)
 
             # Return the created identity
-            r = JsonResponse({
-                "site": url,
-                "email": ident.mail,
-                "first": ident.first_name,
-                "last": ident.surname,
-                "gender": "Male" if ident.gender else "Female"
-            })
+            r = JsonResponse(
+                {
+                    "site": url,
+                    "email": ident.mail,
+                    "first": ident.first_name,
+                    "last": ident.surname,
+                    "gender": "Male" if ident.gender else "Female",
+                }
+            )
         except KeyError:
-            logger.warning("BookmarkletApiView.post: Malformed request received, missing url.", extra={'request': request})
+            logger.warning(
+                "BookmarkletApiView.post: Malformed request received, missing url.",
+                extra={"request": request},
+            )
             r = JsonResponse({"error": "No URL passed"})
         except AssertionError:
             # Invalid URL passed
-            logger.warning("BookmarkletApiView.post: Malformed request received, malformed URL.", extra={'request': request})
+            logger.warning(
+                "BookmarkletApiView.post: Malformed request received, malformed URL.",
+                extra={"request": request},
+            )
             r = JsonResponse({"error": "Invalid URL passed."})
         r["Access-Control-Allow-Origin"] = "*"
         return r
+
+
+class AnalysisView(View):
+    @method_decorator(csrf_exempt)
+    def dispatch(self, request, *args, **kwargs):
+        return super(AnalysisView, self).dispatch(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+
+        queue = cache.get("onDemand_analysis_queue")
+        if queue is None:
+            queue = {}
+        print(settings.MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND)
+        if len(queue) >= settings.MAXIMUM_ALLOWED_EMAIL_ANALYSIS_ONDEMAND:
+            return HttpResponse(status=503)
+        else:
+            analysis_id = str(uuid.uuid4())
+            queue[analysis_id] = analysis_id
+            cache.set("onDemand_analysis_queue",queue)
+            try:
+                body_unicode = request.body.decode("utf-8")
+                body_json = json.loads(body_unicode)
+                message = body_json["rawData"]
+                stats = analyzeSingleMail(message)
+                queue.pop(analysis_id,None)
+                cache.set("onDemand_analysis_queue",queue)
+                return JsonResponse(stats)
+            except:
+                queue.pop(analysis_id,None)
+                cache.set("onDemand_analysis_queue",queue)
+                raise
+            

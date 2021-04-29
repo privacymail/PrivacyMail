@@ -1,0 +1,81 @@
+Return-Path: <delivery@mx.sailthru.com>
+X-Original-To: cathy.cartier@newsletterme.de
+Delivered-To: mailbox@newsletterme.de
+Received: from ny1mta-29.sailthru.com (ny1mta-29.sailthru.com [65.39.215.29])
+	by mx2f68.netcup.net (Postfix) with ESMTP id 22DC8A20B4
+	for <cathy.cartier@newsletterme.de>; Fri,  1 Mar 2019 16:00:14 +0100 (CET)
+Authentication-Results: mx2f68;
+	dkim=pass header.i=delivery@mx.sailthru.com;
+        spf=pass (sender IP is 65.39.215.29)
+ smtp.mailfrom=delivery@mx.sailthru.com smtp.helo=ny1mta-29.sailthru.com
+Received-SPF: pass (mx2f68: domain of mx.sailthru.com designates 65.39.215.29
+ as permitted sender) client-ip=65.39.215.29;
+ envelope-from=delivery@mx.sailthru.com; helo=ny1mta-29.sailthru.com;
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; s=pt; d=pmta.sailthru.com;
+ h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:List-Unsubscribe;
+ bh=j3VghjCSiMC4JPVT1ry3ntzuvwI=;
+ b=bg64MmxngcPVymECbbBplvYYmHP5wrOAoCc8+lPEQzGglbaRyqJ7isIhPF+vnhMkNPHAqhkJbtA6
+   c3PxmkT+B2sOPQQbQff6rzo10nOg1XJeXZT8WcOpOR72seVaCeMO1BtxU2XCTw2kFh2MsO5USFTz
+   W6jFtubkQ4Yv+5J6cGM=
+Received: from njmta-20.sailthru.com (173.228.155.20) by mx-b157.sailthru.com
+ id hf54g01qqbsp for <cathy.cartier@newsletterme.de>;
+ Fri, 1 Mar 2019 10:00:13 -0500 (envelope-from <delivery@mx.sailthru.com>)
+Received: from nj1-rawolive.flt (172.18.20.13) by njmta-20.sailthru.com id
+ hf54fq1qqbss for <cathy.cartier@newsletterme.de>;
+ Fri, 1 Mar 2019 10:00:13 -0500 (envelope-from <delivery@mx.sailthru.com>)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple; t=1551452413;
+	s=sailthru; d=mail.nbcnews.com;
+	h=Date:From:To:Message-ID:Subject:MIME-Version:Content-Type:List-Unsubscribe;
+	bh=e6rQGudC+OLOmogS9qWMKKlln2sZ+9U4EIMq7O4dH+0=;
+	b=Uno5bPkRt1/WRy69JExnnLNrzCq2vBmRz5Cz2wmm/3WYppSow4g5eSd6PF4IwSFQ
+	mhjp76q03j+cDu8ShaBrOmYxeHzLWROvcsIsWoJgTzwYMMVrnXnWT1JaepliZJb66xP
+	o8JdS5NSM6jlsbn7986y3XVBM0wjGsYr5HSLz3JQ=
+Date: Fri, 1 Mar 2019 10:00:13 -0500 (EST)
+From: NBC News Alert <email@mail.nbcnews.com>
+To: cathy.cartier@newsletterme.de
+Message-ID: <20190301100013.16156523.367164@sailthru.com>
+Subject: BREAKING: Contradicting Trump, Otto Warmbier's parents blame North
+ Korean leader Kim Jung Un for the death of their son
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary="----=_Part_127289264_532475703.1551452413660"
+Precedence: bulk
+X-TM-ID: 20190301100013.16156523.367164
+X-Info: Message sent by sailthru.com customer NBCU - nbcnews.com
+X-Info: We do not permit unsolicited commercial email
+X-Info: Please report abuse by forwarding complete headers to
+X-Info: abuse@sailthru.com
+X-Mailer: sailthru.com
+X-Unsubscribe-Web: 
+ https://privacymail.info
+List-Unsubscribe: 
+ https://privacymail.info,
+ <mailto:unsubscribe_20190301100013.16156523.367164@mx.sailthru.com>
+X-rpcampaign: stkgp16156523
+
+------=_Part_127289264_532475703.1551452413660
+Content-Type: text/html; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+
+<!-- NBCNews Newsletter Boilerplate - Account 6931 -->
+<!doctype html>
+<html>
+<head>
+<meta name=3D"format-detection" content=3D"telephone=3Dno" />
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3DUTF-8"/>
+<meta name=3D"format-detection" content=3D"telephone=3Dno">=20
+<meta name=3D"viewport" content=3D"width=3Ddevice-width; initial-scale=3D1.=
+0; maximum-scale=3D1.0; user-scalable=3Dno;">
+<meta http-equiv=3D"X-UA-Compatible" content=3D"IE=3Dedge">
+<meta name=3D"x-apple-disable-message-reformatting">  <!-- Disable auto-sca=
+le in iOS 10 Mail entirely -->
+<title>NBC News</title>
+</head>
+<body>
+<a href="https://privacymail.info">Test</a>
+<a href="https://privacymail.info">Visit our Site</a>
+</body>
+</html>
+
+------=_Part_127289264_532475703.1551452413660--
+

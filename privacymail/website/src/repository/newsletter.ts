@@ -32,10 +32,18 @@ export interface INewsletter {
         spam: Reliability;
         personalisedLinks: Reliability;
     };
-    rating: IRating;
+    rating: {
+        newsletterRating: IRating;
+        history: IRating[];
+        completeHistory: {
+            worstIdenity: IRating[];
+            [key: string]: IRating[];
+        };
+    };
 }
 export interface IRating {
     rating: number;
+    date?: string;
     categories: {
         [category: string]: IRatingCategory;
     };
@@ -47,9 +55,9 @@ export interface IRatingCategory {
 }
 export interface IThirdParty {
     embed_as: string[];
-    address_leak_view: boolean;
-    address_leak_click: boolean;
-    sets_cookie: boolean;
+    address_leak_view?: boolean;
+    address_leak_click?: boolean;
+    sets_cookie?: boolean;
     receives_identifier: boolean;
     name: string;
     host?: string;
@@ -60,6 +68,7 @@ export interface IThirdParty {
     sector: string;
     service: any;
 }
+
 export interface IService {
     url: string;
     name: string;

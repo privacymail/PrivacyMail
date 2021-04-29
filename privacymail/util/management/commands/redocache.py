@@ -2,20 +2,32 @@ from django.core.management.base import BaseCommand
 from django.core.cache import cache
 from identity.models import Service
 from mailfetcher.models import Thirdparty
-from mailfetcher.analyser_cron import create_service_cache, create_summary_cache, create_third_party_cache
-
-
+import multiprocessing
+from itertools import repeat
+from mailfetcher.analyser_cron import (
+    create_service_cache,
+    create_summary_cache,
+    create_third_party_cache,
+    multiprocessing_create_service_cache,
+    multiprocessing_create_thirdparty_cache
+)
+from django.db import connections
+import time
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
+        t1 = time.time()
         cache.clear()
-        self.stdout.write('Cleared cache\n')
+        self.stdout.write("Cleared cache\n")
 
-        create_summary_cache(force=True)
+        # create_summary_cache(force=True)
+        if multiprocessing.cpu_count() > 3:
+            cpus = multiprocessing.cpu_count() - 3
+        else:
+            cpus = 1
 
-        for service in Service.objects.all():
-            create_service_cache(service, force=True)
-
-        for thirdparty in Thirdparty.objects.all():
-            create_third_party_cache(thirdparty, force=True)
-
-        print('Done')
+        with multiprocessing.Pool(cpus) as p:
+            p.map(multiprocessing_create_service_cache, Service.objects.all())
+            p.map(multiprocessing_create_thirdparty_cache, Thirdparty.objects.all())
+        t2 = time.time()
+        print(t2 - t1)
+        print("Done")

@@ -2,26 +2,22 @@ from identity.rating.calculate import scaleToRating, countToRating
 
 from identity.util import filterDict
 
+from identity.models import ServiceThirdPartyEmbeds
+from django.db.models import Q
 
-def CDNs(service, rMin, rMax):
+def CDNs(embeds, service, rMin, rMax):
     return countToRating(
-        len(
-            filterDict(
-                service["third_parties"],
-                lambda key, value: "ONVIEW" in value["embed_as"]
-                and (
-                    (key.sector != "tracker" and key.sector != "unknown")
-                    or key.name == service["service"].name
-                ),
-            )
-        ),
+        embeds.filter(
+            Q(embed_type=ServiceThirdPartyEmbeds.ONVIEW) & 
+            ((~Q(thirdparty__sector="tracker") & ~Q(thirdparty__sector="unkown")) | Q(thirdparty__name = service.name))
+        ).count(),
         rMin,
         rMax,
     )
 
 
-def calculateCDNs(service, weight, rMin, rMax):
+def calculateCDNs(embeds, service, weight, rMin, rMax):
     return {
         "weight": weight,
-        "rating": scaleToRating(CDNs(service, rMin, rMax), rMax),
+        "rating": scaleToRating(CDNs(embeds,service, rMin, rMax), rMax),
     }
