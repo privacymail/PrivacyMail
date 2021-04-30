@@ -1,4 +1,9 @@
 #!/bin/bash
+# Start cron because it won't on its own for some reason
+service cron start
+# Export env
+printenv > /etc/environment
+
 echo "Making migrations and migrating the database. "
 source /opt/conda/etc/profile.d/conda.sh
 conda activate privacymail
