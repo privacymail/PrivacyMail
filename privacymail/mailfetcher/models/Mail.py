@@ -51,15 +51,15 @@ class Mail(models.Model):
     message_id = models.TextField()
     body_plain = models.TextField(null=True, blank=True)
     body_html = models.TextField(null=True, blank=True)
-    h_x_original_to = models.CharField(max_length=200, null=True, blank=True)
-    h_from = models.CharField(max_length=200, null=True, blank=True)
-    h_to = models.CharField(max_length=200, null=True, blank=True)
-    h_cc = models.CharField(max_length=200, null=True, blank=True)
-    h_bcc = models.CharField(max_length=200, null=True, blank=True)
-    h_subject = models.CharField(max_length=500, null=True, blank=True)
-    h_date = models.CharField(max_length=200, null=True, blank=True)
+    h_x_original_to = models.CharField(max_length=500, null=True, blank=True)
+    h_from = models.CharField(max_length=500, null=True, blank=True)
+    h_to = models.CharField(max_length=500, null=True, blank=True)
+    h_cc = models.CharField(max_length=500, null=True, blank=True)
+    h_bcc = models.CharField(max_length=500, null=True, blank=True)
+    h_subject = models.CharField(max_length=5000, null=True, blank=True)
+    h_date = models.CharField(max_length=500, null=True, blank=True)
     date_time = models.DateTimeField(blank=True, null=True)
-    h_user_agent = models.CharField(max_length=200, null=True, blank=True)
+    h_user_agent = models.CharField(max_length=500, null=True, blank=True)
     identity = models.ManyToManyField(Identity, related_name="message")
     suspected_spam = models.BooleanField(default=False)
     mail_from_another_identity = models.ManyToManyField("self",
@@ -237,8 +237,10 @@ class Mail(models.Model):
         self.h_to = message["To"]
         self.h_cc = message["Cc"]
         self.h_bcc = message["BCC"]
-        self.h_subject = make_header(
-            decode_header(self._clear_none_values(message["Subject"])))
+        self.h_subject = str(make_header(
+            decode_header(self._clear_none_values(message["Subject"]))))
+        if len(self.h_subject) >= 5000:
+            self.h_subject = self.h_subject[:4999]
         self.h_date = message["Date"]
         self.h_user_agent = message["User-Agent"]
         # date_obj = parsedate_to_datetime(self.h_date)
