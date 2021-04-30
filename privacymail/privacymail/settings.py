@@ -333,18 +333,18 @@ LOGGING = {
             "formatter": "console",
         },
         "sentry": {
-            "level": "DEBUG",
+            "level": "WARNING",
             "class": ("raven.contrib.django.raven_compat.handlers." "SentryHandler"),
         },
     },
     "loggers": {
-        "mailfetcher": {"level": "DEBUG", "handlers": ["sentry"], "propagate": False},
-        "identity": {"level": "DEBUG", "handlers": ["sentry"], "propagate": False},
+        "mailfetcher": {"level": "ERROR", "handlers": ["sentry"], "propagate": False},
+        "identity": {"level": "ERROR", "handlers": ["sentry"], "propagate": False},
         "OpenWPM.automation.MPLogger": {
             "level": "ERROR",
             "handlers": ["console"],
             "propagate": False,
         },
-        "cron": {"level": "INFO", "handlers": ["sentry"], "propagate": False},
+        "cron": {"level": "ERROR", "handlers": ["sentry"], "propagate": False},
     },
 }
