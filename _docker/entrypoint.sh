@@ -3,7 +3,6 @@ echo "Making migrations and migrating the database. "
 source /opt/conda/etc/profile.d/conda.sh
 conda activate privacymail
 cd privacymail
-python manage.py makemigrations --noinput 
 python manage.py migrate --noinput 
 python manage.py collectstatic --noinput
 
