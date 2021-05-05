@@ -33,30 +33,27 @@ class ImapFetcher(CronJobBase):
         start_time = time.time()
         server, thread = init()
 
-        mails_left = True
-        # Continue until all mails processed.
-        while mails_left:
-            unfinished_mail_count = getUnfinishedMailCount()
-            # Have at most settings.CRON_MAILQUEUE_SIZE messages in the queue. If we have less than that,
-            # retrieve new messages from the mail server
-            if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
-                print(
-                    "Too many unfinished mails in database. Continuing without fetching new ones."
-                )
-            else:
-                mails_left = fetchMails(unfinished_mail_count)
+        unfinished_mail_count = getUnfinishedMailCount()
+        # Have at most settings.CRON_MAILQUEUE_SIZE messages in the queue. If we have less than that,
+        # retrieve new messages from the mail server
+        if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
+            print(
+                "Too many unfinished mails in database. Continuing without fetching new ones."
+            )
+        else:
+            mails_left = fetchMails(unfinished_mail_count)
 
-            # Run OpenWPM; View the Mail, then visit one of it's links.
-            analyzeOnView()
+        # Run OpenWPM; View the Mail, then visit one of it's links.
+        analyzeOnView()
 
-            analyzeOnClick()
+        analyzeOnClick()
 
-            analyzeLeaks()
-            # print('All mails processed.')
-            end_time = time.time()
-            print("Time elapsed: %s" % (end_time - start_time))
-            print("Mails_left: %s" % mails_left)
-            # print('%s have been processed until now.' % num_mails_processed)
+        analyzeLeaks()
+        # print('All mails processed.')
+        end_time = time.time()
+        print("Time elapsed: %s" % (end_time - start_time))
+        print("Mails_left: %s" % mails_left)
+        # print('%s have been processed until now.' % num_mails_processed)
 
         print("done")
         # Clean up zombie processes
