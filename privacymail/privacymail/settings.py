@@ -261,7 +261,7 @@ UNSUBSCRIBE_LINK_DICT = [
 ]
 
 # Number of mails to be processed per batch by the cronjob.
-CRON_MAILQUEUE_SIZE = 100
+CRON_MAILQUEUE_SIZE = 50
 
 # Number of retries
 OPENWPM_RETRIES = 3
