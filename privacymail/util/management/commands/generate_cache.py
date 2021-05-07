@@ -5,7 +5,7 @@ from mailfetcher.models import Thirdparty
 from pprint import pprint
 
 from mailfetcher.analyser_cron import (
-    analyse_dirty_service)
+    analyse_dirty_service,create_service_cache)
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
@@ -15,8 +15,8 @@ class Command(BaseCommand):
         for sid in options['id']:
             try:
                 service = Service.objects.get(pk=sid)
-                analyse_dirty_service(service)
+                create_service_cache(service,True)
                 c = cache.get(service.derive_service_cache_path())
-                pprint(c)
+                #pprint(c)
             except Service.DoesNotExist:
                 raise CommandError('Service %s does not exist' % sid)
