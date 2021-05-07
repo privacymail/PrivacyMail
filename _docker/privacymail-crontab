@@ -1,0 +1,1 @@
+*/10 * * * * bash /opt/privacymail/cron.sh >> /tmp/privacymail.log 2>> /tmp/privacymail.err

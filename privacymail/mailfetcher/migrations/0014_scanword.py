@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('mailfetcher', '0012_auto_20210120_1042'),
+        ('mailfetcher', '0013_auto_20201126_1225'),
     ]
 
     operations = [

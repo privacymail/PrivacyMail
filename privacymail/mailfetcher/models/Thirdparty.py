@@ -53,8 +53,8 @@ class Thirdparty(models.Model):
         (UNKNOWN, "Unknown"),
     )
 
-    name = models.CharField(max_length=200, null=False, blank=False)
-    host = models.CharField(max_length=200, null=False, blank=False, unique=True)
+    name = models.CharField(max_length=500, null=False, blank=False)
+    host = models.CharField(max_length=500, null=False, blank=False, unique=True)
     resultsdirty = models.BooleanField(default=True)
 
     # Metadata

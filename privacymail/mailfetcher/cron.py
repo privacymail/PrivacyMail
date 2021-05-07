@@ -1,11 +1,8 @@
 import logging
 import poplib
 
-import requests
 from django.conf import settings
 from django_cron import CronJobBase, Schedule
-
-from mailfetcher.models import Mail
 
 from mailfetcher.crons.mailCrawler.init import init
 from mailfetcher.crons.mailCrawler.getUnfinishedMailCount import getUnfinishedMailCount
@@ -29,51 +26,34 @@ class ImapFetcher(CronJobBase):
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = "org.privacy-mail.imapfetcher"  # a unique code
 
-    def notify_webhook(self, case):
-        if settings.CRON_WEBHOOKS:
-            try:
-                url = settings.CRON_WEBHOOKS["mailfetcher.cron.ImapFetcher"][case]
-                if url:
-                    requests.get(url)
-            except Exception:
-                logger.warning(
-                    "ImapFetcher.notify_webhook: Failed to send signal.", exc_info=True
-                )
-                # No matter what happens here
-                pass
-
     def do(self):
-        # self.notify_webhook("start")
         # Work around a bug with the caching library
 
         # Start measuring the time from the beginning.
         start_time = time.time()
         server, thread = init()
 
-        mails_left = True
-        # Continue until all mails processed.
-        while mails_left:
-            unfinished_mail_count = getUnfinishedMailCount()
-            # Have at most settings.CRON_MAILQUEUE_SIZE messages in the queue. If we have less than that,
-            # retrieve new messages from the mail server
-            if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
-                print(
-                    "Too many unfinished mails in database. Continuing without fetching new ones."
-                )
-            else:
-                mails_left = fetchMails(unfinished_mail_count)
+        unfinished_mail_count = getUnfinishedMailCount()
+        # Have at most settings.CRON_MAILQUEUE_SIZE messages in the queue. If we have less than that,
+        # retrieve new messages from the mail server
+        if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
+            print(
+                "Too many unfinished mails in database. Continuing without fetching new ones."
+            )
+        else:
+            mails_left = fetchMails(unfinished_mail_count)
 
-            # Run OpenWPM; View the Mail, then visit one of it's links.
-            analyzeOnView()
+        # Run OpenWPM; View the Mail, then visit one of it's links.
+        analyzeOnView()
 
-            analyzeOnClick()
+        analyzeOnClick()
 
-            analyzeLeaks()
-            # print('All mails processed.')
-            end_time = time.time()
-            print("Time elapsed: %s" % (end_time - start_time))
-            print("Mails_left: %s" % mails_left)
-            # print('%s have been processed until now.' % num_mails_processed)
+        analyzeLeaks()
+        # print('All mails processed.')
+        end_time = time.time()
+        print("Time elapsed: %s" % (end_time - start_time))
+        print("Mails_left: %s" % mails_left)
+        # print('%s have been processed until now.' % num_mails_processed)
 
         print("done")
         # Clean up zombie processes
@@ -89,4 +69,3 @@ class ImapFetcher(CronJobBase):
             server.shutdown()
             server.socket.close()
             thread.join(5)
-            self.notify_webhook("success")

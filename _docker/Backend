@@ -9,7 +9,7 @@ RUN apt-get clean -qq \
     && apt-get update -qq \
     && apt-get upgrade -qq \
     # deps to run firefox inc. with xvfb
-    && apt-get install curl make libgtk-3-0 libx11-xcb1 libdbus-glib-1-2 libxt6 xvfb -qq
+    && apt-get install cron curl make libgtk-3-0 libx11-xcb1 libdbus-glib-1-2 libxt6 xvfb -qq
 
 # create conda environment
 COPY environment.yaml .
@@ -45,4 +45,12 @@ RUN npm install && npm run build
 
 WORKDIR /opt/privacymail
 COPY _docker/entrypoint.sh .
+ 
+# setup crontab
+COPY _docker/cron.sh .
+RUN chmod 755 cron.sh
+COPY _docker/privacymail-crontab /etc/cron.d/privacymail-crontab
+RUN chmod 0644 /etc/cron.d/privacymail-crontab \
+	&& crontab /etc/cron.d/privacymail-crontab
+
 ENTRYPOINT ["bash", "/opt/privacymail/entrypoint.sh"]
