@@ -26,8 +26,10 @@ class Command(BaseCommand):
             cpus = 1
 
         with multiprocessing.Pool(cpus) as p:
-            p.map(multiprocessing_create_service_cache, Service.objects.all())
-            p.map(multiprocessing_create_thirdparty_cache, Thirdparty.objects.all())
+            p.map(multiprocessing_create_service_cache, Service.objects.all()[0:10])
+        connections.close_all()
+        for thirdparty in Thirdparty.objects.all():
+            create_third_party_cache(thirdparty)
         t2 = time.time()
         print(t2 - t1)
         print("Done")

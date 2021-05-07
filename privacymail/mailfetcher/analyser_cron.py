@@ -13,6 +13,7 @@ from django.conf import settings
 from django.db.models import Q
 from django import db
 from datetime import date
+import time
 import requests
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
@@ -229,18 +230,20 @@ def create_service_cache(service, force=False):
 
     # Check if service has dead identities
     # Look for the 5th newest mail an identity has received
-    for mail in mails:
+    for mail in mails:    
         cookies_per_mail.append(
             service_3p_conns.filter(mail=mail, sets_cookie=True).count()
         )
         counter_personalised_links += 1
+        now = time.time()
         all_static_eresources = Eresource.objects.filter(mail=mail).filter(
             Q(type="a") | Q(type="link") | Q(type="img") | Q(type="script")
         )
+        now = time.time()
         num_embedded_links.append(all_static_eresources.count())
         personalised_anchor_links.append(
             all_static_eresources.filter(type="a", personalised=True).count()
-        )
+        )        now = time.time()
         personalised_image_links.append(
             all_static_eresources.filter(type="img", personalised=True).count()
         )
@@ -253,15 +256,23 @@ def create_service_cache(service, force=False):
         cookies_set_mean = statistics.mean(cookies_per_mail)
     except:
         cookies_set_mean = 0
- 
-    avg_num_embedded_links = statistics.mean(num_embedded_links)
+    try:
+        avg_num_embedded_links = statistics.mean(num_embedded_links)
+    except:
+        avg_num_embedded_links = 0
     # TODO When does this happen?
     if avg_num_embedded_links == 0:
         ratio = 0
     else:
-        ratio = statistics.mean(personalised_links) / avg_num_embedded_links
-    avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
-    avg_personalised_image_links = statistics.mean(personalised_image_links)
+        ratio = statistics.mean(personalised_links) / avg_num_embedded_links        
+    try:
+        avg_personalised_anchor_links = statistics.mean(personalised_anchor_links)
+    except:
+        avg_personalised_anchor_links = 0
+    try:
+        avg_personalised_image_links = statistics.mean(personalised_image_links)
+    except:
+        avg_personalised_image_links = 0
 
     for third_party in third_parties:
         if third_party not in third_parties_dict:
