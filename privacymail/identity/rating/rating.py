@@ -154,6 +154,7 @@ def getAdjustedRating(service):
         mails = Mail.objects.filter(
             identity=identity,
             identity__approved=True,
+            processing_state="DONE",
         ).distinct().order_by("-date_time")
         
         past180Days = timedelta(days=180)
