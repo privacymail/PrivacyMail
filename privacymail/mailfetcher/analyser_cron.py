@@ -235,15 +235,13 @@ def create_service_cache(service, force=False):
             service_3p_conns.filter(mail=mail, sets_cookie=True).count()
         )
         counter_personalised_links += 1
-        now = time.time()
         all_static_eresources = Eresource.objects.filter(mail=mail).filter(
             Q(type="a") | Q(type="link") | Q(type="img") | Q(type="script")
         )
-        now = time.time()
         num_embedded_links.append(all_static_eresources.count())
         personalised_anchor_links.append(
             all_static_eresources.filter(type="a", personalised=True).count()
-        )        now = time.time()
+        )    
         personalised_image_links.append(
             all_static_eresources.filter(type="img", personalised=True).count()
         )
