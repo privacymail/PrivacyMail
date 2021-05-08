@@ -40,6 +40,9 @@ class Eresource(models.Model):
     is_start_of_chain = models.BooleanField(default=True)
     possible_unsub_link = models.BooleanField(default=False)
 
+    class Meta:
+        indexes = [models.Index(fields=['mail', 'type', 'personalised']),]
+
     def __str__(self):
         return "({})|{}".format(self.type, self.url)
 
