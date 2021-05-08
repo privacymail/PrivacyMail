@@ -26,7 +26,7 @@ class Command(BaseCommand):
             cpus = 1
 
         with multiprocessing.Pool(cpus) as p:
-            p.map(multiprocessing_create_service_cache, Service.objects.all()[])
+            p.map(multiprocessing_create_service_cache, Service.objects.all())
         connections.close_all()
         with multiprocessing.Pool(cpus) as p:
             p.map(multiprocessing_create_thirdparty_cache, Thirdparty.objects.all())
