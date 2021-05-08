@@ -358,7 +358,10 @@ def analyse_dirty_service(dirty_service):
 
 def multiprocessing_create_service_cache(service):
     connections.close_all()
+    now = time.time()
     create_service_cache(service, True)
+    print(f"Service creation took for {service.name} took : {time.time() - now }")
+    
 
 def multiprocessing_create_thirdparty_cache(thirdparty):
     connections.close_all()

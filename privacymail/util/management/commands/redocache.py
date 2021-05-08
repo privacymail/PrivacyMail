@@ -25,10 +25,10 @@ class Command(BaseCommand):
         else:
             cpus = 1
 
-        with multiprocessing.Pool(cpus) as p:
+        with multiprocessing.Pool(cpus, maxtasksperchild=10) as p:
             p.map(multiprocessing_create_service_cache, Service.objects.all())
         connections.close_all()
-        with multiprocessing.Pool(cpus) as p:
+        with multiprocessing.Pool(cpus, maxtasksperchild=10) as p:
             p.map(multiprocessing_create_thirdparty_cache, Thirdparty.objects.all())
         t2 = time.time()
         print(t2 - t1)
