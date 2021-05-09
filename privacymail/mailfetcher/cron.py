@@ -38,7 +38,7 @@ class ImapFetcher(CronJobBase):
         # retrieve new messages from the mail server
         if unfinished_mail_count >= settings.CRON_MAILQUEUE_SIZE:
             print(
-                "Too many unfinished mails in database. Continuing without fetching new ones."
+                f"Too many unfinished mails in database. Continuing without fetching new ones: {unfinished_mail_count}"
             )
         else:
             mails_left = fetchMails(unfinished_mail_count)
