@@ -18,6 +18,7 @@ import requests
 from mailfetcher.crons.mailCrawler.analysis.leakage import (
     analyze_mail_connections_for_leakage,
 )
+from contextlib import closing
 
 from identity.rating.rating import getAdjustedRating
 logger = logging.getLogger(__name__)
@@ -335,13 +336,12 @@ def analyse_dirty_services():
     # Re-generate caches for services with updated data
     dirty_services = Service.objects.filter(resultsdirty=True)
     print(dirty_services.count())
-    if cpu_count() > 3:
-        cpus = cpu_count() - 3
+    if cpu_count() > 5:
+        cpus = cpu_count() - 5
     else:
         cpus = 1
 
-    
-    with Pool(cpus) as p:
+    with closing(Pool(cpus,maxtasksperchild=1)) as p:
         p.map(analyse_dirty_service, dirty_services)
 
 
@@ -360,7 +360,7 @@ def multiprocessing_create_service_cache(service):
     connections.close_all()
     now = time.time()
     create_service_cache(service, True)
-    print(f"Service creation took for {service.name} took : {time.time() - now }")
+    print(f"Service creation for {service.name} took : {time.time() - now }")
     
 
 def multiprocessing_create_thirdparty_cache(thirdparty):
