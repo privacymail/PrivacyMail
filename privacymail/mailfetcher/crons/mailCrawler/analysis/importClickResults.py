@@ -122,6 +122,7 @@ def import_openwpmresults_click(url, mail, db_cursor):
             eresources_to_save.append(e)
 
     # save load resources in eresource of type connection
+    eresources_not_dropped = []
     for e in eresources_to_save:
         isInList = False
         for drop_host in drop_hosts:
@@ -130,13 +131,13 @@ def import_openwpmresults_click(url, mail, db_cursor):
 
         if not isInList:
             # print(e.url)
-            e.save()
             mail.connect_tracker(eresource=e)
-            e.save()
             num_eresources += +1
+            eresources_not_dropped.append(e)
         else:
             print("Dropped:", e.url)
             num_eresources_dropped += 1
+    Eresource.objects.bulk_update(eresources_not_dropped, ["host"])
     print(
         "Added %s Eresources to the database (%s dropped)"
         % (num_eresources, num_eresources_dropped)

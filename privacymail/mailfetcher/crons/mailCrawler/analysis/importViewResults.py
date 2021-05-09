@@ -71,7 +71,7 @@ def import_openwpmresults(filename, mail, db_cursor):
     #                                 "FROM http_requests as h JOIN site_visits as v ON "
     #                                 "h.visit_id = v.visit_id WHERE top_level_url = ?;", (filename,)):
     print(f"Read open wpm : {time.time() - now}")
-    
+    list_of_eresources = []
     for (
         url,
         request_headers,
@@ -124,8 +124,10 @@ def import_openwpmresults(filename, mail, db_cursor):
         # save load resources in eresource of type connection
         if created:
             mail.connect_tracker(eresource=r)
-            r.save()
             num_eresources = num_eresources + 1
+            print(f"Eresource ID: {r.pk}")
+            list_of_eresources.append(r)
+    Eresource.objects.bulk_update(list_of_eresources, ["host"])
     print("Number of Eresources added to the Database: %s" % num_eresources)
 
     if num_openWpm_entries != num_eresources:

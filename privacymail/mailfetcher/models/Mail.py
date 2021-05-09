@@ -834,7 +834,6 @@ class Mail(models.Model):
         except ObjectDoesNotExist:
             thirdparty = Thirdparty.create(name=host, host=host)
         eresource.host = thirdparty
-        eresource.save()
         thirdparty.set_dirty()
 
     @cached_property

@@ -57,7 +57,6 @@ class Eresource(models.Model):
         )
         if created:
             mail.connect_tracker(eresource=r)
-            r.save()
 
     @classmethod
     def create_static_eresource(
