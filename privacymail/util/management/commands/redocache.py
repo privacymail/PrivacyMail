@@ -13,22 +13,23 @@ from mailfetcher.analyser_cron import (
 )
 from django.db import connections
 import time
+from contextlib import closing
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         t1 = time.time()
         cache.clear()
         self.stdout.write("Cleared cache\n")
 
-        # create_summary_cache(force=True)
+        create_summary_cache(force=True)
         if multiprocessing.cpu_count() > 3:
             cpus = multiprocessing.cpu_count() - 3
         else:
             cpus = 1
 
-        with multiprocessing.Pool(cpus, maxtasksperchild=10) as p:
+        with closing(multiprocessing.Pool(cpus, maxtasksperchild=1)) as p:
             p.map(multiprocessing_create_service_cache, Service.objects.all())
         connections.close_all()
-        with multiprocessing.Pool(cpus, maxtasksperchild=10) as p:
+        with closing(multiprocessing.Pool(cpus, maxtasksperchild=1)) as p:
             p.map(multiprocessing_create_thirdparty_cache, Thirdparty.objects.all())
         t2 = time.time()
         print(t2 - t1)
