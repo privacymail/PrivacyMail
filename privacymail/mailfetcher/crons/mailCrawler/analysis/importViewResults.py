@@ -88,8 +88,7 @@ def import_openwpmresults(filename, mail, db_cursor):
         is_start_of_chain = False
         if db_cursor.fetchone() is None:
             is_start_of_chain = True
-        print("create eresource")
-        now = time.time()
+        
         # eresource is end of chain
         if redirects_to is None or redirects_to == "":
             r, created = Eresource.objects.get_or_create(
@@ -120,14 +119,15 @@ def import_openwpmresults(filename, mail, db_cursor):
                 is_start_of_chain=is_start_of_chain,
                 is_end_of_chain=False,
             )
-        print(f"create erource: {time.time() - now} ")
         # save load resources in eresource of type connection
         if created:
             mail.connect_tracker(eresource=r)
             num_eresources = num_eresources + 1
             print(f"Eresource ID: {r.pk}")
             list_of_eresources.append(r)
+    now = time.time()
     Eresource.objects.bulk_update(list_of_eresources, ["host"])
+    print(f"Updated eresources with hosts took : {time.time() - now} ")
     print("Number of Eresources added to the Database: %s" % num_eresources)
 
     if num_openWpm_entries != num_eresources:
@@ -139,17 +139,13 @@ def import_openwpmresults(filename, mail, db_cursor):
 
 
 def read_openWPM(filename, db_cursor):
-    print(filename)
-    print("ex 1")
     db_cursor.execute(
         "SELECT arguments from crawl_history where arguments LIKE ? AND command_status = 'ok' ;",
         ('%"url": "' + filename + '"%',),
     )
-    print("ex 2")
     if len(db_cursor.fetchall()) == 0:
         return [], 0
     # scans through the sqlite database, checking for all external calls and to which they redirect
-    print("ex 3")
     db_cursor.execute(
         "SELECT DISTINCT h.url, h.headers, hr.headers, h.top_level_url, r.new_request_url "
         "FROM http_requests as h "
@@ -158,9 +154,7 @@ def read_openWPM(filename, db_cursor):
         "WHERE h.url not like '%favicon.ico' and h.url not like ? and h.top_level_url LIKE ?;",
         (filename, filename),
     )
-    print("ex 4")
     openWPM_entries = db_cursor.fetchall()
-    print("ex 5")
     num_openWpm_entries = len(openWPM_entries)
 
     return openWPM_entries, num_openWpm_entries
